@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox prefHeight="550.0" prefWidth="855.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lymytz.service.application.report.FormListingController">
+   <children>
+      <VBox fx:id="WRAP_TABLE" prefHeight="510.0" prefWidth="850.0">
+         <children>
+            <Label alignment="CENTER" prefHeight="17.0" prefWidth="799.0" text="Listing des ventes" />
+         </children>
+      </VBox>
+      <AnchorPane styleClass="line_bar2">
+         <children>
+            <HBox prefHeight="50.0" prefWidth="1100.0" spacing="5.0" style="-fx-background-color: #FFF; -fx-border-color: #008b8b; -fx-border-width: 3;" styleClass="line_bar2">
+               <children>
+                  <VBox prefHeight="50.0" prefWidth="125.0">
+                     <children>
+                        <Label text="Num. Facture" />
+                        <TextField fx:id="F_FACTURE" onKeyReleased="#addParamNumDoc" />
+                     </children>
+                  </VBox>
+                  <VBox layoutX="23.0" layoutY="13.0" prefHeight="50.0" prefWidth="125.0">
+                     <children>
+                        <Label text="Clients" />
+                        <TextField fx:id="F_CLIENT" onAction="#addParamClient" />
+                     </children>
+                  </VBox>
+                  <VBox layoutX="140.0" layoutY="10.0" prefHeight="50.0" prefWidth="125.0">
+                     <children>
+                        <Label text="Réf. Article" />
+                        <TextField fx:id="F_ARTICLE" onAction="#addParamRefArticle" />
+                     </children>
+                  </VBox>
+                  <VBox layoutX="10.0" layoutY="10.0" prefHeight="50.0" prefWidth="125.0">
+                     <children>
+                        <Label text="Type doc" />
+                        <ComboBox fx:id="F_TYPE_DOC" onInputMethodTextChanged="#addParamTypeDoc" prefWidth="150.0" />
+                     </children>
+                  </VBox>
+               </children>
+               <padding>
+                  <Insets left="10.0" />
+               </padding>
+            </HBox>
+         </children>
+      </AnchorPane>
+   </children>
+</VBox>

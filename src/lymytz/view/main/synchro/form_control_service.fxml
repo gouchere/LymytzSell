@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox prefHeight="222.0" prefWidth="455.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lymytz.service.application.synchro.ControlServiceController">
+   <children>
+      <Label alignment="CENTER" prefHeight="31.0" prefWidth="459.0" style="-fx-background-color: #bbb;" text="Contrôler les services de synchronisation des données" textFill="#656464">
+         <font>
+            <Font size="13.0" />
+         </font>
+      </Label>
+      <HBox>
+         <children>
+            <VBox prefHeight="174.0" prefWidth="259.0" spacing="2.0">
+               <children>
+                  <Label alignment="CENTER" prefHeight="16.0" prefWidth="218.0" text="Service de données sortant" textFill="#8a0404" />
+                  <Button fx:id="LAUNCH_OUT" mnemonicParsing="false" onAction="#launchServiceOut" prefHeight="48.0" prefWidth="200.0" style="-fx-background-color: #00FF00;" text="Lancer" />
+                  <Button fx:id="PAUSE_OUT" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#pauseServiceOut" prefHeight="48.0" prefWidth="200.0" style="-fx-background-color: #CCC;" text="Pause" />
+                  <Button fx:id="STOP_OUT" layoutX="10.0" layoutY="49.0" mnemonicParsing="false" onAction="#stopServiceOut" prefHeight="48.0" prefWidth="200.0" style="-fx-background-color: #B22222;" text="Stopper" textFill="#c6c1c1" />
+               </children>
+               <padding>
+                  <Insets left="5.0" />
+               </padding>
+            </VBox>
+            <VBox layoutX="10.0" layoutY="10.0" prefHeight="174.0" prefWidth="218.0" spacing="2.0">
+               <children>
+                  <Label alignment="CENTER" prefHeight="16.0" prefWidth="218.0" text="Service de données entrant" textFill="#140479" />
+                  <Button fx:id="LAUNCH_IN" mnemonicParsing="false" onAction="#launchServiceIn" prefHeight="48.0" prefWidth="200.0" style="-fx-background-color: #00FF00;" text="Lancer" />
+                  <Button fx:id="PAUSE_IN" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#pauseServiceIn" prefHeight="48.0" prefWidth="200.0" style="-fx-background-color: #CCC;" text="Pause" />
+                  <Button fx:id="STOP_IN" layoutX="10.0" layoutY="49.0" mnemonicParsing="false" onAction="#stopServiceIn" prefHeight="48.0" prefWidth="200.0" style="-fx-background-color: #B22222;" text="Stopper" textFill="#c6c1c1" />
+               </children>
+            </VBox>
+         </children>
+      </HBox>
+   </children>
+</VBox>

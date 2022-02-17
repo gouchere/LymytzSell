@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox minHeight="240.0" minWidth="599.0" prefHeight="268.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lymytz.service.application.service.reglement.FormVirementController">
+   <children>
+      <Label alignment="CENTER" contentDisplay="CENTER" lineSpacing="1.0" prefHeight="44.0" prefWidth="608.0" style="-fx-border-color: #333;" text="Clôture la fiche de vente" textFill="#804f4f" wrapText="true" VBox.vgrow="ALWAYS">
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font>
+      </Label>
+      <HBox prefHeight="159.0" prefWidth="600.0">
+         <children>
+            <VBox prefHeight="145.0" prefWidth="246.0" style="-fx-background-color: #bba;">
+               <children>
+                  <HBox prefHeight="38.0">
+                     <children>
+                        <Label prefHeight="36.0" prefWidth="118.0" text="Chiffre du jour" />
+                        <Label fx:id="LAB_CA" alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="10.0" layoutY="10.0" prefHeight="40.0" prefWidth="112.0" text="1 275 000" textFill="#0a193c">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                           <padding>
+                              <Insets right="3.0" />
+                           </padding>
+                        </Label>
+                     </children>
+                     <VBox.margin>
+                        <Insets left="5.0" />
+                     </VBox.margin>
+                  </HBox>
+                  <Separator prefWidth="200.0" />
+                  <HBox prefHeight="36.0">
+                     <children>
+                        <Label prefHeight="38.0" prefWidth="118.0" text="Commande reçu" />
+                        <Label fx:id="LAB_COMMANDE" alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="10.0" layoutY="10.0" prefHeight="41.0" prefWidth="112.0" text="1 275 000" textFill="#0a193c">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                           <padding>
+                              <Insets right="3.0" />
+                           </padding>
+                           <HBox.margin>
+                              <Insets />
+                           </HBox.margin>
+                        </Label>
+                     </children>
+                     <padding>
+                        <Insets left="5.0" />
+                     </padding>
+                  </HBox>
+                  <Separator prefWidth="200.0" />
+                  <HBox prefHeight="36.0">
+                     <children>
+                        <Label prefHeight="40.0" prefWidth="118.0" text="Versement confirmé !" />
+                        <Label fx:id="LAB_VERSE" alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="10.0" layoutY="10.0" prefHeight="41.0" prefWidth="112.0" text="1 275 000" textFill="#0a193c">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                           <padding>
+                              <Insets right="3.0" />
+                           </padding>
+                        </Label>
+                     </children>
+                     <padding>
+                        <Insets left="5.0" />
+                     </padding>
+                  </HBox>
+               </children>
+            </VBox>
+            <VBox prefHeight="145.0" prefWidth="342.0">
+               <children>
+                  <HBox>
+                     <children>
+                        <Label fx:id="MESSAGE" prefHeight="22.0" prefWidth="215.0" />
+                        <ProgressIndicator fx:id="PROGRESS_CLOSE" prefHeight="20.0" prefWidth="89.0" />
+                     </children>
+                  </HBox>
+                  <Separator prefWidth="200.0" />
+                  <Label text="Versements Enregistrés" />
+                  <ListView fx:id="LIST_VER" prefHeight="107.0" prefWidth="324.0" />
+               </children>
+               <HBox.margin>
+                  <Insets left="10.0" />
+               </HBox.margin>
+            </VBox>
+         </children>
+      </HBox>
+      <HBox layoutX="10.0" layoutY="138.0" prefHeight="36.0">
+         <children>
+            <Label fx:id="LAB_VERSEC" alignment="CENTER" contentDisplay="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="22.0" prefWidth="608.0" text="Entrez le montant à verser" textFill="#0a193c">
+               <font>
+                  <Font size="11.0" />
+               </font>
+               <padding>
+                  <Insets right="3.0" />
+               </padding>
+            </Label>
+         </children>
+         <padding>
+            <Insets left="5.0" />
+         </padding>
+      </HBox>
+      <HBox layoutX="10.0" layoutY="74.0">
+         <children>
+            <TextField fx:id="TXT_MONTANT" alignment="CENTER" prefHeight="25.0" prefWidth="307.0" promptText="0" style="-fx-background-color: #CCffff; -fx-text-fill: #000000; -fx-font-weight: bold;">
+               <font>
+                  <Font name="System Bold" size="15.0" />
+               </font>
+               <HBox.margin>
+                  <Insets left="150.0" />
+               </HBox.margin>
+            </TextField>
+         </children>
+      </HBox>
+      <HBox alignment="CENTER" prefHeight="26.0" prefWidth="537.0">
+         <children>
+            <Label fx:id="LAB_CAISSE" prefHeight="26.0" prefWidth="122.0" text="Caisse Source" />
+            <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="25.0" prefWidth="34.0" text="-&gt;" />
+            <ComboBox fx:id="CB_CAISS_CIBLE" prefHeight="36.0" prefWidth="178.0" />
+         </children>
+         <padding>
+            <Insets left="5.0" />
+         </padding>
+      </HBox>
+      <HBox alignment="CENTER_RIGHT" prefHeight="34.0" prefWidth="601.0">
+         <children>
+            <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#termineClose" prefHeight="25.0" prefWidth="110.0" text="Terminer">
+               <HBox.margin>
+                  <Insets bottom="5.0" />
+               </HBox.margin></Button>
+         </children>
+         <padding>
+            <Insets right="15.0" />
+         </padding>
+      </HBox>
+   </children>
+</VBox>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.image.*?>
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox prefHeight="303.0" prefWidth="395.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lymytz.service.application.HelpController">
+   <children>
+      <Text fill="#112b72" strokeType="OUTSIDE" strokeWidth="0.0" text="A PROPOS DE Lymytz Caisse Ex" textAlignment="CENTER" wrappingWidth="394.13671875">
+         <font>
+            <Font size="20.0" />
+         </font>
+      </Text>
+      <AnchorPane prefHeight="243.0" prefWidth="382.0">
+         <children>
+            <ImageView fitHeight="131.0" fitWidth="108.0" layoutX="14.0" layoutY="109.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../icones/logo/logo_erp.png" />
+               </image>
+            </ImageView>
+            <Text layoutX="132.0" layoutY="52.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Lymytz Caisse Extension" underline="true">
+               <font>
+                  <Font name="System Bold" size="13.0" />
+               </font>
+            </Text>
+            <Text fill="#393838" fontSmoothingType="LCD" layoutX="132.0" layoutY="71.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Verion 2.3">
+               <font>
+                  <Font name="System Italic" size="12.0" />
+               </font>
+            </Text>
+            <TextArea editable="false" layoutX="132.0" layoutY="75.0" prefHeight="183.0" prefWidth="249.0" text="Offre une gestion de caisse décentralisé. &#10;Cette Extension de l'ERP Lymytz permet de réaliser des facturations directe avec la possibilité nouvelle de se connecter à deux serveurs de données; dont 1 serveur local pour garantir la réactivité et un serveur distant pour centraliser l'ensemble des données de la société&#10;&#10;En savoir plus:" wrapText="true" />
+            <Hyperlink layoutX="284.0" layoutY="258.0" text="www.lymytz.com" textFill="#1985f8" visited="true" wrapText="true" />
+         </children>
+      </AnchorPane>
+   </children>
+</VBox>

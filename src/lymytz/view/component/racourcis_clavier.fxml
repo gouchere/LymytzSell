@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.image.*?>
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox prefHeight="391.0" prefWidth="395.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lymytz.service.application.HelpController">
+   <children>
+      <Text fill="#112b72" strokeType="OUTSIDE" strokeWidth="0.0" text="Liste des raccourcis claviers acceptés" textAlignment="CENTER" wrappingWidth="394.13671875">
+         <font>
+            <Font size="20.0" />
+         </font>
+      </Text>
+      <Separator prefWidth="200.0" />
+      <AnchorPane prefHeight="319.0" prefWidth="395.0">
+         <children>
+            <VBox prefHeight="300.0" prefWidth="405.0" spacing="2.0">
+               <children>
+                  <HBox prefHeight="20.0" prefWidth="218.0">
+                     <children>
+                        <Label prefHeight="23.0" prefWidth="59.0" text="CTL + N" />
+                        <Separator orientation="VERTICAL" prefHeight="200.0" />
+                        <Label prefHeight="24.0" prefWidth="328.0" text="Ouvre l'invite de création d'une nouvelle facture" />
+                     </children>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                  </HBox>
+                  <HBox layoutX="20.0" layoutY="10.0" prefHeight="20.0" prefWidth="218.0">
+                     <children>
+                        <Label prefHeight="23.0" prefWidth="59.0" text="CTL + R" />
+                        <Separator orientation="VERTICAL" prefHeight="200.0" />
+                        <Label prefHeight="24.0" prefWidth="328.0" text="Crée une nouvelle facture sans invite" />
+                     </children>
+                  </HBox>
+                  <HBox layoutX="20.0" layoutY="32.0" prefHeight="20.0" prefWidth="218.0">
+                     <children>
+                        <Label prefHeight="23.0" prefWidth="59.0" text="CTL + P" />
+                        <Separator orientation="VERTICAL" prefHeight="200.0" />
+                        <Label prefHeight="24.0" prefWidth="328.0" text="Imprimer la facture ouverte sur la page principale" />
+                     </children>
+                  </HBox>
+                  <HBox layoutX="20.0" layoutY="54.0" prefHeight="20.0" prefWidth="218.0">
+                     <children>
+                        <Label prefHeight="23.0" prefWidth="59.0" text="CTL + C" />
+                        <Separator orientation="VERTICAL" prefHeight="200.0" />
+                        <Label prefHeight="24.0" prefWidth="328.0" text="Accéder à la vue mon compte" />
+                     </children>
+                  </HBox>
+                  <HBox layoutX="20.0" layoutY="76.0" prefHeight="20.0" prefWidth="218.0">
+                     <children>
+                        <Label prefHeight="23.0" prefWidth="59.0" text="CTL + L" />
+                        <Separator orientation="VERTICAL" prefHeight="200.0" />
+                        <Label prefHeight="24.0" prefWidth="328.0" text="Accéder à la liste des factures" />
+                     </children>
+                  </HBox>
+                  <HBox layoutX="20.0" layoutY="98.0" prefHeight="20.0" prefWidth="218.0">
+                     <children>
+                        <Label prefHeight="23.0" prefWidth="59.0" text="CTL + Q" />
+                        <Separator orientation="VERTICAL" prefHeight="200.0" />
+                        <Label prefHeight="24.0" prefWidth="328.0" text="Quitter l'application" />
+                     </children>
+                  </HBox>
+                  <HBox layoutX="20.0" layoutY="98.0" prefHeight="20.0" prefWidth="218.0">
+                     <children>
+                        <Label prefHeight="23.0" prefWidth="59.0" text="CTL + C" />
+                        <Separator orientation="VERTICAL" prefHeight="200.0" />
+                        <Label prefHeight="24.0" prefWidth="328.0" text="Accéder au catalogue" />
+                     </children>
+                  </HBox>
+                  <Separator prefWidth="200.0">
+                     <VBox.margin>
+                        <Insets top="10.0" />
+                     </VBox.margin>
+                  </Separator>
+                  <Text fill="#112b72" strokeType="OUTSIDE" strokeWidth="0.0" text="Raccourcis saisie" textAlignment="CENTER" wrappingWidth="394.13671875" />
+                  <HBox layoutX="20.0" layoutY="142.0" prefHeight="20.0" prefWidth="218.0">
+                     <children>
+                        <Label prefHeight="23.0" prefWidth="59.0" text="+" />
+                        <Separator orientation="VERTICAL" prefHeight="200.0" />
+                        <Label prefHeight="24.0" prefWidth="328.0" text="Incrémenter le plus récent article du panier" />
+                     </children>
+                  </HBox>
+                  <HBox layoutX="20.0" layoutY="197.0" prefHeight="20.0" prefWidth="218.0">
+                     <children>
+                        <Label prefHeight="23.0" prefWidth="59.0" text="-" />
+                        <Separator orientation="VERTICAL" prefHeight="200.0" />
+                        <Label prefHeight="24.0" prefWidth="328.0" text="Décrémenter le plus recent article du panier" />
+                     </children>
+                  </HBox>
+                  <HBox layoutX="20.0" layoutY="219.0" prefHeight="20.0" prefWidth="218.0">
+                     <children>
+                        <Label prefHeight="23.0" prefWidth="59.0" text="Q" />
+                        <Separator orientation="VERTICAL" prefHeight="200.0" />
+                        <Label prefHeight="24.0" prefWidth="328.0" text="Modifier la quantité du plus récent article du panier" />
+                     </children>
+                  </HBox>
+                  <HBox layoutX="20.0" layoutY="242.0" prefHeight="20.0" prefWidth="218.0">
+                     <children>
+                        <Label prefHeight="23.0" prefWidth="59.0" text="V" />
+                        <Separator orientation="VERTICAL" prefHeight="200.0" />
+                        <Label prefHeight="24.0" prefWidth="328.0" text="Valider la facture en cours de saisie" />
+                     </children>
+                  </HBox>
+                  <HBox layoutX="20.0" layoutY="254.0" prefHeight="20.0" prefWidth="218.0">
+                     <children>
+                        <Label prefHeight="23.0" prefWidth="59.0" text="CTL + D" />
+                        <Separator orientation="VERTICAL" prefHeight="200.0" />
+                        <Label prefHeight="24.0" prefWidth="328.0" text="Accéder au catalogue" />
+                     </children>
+                  </HBox>
+                  <HBox layoutX="20.0" layoutY="255.0" prefHeight="20.0" prefWidth="218.0">
+                     <children>
+                        <Label prefHeight="23.0" prefWidth="59.0" text="Alt" />
+                        <Separator orientation="VERTICAL" prefHeight="200.0" />
+                        <Label prefHeight="24.0" prefWidth="328.0" text="Se positionner dans le champ de saisie de référence" />
+                     </children>
+                  </HBox>
+               </children>
+               <padding>
+                  <Insets left="10.0" />
+               </padding>
+            </VBox>
+         </children>
+      </AnchorPane>
+      <Hyperlink alignment="CENTER_RIGHT" contentDisplay="RIGHT" prefHeight="23.0" prefWidth="426.0" text="www.lymytz.com" textFill="#1985f8" visited="true" wrapText="true" />
+   </children>
+</VBox>

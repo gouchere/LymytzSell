@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+
+<AnchorPane id="AnchorPane" prefHeight="550.0" prefWidth="855.0" styleClass="mainFxmlClass" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lymytz.service.application.report.FormListingController">
+    <stylesheets>
+        <URL value="@/lymytz/view/main/form_application.css" />
+    </stylesheets>
+   <children>
+      <VBox layoutX="2.0" layoutY="7.0">
+         <children>
+            <VBox fx:id="WRAP_TABLE" prefHeight="510.0" prefWidth="855.0">
+               <children>
+                  <TableView fx:id="TABLE_CONTENT" layoutX="14.0" layoutY="7.0" prefHeight="510.0" prefWidth="850.0" AnchorPane.leftAnchor="2.0" AnchorPane.rightAnchor="2.0">
+                    <columns>
+                      <TableColumn fx:id="C_NUM" prefWidth="40.0" text="N°" />
+                        <TableColumn fx:id="C_NUM_CMDE" prefWidth="147.0" text="Num. commande" />
+                      <TableColumn fx:id="C_REFERENCE" prefWidth="111.0" text="Référence" />
+                        <TableColumn fx:id="C_DESIGNATION" prefWidth="180.0" text="Désignation" />
+                        <TableColumn fx:id="C_QUANTITE" prefWidth="66.0" text="Quantité" />
+                        <TableColumn fx:id="C_PU" prefWidth="78.0" styleClass="colsNumber" text="Prix U." />
+                        <TableColumn fx:id="C_TAXES" prefWidth="72.0" styleClass="colsNumber" text="Taxes" />
+                        <TableColumn fx:id="C_REMISE" prefWidth="68.0" styleClass="colsNumber" text="Remises" />
+                        <TableColumn fx:id="C_TOTAL" prefWidth="87.0" styleClass="colsNumber" text="Total" />
+                    </columns>
+                  </TableView>
+               </children>
+            </VBox>
+            <AnchorPane>
+               <children>
+                  <HBox prefHeight="50.0" prefWidth="850.0" spacing="5.0" styleClass="line_bar2">
+                     <children>
+                        <VBox prefHeight="50.0" prefWidth="125.0">
+                           <children>
+                              <Label text="Num. Facture" />
+                              <TextField fx:id="F_FACTURE" />
+                           </children>
+                        </VBox>
+                        <VBox layoutX="10.0" layoutY="10.0" prefHeight="50.0" prefWidth="125.0">
+                           <children>
+                              <Label text="Type doc" />
+                              <ComboBox fx:id="F_TYPE_DOC" prefWidth="150.0" />
+                           </children>
+                        </VBox>
+                        <VBox layoutX="140.0" layoutY="10.0" prefHeight="50.0" prefWidth="125.0">
+                           <children>
+                              <Label text="Réf. Article" />
+                              <TextField fx:id="F_ARTICLE" />
+                           </children>
+                        </VBox>
+                     </children>
+                  </HBox>
+                  <Pagination fx:id="PAGE" pageCount="5" prefHeight="50.0" prefWidth="487.0" style="-fx-font-size: 0.7em;" AnchorPane.rightAnchor="2.0" />
+               </children>
+            </AnchorPane>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lymytz.service.application.synchro.impor.ListenRemoteTableController">
+   <children>
+      <VBox>
+         <children>
+            <HBox prefHeight="20.0" prefWidth="600.0">
+               <children>
+                  <Label prefHeight="20.0" prefWidth="128.0" text="Synchro en attente:" textFill="#7c600c" />
+                  <Label fx:id="NB_WAIT" text="0" />
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+      <TableView fx:id="TAB_LISTEN" prefHeight="470.0" prefWidth="851.0">
+        <columns>
+          <TableColumn fx:id="C_ID" prefWidth="75.0" text="Id" />
+          <TableColumn fx:id="C_TABLE" prefWidth="152.0" text="Table" />
+            <TableColumn fx:id="C_ID_SOURCE" prefWidth="89.0" text="Id source" />
+            <TableColumn fx:id="C_ACTION" prefWidth="106.0" text="Action" />
+            <TableColumn fx:id="C_MESSAGE" prefWidth="343.0" text="Message" />
+            <TableColumn fx:id="C_DATE_SAVE" minWidth="0.0" prefWidth="94.0" text="Date enregistrement" />
+        </columns>
+      </TableView>
+      <VBox prefHeight="30.0" prefWidth="100.0">
+         <children>
+            <HBox style="-fx-background-color: #ccb;">
+               <children>
+                  <Label fx:id="PROGRESS_LABEL" prefHeight="22.0" prefWidth="99.0" text="0/0">
+                     <HBox.margin>
+                        <Insets left="5.0" />
+                     </HBox.margin></Label>
+               </children>
+            </HBox>
+            <ProgressBar fx:id="PROGRESS" prefHeight="18.0" prefWidth="870.0" progress="0.0" />
+         </children>
+      </VBox>
+   </children>
+</VBox>

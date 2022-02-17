@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane id="AnchorPane" prefHeight="500.0" prefWidth="800.0" styleClass="mainFxmlClass" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8" fx:controller="lymytz.service.application.service.reglement.ListDetailFactController">
+    <stylesheets>
+        <URL value="@/lymytz/view/main/form_application.css" />
+    </stylesheets>
+   <children>
+      <VBox prefHeight="600.0" prefWidth="800.0" spacing="10.0">
+         <children>
+            <TableView fx:id="TABLE_REG" prefHeight="310.0" prefWidth="638.0">
+              <columns>
+                <TableColumn fx:id="CR_FAC" prefWidth="139.0" text="Numéro Fact." />
+                <TableColumn fx:id="CR_NUM" prefWidth="120.0" text="Numéro Piece" />
+                  <TableColumn fx:id="CR_MONTANT" prefWidth="87.0" text="Montants" />
+                  <TableColumn fx:id="CR_CAISSE" prefWidth="109.0" text="Caisses" />
+                  <TableColumn fx:id="CR_DATE" prefWidth="90.0" text="Date" />
+                  <TableColumn fx:id="CR_STATUT" prefWidth="66.0" text="Statut" />
+                  <TableColumn fx:id="CR_AUTEUR" minWidth="0.0" prefWidth="72.0" text="Auteur" />
+              </columns>
+            </TableView>
+            <TableView fx:id="TABLE_BL" prefHeight="200.0" prefWidth="600.0">
+              <columns>
+                <TableColumn fx:id="CL_REF" prefWidth="73.0" text="Ref. Article" />
+                  <TableColumn fx:id="CL_DES" prefWidth="111.0" text="Des. Articles" />
+                  <TableColumn fx:id="CL_QUANTITE" prefWidth="79.0" text="Quantité" />
+                <TableColumn fx:id="CL_NUM" prefWidth="82.0" text="Numéro BL" />
+                  <TableColumn fx:id="CL_DEPOT" prefWidth="89.0" text="Dépôt" />
+                  <TableColumn fx:id="CL_DATE" prefWidth="79.0" text="Date" />
+                  <TableColumn fx:id="CL_STATUT" prefWidth="61.0" text="Statut" />
+                  <TableColumn fx:id="CL_AUTEUR" prefWidth="73.0" text="Auteur" />
+                  <TableColumn fx:id="CL_FAC" prefWidth="116.0" text="Numéro Fact." />
+              </columns>
+            </TableView>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>

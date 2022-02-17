@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<persistence>
+    <entity name="YvsComEnteteDocVente" table="yvs_com_entete_doc_vente"> 
+        <path>lymytz.dao.entity.YvsComEnteteDocVente</path>
+    </entity>
+    <entity name="YvsComDocVentes" table="yvs_com_doc_ventes"> 
+        <path>lymytz.dao.entity.YvsComDocVentes</path>
+    </entity>
+    <entity name="YvsComContenuDocVente" table="yvs_com_contenu_doc_vente"> 
+        <path>lymytz.dao.entity.YvsComContenuDocVente</path>
+    </entity>     
+    <entity name="YvsComptaAcompteClient" table="yvs_compta_acompte_client"> 
+        <path>lymytz.dao.entity.YvsComptaAcompteClient</path>
+    </entity>    
+    <entity name="YvsComptaNotifReglementVente" table="yvs_compta_notif_reglement_vente"> 
+        <path>lymytz.dao.entity.YvsComptaNotifReglementVente</path>
+    </entity>    
+    <entity name="YvsComptaCaissePieceVente" table="yvs_compta_caisse_piece_vente"> 
+        <path>lymytz.dao.entity.YvsComptaCaissePieceVente</path>
+    </entity>  
+</persistence>

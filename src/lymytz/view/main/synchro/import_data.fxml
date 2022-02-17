@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane id="AnchorPane" prefHeight="590.0" prefWidth="1000.0" styleClass="mainFxmlClass" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lymytz.service.application.synchro.impor.ImportDataController">
+    <stylesheets>
+        <URL value="@/lymytz/view/main/form_application.css" />
+    </stylesheets>
+   <left>
+      <VBox prefHeight="493.0" prefWidth="300.0" BorderPane.alignment="CENTER">
+         <children>
+            <TableView fx:id="TV_TABLE" prefHeight="566.0" prefWidth="300.0">
+              <columns>
+                <TableColumn fx:id="C_TABLE" prefWidth="232.0" text="Tables" />
+                <TableColumn fx:id="C_MAJ" prefWidth="67.0" text="Maj" />
+              </columns>
+            </TableView>
+         </children>
+      </VBox>
+   </left>
+   <bottom>
+      <VBox>
+         <children>
+            <HBox>
+               <children>
+                  <Label fx:id="PROGRESS_LABEL" prefHeight="17.0" prefWidth="434.0" text="\%" />
+                  <Label fx:id="LAB_RUN_IMPORT" />
+               </children>
+            </HBox>
+            <HBox prefHeight="27.0" prefWidth="665.0" BorderPane.alignment="CENTER">
+               <children>
+                  <ProgressBar fx:id="PROGRESS" prefHeight="25.0" prefWidth="1004.0" progress="0.0" />
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </bottom>
+   <center>
+      <VBox prefHeight="493.0" prefWidth="753.0" BorderPane.alignment="CENTER">
+         <children>
+            <HBox style="-fx-background-color: #bbb;">
+               <children>
+                  <Label prefHeight="30.0" prefWidth="205.0" style="-fx-background-color: #aaa;" text="Récupération des données de la table" textFill="#722d2d" />
+                  <Label fx:id="LAB_NAME_TABLE" prefHeight="29.0" style="-fx-background-color: #aaa;" text="Articles" textFill="#cf1104" wrapText="true">
+                     <font>
+                        <Font size="11.0" />
+                     </font>
+                  </Label>
+               </children>
+            </HBox>
+            <VBox prefHeight="551.0" prefWidth="700.0">
+               <children>
+                  <TabPane prefHeight="549.0" prefWidth="700.0" tabClosingPolicy="UNAVAILABLE">
+                    <tabs>
+                      <Tab text="Données locales">
+                        <content>
+                              <VBox>
+                                 <children>
+                                    <Label fx:id="PROGRESS_MESSAGE_L" prefHeight="17.0" prefWidth="703.0" text="\%" />
+                                    <ProgressBar fx:id="PROGRESS_LOCAL" prefHeight="18.0" prefWidth="706.0" progress="0.0" />
+                                    <VBox fx:id="BOX_TAB_LOCALE" />
+                                 </children>
+                              </VBox>
+                        </content>
+                      </Tab>
+                      <Tab text="Données distantes">
+                        <content>
+                              <VBox>
+                                 <children>
+                                    <Label fx:id="PROGRESS_MESSAGE_R" prefHeight="17.0" prefWidth="703.0" text="\%" />
+                                    <ProgressBar fx:id="PROGRESS_REMOTE" prefHeight="18.0" prefWidth="706.0" progress="0.0" />
+                                    <VBox fx:id="BOX_TAB_REMOTE" />
+                                 </children>
+                              </VBox>
+                        </content>
+                      </Tab>
+                    </tabs>
+                  </TabPane>
+                  <Button mnemonicParsing="false" onAction="#importRemoteData" prefHeight="25.0" prefWidth="706.0" text="Importer...." textFill="#14065b">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                  </Button>
+               </children>
+            </VBox>
+         </children>
+      </VBox>
+   </center>
+</BorderPane>

@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox prefHeight="504.0" prefWidth="549.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lymytz.service.start.ParametresController">
+   <children>
+      <HBox prefHeight="37.0" prefWidth="508.0" style="-fx-background-color: #aaa;" />
+      <TabPane prefHeight="430.0" prefWidth="540.0" side="LEFT" tabClosingPolicy="UNAVAILABLE">
+        <tabs>
+            <Tab text="Source de donnéees">
+               <content>
+                  <VBox prefHeight="400.0" prefWidth="479.0">
+                     <children>
+                        <TabPane prefHeight="382.0" prefWidth="500.0" tabClosingPolicy="UNAVAILABLE">
+                          <tabs>
+                            <Tab text="Locale">
+                                 <content>
+                                    <GridPane prefHeight="300.0" prefWidth="459.0">
+                                      <columnConstraints>
+                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="216.0" minWidth="10.0" prefWidth="120.0" />
+                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="362.0" minWidth="10.0" prefWidth="321.0" />
+                                      </columnConstraints>
+                                      <rowConstraints>
+                                        <RowConstraints minHeight="30.0" prefHeight="50.0" vgrow="SOMETIMES" />
+                                        <RowConstraints minHeight="30.0" prefHeight="50.0" vgrow="SOMETIMES" />
+                                        <RowConstraints minHeight="30.0" prefHeight="50.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="30.0" prefHeight="50.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="30.0" prefHeight="50.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="30.0" prefHeight="50.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="30.0" prefHeight="50.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="30.0" prefHeight="50.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="30.0" prefHeight="50.0" vgrow="SOMETIMES" />
+                                      </rowConstraints>
+                                       <children>
+                                          <Label text="Hôte" />
+                                          <Label text="Port" GridPane.rowIndex="1" />                              
+                                          <Label text="Utilisateur" GridPane.rowIndex="2" />
+                                          <Label text="Base de données" GridPane.rowIndex="3" />
+                                          <Label text="Mot de passe" GridPane.rowIndex="4" />
+                                          <TextField fx:id="TXT_HOTE" text="localhost" GridPane.columnIndex="1" />
+                                          <TextField fx:id="TXT_PORT" text="5432" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                          <TextField fx:id="TXT_USER" text="postgres" GridPane.columnIndex="1" GridPane.rowIndex="2" /> 
+                                          <TextField fx:id="TXT_DB" text="lymytz_demo_0" GridPane.columnIndex="1" GridPane.rowIndex="3" />                             
+                                          <PasswordField fx:id="TXT_PASS" text="yves1910/" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                                          <Label text="Société" GridPane.rowIndex="6" />
+                                          <Label text="Agence" GridPane.rowIndex="7" />
+                                          <Button mnemonicParsing="false" onAction="#testConnect" prefHeight="31.0" prefWidth="155.0" style="-fx-background-color: #4ef;" text="Connecter" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                                          <ComboBox fx:id="CB_SOCIETE" onAction="#choixSociete" prefHeight="25.0" prefWidth="247.0" style="-fx-background-color: #4ee;" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                                          <ComboBox fx:id="CB_AGENCE" prefHeight="25.0" prefWidth="245.0" style="-fx-background-color: #4ee;" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                                       </children>
+                                    </GridPane>
+                                 </content>
+                            </Tab>
+                            <Tab text="Serveur">
+                                 <content>
+                                    <VBox prefHeight="200.0" prefWidth="100.0">
+                                       <children>
+                                          <GridPane prefHeight="300.0" prefWidth="459.0">
+                                             <children>
+                                                <Label text="Hôte" GridPane.rowIndex="1" />
+                                                <Label text="Port" GridPane.rowIndex="2" />
+                                                <Label text="Utilisateur" GridPane.rowIndex="3" />
+                                                <Label text="Base de données" GridPane.rowIndex="4" />
+                                                <Label text="Mot de passe" GridPane.rowIndex="5" />
+                                                <Label text="Hôte Web" GridPane.rowIndex="6" />
+                                                <Label text="Port Web" GridPane.rowIndex="7" />
+                                                <TextField fx:id="TXT_HOTE_R" text="localhost" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                                <TextField fx:id="TXT_PORT_R" text="5432" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                                <TextField fx:id="TXT_USER_R" text="postgres" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                                <TextField fx:id="TXT_DB_R" text="lymytz_demo_0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                                                <PasswordField fx:id="TXT_PASS_R" text="yves1910/" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                                                <TextField fx:id="TXT_HOTE_W" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                                                <TextField fx:id="TXT_PORT_W" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                                                <TextField fx:id="TXT_ID_R" prefHeight="25.0" prefWidth="50.0" />
+                                                <Label text="Identifiant de la société sur le serveur Master" GridPane.columnIndex="1" />
+                                             </children>
+                                             <columnConstraints>
+                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="216.0" minWidth="10.0" prefWidth="120.0" />
+                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="362.0" minWidth="10.0" prefWidth="321.0" />
+                                             </columnConstraints>
+                                             <rowConstraints>
+                                                <RowConstraints minHeight="30.0" prefHeight="50.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="30.0" prefHeight="50.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="30.0" prefHeight="50.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="30.0" prefHeight="50.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="30.0" prefHeight="50.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="30.0" prefHeight="50.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="30.0" prefHeight="50.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="30.0" prefHeight="50.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="30.0" prefHeight="50.0" vgrow="SOMETIMES" />
+                                             </rowConstraints>
+                                          </GridPane>
+                                       </children>
+                                    </VBox>
+                                 </content>
+                            </Tab>
+                          </tabs>
+                        </TabPane>
+                        <Label fx:id="TXT_RESULT" alignment="CENTER" contentDisplay="CENTER" prefHeight="17.0" prefWidth="429.0" wrapText="true" />
+                     </children>
+                     <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </padding>
+                  </VBox>
+               </content>
+            </Tab>
+          <Tab text="Impressions">
+            <content>
+                  <VBox>
+                     <children>
+                        <GridPane prefHeight="234.0" prefWidth="459.0">
+                           <children>
+                              <Label text="Orientation" />
+                              <Label text="Largeur" GridPane.rowIndex="1" />
+                              <Label text="Marge gauche" GridPane.rowIndex="3" />
+                              <Label text="Marge Droite" GridPane.rowIndex="4" />
+                              <Label text="Hauteur" GridPane.rowIndex="2" />
+                              <Label text="Marge Haut" GridPane.rowIndex="5" />
+                              <TextField fx:id="TXT_ORIENTATION" GridPane.columnIndex="1" />
+                              <TextField fx:id="TXT_LARGEUR" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                              <TextField fx:id="TXT_HAUTEUR" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                              <TextField fx:id="TXT_MARGE_D" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                              <TextField fx:id="TXT_MARGE_TOP" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                              <HBox alignment="BOTTOM_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="20.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="6" GridPane.valignment="CENTER">
+                                 <children>
+                                    <RadioButton fx:id="RAD_TICKET" mnemonicParsing="false" selected="true" text="TICKET">
+                                       <toggleGroup>
+                                          <ToggleGroup fx:id="TYPE_PRINT" />
+                                       </toggleGroup>
+                                    </RadioButton>
+                                    <RadioButton fx:id="RAD_A5" mnemonicParsing="false" text="A5" toggleGroup="$TYPE_PRINT" />
+                                    <RadioButton fx:id="RAD_A4" contentDisplay="CENTER" mnemonicParsing="false" text="A4" toggleGroup="$TYPE_PRINT" />
+                                 </children>
+                              </HBox>
+                              <Label alignment="BOTTOM_LEFT" prefHeight="36.0" prefWidth="138.0" text="Format impression" GridPane.rowIndex="6" />
+                              <TextField fx:id="TXT_MARGE_G" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                           </children>
+                           <columnConstraints>
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="216.0" minWidth="10.0" prefWidth="120.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="362.0" minWidth="10.0" prefWidth="321.0" />
+                           </columnConstraints>
+                           <rowConstraints>
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                           </rowConstraints>
+                        </GridPane>
+                     </children>
+                     <padding>
+                        <Insets left="10.0" right="10.0" />
+                     </padding>
+                  </VBox>
+            </content>
+          </Tab>
+          <Tab fx:id="TAB_GEN" text="Préférences">
+            <content>
+                  <VBox prefHeight="371.0" prefWidth="508.0">
+                     <children>
+                        <GridPane>
+                          <columnConstraints>
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="215.0" minWidth="10.0" prefWidth="174.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="352.0" minWidth="10.0" prefWidth="266.0" />
+                          </columnConstraints>
+                          <rowConstraints>
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                          </rowConstraints>
+                           <children>
+                              <Label text="Code Caisse" />
+                              <TextField fx:id="TXT_NUM_CAISSE" prefHeight="25.0" GridPane.columnIndex="1">
+                                 <GridPane.margin>
+                                    <Insets right="5.0" />
+                                 </GridPane.margin></TextField>
+                              <Label text="Imprimer toujours" GridPane.rowIndex="7" />
+                              <Label text="Chemin photos" GridPane.rowIndex="6" />
+                              <CheckBox fx:id="CHB_PRINT" mnemonicParsing="false" text="CheckBox" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                              <Label text="Cient par dfaut" GridPane.rowIndex="1" />
+                              <Label text="Ville" GridPane.rowIndex="2" />
+                              <Label text="Secteur" GridPane.rowIndex="3" />
+                              <ComboBox fx:id="CB_CLIENT" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                              <ComboBox fx:id="CB_VILLE" onAction="#listenValue" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                              <ComboBox fx:id="CB_SECTEUR" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                              <Label text="Mode de Reglement par defaut" GridPane.rowIndex="4" />
+                              <ComboBox fx:id="CB_MODE_REG" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                              <ComboBox fx:id="CB_MODEL_REG" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                              <Label text="Model de règlement par defaut" GridPane.rowIndex="5" />
+                              <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="6">
+                                 <children>
+                                    <TextField fx:id="TXT_PATH" prefHeight="25.0" prefWidth="203.0" />
+                                    <Button fx:id="CHOOSE_DIR" mnemonicParsing="false" onAction="#openDirectorie" text="Parcourir..." />
+                                 </children>
+                              </HBox>
+                              <Label prefHeight="44.0" text="Toujour initier une nouvelle facture après validation" wrapText="true" GridPane.rowIndex="8" />
+                              <CheckBox mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+                           </children>
+                        </GridPane>
+                        <AnchorPane prefHeight="29.0" prefWidth="392.0">
+                           <children>
+                              <Button layoutX="180.0" layoutY="2.0" mnemonicParsing="false" onAction="#saveParametres" text="Enregistrer" AnchorPane.rightAnchor="10.0" />
+                           </children>
+                        </AnchorPane>
+                     </children>
+                     <padding>
+                        <Insets left="10.0" right="10.0" />
+                     </padding>
+                  </VBox>
+            </content>
+          </Tab>
+        </tabs>
+      </TabPane>
+      <Button fx:id="BTN_SAVE_LOCALE" mnemonicParsing="false" onAction="#saveParametres" prefHeight="25.0" prefWidth="551.0" style="-fx-background-color: #4ef;" text="Connecter &amp; Enregistrer" textAlignment="RIGHT" wrapText="true" />
+   </children>
+</VBox>

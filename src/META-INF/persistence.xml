@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.0" xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
+  <persistence-unit name="LYMYTZ_PU" transaction-type="RESOURCE_LOCAL">
+    <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+    <class>lymytz.dao.entity.YvsBaseConditionnement</class>
+    <class>lymytz.dao.entity.YvsBaseModeleReference</class>
+    <class>lymytz.dao.entity.YvsBasePlanTarifaireTranche</class>
+    <class>lymytz.dao.entity.YvsBaseArticleCategorieComptableTaxe</class>
+    <class>lymytz.dao.entity.YvsBaseTaxes</class>
+    <class>lymytz.dao.entity.YvsBaseArticleCategorieComptable</class>
+    <class>lymytz.dao.entity.YvsUsers</class>
+    <class>lymytz.dao.entity.YvsBaseFamilleArticle</class>
+    <class>lymytz.dao.entity.YvsBaseElementReference</class>
+    <class>lymytz.dao.entity.YvsBaseCategorieClient</class>
+    <class>lymytz.dao.entity.YvsBasePlanTarifaire</class>
+    <class>lymytz.dao.entity.YvsBaseUniteMesure</class>
+    <class>lymytz.dao.entity.YvsBaseArticleCodeBarre</class>
+    <class>lymytz.dao.entity.YvsBaseArticles</class>
+    <class>lymytz.dao.entity.YvsBaseClassesStat</class>
+    <class>lymytz.dao.entity.YvsUsersAgence</class>
+    <class>lymytz.dao.entity.YvsBaseGroupesArticle</class>
+    <class>lymytz.dao.entity.YvsBaseCategorieComptable</class>
+    <class>lymytz.dao.entity.YvsAgences</class>
+    <class>lymytz.dao.entity.YvsBaseModeReglement</class>
+    <class>lymytz.dao.entity.YvsSocietes</class>
+    <class>lymytz.dao.entity.YvsSynchroDataSynchro</class>
+    <class>lymytz.dao.entity.YvsSynchroListenTable</class>
+    <class>lymytz.dao.entity.YvsBasePointVente</class>
+    <class>lymytz.dao.entity.YvsBaseTiers</class>
+    <class>lymytz.dao.entity.YvsComCreneauHoraireUsers</class>
+    <class>lymytz.dao.entity.YvsComCreneauPoint</class>
+    <class>lymytz.dao.entity.YvsBaseDepots</class>
+    <class>lymytz.dao.entity.YvsBasePointLivraison</class>
+    <class>lymytz.dao.entity.YvsComDocVentes</class>
+    <class>lymytz.dao.entity.YvsComEnteteDocVente</class>
+    <class>lymytz.dao.entity.YvsGrhTrancheHoraire</class>
+    <class>lymytz.dao.entity.YvsComPlanRistourne</class>
+    <class>lymytz.dao.entity.YvsComCreneauDepot</class>
+    <class>lymytz.dao.entity.YvsComClient</class>
+    <class>lymytz.dao.entity.YvsDictionnaire</class>
+    <class>lymytz.dao.entity.YvsBaseModelReglement</class>
+    <class>lymytz.dao.entity.YvsBaseUsersAcces</class>
+    <class>lymytz.dao.entity.YvsComContenuDocVente</class>
+    <class>lymytz.dao.entity.YvsBaseCaisse</class>
+    <class>lymytz.dao.entity.YvsBaseCodeAcces</class>
+    <class>lymytz.dao.entity.YvsComptaCaissePieceVente</class>
+    <class>lymytz.dao.entity.YvsComParametreVente</class>
+    <class>lymytz.dao.entity.YvsComCommercialVente</class>
+    <class>lymytz.dao.entity.YvsComComerciale</class>
+    <class>lymytz.dao.entity.YvsComParametre</class>
+    <class>lymytz.dao.entity.YvsComCommercialPoint</class>
+    <class>lymytz.dao.entity.YvsBaseExercice</class>
+    <class>lymytz.dao.entity.YvsBasePointVenteDepot</class>
+    <class>lymytz.dao.entity.YvsBaseArticleDepot</class>
+    <class>lymytz.dao.entity.YvsBaseArticlePoint</class>
+    <class>lymytz.dao.entity.YvsBaseConditionnementPoint</class>
+    <class>lymytz.dao.entity.YvsBaseCaisseUser</class>
+    <class>lymytz.dao.entity.YvsComTaxeContenuVente</class>
+    <class>lymytz.dao.entity.YvsComptaAcompteClient</class>
+    <class>lymytz.dao.entity.YvsComptaNotifReglementVente</class>
+    <class>lymytz.dao.entity.YvsComCategorieTarifaire</class>
+    <class>lymytz.dao.entity.YvsComptaParametre</class>
+    <class>lymytz.dao.entity.YvsSynchroServeurs</class>
+    <class>lymytz.dao.entity.YvsComRistourne</class>
+    <class>lymytz.dao.entity.YvsComGrilleRistourne</class>
+    <class>lymytz.dao.entity.YvsComGrilleRemise</class>
+    <class>lymytz.dao.entity.YvsComRemise</class>
+    <class>lymytz.dao.entity.YvsComRabais</class>
+    <class>lymytz.dao.entity.YvsBaseLiaisonCaisse</class>
+    <class>lymytz.dao.entity.YvsComptaCaissePieceVirement</class>
+    <shared-cache-mode>NONE</shared-cache-mode>
+    <properties>
+      <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/lymytz_sell_extension"/>
+      <property name="javax.persistence.jdbc.user" value="postgres"/>
+      <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver"/>
+      <property name="javax.persistence.jdbc.password" value="yves1910/"/>
+      <!--<property name="eclipselink.logging.level" value="FINE"/>-->
+    </properties>
+  </persistence-unit>
+</persistence>

@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox prefHeight="446.0" prefWidth="739.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lymytz.service.application.MyComptesController">
+    <children>
+        <HBox prefHeight="18.0" prefWidth="739.0" style="-fx-background-color: #ccc;" />
+        <TabPane prefHeight="406.0" prefWidth="745.0" side="LEFT" tabClosingPolicy="UNAVAILABLE">
+            <tabs>
+                <Tab text="Mes Fiches">
+                    <content>
+                        <VBox>
+                            <children>
+                                <TableView fx:id="TAB_FICHES" editable="true" prefHeight="200.0" prefWidth="200.0">
+                                    <columns>
+                                        <TableColumn fx:id="DATE_FICHE" prefWidth="110" text="Date" />
+                                        <TableColumn fx:id="PV_FICHE" prefWidth="200" text="Point de vente" />
+                                        <TableColumn fx:id="TRANCHE_FICHE" prefWidth="130" text="Tranche" />
+                                        <TableColumn fx:id="DATE_EDIT" prefWidth="130.0" text="Date Edit" />
+                                        <TableColumn fx:id="STATUT_FICHE" prefWidth="80" text="Statut" />
+                                        <TableColumn fx:id="COL_CLOSE" prefWidth="80" text="Cloturer" />
+                                        <TableColumn fx:id="COL_ACTIVE" prefWidth="80" text="Activer" />
+                                    </columns>
+                                </TableView>
+                                <VBox fx:id="ZONE_NEW">
+                                    <children>
+                                        <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="17.0" prefWidth="712.0" text="Vous êtes en planning permanent, il vous est possible de créer une nouvelle fiche de vente" textAlignment="CENTER" textFill="#127929" wrapText="true">
+                                            <font>
+                                                <Font name="System Bold" size="11.0" />
+                                            </font>
+                                        </Label>
+                                        <GridPane>
+                                            <columnConstraints>
+                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="349.0" minWidth="10.0" prefWidth="109.0" />
+                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="601.0" minWidth="10.0" prefWidth="601.0" />
+                                            </columnConstraints>
+                                            <rowConstraints>
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                            </rowConstraints>
+                                            <children>
+                                                <Label prefHeight="17.0" prefWidth="171.0" text="Créneau " />
+                                                <Label prefHeight="17.0" prefWidth="102.0" text="Date" GridPane.rowIndex="1" />
+                                                <ComboBox fx:id="CB_CRENO" prefHeight="25.0" prefWidth="184.0" GridPane.columnIndex="1" />
+                                                <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                                    <children>
+                                                        <DatePicker fx:id="DATE" prefHeight="25.0" prefWidth="184.0" />
+                                                        <Button mnemonicParsing="false" onAction="#createNewFiche" prefHeight="27.0" prefWidth="196.0" text="Créer une nouvelle fiche">
+                                                            <HBox.margin>
+                                                                <Insets left="30.0" />
+                                                            </HBox.margin>
+                                                        </Button>
+                                                    </children>
+                                                </HBox>
+                                            </children>
+                                        </GridPane>
+                                    </children>
+                                </VBox>
+                            </children>
+                        </VBox>
+                    </content>
+                </Tab>
+                <Tab text="Mes Planning">
+                    <content>
+                        <VBox>
+                            <children>
+                                <TableView fx:id="TAB_PLANING" editable="true" prefHeight="200.0" prefWidth="200.0">
+                                    <columns>
+                                        <TableColumn fx:id="COL_DATE" prefWidth="110" text="Date" />
+                                        <TableColumn fx:id="COL_PV" prefWidth="200" text="Point de vente" />
+                                        <TableColumn fx:id="COL_TRANCHE" prefWidth="150" text="Tranche" />
+                                        <TableColumn fx:id="COL_ACTIF" prefWidth="90" text="Actif" />
+                                        <TableColumn fx:id="COL_OP" prefWidth="120" text="Action" />
+                                    </columns>
+                                </TableView>
+                            </children>
+                        </VBox>
+                    </content>
+                </Tab>
+                <Tab disable="true" text="Approvisionnements">
+                    <content>
+                        <VBox prefHeight="200.0" prefWidth="100.0">
+                            <padding>
+                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                            </padding>
+                            <children>
+                                <TreeTableView fx:id="TAB_APPRO" prefHeight="600.0" prefWidth="800">
+                                    <columns>
+                                        <TreeTableColumn fx:id="COL_REF_ART" prefWidth="120" text="Référence" />
+                                        <TreeTableColumn fx:id="COL_DESIGNATION" prefWidth="160" text="Désignation" />
+                                        <TreeTableColumn fx:id="COL_QUANTITE_E" prefWidth="70" text="Quantité" />
+                                        <TreeTableColumn fx:id="COL_UNITE_E" prefWidth="80" text="Unité" />
+                                        <TreeTableColumn fx:id="COL_PUV" prefWidth="70" text="Prix" />
+                                        <TreeTableColumn fx:id="COL_DATE_T" prefWidth="110" text="Date" />
+                                        <TreeTableColumn fx:id="COL_DEPOT" prefWidth="140" text="Dépôts" />
+                                        <TreeTableColumn fx:id="COL_NUM_DOC" prefWidth="140" text="Numéro" />
+                                        <TreeTableColumn fx:id="COL_STATUT" prefWidth="100" text="Statut" />
+                                        <TreeTableColumn fx:id="COL_ACTION" prefWidth="120.0" text="Reception" />
+                                    </columns>
+                                </TreeTableView>
+                            </children>
+                        </VBox>
+                    </content>
+                </Tab>
+                <Tab text="Ma session">
+                    <content>
+                        <VBox prefHeight="200.0" prefWidth="100.0">
+                            <children>
+                        <HBox layoutX="20.0" layoutY="107.0" prefHeight="77.0" prefWidth="690.0" style="-fx-background-color: #10fa31;">
+                           <children>
+                              <HBox prefHeight="66.0" prefWidth="391.0">
+                                 <children>
+                                    <Label prefHeight="73.0" prefWidth="180.0" text="Versement attendu" textFill="#7f5151">
+                                       <font>
+                                          <Font size="15.0" />
+                                       </font>
+                                    </Label>
+                                              <Label fx:id="F_VST_ATTENDU" prefHeight="71.0" prefWidth="136.0" text="XXX" textFill="#2232eb">
+                                                  <font>
+                                                      <Font name="System Bold" size="20.0" />
+                                                  </font>
+                                              </Label>
+                                 </children>
+                              </HBox>
+                              <HBox prefHeight="25.0" prefWidth="376.0">
+                                 <children>
+                                    <Label prefHeight="73.0" prefWidth="215.0" text="Solde caisse courant" textFill="#7f5151">
+                                       <font>
+                                          <Font size="15.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="F_SOLDE_CAISSE" prefHeight="71.0" prefWidth="160.0" text="--" textFill="#2232eb">
+                                       <font>
+                                          <Font name="System Bold" size="20.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </HBox>
+                           </children>
+                           <VBox.margin>
+                              <Insets top="15.0" />
+                           </VBox.margin>
+                        </HBox>
+                        <HBox layoutX="20.0" layoutY="122.0" prefHeight="130.0" prefWidth="534.0" style="-fx-background-color: #cde5fa;">
+                           <children>
+                              <HBox prefHeight="25.0" prefWidth="316.0">
+                                 <children>
+                                    <Label prefHeight="134.0" prefWidth="140.0" text="Nombre de tickets" />
+                                              <Label fx:id="F_NB_TICKET_RECU" prefHeight="134.0" prefWidth="193.0" text="NN">
+                                                  <font>
+                                                      <Font name="System Bold" size="15.0" />
+                                                  </font>
+                                              </Label>
+                                 </children>
+                              </HBox>
+                              <VBox prefHeight="21.0" prefWidth="374.0">
+                                 <children>
+                                    <HBox prefHeight="100.0" prefWidth="200.0">
+                                       <children>
+                                          <Label prefHeight="57.0" prefWidth="123.0" text="Factures directe (H.R)" />
+                                                    <Label fx:id="F_NB_FACT_SAVE" prefHeight="70.0" prefWidth="60.0" text="XX">
+                                                        <font>
+                                                            <Font name="System Bold" size="15.0" />
+                                                        </font>
+                                                    </Label>
+                                          <VBox prefHeight="65.0" prefWidth="190.0">
+                                             <children>
+                                                <HBox prefHeight="100.0" prefWidth="400.0">
+                                                   <children>
+                                                      <Label prefHeight="17.0" prefWidth="50.0" text="Validé" textFill="#3c45f2" />
+                                                      <Label fx:id="F_FACT_VALIDE" alignment="CENTER_RIGHT" prefWidth="70.0" text="xx" textFill="#3c45f2">
+                                                         <HBox.margin>
+                                                            <Insets left="10.0" right="15.0" />
+                                                         </HBox.margin>
+                                                      </Label>
+                                                      <Label fx:id="F_NB_VALIDE" alignment="CENTER_RIGHT" prefWidth="40.0" text="n" />
+                                                   </children>
+                                                </HBox>
+                                                <HBox layoutX="10.0" layoutY="10.0" prefHeight="100.0" prefWidth="200.0">
+                                                   <children>
+                                                      <Label prefHeight="17.0" prefWidth="50.0" text="Livré" textFill="#182fda">
+                                                         <font>
+                                                            <Font name="System Bold" size="12.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <Label fx:id="F_FACT_LIVRE" alignment="CENTER_RIGHT" prefWidth="70.0" text="xx" textFill="#3c45f2">
+                                                         <HBox.margin>
+                                                            <Insets left="10.0" right="15.0" />
+                                                         </HBox.margin>
+                                                         <font>
+                                                            <Font name="System Bold Italic" size="12.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <Label fx:id="F_NB_LIVRE" alignment="CENTER_RIGHT" prefWidth="40.0" text="n" />
+                                                   </children>
+                                                </HBox>
+                                                <HBox layoutX="10.0" layoutY="27.0" prefHeight="100.0" prefWidth="200.0">
+                                                   <children>
+                                                      <Label prefHeight="17.0" prefWidth="50.0" text="Réglé" textFill="#048911">
+                                                         <font>
+                                                            <Font name="System Bold" size="12.0" />
+                                                         </font></Label>
+                                                      <Label fx:id="F_FACT_REGLE" alignment="CENTER_RIGHT" prefWidth="70.0" text="xx" textFill="#048911">
+                                                         <HBox.margin>
+                                                            <Insets left="10.0" right="15.0" />
+                                                         </HBox.margin>
+                                                         <font>
+                                                            <Font name="System Bold" size="12.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <Label fx:id="F_NB_REGLE" alignment="CENTER_RIGHT" prefWidth="40.0" text="n" />
+                                                   </children>
+                                                </HBox>
+                                             </children>
+                                             <HBox.margin>
+                                                <Insets left="15.0" />
+                                             </HBox.margin>
+                                          </VBox>
+                                       </children>
+                                    </HBox>
+                                    <HBox layoutX="10.0" layoutY="10.0" prefHeight="100.0" prefWidth="200.0">
+                                       <children>
+                                          <Label prefHeight="63.0" prefWidth="132.0" text="Commandes" />
+                                                    <Label fx:id="F_NB_CMDE_SAVE" prefHeight="61.0" prefWidth="60.0" text="XX">
+                                                        <font>
+                                                            <Font name="System Bold" size="15.0" />
+                                                        </font>
+                                                    </Label>
+                                          <VBox prefHeight="200.0">
+                                             <children>
+                                                <HBox prefHeight="100.0" prefWidth="200.0">
+                                                   <children>
+                                                      <Label prefHeight="17.0" prefWidth="50.0" text="Validé" textFill="#3c45f2" />
+                                                      <Label fx:id="F_CMDE_VALIDE" alignment="CENTER_RIGHT" prefWidth="70.0" text="xx" textFill="#3c45f2">
+                                                         <HBox.margin>
+                                                            <Insets left="10.0" right="15.0" />
+                                                         </HBox.margin>
+                                                      </Label>
+                                                      <Label fx:id="C_NB_VALIDE" alignment="CENTER_RIGHT" prefWidth="40.0" text="n" />
+                                                   </children>
+                                                </HBox>
+                                                <HBox layoutX="10.0" layoutY="10.0" prefHeight="100.0" prefWidth="200.0">
+                                                   <children>
+                                                      <Label prefHeight="17.0" prefWidth="50.0" text="Livré" textFill="#182fda">
+                                                         <font>
+                                                            <Font name="System Bold" size="12.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <Label fx:id="F_CMDE_LIVRE" alignment="CENTER_RIGHT" prefWidth="70.0" text="xx" textFill="#3c45f2">
+                                                         <HBox.margin>
+                                                            <Insets left="10.0" right="15.0" />
+                                                         </HBox.margin>
+                                                      </Label>
+                                                      <Label fx:id="C_NB_LIVRE" alignment="CENTER_RIGHT" prefWidth="40.0" text="n" />
+                                                   </children>
+                                                </HBox>
+                                                <HBox layoutX="10.0" layoutY="27.0" prefHeight="100.0" prefWidth="200.0">
+                                                   <children>
+                                                      <Label prefHeight="17.0" prefWidth="50.0" text="Réglé" textFill="#048911" />
+                                                      <Label fx:id="F_CMDE_REGLE" alignment="CENTER_RIGHT" prefWidth="70.0" text="xx" textFill="#048911">
+                                                         <HBox.margin>
+                                                            <Insets left="10.0" right="15.0" />
+                                                         </HBox.margin>
+                                                      </Label>
+                                                      <Label fx:id="C_NB_REGLE" alignment="CENTER_RIGHT" prefWidth="40.0" text="n" />
+                                                   </children>
+                                                </HBox>
+                                             </children>
+                                             <HBox.margin>
+                                                <Insets left="30.0" />
+                                             </HBox.margin>
+                                          </VBox>
+                                       </children>
+                                    </HBox>
+                                 </children>
+                              </VBox>
+                           </children>
+                           <VBox.margin>
+                              <Insets top="15.0" />
+                           </VBox.margin>
+                        </HBox>
+                        <VBox prefHeight="64.0" prefWidth="690.0" style="-fx-background-color: #cde5fa;">
+                           <children>
+                                      <HBox prefHeight="50.0" prefWidth="690.0">
+                                          <children>
+                                              <Label prefHeight="35.0" prefWidth="100.0" text="Meilleur Vente" textFill="#040c43" />
+                                              <Label fx:id="F_NUM_BEST_VENTE" prefHeight="37.0" prefWidth="363.0">
+                                                  <font>
+                                                      <Font name="System Bold" size="11.0" />
+                                                  </font>
+                                              </Label>
+                                          </children>
+                                      </HBox>
+                                      <HBox prefHeight="49.0" prefWidth="690.0">
+                                          <children>
+                                              <Label prefHeight="32.0" prefWidth="100.0" text="Par " />
+                                              <Label fx:id="F_CLIENT_BEST_VENTE" prefHeight="57.0" prefWidth="323.0">
+                                                  <font>
+                                                      <Font name="System Bold" size="11.0" />
+                                                  </font>
+                                              </Label>
+                                          </children>
+                                      </HBox>
+                           </children>
+                           <VBox.margin>
+                              <Insets bottom="20.0" top="3.0" />
+                           </VBox.margin>
+                        </VBox>
+                            </children>
+                            <padding>
+                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                            </padding>
+                        </VBox>
+                    </content>
+                </Tab>
+            </tabs>
+        </TabPane>
+    </children>
+</VBox>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+
+<VBox prefHeight="531.0" prefWidth="699.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lymytz.service.application.FormCatalogueController">
+   <children>
+      <TableView fx:id="TV_ARTICLE" prefHeight="507.0" prefWidth="646.0" tableMenuButtonVisible="true">
+        <columns>
+          <TableColumn fx:id="C_NUM" prefWidth="47.0" text="N°" />
+          <TableColumn fx:id="C_REF" prefWidth="103.0" text="Référence" />
+            <TableColumn fx:id="C_DESIGNATION" minWidth="100.0" prefWidth="250.0" text="Désignation" />
+            <TableColumn fx:id="C_UNITE" prefWidth="103.0" text="Unité" />
+            <TableColumn fx:id="C_PUA" prefWidth="103.0" text="Prix A." />
+            <TableColumn fx:id="C_PUV" prefWidth="103.0" text="Prix V." />
+            <TableColumn fx:id="C_PMIN" prefWidth="103.0" text="Prix Min." />
+            <TableColumn fx:id="C_CATEGORIE" prefWidth="103.0" text="Catégorie" />
+            <TableColumn fx:id="C_FAMILLE" prefWidth="103.0" text="Famille" />
+            <TableColumn fx:id="C_GROUP" prefWidth="103.0" text="Groupe" />
+            <TableColumn fx:id="C_CLASSE" prefWidth="103.0" text="Classe" />
+            <TableColumn fx:id="C_STATUT" prefWidth="103.0" text="Statut" />
+        </columns>
+      </TableView>
+      <HBox>
+         <children>
+            <Label fx:id="PROGRESS_LABEL" prefHeight="25.0" prefWidth="50.0" text="Label">
+               <HBox.margin>
+                  <Insets left="5.0" />
+               </HBox.margin>
+            </Label>
+            <ProgressBar fx:id="PROGRESS" prefHeight="24.0" prefWidth="950.0" progress="0.0" />
+         </children>
+      </HBox>
+   </children>
+</VBox>

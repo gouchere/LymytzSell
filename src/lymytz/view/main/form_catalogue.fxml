@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane prefHeight="592.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lymytz.service.application.CatalogueController">
+    <stylesheets>
+        <URL value="@form_application.css" />
+    </stylesheets>
+    <left>
+        <VBox fx:id="ZONE_LEFT" maxWidth="1.7976931348623157E308" prefWidth="600.0" BorderPane.alignment="CENTER">
+            <children>
+                <ScrollPane hbarPolicy="NEVER" styleClass="my_scroller">
+                    <content>
+                        <VBox fx:id="PAN_ART" prefWidth="600.0" />
+                    </content>
+                </ScrollPane>
+                <Pagination fx:id="PAGINATOR" maxPageIndicatorCount="5" pageCount="0" prefHeight="45.0" prefWidth="432.0" />
+            <ProgressIndicator fx:id="INDICATOR" prefHeight="154.0" prefWidth="576.0" progress="0.0" />
+            </children>
+        </VBox>
+    </left>
+    <bottom>
+        <VBox fx:id="ZONE_BOTTOM" style="-fx-background-color: #333;" visible="false">
+            <children>
+                <Label text="Rechercher par" textFill="#188de8">
+                    <font>
+                        <Font name="Bell MT" size="11.0" />
+                    </font>
+                </Label>
+                <HBox prefHeight="25.0" prefWidth="843.0" spacing="5.0" BorderPane.alignment="CENTER">
+                    <children>
+                        <TextField fx:id="TXT_REF" onKeyReleased="#findByReference" promptText="Référence..." style="-fx-text-fill: #188de8;" />
+                        <TextField fx:id="TXT_FAM" onKeyReleased="#findByFamille" promptText="Famille..." style="-fx-text-fill: #188de8;" />
+                    </children>
+                </HBox>
+            </children>
+        </VBox>
+    </bottom>
+   <center>
+      <VBox fx:id="ZONE_CENTER" prefHeight="200.0" prefWidth="100.0" visible="false" BorderPane.alignment="CENTER">
+         <children>
+            <HBox alignment="CENTER" prefHeight="181.0" prefWidth="388.0">
+               <children>
+                  <ImageView fitHeight="200.0" fitWidth="304.0" pickOnBounds="true" preserveRatio="true" VBox.vgrow="ALWAYS">
+                     <image>
+                        <Image url="@../icones/produits.png" />
+                     </image>
+                  </ImageView>
+               </children>
+            </HBox>
+            <HBox styleClass="line_bar">
+               <children>
+                  <Label text="Conditionnements" />
+               </children>
+            </HBox>
+            <VBox fx:id="PAN_COND" prefWidth="368.0">
+               <padding>
+                  <Insets bottom="10.0" top="5.0" />
+               </padding>
+            </VBox>
+            <HBox styleClass="line_bar">
+               <children>
+                  <Label text="Stocks" />
+               </children>
+            </HBox>
+            <VBox fx:id="PAN_STOCK" layoutX="10.0" layoutY="227.0" prefWidth="368.0">
+               <padding>
+                  <Insets bottom="10.0" top="5.0" />
+               </padding>
+            </VBox>
+            <HBox styleClass="line_bar" />
+            <HBox styleClass="line_bar">
+               <children>
+                  <Label text="Fournisseurs" />
+               </children>
+            </HBox>
+            <VBox fx:id="PAN_FSEUR" layoutX="10.0" layoutY="291.0" prefWidth="368.0">
+               <padding>
+                  <Insets bottom="10.0" top="5.0" />
+               </padding>
+            </VBox>
+         </children>
+      </VBox>
+   </center>
+</BorderPane>

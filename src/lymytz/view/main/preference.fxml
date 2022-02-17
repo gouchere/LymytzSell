@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox prefHeight="550.0" prefWidth="550.0" stylesheets="@form_application.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lymytz.service.application.PreferenceController">
+   <children>
+      <ScrollPane hbarPolicy="NEVER" prefHeight="900.0" prefWidth="550.0">
+         <content>
+            <VBox>
+               <children>
+                <TitledPane animated="false" prefHeight="233.0" prefWidth="539.0" text="Config locale">
+                     <content>
+                        <HBox>
+                           <children>
+                              <VBox>
+                                 <children>
+                                    <Label prefHeight="17.0" prefWidth="256.0" text="Accès base de données" textFill="#544f4f" wrapText="true">
+                                       <font>
+                                          <Font name="System Bold" size="12.0" />
+                                       </font>
+                                    </Label>
+                                    <Separator prefWidth="200.0" />
+                                    <GridPane>
+                                      <columnConstraints>
+                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="119.0" minWidth="10.0" prefWidth="86.0" />
+                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="164.0" minWidth="10.0" prefWidth="164.0" />
+                                      </columnConstraints>
+                                      <rowConstraints>
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                      </rowConstraints>
+                                       <children>
+                                          <Label text="Adresse Ip" />
+                                          <Label layoutX="10.0" layoutY="17.0" text="Port" GridPane.rowIndex="1" />
+                                          <Label layoutX="10.0" layoutY="47.0" text="Utilisateur" GridPane.rowIndex="2" />
+                                          <Label layoutX="10.0" layoutY="77.0" text="Mot de passe" GridPane.rowIndex="3" />
+                                          <TextField fx:id="TXT_IP_L" styleClass="text_input_pref" GridPane.columnIndex="1" />
+                                          <TextField fx:id="TXT_PORT_L" layoutX="95.0" layoutY="13.0" styleClass="text_input_pref" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                          <TextField fx:id="TXT_USER_L" layoutX="95.0" layoutY="39.0" styleClass="text_input_pref" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                          <PasswordField fx:id="TXT_PASSWORD_L" styleClass="text_input_pref" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                          <Label layoutX="10.0" layoutY="12.0" text="Base de donnée" GridPane.rowIndex="4" />
+                                          <TextField fx:id="TXT_BD_NAME_L" layoutX="95.0" layoutY="11.0" styleClass="text_input_pref" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                                       </children>
+                                    </GridPane>
+                                 </children>
+                              </VBox>
+                              <VBox layoutX="20.0" layoutY="20.0">
+                                 <children>
+                                    <Label prefHeight="17.0" prefWidth="256.0" text="Général" textFill="#544f4f" wrapText="true">
+                                       <font>
+                                          <Font name="System Bold" size="12.0" />
+                                       </font>
+                                    </Label>
+                                    <Separator prefWidth="200.0" />
+                                    <GridPane>
+                                       <children>
+                                          <Label text="Id Société" />
+                                          <Label layoutX="10.0" layoutY="17.0" text="Id Agence" GridPane.rowIndex="1" />
+                                          <ComboBox fx:id="CB_SOCIETE_L" prefHeight="16.0" prefWidth="150.0" styleClass="text_input_pref" GridPane.columnIndex="1" />
+                                          <ComboBox fx:id="CB_AGENCE_L" prefHeight="16.0" prefWidth="150.0" styleClass="text_input_pref" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                       </children>
+                                       <columnConstraints>
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="158.0" minWidth="10.0" prefWidth="158.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="119.0" minWidth="10.0" prefWidth="91.0" />
+                                       </columnConstraints>
+                                       <rowConstraints>
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                       </rowConstraints>
+                                    </GridPane>
+                                    <Label layoutX="10.0" layoutY="10.0" prefHeight="17.0" prefWidth="256.0" text="Préférences" textFill="#544f4f" wrapText="true">
+                                       <font>
+                                          <Font name="System Bold" size="12.0" />
+                                       </font>
+                                    </Label>
+                                    <Separator layoutX="10.0" layoutY="27.0" prefWidth="200.0" />
+                                    <GridPane layoutX="10.0" layoutY="30.0">
+                                       <children>
+                                          <Label text="Client par défaut" />
+                                          <Label text="Model de règlement" GridPane.rowIndex="1" />
+                                          <ComboBox fx:id="CB_CLT" prefHeight="16.0" prefWidth="150.0" styleClass="text_input_pref" GridPane.columnIndex="1" />
+                                          <ComboBox fx:id="CB_MDR" layoutX="121.0" layoutY="12.0" prefHeight="16.0" prefWidth="150.0" styleClass="text_input_pref" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                          <Label layoutX="10.0" layoutY="47.0" text="Mode de règlement" GridPane.rowIndex="2" />
+                                          <ComboBox fx:id="CB_MODE_R" layoutX="125.0" layoutY="45.0" prefHeight="16.0" prefWidth="150.0" styleClass="text_input_pref" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                       </children>
+                                       <columnConstraints>
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="120.0" minWidth="10.0" prefWidth="111.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="142.0" minWidth="10.0" prefWidth="138.0" />
+                                       </columnConstraints>
+                                       <rowConstraints>
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                       </rowConstraints>
+                                    </GridPane>
+                                 </children>
+                                 <HBox.margin>
+                                    <Insets left="5.0" />
+                                 </HBox.margin>
+                              </VBox>
+                           </children>
+                        </HBox>
+                     </content>
+                </TitledPane>
+                <TitledPane animated="false" text="Config distante">
+                     <content>
+                        <HBox>
+                           <children>
+                              <VBox>
+                                 <children>
+                                    <Label prefHeight="17.0" prefWidth="256.0" text="Accès base de données" textFill="#544f4f" wrapText="true">
+                                       <font>
+                                          <Font name="System Bold" size="12.0" />
+                                       </font>
+                                    </Label>
+                                    <Separator prefWidth="200.0" />
+                                    <GridPane>
+                                       <children>
+                                          <Label text="Adresse Ip" />
+                                          <Label layoutX="10.0" layoutY="17.0" text="Port" GridPane.rowIndex="1" />
+                                          <Label layoutX="10.0" layoutY="47.0" text="Utilisateur" GridPane.rowIndex="2" />
+                                          <Label layoutX="10.0" layoutY="77.0" text="Mot de passe" GridPane.rowIndex="3" />
+                                          <TextField fx:id="TXT_IP_R" styleClass="text_input_pref" GridPane.columnIndex="1" />
+                                          <TextField fx:id="TXT_USER_R" layoutX="91.0" layoutY="9.0" styleClass="text_input_pref" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                          <TextField fx:id="TXT_PORT_R" layoutX="91.0" layoutY="9.0" styleClass="text_input_pref" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                          <PasswordField fx:id="TXT_PASSWORD_R" styleClass="text_input_pref" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                          <Label layoutX="10.0" layoutY="13.0" text="Base de donnée" GridPane.rowIndex="4" />
+                                          <TextField fx:id="TXT_BD_NAME_R" styleClass="text_input_pref" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                                       </children>
+                                       <columnConstraints>
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="120.0" minWidth="10.0" prefWidth="91.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="168.0" minWidth="10.0" prefWidth="158.0" />
+                                       </columnConstraints>
+                                       <rowConstraints>
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                       </rowConstraints>
+                                    </GridPane>
+                                 </children>
+                              </VBox>
+                              <VBox>
+                                 <children>
+                                    <Label prefHeight="17.0" prefWidth="256.0" text="Accès aux services Web" textFill="#544f4f" wrapText="true">
+                                       <font>
+                                          <Font name="System Bold" size="12.0" />
+                                       </font>
+                                    </Label>
+                                    <Separator prefWidth="200.0" />
+                                    <GridPane>
+                                       <children>
+                                          <Label text="Adresse serveur" />
+                                          <Label layoutX="10.0" layoutY="17.0" text="Port" GridPane.rowIndex="1" />
+                                          <TextField fx:id="TXT_IP_WEB" styleClass="text_input_pref" GridPane.columnIndex="1" />
+                                          <TextField fx:id="TXT_PORT_WEB" layoutX="125.0" layoutY="14.0" styleClass="text_input_pref" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                       </children>
+                                       <columnConstraints>
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="119.0" minWidth="10.0" prefWidth="115.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="134.0" minWidth="10.0" prefWidth="134.0" />
+                                       </columnConstraints>
+                                       <rowConstraints>
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                       </rowConstraints>
+                                    </GridPane>
+                                    <Label layoutX="10.0" layoutY="10.0" prefHeight="17.0" prefWidth="256.0" text="Infos société" textFill="#544f4f" wrapText="true">
+                                       <font>
+                                          <Font name="System Bold" size="12.0" />
+                                       </font>
+                                    </Label>
+                                    <Separator layoutX="10.0" layoutY="27.0" prefWidth="200.0" />
+                                    <GridPane layoutX="10.0" layoutY="30.0">
+                                       <children>
+                                          <Label text="Id Société" />
+                                          <TextField fx:id="TXT_SOCIETE_R" prefHeight="21.0" prefWidth="116.0" styleClass="text_input_pref" GridPane.columnIndex="1" />
+                                       </children>
+                                       <columnConstraints>
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="161.0" minWidth="10.0" prefWidth="161.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="119.0" minWidth="10.0" prefWidth="88.0" />
+                                       </columnConstraints>
+                                       <rowConstraints>
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                       </rowConstraints>
+                                    </GridPane>
+                                 </children>
+                                 <HBox.margin>
+                                    <Insets left="5.0" />
+                                 </HBox.margin>
+                              </VBox>
+                           </children>
+                        </HBox>
+                     </content>
+                </TitledPane>
+                <TitledPane animated="false" text="Paramètres Générale">
+                     <content>
+                        <HBox>
+                           <children>
+                              <VBox>
+                                 <children>
+                                    <Label prefHeight="17.0" prefWidth="256.0" text="Application" textFill="#544f4f" wrapText="true">
+                                       <font>
+                                          <Font name="System Bold" size="12.0" />
+                                       </font>
+                                    </Label>
+                                    <Separator prefWidth="200.0" />
+                                    <GridPane hgap="2.0">
+                                      <columnConstraints>
+                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                      </columnConstraints>
+                                      <rowConstraints>
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                      </rowConstraints>
+                                       <children>
+                                          <Label text="Port Application" />
+                                          <Label layoutX="10.0" layoutY="15.0" text="Date Init Synchro" GridPane.rowIndex="1">
+                                             <tooltip>
+                                                <Tooltip text="Date de démarrage de la synchronisation" />
+                                             </tooltip>
+                                          </Label>
+                                          <Label layoutX="10.0" layoutY="41.0" text="Environnement" GridPane.rowIndex="2" />
+                                          <Label text="Mode " GridPane.rowIndex="3" />
+                                          <Label text="Lecteur code barre actif" GridPane.rowIndex="4" />
+                                          <TextField fx:id="TXT_PORT_APP" prefHeight="21.0" prefWidth="116.0" styleClass="text_input_pref" GridPane.columnIndex="1" />
+                                          <CheckBox fx:id="CKB_CODE_BARRE" alignment="CENTER_RIGHT" contentDisplay="RIGHT" mnemonicParsing="false" prefHeight="17.0" prefWidth="48.0" selected="true" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                                          <ComboBox fx:id="CB_ENVIRONNEMENT" prefHeight="16.0" prefWidth="150.0" styleClass="text_input_pref" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                          <ComboBox fx:id="CB_MODE" layoutX="135.0" layoutY="58.0" prefHeight="16.0" prefWidth="150.0" styleClass="text_input_pref" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                          <DatePicker fx:id="TXT_DATE_INIT" styleClass="text_input_pref" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                       </children>
+                                    </GridPane>
+                                 </children>
+                              </VBox>
+                              <VBox layoutX="10.0" layoutY="10.0">
+                                 <children>
+                                    <Label prefHeight="17.0" prefWidth="256.0" text="Imprimantes" textFill="#544f4f" wrapText="true">
+                                       <font>
+                                          <Font name="System Bold" size="12.0" />
+                                       </font>
+                                    </Label>
+                                    <Separator prefWidth="200.0" />
+                                    <GridPane>
+                                      <columnConstraints>
+                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                      </columnConstraints>
+                                      <rowConstraints>
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                      </rowConstraints>
+                                       <children>
+                                          <Label text="Imprimante disponible" />
+                                          <Label layoutX="10.0" layoutY="17.0" text="Type d'impression" GridPane.rowIndex="1" />
+                                          <ComboBox fx:id="CB_TYPE_PRINT" prefHeight="16.0" prefWidth="150.0" styleClass="text_input_pref" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                          <CheckBox fx:id="CKB_PRINT" alignment="CENTER_RIGHT" contentDisplay="RIGHT" mnemonicParsing="false" prefHeight="17.0" prefWidth="48.0" selected="true" GridPane.columnIndex="1" />
+                                          <Label layoutX="10.0" layoutY="47.0" text="Largeur" GridPane.rowIndex="3" />
+                                          <Label layoutX="10.0" layoutY="47.0" text="Hauteur" GridPane.rowIndex="2" />
+                                          <TextField fx:id="TXT_PAPER_H" prefHeight="21.0" prefWidth="116.0" styleClass="text_input_pref" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                          <TextField fx:id="TXT_PAPER_L" layoutX="138.0" layoutY="75.0" prefHeight="21.0" prefWidth="116.0" styleClass="text_input_pref" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                       </children>
+                                    </GridPane>
+                                    <Label text="Marges" textFill="#544f4f">
+                                       <font>
+                                          <Font name="System Bold" size="12.0" />
+                                       </font>
+                                    </Label>
+                                    <Separator prefWidth="200.0" />
+                                    <GridPane layoutX="10.0" layoutY="30.0" prefHeight="54.0" prefWidth="225.0">
+                                       <children>
+                                          <Label layoutX="10.0" layoutY="47.0" text="Haut" />
+                                          <Label text="Gauche" GridPane.rowIndex="1" />
+                                          <Label text="Droite" GridPane.columnIndex="2" />
+                                          <Label text="Bas" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                                          <TextField fx:id="TXT_M_H" prefHeight="21.0" prefWidth="116.0" styleClass="text_input_pref" GridPane.columnIndex="1" />
+                                          <TextField fx:id="TXT_M_B" layoutX="72.0" layoutY="12.0" prefHeight="21.0" prefWidth="116.0" styleClass="text_input_pref" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                                          <TextField fx:id="TXT_M_G" layoutX="72.0" layoutY="12.0" prefHeight="21.0" prefWidth="116.0" styleClass="text_input_pref" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                          <TextField fx:id="TXT_M_D" layoutX="72.0" layoutY="12.0" prefHeight="21.0" prefWidth="116.0" styleClass="text_input_pref" GridPane.columnIndex="3" />
+                                       </children>
+                                       <columnConstraints>
+                                          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                       </columnConstraints>
+                                       <rowConstraints>
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                       </rowConstraints>
+                                    </GridPane>
+                                 </children>
+                                 <HBox.margin>
+                                    <Insets left="5.0" />
+                                 </HBox.margin>
+                              </VBox>
+                           </children>
+                        </HBox>
+                     </content>
+                </TitledPane>
+               </children>
+            </VBox>
+         </content>
+      </ScrollPane>
+      <Separator prefWidth="200.0" />
+      <HBox prefHeight="63.0" prefWidth="524.0">
+         <children>
+            <Label prefHeight="27.0" prefWidth="81.0" text="Chemin photos" />
+            <TextField fx:id="TXT_PATH" prefHeight="25.0" prefWidth="343.0" />
+            <Button fx:id="BTN_FILE" mnemonicParsing="false" prefHeight="25.0" prefWidth="97.0" text="Parcourir..." />
+         </children>
+      </HBox>
+      <HBox alignment="CENTER_RIGHT" prefHeight="33.0" prefWidth="524.0">
+         <children>
+            <Button fx:id="BTN_SAVE" mnemonicParsing="false" onAction="#saveConfig" prefHeight="25.0" prefWidth="132.0" text="Enegistrer">
+               <HBox.margin>
+                  <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+               </HBox.margin>
+            </Button>
+         </children>
+      </HBox>
+   </children>
+</VBox>

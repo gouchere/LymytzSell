@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lymytz.view.main.ListFacturesController">
+   <children>
+      <VBox prefHeight="530.0" prefWidth="945.0">
+         <children>
+            <TableView fx:id="TABLE_FACTURE" prefHeight="530.0" prefWidth="945.0">
+              <columns>
+                <TableColumn fx:id="COL_N" prefWidth="52.0" text="N°" />
+                  <TableColumn fx:id="COL_TYPE" prefWidth="52.0" text="Type" />
+                <TableColumn fx:id="COL_NUM" prefWidth="138.0" text="Numéro" />
+                  <TableColumn fx:id="COL_CLIENT" prefWidth="211.0" text="Clients" />
+                  <TableColumn fx:id="COL_DATE" prefWidth="91.0" text="Date" />
+                  <TableColumn fx:id="COL_HEURE" prefWidth="97.0" text="Enregistré le" />
+                  <TableColumn fx:id="COL_D_LIV" prefWidth="97.0" text="A livrer Le" />
+                  <TableColumn fx:id="COL_VALIDE" prefWidth="50.0" resizable="false" text="Validé" />
+                  <TableColumn fx:id="COL_LIV" prefWidth="50.0" resizable="false" text="Livré" />
+                  <TableColumn fx:id="COL_REG" prefWidth="50.0" resizable="false" text="Réglé" />
+                  <TableColumn fx:id="COL_ID" prefWidth="57.0" text="Id" />
+              </columns>
+               <contextMenu>
+                  <ContextMenu>
+                    <items>
+                      <MenuItem mnemonicParsing="false" onAction="#openDlgDetails" text="Voir les règlements" />
+                        <MenuItem mnemonicParsing="false" text="Voir Les livraisons" />
+                    </items>
+                  </ContextMenu>
+               </contextMenu>
+            </TableView>
+         </children>
+      </VBox>
+      <VBox>
+         <children>
+            <Label text="Zone de recherche">
+               <font>
+                  <Font name="System Bold Italic" size="9.0" />
+               </font>
+            </Label>
+            <HBox prefWidth="950.0" spacing="15.0" style="-fx-background-color: #a7d9f5;" AnchorPane.bottomAnchor="0.0">
+               <children>
+                  <VBox>
+                     <children>
+                        <TextField fx:id="TXT_REF" onKeyReleased="#findByNumDoc" prefHeight="0.0" prefWidth="149.0" promptText="Référence..." />
+                     </children>
+                  </VBox>
+                  <VBox>
+                     <children>
+                        <TextField fx:id="TXT_CLIENT" onKeyReleased="#findByClient" promptText="Clients..." />
+                     </children>
+                  </VBox>
+                  <VBox>
+                     <children>
+                        <ComboBox fx:id="CB_TYPE" onAction="#findByTypeDoc" prefHeight="25.0" prefWidth="101.0" promptText="Types..." style="-fx-background-color: #FFF;" />
+                     </children>
+                  </VBox>
+                  <VBox spacing="3.0">
+                     <children>
+                        <ComboBox fx:id="CB_STATUT_DOC" layoutX="10.0" layoutY="10.0" promptText="Statuts doc..." style="-fx-background-color: #FFF;" />
+                     </children>
+                  </VBox>
+                  <VBox spacing="3.0">
+                     <children>
+                        <ComboBox fx:id="CB_STATUT_LIV" layoutX="10.0" layoutY="10.0" promptText="Statuts Liv..." style="-fx-background-color: #FFF;" />
+                     </children>
+                  </VBox>
+                  <VBox prefHeight="20.0" prefWidth="111.0">
+                     <children>
+                        <ComboBox fx:id="CB_STATUT_REG" layoutX="528.0" layoutY="15.0" promptText="Statuts Reg..." style="-fx-background-color: #FFF;" />
+                     </children>
+                  </VBox>
+               </children>
+               <padding>
+                  <Insets bottom="2.0" left="5.0" top="5.0" />
+               </padding>
+            </HBox>
+         </children>
+      </VBox>
+      <ProgressBar fx:id="PROGRESS" prefHeight="18.0" prefWidth="949.0" progress="0.0" />
+   </children>
+</VBox>

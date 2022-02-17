@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<persistence>
+    <entity name="YvsBaseArticleCategorieComptable" table="yvs_base_article_categorie_comptable"> 
+        <path>lymytz.dao.entity.YvsBaseArticleCategorieComptable</path>
+    </entity>
+    <entity name="YvsBaseArticleCategorieComptableTaxe" table="yvs_base_article_categorie_comptable_taxe"> 
+        <path>lymytz.dao.entity.YvsBaseArticleCategorieComptableTaxe</path>
+    </entity>
+    <entity name="YvsBaseArticleCodeBarre" table="yvs_base_article_code_barre"> 
+        <path>lymytz.dao.entity.YvsBaseArticleCodeBarre</path>
+    </entity>    
+    <entity name="YvsAgences" table="yvs_agences"> 
+        <path>lymytz.dao.entity.YvsAgences</path>
+    </entity>    
+    <entity name="YvsBaseArticleDepot" table="yvs_base_article_depot"> 
+        <path>lymytz.dao.entity.YvsBaseArticleDepot</path>
+    </entity>    
+    <entity name="YvsBaseArticlePoint" table="yvs_base_article_point"> 
+        <path>lymytz.dao.entity.YvsBaseArticlePoint</path>
+    </entity>    
+    <entity name="YvsBaseArticles" table="yvs_base_articles"> 
+        <path>lymytz.dao.entity.YvsBaseArticles</path>
+    </entity>    
+    <entity name="YvsBaseCaisse" table="yvs_base_caisse"> 
+        <path>lymytz.dao.entity.YvsBaseCaisse</path>
+    </entity>    
+    <entity name="YvsBaseLiaisonCaisse" table="yvs_base_liaison_caisse"> 
+        <path>lymytz.dao.entity.YvsBaseLiaisonCaisse</path>
+    </entity>    
+    <entity name="YvsBaseCaisseUser" table="yvs_base_caisse_user"> 
+        <path>lymytz.dao.entity.YvsBaseCaisseUser</path>
+    </entity>    
+    <entity name="YvsBaseCategorieClient" table="yvs_base_categorie_client"> 
+        <path>lymytz.dao.entity.YvsBaseCategorieClient</path>
+    </entity>    
+    <entity name="YvsBaseCategorieComptable" table="yvs_base_categorie_comptable"> 
+        <path>lymytz.dao.entity.YvsBaseCategorieComptable</path>
+    </entity>    
+    <entity name="YvsBaseClassesStat" table="yvs_base_classes_stat"> 
+        <path>lymytz.dao.entity.YvsBaseClassesStat</path>
+    </entity>    
+    <entity name="YvsBaseCodeAcces" table="yvs_base_code_acces"> 
+        <path>lymytz.dao.entity.YvsBaseCodeAcces</path>
+    </entity>    
+    <entity name="YvsBaseConditionnement" table="yvs_base_conditionnement"> 
+        <path>lymytz.dao.entity.YvsBaseConditionnement</path>
+    </entity>    
+    <entity name="YvsBaseConditionnementPoint" table="yvs_base_conditionnement_point"> 
+        <path>lymytz.dao.entity.YvsBaseConditionnementPoint</path>
+    </entity>    
+    <entity name="YvsBaseDepots" table="yvs_base_depots"> 
+        <path>lymytz.dao.entity.YvsBaseDepots</path>
+    </entity>    
+    <entity name="YvsBaseElementReference" table="yvs_base_element_reference"> 
+        <path>lymytz.dao.entity.YvsBaseElementReference</path>
+    </entity>    
+    <entity name="YvsBaseExercice" table="yvs_base_exercice"> 
+        <path>lymytz.dao.entity.YvsBaseExercice</path>
+    </entity>    
+    <entity name="YvsBaseFamilleArticle" table="yvs_base_famille_article"> 
+        <path>lymytz.dao.entity.YvsBaseFamilleArticle</path>
+    </entity>    
+    <entity name="YvsBaseGroupesArticle" table="yvs_base_groupes_article"> 
+        <path>lymytz.dao.entity.YvsBaseGroupesArticle</path>
+    </entity>    
+    <entity name="YvsBaseModeleReference" table="yvs_base_modele_reference"> 
+        <path>lymytz.dao.entity.YvsBaseModeleReference</path>
+    </entity>    
+    <entity name="YvsBaseModelReglement" table="yvs_base_model_reglement"> 
+        <path>lymytz.dao.entity.YvsBaseModelReglement</path>
+    </entity>    
+    <entity name="YvsBaseModeReglement" table="yvs_base_mode_reglement"> 
+        <path>lymytz.dao.entity.YvsBaseModeReglement</path>
+    </entity>    
+    <entity name="YvsBasePlanTarifaire" table="yvs_base_plan_tarifaire"> 
+        <path>lymytz.dao.entity.YvsBasePlanTarifaire</path>
+    </entity>    
+    <entity name="YvsBasePlanTarifaireTranche" table="yvs_base_plan_tarifaire_tranche"> 
+        <path>lymytz.dao.entity.YvsBasePlanTarifaireTranche</path>
+    </entity>    
+    <entity name="YvsBasePointLivraison" table="yvs_base_point_livraison"> 
+        <path>lymytz.dao.entity.YvsBasePointLivraison</path>
+    </entity>    
+    <entity name="YvsBasePointVente" table="yvs_base_point_vente"> 
+        <path>lymytz.dao.entity.YvsBasePointVente</path>
+    </entity>    
+    <entity name="YvsBasePointVenteDepot" table="yvs_base_point_vente_depot"> 
+        <path>lymytz.dao.entity.YvsBasePointVenteDepot</path>
+    </entity>    
+    <entity name="YvsBaseTaxes" table="yvs_base_taxes"> 
+        <path>lymytz.dao.entity.YvsBaseTaxes</path>
+    </entity>    
+    <entity name="YvsBaseTiers" table="yvs_base_tiers"> 
+        <path>lymytz.dao.entity.YvsBaseTiers</path>
+    </entity>    
+    <entity name="YvsBaseUniteMesure" table="yvs_base_unite_mesure"> 
+        <path>lymytz.dao.entity.YvsBaseUniteMesure</path>
+    </entity>    
+    <entity name="YvsBaseUsersAcces" table="yvs_base_users_acces"> 
+        <path>lymytz.dao.entity.YvsBaseUsersAcces</path>
+    </entity>    
+    <entity name="YvsComClient" table="yvs_com_client"> 
+        <path>lymytz.dao.entity.YvsComClient</path>
+    </entity>  
+    <entity name="YvsComCreneauDepot" table="yvs_com_creneau_depot"> 
+        <path>lymytz.dao.entity.YvsComCreneauDepot</path>
+    </entity>    
+    <entity name="YvsComCreneauHoraireUsers" table="yvs_com_creneau_horaire_users"> 
+        <path>lymytz.dao.entity.YvsComCreneauHoraireUsers</path>
+    </entity>    
+    <entity name="YvsComCreneauPoint" table="yvs_com_creneau_point"> 
+        <path>lymytz.dao.entity.YvsComCreneauPoint</path>
+    </entity>    
+    <entity name="YvsComRabais" table="yvs_com_rabais"> 
+        <path>lymytz.dao.entity.YvsComRabais</path>
+    </entity>    
+    <entity name="YvsComGrilleRemise" table="yvs_com_grille_remise"> 
+        <path>lymytz.dao.entity.YvsComGrilleRemise</path>
+    </entity>    
+    <entity name="YvsComGrilleRistourne" table="yvs_com_grille_ristourne"> 
+        <path>lymytz.dao.entity.YvsComGrilleRistourne</path>
+    </entity>    
+    <entity name="YvsComParametre" table="yvs_com_parametre"> 
+        <path>lymytz.dao.entity.YvsComParametre</path>
+    </entity>    
+    <entity name="YvsComParametreVente" table="yvs_com_parametre_vente"> 
+        <path>lymytz.dao.entity.YvsComParametreVente</path>
+    </entity>    
+    <entity name="YvsComPlanRistourne" table="yvs_com_plan_ristourne"> 
+        <path>lymytz.dao.entity.YvsComPlanRistourne</path>
+    </entity>    
+    <entity name="YvsComRemise" table="yvs_com_remise"> 
+        <path>lymytz.dao.entity.YvsComRemise</path>
+    </entity>    
+    <entity name="YvsComRistourne" table="yvs_com_ristourne"> 
+        <path>lymytz.dao.entity.YvsComRistourne</path>
+    </entity>    
+    <entity name="YvsComCategorieTarifaire" table="yvs_com_categorie_tarifaire"> 
+        <path>lymytz.dao.entity.YvsComCategorieTarifaire</path>
+    </entity>    
+    <entity name="YvsDictionnaire" table="yvs_dictionnaire"> 
+        <path>lymytz.dao.entity.YvsDictionnaire</path>
+    </entity>    
+    <entity name="YvsGrhTrancheHoraire" table="yvs_grh_tranche_horaire"> 
+        <path>lymytz.dao.entity.YvsGrhTrancheHoraire</path>
+    </entity>    
+    <entity name="YvsSocietes" table="yvs_societes"> 
+        <path>lymytz.dao.entity.YvsSocietes</path>
+    </entity>    
+    <entity name="YvsUsers" table="yvs_users"> 
+        <path>lymytz.dao.entity.YvsUsers</path>
+    </entity>    
+    <entity name="YvsUsersAgence" table="yvs_users_agence"> 
+        <path>lymytz.dao.entity.YvsUsersAgence</path>
+    </entity>    
+</persistence>

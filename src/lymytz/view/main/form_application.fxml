@@ -1,0 +1,578 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.image.*?>
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane fx:id="ROOT_PAN" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="607.0" prefWidth="1028.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lymytz.service.application.ApplicationController">
+    <stylesheets>
+        <URL value="@form_application.css" />
+    </stylesheets>
+    <top>
+      <VBox>
+         <children>
+            <MenuBar>
+              <menus>
+                <Menu mnemonicParsing="false" text="Fichier">
+                  <items>
+                    <MenuItem mnemonicParsing="false" onAction="#openListContent" text="Listing" />
+                        <MenuItem mnemonicParsing="false" onAction="#initContent_" text="Actualiser" />
+                  </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Aide">
+                  <items>
+                    <MenuItem mnemonicParsing="false" text="A propos" />
+                  </items>
+                </Menu>
+              </menus>
+            </MenuBar>
+              <AnchorPane fx:id="PANE" prefHeight="52.0" prefWidth="1011.0" styleClass="tool_bar" stylesheets="@form_application.css" BorderPane.alignment="CENTER">
+                  <children>
+                      <HBox prefHeight="40.0" prefWidth="500.0">
+                          <children>
+                              <Separator orientation="VERTICAL" prefHeight="40.0" prefWidth="15.0" />
+                        <VBox>
+                           <children>
+                                    <Button fx:id="BTN_CMDE" mnemonicParsing="false" onAction="#createNewFacture" prefHeight="33.0" prefWidth="63.0" />
+                              <Label prefHeight="17.0" prefWidth="64.0" text="Nouvelle cmde" wrapText="true">
+                                 <font>
+                                    <Font size="9.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </VBox>
+                              <Separator layoutX="10.0" layoutY="10.0" orientation="VERTICAL" prefHeight="40.0" prefWidth="15.0" />
+                        <VBox>
+                           <children>
+                                    <Button fx:id="BTN_LIST" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#openViewFacture" prefHeight="41.0" prefWidth="63.0" />
+                              <Label prefHeight="12.0" prefWidth="63.0" text="Liste factures">
+                                 <font>
+                                    <Font size="9.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </VBox>
+                              <Separator layoutX="10.0" layoutY="10.0" orientation="VERTICAL" prefHeight="40.0" prefWidth="15.0" />
+                        <VBox>
+                           <children>
+                                    <Button fx:id="BTN_CATALOGUE" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#openViewCatalogue" prefHeight="41.0" prefWidth="63.0" />
+                              <Label prefHeight="13.0" prefWidth="63.0" text="Catalogue">
+                                 <font>
+                                    <Font size="9.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </VBox>
+                              <Separator layoutX="214.0" layoutY="10.0" orientation="VERTICAL" prefHeight="40.0" prefWidth="15.0" />
+                        <VBox>
+                           <children>
+                                    <Button fx:id="BTN_TRASH" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#deleteFacture" prefHeight="41.0" prefWidth="63.0" />
+                              <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="13.0" prefWidth="63.0" text="Supprimer">
+                                 <font>
+                                    <Font size="9.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </VBox>
+                              <Separator layoutX="10.0" layoutY="10.0" orientation="VERTICAL" prefHeight="40.0" prefWidth="15.0" />
+                          </children>
+                          <padding>
+                              <Insets bottom="5.0" top="5.0" />
+                          </padding>
+                      </HBox>
+                  <HBox layoutX="355.0" prefHeight="41.0" prefWidth="498.0" AnchorPane.leftAnchor="340.0">
+                     <children>
+                        <GridPane>
+                           <columnConstraints>
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="104.0" minWidth="60.0" prefWidth="39.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="200.0" minWidth="10.0" prefWidth="200.0" />
+                           </columnConstraints>
+                           <rowConstraints>
+                              <RowConstraints maxHeight="22.0" minHeight="8.0" prefHeight="15.0" valignment="TOP" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="26.0" minHeight="10.0" prefHeight="26.0" valignment="TOP" vgrow="SOMETIMES" />
+                           </rowConstraints>
+                           <children>
+                              <Label text="Point de vente:" wrapText="true">
+                                 <font>
+                                    <Font size="8.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="LAB_PV" alignment="TOP_LEFT" prefHeight="17.0" prefWidth="204.0" text="Aucun point de vente" textFill="#d32626" GridPane.columnIndex="1">
+                                 <font>
+                                    <Font size="8.0" />
+                                 </font>
+                              </Label>
+                              <Label alignment="TOP_LEFT" text="Vendeur:" wrapText="true" GridPane.rowIndex="1">
+                                 <font>
+                                    <Font size="8.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="LAB_VEND" alignment="TOP_LEFT" prefHeight="15.0" prefWidth="199.0" text="Aucun vendeur" textFill="#d32121" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                 <font>
+                                    <Font size="8.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </GridPane>
+                        <GridPane layoutX="10.0" layoutY="10.0">
+                           <children>
+                              <Label alignment="TOP_LEFT" prefHeight="12.0" prefWidth="30.0" text="Date" wrapText="true">
+                                 <font>
+                                    <Font size="8.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="LAB_DATE" alignment="TOP_LEFT" prefHeight="40.0" prefWidth="67.0" text="Aucun planing" textFill="#e82b2b" wrapText="true" GridPane.columnIndex="1">
+                                 <font>
+                                    <Font size="8.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="LAB_AGENCE" alignment="TOP_LEFT" prefHeight="17.0" prefWidth="204.0" text="Agence" GridPane.rowIndex="1">
+                                 <font>
+                                    <Font size="8.0" />
+                                 </font>
+                              </Label>
+                              <Label alignment="TOP_LEFT" text="Aucun" textFill="#e82b2b" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                 <font>
+                                    <Font size="8.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                           <columnConstraints>
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="104.0" minWidth="40.0" prefWidth="39.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="200.0" minWidth="10.0" prefWidth="200.0" />
+                           </columnConstraints>
+                           <rowConstraints>
+                              <RowConstraints maxHeight="22.0" minHeight="10.0" prefHeight="15.0" valignment="TOP" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="29.0" minHeight="10.0" prefHeight="26.0" valignment="TOP" vgrow="SOMETIMES" />
+                           </rowConstraints>
+                        </GridPane>
+                        <GridPane layoutX="284.0" layoutY="10.0">
+                           <children>
+                              <Label text="Tranche" wrapText="true">
+                                 <font>
+                                    <Font size="8.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="LAB_TRANCHE" alignment="TOP_LEFT" prefHeight="40.0" prefWidth="67.0" text="Aucun planing" textFill="#e82b2b" wrapText="true" GridPane.columnIndex="1">
+                                 <font>
+                                    <Font size="8.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                           <columnConstraints>
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="104.0" minWidth="40.0" prefWidth="39.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="200.0" minWidth="10.0" prefWidth="200.0" />
+                           </columnConstraints>
+                           <rowConstraints>
+                              <RowConstraints maxHeight="22.0" minHeight="10.0" prefHeight="13.0" valignment="TOP" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="25.0" minHeight="10.0" prefHeight="19.0" vgrow="SOMETIMES" />
+                           </rowConstraints>
+                        </GridPane>
+                     </children>
+                  </HBox>
+                      <HBox prefHeight="41.0" prefWidth="198.0" AnchorPane.rightAnchor="10.0">
+                          <children>
+                              <Button fx:id="BTN_PARAM" mnemonicParsing="false" onAction="#openViewParam" prefHeight="41.0" prefWidth="63.0" text="Param" />
+                              <Separator orientation="VERTICAL" prefHeight="31.0" prefWidth="20.0" />
+                        <Button fx:id="BTN_COMPTE" layoutX="10.0" layoutY="15.0" mnemonicParsing="false" onAction="#openViewComptes" prefHeight="41.0" prefWidth="63.0" text="compte" />
+                        <Separator layoutX="51.0" layoutY="15.0" orientation="VERTICAL" prefHeight="41.0" prefWidth="23.0" />
+                              <Button fx:id="BTN_LOG_OOUT" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#goingOut" prefHeight="41.0" prefWidth="63.0" text="Quitter" />
+                          </children>
+                          <padding>
+                              <Insets bottom="5.0" top="5.0" />
+                          </padding>
+                      </HBox>
+                  </children>
+                  <padding>
+                      <Insets bottom="5.0" top="5.0" />
+                  </padding>
+              </AnchorPane>
+            <HBox prefHeight="20.0" prefWidth="1028.0" style="-fx-background-color: #000;">
+               <children>
+                  <ImageView fx:id="IMG_WIFI" fitHeight="20.0" fitWidth="28.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../icones/i_wifi.jpg" />
+                     </image>
+                  </ImageView>
+                  <Label fx:id="LABEL_NB_TRANSFERT" prefHeight="17.0" prefWidth="371.0" textFill="#f5d3d3">
+                     <HBox.margin>
+                        <Insets left="100.0" />
+                     </HBox.margin>
+                     <font>
+                        <Font name="System Bold" size="10.0" />
+                     </font>
+                  </Label>
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+    </top>
+    <bottom>
+      <VBox>
+         <children>
+            <HBox>
+               <children>
+                  <VBox fx:id="ZONE_FACTURE" alignment="CENTER" prefHeight="295.0" prefWidth="1250.0" style="-fx-background-color: #CCC;" HBox.hgrow="ALWAYS">
+                     <children>
+                        <HBox VBox.vgrow="ALWAYS">
+                           <children>
+                              <ImageView fitHeight="20.0" fitWidth="20.0" onMouseClicked="#navigueLeft" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../icones/arrow_l.png" />
+                                 </image>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                              </ImageView>
+                              <Label fx:id="L_CURRENT" text="1" />
+                              <Label text=" sur " />
+                              <Label fx:id="L_TOTAL" text="55" />
+                              <ImageView fitHeight="20.0" fitWidth="20.0" layoutX="10.0" layoutY="10.0" onMouseClicked="#navigueRight" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../icones/arrow_r.png" />
+                                 </image>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                              </ImageView>
+                              <Label fx:id="LAB_ADRESSSE" styleClass="label_info" text="Parcourir mes factures" />
+                           </children>
+                        </HBox>
+                     </children>
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                  </VBox>
+                  <VBox fx:id="ZONE_IMG" alignment="CENTER" prefHeight="295.0" prefWidth="241.0" style="-fx-background-color: #FFF;" />
+               </children>
+            </HBox>
+            <HBox prefHeight="21.0">
+               <children>
+                  <HBox alignment="CENTER_LEFT" spacing="5.0">
+                     <children>
+                        <Label prefHeight="22.0" prefWidth="34.0" text="Société :">
+                           <font>
+                              <Font size="9.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="SESS_SOCIETE" prefHeight="21.0" prefWidth="99.0">
+                           <font>
+                              <Font size="9.0" />
+                           </font>
+                        </Label>
+                     </children>
+                     <HBox.margin>
+                        <Insets left="10.0" />
+                     </HBox.margin>
+                  </HBox>
+                  <HBox alignment="CENTER_RIGHT" prefHeight="21.0" prefWidth="181.0">
+                     <children>
+                        <Label text="Durée de votre connexion:  " textFill="#5e5d5d">
+                           <font>
+                              <Font size="9.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="SESS_DUREE" text="3h53min" textFill="#031a5b">
+                           <font>
+                              <Font size="9.0" />
+                           </font>
+                        </Label>
+                     </children>
+                     <HBox.margin>
+                        <Insets left="1000.0" />
+                     </HBox.margin>
+                  </HBox>
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+    </bottom>
+    <center>
+        <BorderPane prefHeight="227.0" prefWidth="757.0" BorderPane.alignment="CENTER">
+            <right>
+                <VBox alignment="TOP_CENTER" prefHeight="238.0" prefWidth="284.0" BorderPane.alignment="TOP_CENTER">
+                    <children>
+                  <HBox prefHeight="33.0" prefWidth="300.0" styleClass="background_">
+                     <children>
+                              <Label fx:id="LAB_TOTAL" alignment="CENTER" contentDisplay="CENTER" prefHeight="39.0" prefWidth="234.0" text="0" textFill="#066b20">
+                                  <font>
+                                      <Font name="Bell MT Bold" size="31.0" />
+                                  </font>
+                              </Label>
+                        <Label prefHeight="41.0" prefWidth="43.0" text="Fcfa" textFill="#066b20">
+                           <font>
+                              <Font name="System Bold" size="12.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </HBox>
+                        <GridPane prefHeight="76.0" prefWidth="263.0">
+                            <columnConstraints>
+                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="100.0" minWidth="10.0" prefWidth="84.0" />
+                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="64.0" minWidth="10.0" prefWidth="62.0" />
+                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="114.0" minWidth="10.0" prefWidth="70.0" />
+                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="80.0" minWidth="10.0" prefWidth="68.0" />
+                            </columnConstraints>
+                            <rowConstraints>
+                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            </rowConstraints>
+                            <children>
+                                <Label text="Total Taxes" textFill="#393838" wrapText="true" GridPane.columnIndex="2">
+                           <font>
+                              <Font size="10.0" />
+                           </font></Label>
+                                <Label text="Total HT" textFill="#393838" wrapText="true">
+                           <font>
+                              <Font size="10.0" />
+                           </font></Label>
+                                <Label text="Total Remise" textFill="#393838" wrapText="true" GridPane.rowIndex="1">
+                           <font>
+                              <Font size="10.0" />
+                           </font></Label>
+                                <Label text="Avance" textFill="#393838" wrapText="true" GridPane.rowIndex="2">
+                           <font>
+                              <Font size="10.0" />
+                           </font></Label>
+                                <Label text="Total TTC" textFill="#393838" wrapText="true" GridPane.rowIndex="3">
+                           <font>
+                              <Font size="10.0" />
+                           </font></Label>
+                                <Label text="Ristourne" textFill="#393838" wrapText="true" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                           <font>
+                              <Font size="10.0" />
+                           </font></Label>
+                                <Label text="Reste" textFill="#393838" wrapText="true" GridPane.columnIndex="2" GridPane.rowIndex="2">
+                           <font>
+                              <Font size="10.0" />
+                           </font></Label>
+                                <Label text="Net A payer" textFill="#393838" wrapText="true" GridPane.columnIndex="2" GridPane.rowIndex="3">
+                           <font>
+                              <Font size="10.0" />
+                           </font></Label>
+                        <Label fx:id="LAB_T_HT" styleClass="label_info" GridPane.columnIndex="1">
+                           <font>
+                              <Font size="10.0" />
+                           </font></Label>
+                        <Label fx:id="LAB_T_REM" styleClass="label_info" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                           <font>
+                              <Font size="10.0" />
+                           </font></Label>
+                        <Label fx:id="LAB_T_AVANCE" styleClass="label_info" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                           <font>
+                              <Font size="10.0" />
+                           </font></Label>
+                        <Label fx:id="LAB_TTC" styleClass="label_info" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                           <font>
+                              <Font size="10.0" />
+                           </font></Label>
+                        <Label fx:id="LAB_NET_A_PAYER" styleClass="label_info" GridPane.columnIndex="3" GridPane.rowIndex="3">
+                           <font>
+                              <Font size="10.0" />
+                           </font></Label>
+                        <Label fx:id="LAB_T_RESTE" styleClass="label_info" GridPane.columnIndex="3" GridPane.rowIndex="2">
+                           <font>
+                              <Font size="10.0" />
+                           </font></Label>
+                        <Label fx:id="LAB_T_RIST" styleClass="label_info" GridPane.columnIndex="3" GridPane.rowIndex="1">
+                           <font>
+                              <Font size="10.0" />
+                           </font></Label>
+                        <Label fx:id="LAB_T_TAXE" styleClass="label_info" GridPane.columnIndex="3">
+                           <font>
+                              <Font size="10.0" />
+                           </font></Label>
+                            </children>
+                     <VBox.margin>
+                        <Insets left="7.0" top="5.0" />
+                     </VBox.margin>
+                        </GridPane>
+                        <Separator prefHeight="12.0" prefWidth="277.0" />
+                        <GridPane layoutX="10.0" layoutY="53.0" prefHeight="122.0" prefWidth="280.0">
+                            <children>
+                                <Label text="Livré" GridPane.rowIndex="6" />
+                                <Label text="Référence" />
+                                <Label text="Clients" GridPane.rowIndex="1" />
+                                <Label text="Date" GridPane.rowIndex="4" />
+                                <Label text="Réglé" GridPane.rowIndex="7" />
+                                <Label text="Adresse" GridPane.rowIndex="3" />
+                        <Label fx:id="LAB_REF_FACTURE" styleClass="label_info" GridPane.columnIndex="1">
+                           <font>
+                              <Font size="10.0" />
+                           </font></Label>
+                        <Label fx:id="LAB_CLIENT" styleClass="label_info" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                           <font>
+                              <Font size="10.0" />
+                           </font></Label>
+                        <Label fx:id="LAB_DATE_FACTURE" styleClass="label_info" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                           <font>
+                              <Font size="10.0" />
+                           </font></Label>
+                        <CheckBox fx:id="CHK_LIVRE" disable="true" mnemonicParsing="false" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="6">
+                           <font>
+                              <Font size="10.0" />
+                           </font></CheckBox>
+                        <CheckBox fx:id="CHK_REGLE" disable="true" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="7">
+                           <font>
+                              <Font size="10.0" />
+                           </font></CheckBox>
+                        <Label fx:id="LAB_NAME_CLT" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                           <font>
+                              <Font size="10.0" />
+                           </font></Label>
+                            </children>
+                            <columnConstraints>
+                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="143.0" minWidth="10.0" prefWidth="76.0" />
+                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="201.0" minWidth="10.0" prefWidth="201.0" />
+                            </columnConstraints>
+                            <rowConstraints>
+                                <RowConstraints maxHeight="28.0" minHeight="10.0" prefHeight="20.0" vgrow="SOMETIMES" />
+                                <RowConstraints maxHeight="49.0" minHeight="0.0" prefHeight="18.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="49.0" minHeight="10.0" prefHeight="18.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="63.0" minHeight="3.0" prefHeight="24.0" vgrow="SOMETIMES" />
+                                <RowConstraints maxHeight="63.0" minHeight="0.0" prefHeight="19.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="63.0" minHeight="0.0" prefHeight="0.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="63.0" minHeight="0.0" prefHeight="19.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="63.0" minHeight="0.0" prefHeight="13.0" vgrow="SOMETIMES" />
+                            </rowConstraints>
+                     <VBox.margin>
+                        <Insets left="7.0" />
+                     </VBox.margin>
+                        </GridPane>
+                    </children>
+                </VBox>
+            </right>
+            <bottom>
+            <HBox styleClass="line_bar2">
+               <children>
+                      <HBox prefHeight="39.0" prefWidth="400.0">
+                          <children>
+                              <CheckBox fx:id="CHK_DISPLAY" mnemonicParsing="false" prefHeight="34.0" prefWidth="57.0" selected="true" text="Détails" />
+                              <TextField fx:id="TEXT_FIND" alignment="CENTER" onKeyReleased="#findArticleByRef" prefHeight="33.0" prefWidth="261.0" promptText="Rérérence ou code barre" BorderPane.alignment="CENTER">
+                           <HBox.margin>
+                              <Insets left="5.0" />
+                           </HBox.margin>
+                              </TextField>
+                          </children>
+                     <HBox.margin>
+                        <Insets left="250.0" />
+                     </HBox.margin>
+                     <padding>
+                        <Insets top="5.0" />
+                     </padding>
+                      </HBox>
+                  <Label fx:id="LAB_RESULT" prefHeight="34.0" prefWidth="70.0" textFill="#e40202">
+                     <font>
+                        <Font size="10.0" />
+                     </font>
+                  </Label>
+                  <Button fx:id="BTN_SAVE" mnemonicParsing="false" onAction="#valideFacture" prefHeight="35.0" prefWidth="133.0" text="Valider">
+                     <HBox.margin>
+                        <Insets right="5.0" top="2.0" />
+                     </HBox.margin>
+                  </Button>
+                  <Button fx:id="BTN_REGLER" mnemonicParsing="false" onAction="#saveOrGeneratedPaiement" prefHeight="35.0" prefWidth="133.0" text="Régler">
+                     <HBox.margin>
+                        <Insets right="5.0" top="2.0" />
+                     </HBox.margin>
+                  </Button>
+                  <Button fx:id="BTN_LIVRER" layoutX="984.0" layoutY="15.0" mnemonicParsing="false" onAction="#saveOrGenerateBl" prefHeight="35.0" prefWidth="133.0" text="Livrer">
+                     <HBox.margin>
+                        <Insets top="2.0" />
+                     </HBox.margin>
+                  </Button>
+                  <Button fx:id="BTN_PRINT" layoutX="744.0" layoutY="10.0" mnemonicParsing="false" onAction="#printFacture" prefHeight="35.0" prefWidth="123.0" text="Imprimer" visible="false">
+                     <HBox.margin>
+                        <Insets top="2.0" />
+                     </HBox.margin>
+                  </Button>
+               </children>
+            </HBox>
+            </bottom>
+            <left>
+                <VBox prefHeight="282.0" prefWidth="423.0" BorderPane.alignment="CENTER">
+                    <padding>
+                        <Insets left="7.0" />
+                    </padding>
+               <children>
+                  <GridPane prefHeight="69.0" prefWidth="419.0">
+                     <children>
+                        <Label styleClass="label_text" text="Référence :" />
+                        <Label styleClass="label_text" text="Désignation" GridPane.rowIndex="1" />
+                        <Label styleClass="label_text" text="Désignations+" GridPane.rowIndex="2" />
+                        <Label styleClass="label_text" text="Famille" GridPane.columnIndex="2" />
+                        <Label styleClass="label_text" text="Groupe" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                        <Label fx:id="LAB_REF" GridPane.columnIndex="1" />
+                        <Label fx:id="LAB_DES" styleClass="label_info" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <Label fx:id="LAB_DES2" styleClass="label_info" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <Label fx:id="LAB_FAM" prefHeight="17.0" styleClass="label_info" GridPane.columnIndex="3" />
+                        <Label fx:id="LAB_GROUP" prefHeight="17.0" styleClass="label_info" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                        <Label styleClass="label_text" text="Fabricant" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                        <Label fx:id="LAB_FABRICANT" prefHeight="17.0" styleClass="label_info" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+                        <Label styleClass="label_text" text="PUV" GridPane.rowIndex="4" />
+                        <Label styleClass="label_text" text="Puv TTC?" GridPane.rowIndex="5" />
+                        <Label styleClass="label_text" text="Volume" GridPane.rowIndex="6" />
+                        <Label styleClass="label_text" text="Poids" GridPane.columnIndex="2" GridPane.rowIndex="6" />
+                        <Label styleClass="label_text" text="Puv Variable?" GridPane.columnIndex="2" GridPane.rowIndex="5" />
+                        <Label styleClass="label_text" text="Remise" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+                        <Label fx:id="LAB_PUV" styleClass="label_info" text=" " GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                        <Label fx:id="LAB_REM" styleClass="label_info" GridPane.columnIndex="3" GridPane.rowIndex="4" />
+                        <Label fx:id="LAB_PUV_TTC" styleClass="label_info" text=" " GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                        <Label fx:id="LAB_PUV_V" styleClass="label_info" text=" " GridPane.columnIndex="3" GridPane.rowIndex="5" />
+                        <Label fx:id="LAB_VOL" styleClass="label_info" text=" " GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                        <Label fx:id="LAB_POID" styleClass="label_info" text=" " GridPane.columnIndex="3" GridPane.rowIndex="6" />
+                     </children>
+                     <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="103.0" minWidth="10.0" prefWidth="66.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="178.0" minWidth="10.0" prefWidth="158.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="178.0" minWidth="10.0" prefWidth="62.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="178.0" minWidth="10.0" prefWidth="131.0" />
+                     </columnConstraints>
+                     <rowConstraints>
+                        <RowConstraints maxHeight="30.0" minHeight="-Infinity" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="39.0" minHeight="-Infinity" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="44.0" minHeight="-Infinity" prefHeight="19.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="50.0" minHeight="4.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="59.0" minHeight="-Infinity" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="59.0" minHeight="-Infinity" valignment="CENTER" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="59.0" minHeight="-Infinity" valignment="CENTER" vgrow="SOMETIMES" />
+                     </rowConstraints>
+                  </GridPane>
+                  <Label layoutX="17.0" layoutY="197.0" prefHeight="29.0" prefWidth="416.0" style="-fx-background-color: #3ec7f1;" text="Stocks" textFill="#171717">
+                     <font>
+                        <Font name="Calibri Light" size="10.0" />
+                     </font>
+                     <padding>
+                        <Insets left="2.0" />
+                     </padding>
+                  </Label>
+                  <ScrollPane hbarPolicy="NEVER" pannable="true" prefHeight="200.0" prefViewportHeight="26.0" prefViewportWidth="243.0" prefWidth="405.0" style="-fx-background-color: #fff; -fx-border-color: #fff;" styleClass="my_scroller">
+                     <content>
+                        <VBox fx:id="PAN_STOCK" prefHeight="150.0" prefWidth="418.0">
+                           <children>
+                              <TextArea fx:id="ART_DESCRIPTION" editable="false" prefHeight="18.0" prefWidth="416.0" style="-fx-text-fill: green;" text="Commentaire sur le produits" wrapText="true" />
+                           </children></VBox>
+                     </content>
+                  </ScrollPane>
+               </children>
+                </VBox>
+            </left>
+            <center>
+                <ScrollPane fitToWidth="true" pannable="true" styleClass="my_scroller" vbarPolicy="AS_NEEDED" SplitPane.resizableWithParent="true">
+                    <content>
+                  <VBox fx:id="PAN_ART" />
+                    </content>
+                </ScrollPane>
+            </center>
+        </BorderPane>
+    </center>
+</BorderPane>
