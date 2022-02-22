@@ -15,7 +15,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -105,22 +104,11 @@ public class FactureController implements Initializable, Controller {
         DT_DATE.setPrefHeight(37);
         DT_DATE.setConverter(new CustomConvertDP());
         BOX_DATE.getChildren().add(DT_DATE);
-        TYPE_DOC.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-
-            @Override
-            public void changed(ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) {
-                RadioButton r = (RadioButton) TYPE_DOC.getSelectedToggle();
-                String ty = (r.getText().equals("Commande")) ? Constantes.TYPE_BCV : Constantes.TYPE_FV;
-                if (ty.equals(Constantes.TYPE_BCV)) {
-                    DT_DATE = new DateTimePicker(LocalDateTime.now());
-                    DT_DATE.getEditor().setDisable(false);
-                } else {
-                    Calendar cal = Calendar.getInstance();
-                    cal.setTime(UtilsProject.headerDoc.getDateEntete());
-                    DT_DATE = new DateTimePicker(LocalDateTime.of(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH), cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE)));
-                    DT_DATE.getEditor().setDisable(true);
-                }
-            }
+        TYPE_DOC.selectedToggleProperty().addListener((ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) -> {
+//            RadioButton r = (RadioButton) TYPE_DOC.getSelectedToggle();
+//                Calendar cal = Calendar.getInstance();
+//                cal.setTime(UtilsProject.headerDoc.getDateEntete());
+//                DT_DATE = new DateTimePicker(LocalDateTime.of(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH), cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE)));
         });
         initVilles();
         AutoCompletePopup<YvsComClient> popUpClients = TextFields.bindAutoCompletion(TF_CLIENT, c -> {
@@ -245,7 +233,7 @@ public class FactureController implements Initializable, Controller {
         if (local != null) {
             date = Date.from(local.atZone(ZoneId.systemDefault()).toInstant());
         }
-        System.err.println(".... current client : " + selectClient.getCodeClient());
+        System.err.println(" ... Date confirm Liv"+Constantes.dfD.format(date));
         createFactureVente(selectClient, ty, (CB_SECTEUR.getValue() != null) ? CB_SECTEUR.getValue() : CB_VILLE.getValue(), TXT_NAME_CLIENT.getText(), date, TXT_TEL.getText());
     }
 

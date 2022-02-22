@@ -291,7 +291,7 @@
     <center>
         <VBox fx:id="MAIN_PAGE" layoutY="76.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="1600.0" style="-fx-background-color: red;" BorderPane.alignment="CENTER">
             <children>
-                <SplitPane dividerPositions="0.8981042654028436" orientation="VERTICAL" pickOnBounds="false" prefWidth="1570.0">
+                <SplitPane dividerPositions="0.8003095975232198" orientation="VERTICAL" pickOnBounds="false">
                     <items>
                         <HBox style="-fx-background-color: yellow;">
                             <children>

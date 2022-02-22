@@ -91,6 +91,7 @@ public class UtilsProject {
     public static Boolean REPLICATION = false;
     public static Boolean APPLICATION_IHM = true;
     public static Boolean STOP_LISTEN = false;
+    public static Boolean MODE_ADMIN = false;
     public static YvsBaseDepots depotLivraison;
     public static YvsGrhTrancheHoraire trancheLivraison;
     public static YvsBaseModeReglement modeReg;// ("ESPECE, CHEQUE, etc.")

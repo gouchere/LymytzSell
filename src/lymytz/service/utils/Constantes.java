@@ -34,6 +34,7 @@ public class Constantes {
     public static final DateFormat HMS = new SimpleDateFormat("HH:mm:ss");
     public static final DateFormat dfH = new SimpleDateFormat("HH:mm");
     public static final DecimalFormat nbf = new DecimalFormat("#,###");
+    public static final DateFormat dfN1 = new SimpleDateFormat("dd MMMM yyyy");
 
     public static final double WIDTH_ICON_TOOL_BAR = 25;
     public static final double HEIGHT_ICON_TOOL_BAR = 25;
@@ -296,6 +297,11 @@ public class Constantes {
 
     public static final String KEY_ENCRYPT = "1023";
 
+    public static final String CMP1 = "CMPI";
+    public static final String CMP2 = "CMPII";
+    public static final String CMPU1 = "Cout Moyen Pondere 1";
+    public static final String CMPU2 = "Cout Moyen Pondere 2";
+    
     public Constantes() {
         LISTEN_TABLE = new ArrayList<>();
         ALLENTITY_BASE.add(new TableList(TABLE_CAISSE_USERS_NAME, TABLE_CAISSE_USERS_CODE));

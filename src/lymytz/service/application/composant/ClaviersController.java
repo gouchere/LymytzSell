@@ -251,14 +251,12 @@ public class ClaviersController extends ManagedApplication implements Initializa
                             }
                         }
                     }
-                    if (source.equals("F")) {
-                        /**
-                         * lance la validation dans une thread*
-                         */
-                        Thread t = new Thread(new Runnable() {
-
-                            @Override
-                            public void run() {
+                    switch (source) {
+                        case "F":
+                            /**
+                             * lance la validation dans une thread*
+                             */
+                            Thread t = new Thread(() -> {
                                 if (page.confirmValideFacture(selectOnglet, montantAvance, getMontantAffiche(), source)) {
                                     if (UtilsProject.paramConnection.getUsePrinter()) {
                                         if (UtilsProject.paramConnection.getTypeRapport().equals(UtilsProject.TYPE_RAPPORT_TICKET)) {
@@ -301,18 +299,19 @@ public class ClaviersController extends ManagedApplication implements Initializa
                                     });
 //                                    }
                                 }
-                            }
-                        });
-                        t.start();
-                        fenetre.close();
-                        /**
-                         * end*
-                         */
-                    } else if (source.equals("A")) {
-                        //Enregistrer l'avance sur commande                
-                        page.saveReglement(selectOnglet.getFacture(), montantAvance, getMontantAffiche());
-                        selectOnglet.displayMontantsBean();
-                        fenetre.close();
+                            });
+                            t.start();
+                            fenetre.close();
+                            /**
+                             * end*
+                             */
+                            break;
+                        case "A":
+                            //Enregistrer l'avance sur commande
+                            page.saveReglement(selectOnglet.getFacture(), montantAvance, getMontantAffiche());
+                            selectOnglet.displayMontantsBean();
+                            fenetre.close();
+                            break;
                     }
                     break;
                 case "SET_QTE":

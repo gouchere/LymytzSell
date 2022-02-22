@@ -646,7 +646,12 @@ public class UtilExport {
                 re = buildExportPieceVirement(localDoc, null);
                 if (re != null) {
                     // contrôle les laisons obligatoire
-                    return UtilEntityBase.factoryJsonObject(re, YvsComptaCaissePieceVirement.class);
+                    re.setAuthor(new YvsUsersAgence(UtilsProject.currentUser.getId()));
+                    re.setCible(new YvsBaseCaisse(re.getCible()));
+                    re.setSource(new YvsBaseCaisse(re.getSource()));
+                    System.err.println("...model "+re.getModel());
+                    JSONObject jo= UtilEntityBase.factoryJsonObject(re, YvsComptaCaissePieceVirement.class);                    
+                    return jo;
                 }
             }
         } catch (Exception ex) {

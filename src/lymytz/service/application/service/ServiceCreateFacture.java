@@ -93,62 +93,66 @@ public class ServiceCreateFacture implements Runnable {
     public void run() {
         if (UtilsProject.headerDoc != null) {
             if (!UtilsProject.headerDoc.getCloturer()) {
-//                String numDoc = UtilsProject.generatedNumDoc((typeDoc.equals(Constantes.TYPE_FV)) ? Constantes.TYPE_FV_NAME : Constantes.TYPE_BCV_NAME);
-                String numDoc = "FV";
-                if (client != null && Constantes.asString(numDoc)) {
-                    LQueryFactories rq = new LQueryFactories();
-                    final YvsComDocVentes bean = new YvsComDocVentes();
-                    bean.setNumDoc(numDoc);
-                    bean.setLivraisonAuto(true);
-                    bean.setAdresse(adresse);
-                    bean.setAuthor(UtilsProject.currentUser);
-                    bean.setCategorieComptable(client.getCategorieComptable());
-                    bean.setClient(client);
-                    bean.setCloturer(Boolean.FALSE);
-                    bean.setCommision(0d);
-                    bean.setDateSave(new Date());
-                    bean.setDateUpdate(new Date());
-                    bean.setDateSolder(new Date());
-                    bean.setDepotLivrer(UtilsProject.depotLivraison);
-                    bean.setTrancheLivrer(UtilsProject.headerDoc.getCreneau().getCreneauDepot().getTranche());
-                    bean.setEnteteDoc(UtilsProject.headerDoc);
-                    bean.setEtapeTotal(1);
-                    bean.setHeureDoc(new Date());
-                    bean.setModelReglement(UtilsProject.modelReg);
-                    bean.setMouvStock(Boolean.TRUE);
-                    bean.setNomClient(nameClient);
-                    bean.setStatut(Constantes.ETAT_EDITABLE);
-                    bean.setStatutLivre(Constantes.ETAT_ATTENTE);
-                    bean.setStatutRegle(Constantes.ETAT_ATTENTE);
-                    bean.setTypeDoc(typeDoc);
-                    bean.setDateLivraisonPrevu(dateLiv);
-                    bean.setTelephone(telephone);
-                    bean.setOperateur(UtilsProject.currentUser.getUsers());
-                    bean.setNature(Constantes.NATURE_DOC_VENTE_VENTE);
-                    if (client.getSuiviComptable()) {
-                        bean.setTiers(client);
-                    }
-                    if (bean.getTiers() == null) {
-                        //ne pas enregistrer
+                if (!UtilsProject.headerDoc.getDateEntete().after(new Date())) {
+                    String numDoc = typeDoc;
+                    if (client != null && Constantes.asString(numDoc)) {
+                        LQueryFactories rq = new LQueryFactories();
+                        final YvsComDocVentes bean = new YvsComDocVentes();
+                        bean.setNumDoc(numDoc);
+                        bean.setLivraisonAuto(true);
+                        bean.setAdresse(adresse);
+                        bean.setAuthor(UtilsProject.currentUser);
+                        bean.setCategorieComptable(client.getCategorieComptable());
+                        bean.setClient(client);
+                        bean.setCloturer(Boolean.FALSE);
+                        bean.setCommision(0d);
+                        bean.setDateSave(new Date());
+                        bean.setDateUpdate(new Date());
+                        bean.setDateSolder(new Date());
+                        bean.setDepotLivrer(UtilsProject.depotLivraison);
+                        bean.setTrancheLivrer(UtilsProject.headerDoc.getCreneau().getCreneauDepot().getTranche());
+                        bean.setEnteteDoc(UtilsProject.headerDoc);
+                        bean.setEtapeTotal(1);
+                        bean.setHeureDoc(new Date());
+                        bean.setModelReglement(UtilsProject.modelReg);
+                        bean.setMouvStock(Boolean.TRUE);
+                        bean.setNomClient(nameClient);
+                        bean.setStatut(Constantes.ETAT_EDITABLE);
+                        bean.setStatutLivre(Constantes.ETAT_ATTENTE);
+                        bean.setStatutRegle(Constantes.ETAT_ATTENTE);
+                        bean.setTypeDoc(typeDoc);
+                        System.err.println(" ... Date Liv"+Constantes.dfD.format(dateLiv));
+                        bean.setDateLivraisonPrevu(dateLiv);
+                        bean.setTelephone(telephone);
+                        bean.setOperateur(UtilsProject.currentUser.getUsers());
+                        bean.setNature(Constantes.NATURE_DOC_VENTE_VENTE);
+                        if (client.getSuiviComptable()) {
+                            bean.setTiers(client);
+                        }
+                        if (bean.getTiers() == null) {
+                            //ne pas enregistrer
+                            Platform.runLater(() -> {
+                                LymytzService.openAlertDialog("Le tiers rattaché à ce client n'existe pas !", "Action abandonné !", "Erreur ", Alert.AlertType.ERROR);
+                            });
+                            result = -1L;
+                        }
+                        bean.setId(Constantes.localId++);
+                        setFacture(bean);
                         Platform.runLater(() -> {
-                            LymytzService.openAlertDialog("Le tiers rattaché à ce client n'existe pas !", "Action abandonné !", "Erreur ", Alert.AlertType.ERROR);
+                            page.BTN_REGLER.setVisible(bean.getStatutRegle().equals(Constantes.ETAT_REGLE));
+                            page.BTN_LIVRER.setVisible(bean.getStatutLivre().equals(Constantes.ETAT_LIVRE));
+                            page.LAB_REF_FACTURE.setText(numDoc + ":" + client.getCodeClient() + "--" + bean.getId());
                         });
-                        result = -1L;
-                    }
-                    bean.setId(Constantes.localId++);
-                    setFacture(bean);
-                    Platform.runLater(() -> {
-                        page.BTN_REGLER.setVisible(bean.getStatutRegle().equals(Constantes.ETAT_REGLE));
-                        page.BTN_LIVRER.setVisible(bean.getStatutLivre().equals(Constantes.ETAT_LIVRE));
-                        page.LAB_REF_FACTURE.setText(numDoc+":"+client.getCodeClient()+"--"+bean.getId());
-                    });
-                    result = bean.getId();
-                } else {
-                    if (client == null) {
-                        result = -2L;
+                        result = bean.getId();
                     } else {
-                        result = -3L;
+                        if (client == null) {
+                            result = -2L;
+                        } else {
+                            result = -3L;
+                        }
                     }
+                } else {
+                    result = -6L;
                 }
             } else {
                 result = -4L;
@@ -181,6 +185,11 @@ public class ServiceCreateFacture implements Runnable {
             case -5:
                 Platform.runLater(() -> {
                     LymytzService.openAlertDialog("Génération de a facture non réussi !", "Erreur ", "Aucune entête n'a été trouvé !", Alert.AlertType.ERROR);
+                });
+                break;
+            case -6:
+                Platform.runLater(() -> {
+                    LymytzService.openAlertDialog("Génération de a facture non réussi !", "Erreur ", "Vérifier la date de votre fiche !", Alert.AlertType.ERROR);
                 });
                 break;
             default:
@@ -262,7 +271,7 @@ public class ServiceCreateFacture implements Runnable {
                             if (y.getCommercial().getTiers().getId() > 0 ? y.getCommercial().getTiers().getClients() != null ? !y.getCommercial().getTiers().getClients().isEmpty() : false : false) {
                                 tiers = y.getCommercial().getTiers().getClients().get(0);
                             }
-                            if(tiers!=null){
+                            if (tiers != null) {
                                 Options[] param = new Options[]{new Options(y.getFacture().getId(), 1), new Options(tiers.getId(), 2)};
                                 String query = "update yvs_com_doc_ventes set tiers = null where id = ?";
                                 if (tiers.getId() > 0) {
@@ -342,7 +351,7 @@ public class ServiceCreateFacture implements Runnable {
                         Alert dlg = new Alert(Alert.AlertType.CONFIRMATION, "Confirmez vous la livraison de cette commande ?", new ButtonType("Oui"), new ButtonType("Non"));
                         Optional<ButtonType> re = dlg.showAndWait();
                         if (re.get().getText().equals("Oui")) {
-                        //Vérifie que tout les règlements en rapport avec la commande sont synchronisé. 
+                            //Vérifie que tout les règlements en rapport avec la commande sont synchronisé. 
                             if (verifieSynchroCommande(fac.getFacture())) {
                                 //Appelle le service de validation des commandes
                                 Livraison task = new Livraison(fac.getFacture());

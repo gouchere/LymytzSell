@@ -98,7 +98,7 @@ public class FormVirementController implements Initializable, Controller {
         this.idHeader = idHeader;
         this.fenDialogue = stage;
         // trouve l'equivalent du header...
-        idRemoteHeader = UtilEntityBase.findIdRemoteData(Constantes.TABLE_HEADER_DOC_CODE, idHeader);
+        idRemoteHeader = (UtilsProject.REPLICATION)?UtilEntityBase.findIdRemoteData(Constantes.TABLE_HEADER_DOC_CODE, idHeader):idHeader;
         if (caisseSource != null && Constantes.asLong(this.idRemoteHeader)) {
             caisseSource.setCaissesLiees(rq.loadByNamedQuery("YvsBaseLiaisonCaisse.findBySource", new String[]{"source"}, new Object[]{caisseSource}));
             caisseSource.getCaissesLiees().stream().forEach((lc) -> {

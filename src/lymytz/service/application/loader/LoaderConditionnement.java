@@ -146,7 +146,9 @@ public class LoaderConditionnement extends Task<ObservableList<GridPane>> {
                 .append("y.photo_1, ")//23
                 .append("y.photo_2, ")//24
                 .append("y.photo_3, ")//25
-                .append("cb.code_barre ")//26
+                .append("cb.code_barre, ")//26
+                .append("cl1.id::bigint, ")//27
+                .append("cl2.id::bigint ")//28
                 .append("FROM yvs_base_articles y LEFT JOIN yvs_base_conditionnement c ON y.id=c.article ")
                 .append("INNER JOIN yvs_base_famille_article f ON f.id=y.famille ")
                 .append("INNER JOIN yvs_base_article_depot ad ON ad.article=y.id ")
@@ -161,7 +163,6 @@ public class LoaderConditionnement extends Task<ObservableList<GridPane>> {
                 .append("AND ad.actif IS TRUE AND (c.actif IS TRUE OR c.actif IS NULL) AND y.actif IS TRUE AND (cp.actif IS TRUE OR cp.actif IS NULL) ")
                 .append("AND y.categorie IN (?,?,?) ")
                 .append("ORDER BY f.id, y.ref_art ");
-        System.err.println("Query : " + sb.toString());
         return sb.toString();
     }
 
@@ -200,15 +201,19 @@ public class LoaderConditionnement extends Task<ObservableList<GridPane>> {
         art.setCategorie((String) (row[4] != null ? row[4] : null));
         art.setPuvTtc((Boolean) (row[5] != null ? row[5] : false));
         art.setChangePrix((Boolean) (row[6] != null ? row[6] : false));
-        YvsBaseClassesStat cl = new YvsBaseClassesStat();
-        if (row[18] != null) {
-            cl.setDesignation((String) row[18]);
-        } else if (row[19] != null) {
-            cl.setDesignation((String) row[19]);
-        } else {
-            cl.setDesignation("");
+        if (row[27] != null || row[28] != null) {
+            YvsBaseClassesStat cl = new YvsBaseClassesStat();
+            if (row[18] != null) {
+                cl.setId((Long)row[27]);
+                cl.setDesignation((String) row[18]);
+            } else if (row[19] != null) {
+                cl.setId((Long)row[28]);
+                cl.setDesignation((String) row[19]);
+            } else {
+                cl.setDesignation("");
+            }
+            art.setClasse1(cl);
         }
-        art.setClasse1(cl);
         YvsBaseFamilleArticle f = new YvsBaseFamilleArticle();
         f.setId((Long) (row[14] != null ? row[14] : -1));
         f.setDesignation((String) (row[15] != null ? row[15] : null));

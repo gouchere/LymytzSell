@@ -60,8 +60,14 @@ import lymytz.service.utils.Constantes;
     @NamedQuery(name = "YvsComContenuDocVente.findByStatutLivree", query = "SELECT y FROM YvsComContenuDocVente y WHERE y.statutLivree = :statutLivree"),
     @NamedQuery(name = "YvsComContenuDocVente.findByTauxRemise", query = "SELECT y FROM YvsComContenuDocVente y WHERE y.tauxRemise = :tauxRemise"),
     @NamedQuery(name = "YvsComContenuDocVente.findByDateUpdate", query = "SELECT y FROM YvsComContenuDocVente y WHERE y.dateUpdate = :dateUpdate"),
+    @NamedQuery(name = "YvsComContenuDocVente.findByFacture", query = "SELECT DISTINCT y FROM YvsComContenuDocVente y JOIN FETCH y.conditionnement JOIN FETCH y.article JOIN FETCH y.conditionnement.unite "
+            + "LEFT JOIN FETCH y.taxes T JOIN FETCH T.taxe "
+            + "WHERE y.docVente = :docVente ORDER BY y.id ASC"),
+    @NamedQuery(name = "YvsComContenuDocVente.findQteByArticle", query = "SELECT SUM(y.quantite) FROM YvsComContenuDocVente y WHERE y.article = :article AND y.conditionnement =:unite AND y.docVente = :docVente"),
     @NamedQuery(name = "YvsComContenuDocVente.countQteVendu", query = "SELECT SUM(y.quantite) FROM YvsComContenuDocVente y WHERE y.docVente.typeDoc='FV' AND y.docVente.statut='V' AND y.docVente.enteteDoc=:header AND y.conditionnement=:conditionnement"),
-
+    @NamedQuery(name = "YvsComContenuDocVente.findByDocLierTypeStatutArticleS", query = "SELECT SUM(y.quantite) FROM YvsComContenuDocVente y WHERE y.docVente.documentLie = :docVente AND y.docVente.statut = :statut AND y.docVente.typeDoc = :typeDoc AND y.article = :article AND y.conditionnement = :unite"),
+    @NamedQuery(name = "YvsComContenuDocVente.findQteByArticle_", query = "SELECT SUM(y.quantite) FROM YvsComContenuDocVente y WHERE y.article = :article AND y.conditionnement = :unite AND y.conditionnementBonus = :unite AND y.docVente = :docVente"),
+    @NamedQuery(name = "YvsComContenuDocVente.findQteBonusByFacture", query = "SELECT SUM(y.quantiteBonus) FROM YvsComContenuDocVente y WHERE y.article = :article AND y.conditionnement =:unite AND y.docVente = :docVente"),
     @NamedQuery(name = "YvsComContenuDocVente.findTotalByTypeDocAndHeader", query = "SELECT SUM(y.prixTotal) FROM YvsComContenuDocVente y WHERE y.docVente.enteteDoc = :header AND y.docVente.typeDoc = :typeDoc AND y.docVente.statut = 'V'"),
     @NamedQuery(name = "YvsComContenuDocVente.findTotalByTypeDocAndLivre", query = "SELECT SUM(y.prixTotal) FROM YvsComContenuDocVente y WHERE y.docVente.enteteDoc = :header AND y.docVente.typeDoc = :typeDoc AND y.docVente.statut = 'V' AND y.docVente.statutLivre = :statutL"),
     @NamedQuery(name = "YvsComContenuDocVente.findTotalByTypeDocAndRegle", query = "SELECT SUM(y.prixTotal) FROM YvsComContenuDocVente y WHERE y.docVente.enteteDoc = :header AND y.docVente.typeDoc = :typeDoc AND y.docVente.statut = 'V' AND y.docVente.statutRegle = :statutR"),

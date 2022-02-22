@@ -45,7 +45,7 @@ import lymytz.view.main.HomeCaisseController;
  *
  * @author LENOVO
  */
-public class Onglets extends Tab {
+public final class Onglets extends Tab {
 
     LQueryFactories dao;
     private double netAPayer;
@@ -63,18 +63,14 @@ public class Onglets extends Tab {
     }
 
     public Onglets(YvsComDocVentes facture, HomeCaisseController page) {
-        this((facture != null ? (facture.getId() > 0 ? facture.getNumDoc() : facture.getClient().getCodeClient() + "-" + facture.getId()) : ""), page);
+        this((facture != null ? (facture.getId() > 0 ? facture.getNumDoc() : facture.getTypeDoc()+":"+facture.getClient().getCodeClient() + "-" + facture.getId()) : ""), page);
         this.facture = facture;
         //ajoute un évènement
-        this.setOnSelectionChanged(new EventHandler<Event>() {
-
-            @Override
-            public void handle(Event event) {
-                int idx = page.TAB_FACTURES.getSelectionModel().getSelectedIndex();
-                if (idx >= 0 && page.TAB_FACTURES.getTabs().size() > idx) {
-                    displayMontantsBean();
-                    page.displayDetailFacture(((Onglets) page.TAB_FACTURES.getTabs().get(idx)).getFacture());
-                }
+        this.setOnSelectionChanged((Event event) -> {
+            int idx = page.TAB_FACTURES.getSelectionModel().getSelectedIndex();
+            if (idx >= 0 && page.TAB_FACTURES.getTabs().size() > idx) {
+                displayMontantsBean();
+                page.displayDetailFacture(((Onglets) page.TAB_FACTURES.getTabs().get(idx)).getFacture());
             }
         });
     }

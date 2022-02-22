@@ -35,6 +35,7 @@ import javax.persistence.TemporalType;
     @NamedQuery(name = "YvsComptaCaissePieceVente.findMontantRecuByFacture", query = "SELECT y.montantRecu FROM YvsComptaCaissePieceVente y WHERE y.vente = :vente"),
     @NamedQuery(name = "YvsComptaCaissePieceVente.findByDocVente", query = "SELECT y FROM YvsComptaCaissePieceVente y WHERE y.vente = :docVente"),
     @NamedQuery(name = "YvsComptaCaissePieceVente.findByMontant", query = "SELECT y FROM YvsComptaCaissePieceVente y WHERE y.montant = :montant"),
+    @NamedQuery(name = "YvsComptaCaissePieceVente.findByFacture", query = "SELECT y FROM YvsComptaCaissePieceVente y WHERE y.vente = :facture"),
     @NamedQuery(name = "YvsComptaCaissePieceVente.findByFactureStatutS", query = "SELECT SUM(y.montant) FROM YvsComptaCaissePieceVente y WHERE y.vente = :facture AND y.statutPiece = :statut AND (COALESCE(y.mouvement, 'R')) = 'R'"),
     @NamedQuery(name = "YvsComptaCaissePieceVente.findByFactureStatutSDiff", query = "SELECT SUM(y.montant) FROM YvsComptaCaissePieceVente y WHERE y.vente = :facture AND y.statutPiece != :statut AND (COALESCE(y.mouvement, 'R')) = 'R'"),
     @NamedQuery(name = "YvsComptaCaissePieceVente.findByStatutPiece", query = "SELECT y FROM YvsComptaCaissePieceVente y WHERE y.statutPiece = :statutPiece"),

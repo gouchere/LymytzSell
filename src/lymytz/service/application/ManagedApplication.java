@@ -196,12 +196,12 @@ public class ManagedApplication {
     private Label LAB_TOTAL;
     @FXML
     private Label LAB_T_HT;
-    @FXML
-    public Button BTN_SAVE;
-    @FXML
-    public Button BTN_REGLER;
-    @FXML
-    public Button BTN_LIVRER;
+//    @FXML
+//    public Button BTN_SAVE;
+//    @FXML
+//    public Button BTN_REGLER;
+//    @FXML
+//    public Button BTN_LIVRER;
 
     @FXML
     private Label L_CURRENT;
@@ -291,16 +291,14 @@ public class ManagedApplication {
         final ImageView btn_print = new ImageView(new Image(LocalLoader.class.getResource("icones/print.png").toExternalForm()));
         final ImageView btn_reg = new ImageView(new Image(LocalLoader.class.getResource("icones/money.png").toExternalForm()));
         final ImageView btn_liv = new ImageView(new Image(LocalLoader.class.getResource("icones/cdcopy.png").toExternalForm()));
-        BTN_SAVE.setGraphic(btn_save);
-//        BTN_PRINT.setGraphic(btn_print);
-        BTN_REGLER.setGraphic(btn_reg);
-        BTN_LIVRER.setGraphic(btn_liv);
-//        BTN_PRINT.getStyleClass().add("mes_boutons");
-        BTN_SAVE.getStyleClass().add("mes_boutons");
-        BTN_REGLER.getStyleClass().add("mes_boutons");
-        BTN_LIVRER.getStyleClass().add("mes_boutons");
-        BTN_LIVRER.setVisible(false);
-        BTN_REGLER.setVisible(false);
+//        BTN_SAVE.setGraphic(btn_save);
+//        BTN_REGLER.setGraphic(btn_reg);
+//        BTN_LIVRER.setGraphic(btn_liv);
+//        BTN_SAVE.getStyleClass().add("mes_boutons");
+//        BTN_REGLER.getStyleClass().add("mes_boutons");
+//        BTN_LIVRER.getStyleClass().add("mes_boutons");
+//        BTN_LIVRER.setVisible(false);
+//        BTN_REGLER.setVisible(false);
     }
 
     private void initContent_() {
@@ -913,7 +911,6 @@ public class ManagedApplication {
         Boolean be = (Boolean) dao.findOneObjectBySQLQ(squery, new Options[]{new Options(UtilsProject.currentAgence.getId(), 1)});
         if (be) {
             WsSynchro ws = new WsSynchro();
-            System.err.println(" ... "+UtilsProject.currentUser);
             ResultatAction re = ws.comptabiliseVente(id, UtilsProject.currentUser.getId(), numDoc);
         }
     }

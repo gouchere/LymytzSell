@@ -16,7 +16,6 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -39,7 +38,6 @@ import javax.print.attribute.standard.Severity;
 import lymytz.dao.entity.YvsBaseCaisse;
 import lymytz.dao.entity.YvsComCreneauHoraireUsers;
 import lymytz.dao.entity.YvsComEnteteDocVente;
-import lymytz.dao.entity.YvsSynchroListenTable;
 import lymytz.dao.entity.YvsUsers;
 import lymytz.dao.entity.YvsUsersAgence;
 import lymytz.dao.query.LQueryFactories;
@@ -95,30 +93,30 @@ public class StartController implements Initializable, Controller {
     private void connectToApps(ActionEvent event) {
         //récupère le fichier properties
         if (TXT_LOGIN.getText().equals(Constantes.DEFAULT_LOGIN)) {
+            UtilsProject.MODE_ADMIN = true;
             loadInitDataR();
             openMainView();
             return;
         }
+        UtilsProject.MODE_ADMIN = false;
         openApplication();
 
     }
-    public void openAppsForDev(String login, String password){
+
+    public void openAppsForDev(String login, String password) {
         TXT_LOGIN.setText(login);
         TXT_PWD.setText(password);
         openApplication();
     }
 
     private void openApplication() {
-        System.err.println(" .. open page...");
         if (controlePassword(controleConnection(TXT_LOGIN.getText()), TXT_PWD.getText())) {
-            System.err.println(" .. controle passed...");
             //controle la conformité des informations du fichier .properties
             if (LymytzService.controleFileProperties()) {
                 if (controleParamPlannification()) {
                     // Sauvegarde la relation UserAgence                
                     loadInitData();
                     openMainView();
-                    System.err.println(" .. open page...");
                     //Trouve les fiches de ventes non clôturés de ce vendeur
                     // trouve le planning à la date
                     ArrayList etats = new ArrayList() {
@@ -180,63 +178,60 @@ public class StartController implements Initializable, Controller {
             KeyCombination controlPrint = new KeyCodeCombination(KeyCode.P, KeyCodeCombination.CONTROL_DOWN);
             KeyCombination controlMyCompte = new KeyCodeCombination(KeyCode.C, KeyCodeCombination.CONTROL_DOWN);
             KeyCombination controlQuit = new KeyCodeCombination(KeyCode.Q, KeyCodeCombination.CONTROL_DOWN);
-            scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
-                @Override
-                public void handle(KeyEvent event) {
-                    if (control.match(event)) {
-                        mainController.createFactureDivers();
-                    } else if (controlCmde.match(event)) {
-                        mainController.BTN_NEW_CMDE.fire();
-                    } else if (controlPrint.match(event)) {
-                        mainController.BTN_PRINT.fire();
-                    } else if (controlQuit.match(event)) {
-                        mainController.goingOutApplication();
-                    } else if (controlMyCompte.match(event)) {
-                        mainController.openViewComptes();
-                    } else {
-                        switch (event.getCode()) {
-                            case ALT:
-                            case ALT_GRAPH:
-                                mainController.TEXT_FIND.selectAll();
-                                mainController.TEXT_FIND.requestFocus();
-                                mainController.TEXT_FIND.setText("");
-                                break;
-                            case ADD:
-                                if (mainController.TAB_FACTURES != null) {
-                                    if (!mainController.TAB_FACTURES.getTabs().isEmpty()) {
-                                        Onglets o = (Onglets) mainController.TAB_FACTURES.getSelectionModel().getSelectedItem();
-                                        if (!o.getContentFacture().isEmpty()) {
-                                            o.addArticleOnFacture(o.getContentFacture().get(o.getContentFacture().size() - 1).getConditionnement(), 1, false, o.getContentFacture().get(o.getContentFacture().size() - 1).getPrix());
-                                        }
+            scene.setOnKeyPressed((KeyEvent event) -> {
+                if (control.match(event)) {
+                    mainController.createFactureDivers();
+                } else if (controlCmde.match(event)) {
+                    mainController.BTN_NEW_CMDE.fire();
+                } else if (controlPrint.match(event)) {
+                    mainController.BTN_PRINT.fire();
+                } else if (controlQuit.match(event)) {
+                    mainController.goingOutApplication();
+                } else if (controlMyCompte.match(event)) {
+                    mainController.openViewComptes();
+                } else {
+                    switch (event.getCode()) {
+                        case ALT:
+                        case ALT_GRAPH:
+                            mainController.TEXT_FIND.selectAll();
+                            mainController.TEXT_FIND.requestFocus();
+                            mainController.TEXT_FIND.setText("");
+                            break;
+                        case ADD:
+                            if (mainController.TAB_FACTURES != null) {
+                                if (!mainController.TAB_FACTURES.getTabs().isEmpty()) {
+                                    Onglets o = (Onglets) mainController.TAB_FACTURES.getSelectionModel().getSelectedItem();
+                                    if (!o.getContentFacture().isEmpty()) {
+                                        o.addArticleOnFacture(o.getContentFacture().get(o.getContentFacture().size() - 1).getConditionnement(), 1, false, o.getContentFacture().get(o.getContentFacture().size() - 1).getPrix());
                                     }
                                 }
-                                break;
-                            case SUBTRACT:
-                                if (mainController.TAB_FACTURES != null) {
-                                    if (!mainController.TAB_FACTURES.getTabs().isEmpty()) {
-                                        Onglets o = (Onglets) mainController.TAB_FACTURES.getSelectionModel().getSelectedItem();
-                                        if (!o.getContentFacture().isEmpty()) {
-                                            o.addArticleOnFacture(o.getContentFacture().get(o.getContentFacture().size() - 1).getConditionnement(), -1, false, o.getContentFacture().get(o.getContentFacture().size() - 1).getPrix());
-                                        }
+                            }
+                            break;
+                        case SUBTRACT:
+                            if (mainController.TAB_FACTURES != null) {
+                                if (!mainController.TAB_FACTURES.getTabs().isEmpty()) {
+                                    Onglets o = (Onglets) mainController.TAB_FACTURES.getSelectionModel().getSelectedItem();
+                                    if (!o.getContentFacture().isEmpty()) {
+                                        o.addArticleOnFacture(o.getContentFacture().get(o.getContentFacture().size() - 1).getConditionnement(), -1, false, o.getContentFacture().get(o.getContentFacture().size() - 1).getPrix());
                                     }
                                 }
-                                break;
-                            case Q:
-                                if (mainController.TAB_FACTURES != null) {
-                                    if (!mainController.TAB_FACTURES.getTabs().isEmpty()) {
-                                        Onglets o = (Onglets) mainController.TAB_FACTURES.getSelectionModel().getSelectedItem();
-                                        if (!o.getContentFacture().isEmpty()) {
-                                            mainController.openDlgCalculatrice(o, "F", "SET_QTE", o.getContentFacture().get(o.getContentFacture().size() - 1));
-                                        }
+                            }
+                            break;
+                        case Q:
+                            if (mainController.TAB_FACTURES != null) {
+                                if (!mainController.TAB_FACTURES.getTabs().isEmpty()) {
+                                    Onglets o = (Onglets) mainController.TAB_FACTURES.getSelectionModel().getSelectedItem();
+                                    if (!o.getContentFacture().isEmpty()) {
+                                        mainController.openDlgCalculatrice(o, "F", "SET_QTE", o.getContentFacture().get(o.getContentFacture().size() - 1));
                                     }
                                 }
-                                break;
-                            case V:
-                                mainController.BTN_SAVE.fire();
-                                break;
-                            default:
-                                System.err.println(" " + event.getCode().getName());
-                        }
+                            }
+                            break;
+                        case V:
+                            mainController.BTN_SAVE.fire();
+                            break;
+                        default:
+                            break;
                     }
                 }
             });

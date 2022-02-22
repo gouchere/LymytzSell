@@ -43,6 +43,7 @@ public class CustomComponents {
 
     /**
      * Gestion des tailles et redimensionnement*
+     * @param home
      */
     public static void initEventComponents(HomeCaisseController home) {
         home.SPLIT_CENTER.getDividers().get(1).positionProperty().addListener((ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {

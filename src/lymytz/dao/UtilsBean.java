@@ -32,9 +32,9 @@ public class UtilsBean {
 
     /*Générer les références des documents*/
     private YvsBaseModeleReference rechercheModeleReference(String mot, YvsAgences agence) {
-        if (!mot.toLowerCase().equals("")) {
-            String[] ch = new String[]{"designation"};
-            Object[] v = new Object[]{mot};
+        if (!mot.equals("")) {
+            String[] ch = new String[]{"designation","societe"};
+            Object[] v = new Object[]{mot, UtilsProject.currentAgence.getSociete()};
             String query = "YvsBaseModeleReference.findByElement";
             YvsBaseModeleReference l = (YvsBaseModeleReference) dao.findOneByNQ(query, ch, v);
             return l;
@@ -44,7 +44,6 @@ public class UtilsBean {
 
     public String genererReference(String element, Date date, long id, String type, String code, YvsAgences agence) {
         YvsBaseModeleReference model = rechercheModeleReference(element, agence);
-
         if ((model != null) ? model.getId() > 0 : false) {
             return getReferenceElement(model, date, id, type, code, agence);
         } else {
@@ -114,14 +113,6 @@ public class UtilsBean {
         return inter;
     }
 
-    public String genererPrefixe(String element, long id, String type, String code, YvsAgences agence) {
-        YvsBaseModeleReference modele = rechercheModeleReference(element, agence);
-        if ((modele != null) ? modele.getId() > 0 : false) {
-            return genererPrefixe(modele, id, type, code, agence);
-        }
-        return "";
-    }
-
     public String genererPrefixe(YvsBaseModeleReference modele, long id, String type, String code, YvsAgences agence) {
         String inter = modele.getPrefix();
         if (id > 0 && type != null) {
@@ -138,7 +129,6 @@ public class UtilsBean {
         if (modele.getCodePoint()) {
             String code = "";
             switch (modele.getElementCode()) {
-
                 case Constantes.SOCIETE: {
                     if (agence != null ? agence.getSociete().getCodeAbreviation().trim().length() > 0 : false) {
                         code = agence.getSociete().getCodeAbreviation();
@@ -168,27 +158,8 @@ public class UtilsBean {
                             break;
                         }
                         case Constantes.CAISSE: {
-//                    YvsMutCaisse en = (YvsMutCaisse) dao.loadObjectByNameQueries("YvsMutCaisse.findById", new String[]{"id"}, new Object[]{id});
-//                    if ((en != null ? en.getId() > 0 : false) && currentMutuel != null) {
-//                        if (en.getReferenceCaisse().length() > modele.getLongueurCodePoint()) {
-//                            modele.setCodePointvente(currentMutuel.getCode() + "/" + en.getReferenceCaisse().substring(0, modele.getLongueurCodePoint()));
-//                        } else {
-//                            modele.setCodePointvente(currentMutuel.getCode() + "/" + en.getReferenceCaisse());
-//                        }
-//                    }
-//                    return modele.getCodePointvente();
+                                break;
                         }
-//                case Constantes.TYPECREDIT: {
-//                    YvsMutTypeCredit p = (YvsMutTypeCredit) dao.loadObjectByNameQueries("YvsMutTypeCredit.findById", new String[]{"id"}, new Object[]{id});
-//                    if ((p != null ? p.getId() > 0 : false) && currentMutuel != null) {
-//                        if (p.getCode().length() > modele.getLongueurCodePoint()) {
-//                            modele.setCodePointvente(currentMutuel.getCode() + "/" + p.getCode().substring(0, modele.getLongueurCodePoint()));
-//                        } else {
-//                            modele.setCodePointvente(currentMutuel.getCode() + "/" + p.getCode());
-//                        }
-//                    }
-//                    return modele.getCodePointvente();
-//                }
                         default: {
                             if (agence != null ? agence.getSociete().getCodeAbreviation().trim().length() > 0 : false) {
                                 code = agence.getSociete().getCodeAbreviation();
@@ -204,7 +175,7 @@ public class UtilsBean {
                 return code;
             }
         }
-        return modele.getPrefix();
+        return "";
     }
 
     public String genererPrefixeComplet(YvsBaseModeleReference modele, Date date, long id, String type, String code, YvsAgences agence) {

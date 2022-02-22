@@ -99,6 +99,18 @@ public class YvsBaseCaisse implements Serializable {
 
     public YvsBaseCaisse() {
     }
+    public YvsBaseCaisse(YvsBaseCaisse c) {
+        super();
+        this.id=c.id;
+        this.intitule=c.intitule;
+        this.actif=c.actif;
+        this.adresse=c.adresse;
+        this.code=c.code;
+        this.codeAcces=c.codeAcces;
+        this.giveBilletage=c.giveBilletage;
+        this.modeRegDefaut=c.modeRegDefaut;
+        this.typeCaisse=c.typeCaisse;
+    }
 
     public YvsBaseCaisse(Long id) {
         this.id = id;

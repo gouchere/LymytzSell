@@ -30,7 +30,7 @@ import javax.persistence.TemporalType;
 @Table(name = "yvs_base_modele_reference")
 @NamedQueries({
     @NamedQuery(name = "YvsBaseModeleReference.findAll", query = "SELECT y FROM YvsBaseModeleReference y"),
-    @NamedQuery(name = "YvsBaseModeleReference.findByElement", query = "SELECT y FROM YvsBaseModeleReference y WHERE LOWER(y.element.designation) = LOWER(:designation) "),
+    @NamedQuery(name = "YvsBaseModeleReference.findByElement", query = "SELECT y FROM YvsBaseModeleReference y WHERE LOWER(y.element.designation) = LOWER(:designation) AND y.societe=:societe"),
     @NamedQuery(name = "YvsBaseModeleReference.findById", query = "SELECT y FROM YvsBaseModeleReference y WHERE y.id = :id"),
     @NamedQuery(name = "YvsBaseModeleReference.findByPrefix", query = "SELECT y FROM YvsBaseModeleReference y WHERE y.prefix = :prefix"),
     @NamedQuery(name = "YvsBaseModeleReference.findByJour", query = "SELECT y FROM YvsBaseModeleReference y WHERE y.jour = :jour"),

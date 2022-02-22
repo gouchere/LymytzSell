@@ -48,7 +48,8 @@ import javax.persistence.TemporalType;
     @NamedQuery(name = "YvsBaseArticleDepot.findByQuantiteAchat", query = "SELECT y FROM YvsBaseArticleDepot y WHERE y.quantiteAchat = :quantiteAchat"),
     @NamedQuery(name = "YvsBaseArticleDepot.findByQuantiteProduit", query = "SELECT y FROM YvsBaseArticleDepot y WHERE y.quantiteProduit = :quantiteProduit"),
     @NamedQuery(name = "YvsBaseArticleDepot.findDepotActifByArt", query = "SELECT DISTINCT(y.depot) FROM YvsBaseArticleDepot y WHERE y.depot.actif =true AND y.article=:article AND y.actif=true"),
-    @NamedQuery(name = "YvsBaseArticleDepot.findByCategorie", query = "SELECT y FROM YvsBaseArticleDepot y WHERE y.categorie = :categorie")})
+    @NamedQuery(name = "YvsBaseArticleDepot.findByCategorie", query = "SELECT y FROM YvsBaseArticleDepot y WHERE y.categorie = :categorie"),
+    @NamedQuery(name = "YvsBaseArticleDepot.findByArticleDepot", query = "SELECT y FROM YvsBaseArticleDepot y JOIN FETCH y.article JOIN FETCH y.depot WHERE y.article = :article AND y.depot = :depot"),})
 public class YvsBaseArticleDepot implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id

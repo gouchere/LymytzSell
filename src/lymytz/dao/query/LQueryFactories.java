@@ -31,6 +31,7 @@ import lymytz.dao.entity.service.EntityColumn;
 import lymytz.service.utils.Constantes;
 import lymytz.service.utils.UtilsProject;
 import lymytz.service.utils.log.LogFiles;
+import org.postgresql.util.PGobject;
 
 /**
  *
@@ -397,6 +398,34 @@ public class LQueryFactories<T extends Serializable> {
             }
         }
         return 0L;
+    }
+    
+    public boolean getEquilibreVente(long vente) {
+        
+        try {
+            Boolean dr = null;
+            EntityManager em = LocalDao.getInstance().getEntityManagerFactory().createEntityManager();
+            if (em != null) {
+                em.getTransaction().begin();
+                javax.persistence.Query q = em.createNativeQuery("select * from public.equilibre_vente(?)");
+                q.setParameter(1, vente);
+                Object[] re = (Object[]) q.getSingleResult();
+                if(re!=null){                    
+                    dr=(re[0]=="L");
+                }
+                em.getTransaction().commit();
+            }
+            return dr != null ? dr : false;
+        } catch (Exception ex) {
+            try {
+                LogFiles.addLogInFile("",ex);
+                LocalDao.setInstance(null);
+                Logger.getLogger(LQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (Exception ex1) {
+                Logger.getLogger(LQueryFactories.class.getName()).log(Level.SEVERE, null, ex1);
+            }
+        }
+        return false;
     }
 
     public Long executeSqlQuery(String query, Options[] params) {

@@ -28,8 +28,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import lymytz.dao.DateTimeAdapter;
+import lymytz.service.utils.Constantes;
 
 /**
  *
@@ -209,6 +208,8 @@ public class YvsComDocVentes extends YvsEntity implements Serializable {
     private List<YvsComptaCaissePieceVente> reglements;
     @OneToMany(mappedBy = "facture", fetch = FetchType.LAZY)
     private List<YvsComCommercialVente> commerciaux;
+    @OneToMany(mappedBy = "documentLie", fetch = FetchType.LAZY)
+    private List<YvsComDocVentes> documents;
 
     @Transient
     private Boolean synchroniser;
@@ -220,14 +221,22 @@ public class YvsComDocVentes extends YvsEntity implements Serializable {
     @Transient
     private String nom_client;
 
+    @Transient
+    private boolean facture;
+    @Transient
+    private String onfacture;
+
     public YvsComDocVentes() {
+        documents = new ArrayList<>();
     }
 
     public YvsComDocVentes(Long id) {
+        super();
         this.id = id;
     }
 
     public YvsComDocVentes(YvsComDocVentes y) {
+        super();
         this.id = y.id;
         this.annulerBy = y.annulerBy;
         this.cloturer = y.cloturer;
@@ -303,7 +312,9 @@ public class YvsComDocVentes extends YvsEntity implements Serializable {
         this.statut = y.statut;
         this.statutLivre = y.statutLivre;
         this.statutRegle = y.statutRegle;
-        this.trancheLivrer = new YvsGrhTrancheHoraire(y.trancheLivrer.getId());
+        if (trancheLivrer != null) {
+            this.trancheLivrer = new YvsGrhTrancheHoraire(y.trancheLivrer.getId());
+        }
         this.depotLivrer = new YvsBaseDepots(y.depotLivrer.getId());
         if (y.modelReglement != null) {
             this.modelReglement = new YvsBaseModelReglement(y.modelReglement.getId());
@@ -915,6 +926,38 @@ public class YvsComDocVentes extends YvsEntity implements Serializable {
 
     public void setCommerciaux(List<YvsComCommercialVente> commerciaux) {
         this.commerciaux = commerciaux;
+    }
+
+    public List<YvsComDocVentes> getDocuments() {
+        return documents;
+    }
+
+    public void setDocuments(List<YvsComDocVentes> documents) {
+        this.documents = documents;
+    }
+
+    @XmlTransient
+    public String getOnfacture() {
+        onfacture = Constantes.ETAT_VALIDE;
+        if (!isFacture()) {
+            onfacture = Constantes.ETAT_ATTENTE;
+            if (documents != null ? !documents.isEmpty() : false) {
+                onfacture = Constantes.ETAT_ENCOURS;
+                for (YvsComDocVentes d : documents) {
+                    if (d.getStatut().equals(Constantes.ETAT_VALIDE)) {
+                        onfacture = Constantes.ETAT_VALIDE;
+                        break;
+                    }
+                }
+            }
+        }
+        return onfacture;
+    }
+
+    @XmlTransient
+    public boolean isFacture() {
+        facture = (typeDoc != null ? (typeDoc.equals("FV") ? true : (typeDoc.equals("FAV") ? true : (typeDoc.equals("FRV")))) : false);
+        return facture;
     }
 
     @Override
