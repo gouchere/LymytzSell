@@ -258,46 +258,24 @@ public class ClaviersController extends ManagedApplication implements Initializa
                              */
                             Thread t = new Thread(() -> {
                                 if (page.confirmValideFacture(selectOnglet, montantAvance, getMontantAffiche(), source)) {
-                                    if (UtilsProject.paramConnection.getUsePrinter()) {
+                                    if (UtilsProject.paramConnection.getUsePrinter()) {                                        
                                         if (UtilsProject.paramConnection.getTypeRapport().equals(UtilsProject.TYPE_RAPPORT_TICKET)) {
-                                            Platform.runLater(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    PrintTiket pt = new PrintTiket(page, selectOnglet, montantAvance, "XX");
-                                                    pt.setFacture(new YvsComDocVentes(selectOnglet.getFacture()));
-                                                    pt.setMontantAvance(selectOnglet.getFacture().getMontantAvance());
-                                                    pt.setMontantRecu(selectOnglet.getMontantRecu());
-                                                    pt.setMontantTotal(selectOnglet.getFacture().getMontantTotal());
-                                                    pt.setNetAPayer(selectOnglet.getFacture().getMontantTotal());
-                                                    pt.run();
-                                                }
+                                            Platform.runLater(() -> {
+                                                PrintTiket pt = new PrintTiket(page, selectOnglet, montantAvance, "XX");
+                                                pt.setFacture(new YvsComDocVentes(selectOnglet.getFacture()));
+                                                pt.setMontantAvance(selectOnglet.getFacture().getMontantAvance());
+                                                pt.setMontantRecu(selectOnglet.getMontantRecu());
+                                                pt.setMontantTotal(selectOnglet.getFacture().getMontantTotal());
+                                                pt.setNetAPayer(selectOnglet.getFacture().getMontantTotal());
+                                                new Thread(pt).start();
                                             });
                                         } else {
-                                            Platform.runLater(new Runnable() {
-
-                                                @Override
-                                                public void run() {
-                                                    PrintFacture preview = new PrintFacture(page, selectOnglet);
-                                                    preview.loadFactureToPrint(selectOnglet.getFacture());
-                                                }
+                                            Platform.runLater(() -> {
+                                                PrintFacture preview = new PrintFacture(page, selectOnglet);
+                                                preview.loadFactureToPrint(selectOnglet.getFacture());
                                             });
                                         }
                                     }
-//                                    if (UtilsProject.paramConnection.getUsePrinter()) {
-                                    //crée immédiatement une nouvelle facture avec le client divers
-                                    Platform.runLater(new Runnable() {
-
-                                        @Override
-                                        public void run() {
-
-                                            VBox root = null;
-                                            FactureController controler = LymytzService.openWindow("main/form_create_facture.fxml", "Lymytz /Nouvelle Facture", root, 600.0, 305.0, false, page);
-                                            if (controler != null) {
-                                                controler.initDataForm(page);
-                                            }
-                                        }
-                                    });
-//                                    }
                                 }
                             });
                             t.start();

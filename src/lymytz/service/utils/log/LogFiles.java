@@ -79,18 +79,20 @@ public class LogFiles {
                 f.renameTo(new File("log/" + sourceFile.replace(".conf", "").concat("_log_").concat(Constantes.dfh.format(new Date())).concat(".conf")));
                 createLogfile();
             }
-            final FileWriter fw = new FileWriter(f, true);
-            try (PrintWriter pw = new PrintWriter(fw, true)) {
-                pw.write(Constantes.dfh.format(new Date()) + " | " + getSeverity(severity));
-                if (severity == Severity.ERROR) {
-                    pw.println();
-                }
-                if (message != null) {
-                    pw.write(message);
-                pw.println();
-                }
-                if (ex != null) {
-                    ex.printStackTrace(pw);
+            if (f.exists()) {
+                final FileWriter fw = new FileWriter(f, true);
+                try (PrintWriter pw = new PrintWriter(fw, true)) {
+                    pw.write(Constantes.dfh.format(new Date()) + " | " + getSeverity(severity));
+                    if (severity == Severity.ERROR) {
+                        pw.println();
+                    }
+                    if (message != null) {
+                        pw.write(message);
+                        pw.println();
+                    }
+                    if (ex != null) {
+                        ex.printStackTrace(pw);
+                    }
                 }
             }
         } catch (IOException ex1) {

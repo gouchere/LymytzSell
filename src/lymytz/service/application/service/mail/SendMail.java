@@ -33,7 +33,6 @@ public class SendMail {
     Session session;
 
     public SendMail() {
-        System.err.println(" read param...");
         p.put("mail.transport.protocol", "smtp");
         p.put("mail.smtp.host", "mail.lymytz.com");
 //        p.put("mail.smtp.socketFactory.port", "465");

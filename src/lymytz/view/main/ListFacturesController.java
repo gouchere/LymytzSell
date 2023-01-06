@@ -28,6 +28,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
@@ -39,11 +40,13 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.CheckBoxTableCell;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import lymytz.dao.Options;
+import lymytz.dao.ParamOption;
 import lymytz.dao.entity.YvsComDocVentes;
 import lymytz.dao.query.LQueryFactories;
 import lymytz.dao.query.RQueryFactories;
@@ -51,6 +54,7 @@ import lymytz.service.application.Controller;
 import lymytz.service.application.bean.Factures;
 import lymytz.service.application.loader.LoaderFacture;
 import lymytz.service.utils.Constantes;
+import lymytz.service.utils.EtatDoc;
 import lymytz.service.utils.LymytzService;
 import lymytz.service.utils.UtilsProject;
 import lymytz.view.LocalLoader;
@@ -69,6 +73,8 @@ public class ListFacturesController implements Initializable, Controller {
     ContextMenu CTM_TV = new ContextMenu();
 
     private List<String> types;
+    private String type;
+    List<ParamOption> paramsOptions;
 
     @FXML
     private TableView<Factures> TABLE_FACTURE;
@@ -107,13 +113,14 @@ public class ListFacturesController implements Initializable, Controller {
     @FXML
     private Label PROGRESS_LABEL;
     @FXML
-    private ComboBox<String> CB_TYPE;
+    private ComboBox<EtatDoc> CB_STATUT_DOC;
     @FXML
-    private ComboBox<String> CB_STATUT_DOC;
+    private ComboBox<EtatDoc> CB_STATUT_LIV;
     @FXML
-    private ComboBox<String> CB_STATUT_LIV;
+    private ComboBox<EtatDoc> CB_STATUT_REG;
+
     @FXML
-    private ComboBox<String> CB_STATUT_REG;
+    private CheckBox CHK_CMDE_SERVIE;
 
     public ObservableList<Factures> getItems() {
         return items;
@@ -132,6 +139,7 @@ public class ListFacturesController implements Initializable, Controller {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
+        paramsOptions = new ArrayList<>();
         initColumnData();
     }
 
@@ -139,14 +147,18 @@ public class ListFacturesController implements Initializable, Controller {
 
     public void initPage(HomeCaisseController page, String type) {
         this.page = page;
+        this.type = type;
         //context menu
         MenuItem itemSynchro = new MenuItem("Synchroniser ");
         MenuItem itemActualiser = new MenuItem("Actualiser ");
         CTM_TV.getItems().add(itemSynchro);
         CTM_TV.getItems().add(itemActualiser);
+        initParamsQueries(type);
         loadDataFactures(type);
         initInfoSearch();
-        TABLE_FACTURE.setContextMenu(CTM_TV);
+        if (UtilsProject.REPLICATION) {
+            TABLE_FACTURE.setContextMenu(CTM_TV);
+        }
         TABLE_FACTURE.setItems(items);
         TABLE_FACTURE.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Factures>() {
 
@@ -157,10 +169,9 @@ public class ListFacturesController implements Initializable, Controller {
                 page.displayFactureOnView(doc);
             }
         });
-        CB_TYPE.getItems().addAll(Constantes.TYPE_FV, Constantes.TYPE_BCV);
-        CB_STATUT_DOC.getItems().addAll(Constantes.ETAT_ATTENTE, Constantes.ETAT_VALIDE, Constantes.ETAT_ENCOURS);
-        CB_STATUT_LIV.getItems().addAll(Constantes.ETAT_ATTENTE, Constantes.ETAT_LIVRE, Constantes.ETAT_ENCOURS);
-        CB_STATUT_REG.getItems().addAll(Constantes.ETAT_ATTENTE, Constantes.ETAT_REGLE, Constantes.ETAT_ENCOURS);
+        CB_STATUT_DOC.getItems().addAll(new EtatDoc(null, "Tout"), new EtatDoc(Constantes.ETAT_VALIDE, "Non Validé "));
+        CB_STATUT_LIV.getItems().addAll(new EtatDoc(null, "Tout"), new EtatDoc(Constantes.ETAT_LIVRE, "Non Livré "));
+        CB_STATUT_REG.getItems().addAll(new EtatDoc(null, "Tout"), new EtatDoc(Constantes.ETAT_REGLE, "Non Réglé "));
         types = new ArrayList<>();
 //        types.add(Constantes.TYPE_FV);
         types.add(Constantes.TYPE_BCV);
@@ -185,113 +196,41 @@ public class ListFacturesController implements Initializable, Controller {
     }
 
     private void initColumnData() {
-        COL_CLIENT.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Factures, String>, ObservableValue<String>>() {
-            @Override
-            public ObservableValue<String> call(TableColumn.CellDataFeatures<Factures, String> param) {
-                return new SimpleObjectProperty(param.getValue().getNomClient());
-            }
-        });
-        COL_DATE.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Factures, String>, ObservableValue<String>>() {
-            @Override
-            public ObservableValue<String> call(TableColumn.CellDataFeatures<Factures, String> param) {
-                return new SimpleObjectProperty((param.getValue().getDate() != null) ? Constantes.dfD.format(param.getValue().getDate()) : "");
-            }
-        });
-        COL_TOTAL.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Factures, String>, ObservableValue<String>>() {
-            @Override
-            public ObservableValue<String> call(TableColumn.CellDataFeatures<Factures, String> param) {
-                return new SimpleObjectProperty((param.getValue().getTotal() != null) ? Constantes.nbf.format(param.getValue().getTotal()) : "");
-            }
-        });
-        COL_HEURE.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Factures, String>, ObservableValue<String>>() {
-            @Override
-            public ObservableValue<String> call(TableColumn.CellDataFeatures<Factures, String> param) {
-                return new SimpleObjectProperty((param.getValue().getHeure() != null) ? Constantes.dfh.format(param.getValue().getHeure()) : "");
-            }
-        });
-        COL_D_LIV.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Factures, String>, ObservableValue<String>>() {
-            @Override
-            public ObservableValue<String> call(TableColumn.CellDataFeatures<Factures, String> param) {
-                return new SimpleObjectProperty((param.getValue().getDateLiv() != null) ? Constantes.dfh.format(param.getValue().getDateLiv()) : "");
-            }
-        });
-        COL_ID.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Factures, Long>, ObservableValue<Long>>() {
-            @Override
-            public ObservableValue<Long> call(TableColumn.CellDataFeatures<Factures, Long> param) {
-                return new SimpleObjectProperty(param.getValue().getId());
-            }
-        });
-        COL_N.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Factures, Integer>, ObservableValue<Integer>>() {
-            @Override
-            public ObservableValue<Integer> call(TableColumn.CellDataFeatures<Factures, Integer> param) {
-                return new SimpleObjectProperty(param.getValue().getNumLine());
-            }
-        });
-        COL_NUM.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Factures, String>, ObservableValue<String>>() {
-            @Override
-            public ObservableValue<String> call(TableColumn.CellDataFeatures<Factures, String> param) {
-                return new SimpleObjectProperty(param.getValue().getNumDoc());
-            }
-        });
-        COL_TYPE.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Factures, String>, ObservableValue<String>>() {
-            @Override
-            public ObservableValue<String> call(TableColumn.CellDataFeatures<Factures, String> param) {
-                return new SimpleObjectProperty(param.getValue().getType());
-            }
-        });
-        COL_LIV.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Factures, Boolean>, ObservableValue<Boolean>>() {
-            @Override
-            public ObservableValue<Boolean> call(TableColumn.CellDataFeatures<Factures, Boolean> param) {
-                return new SimpleBooleanProperty(param.getValue().getStatutLivraison().equals(Constantes.ETAT_LIVRE));
-            }
-        });
-        COL_REG.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Factures, Boolean>, ObservableValue<Boolean>>() {
-            @Override
-            public ObservableValue<Boolean> call(TableColumn.CellDataFeatures<Factures, Boolean> param) {
-                return new SimpleBooleanProperty(param.getValue().getStatutReglement().equals(Constantes.ETAT_REGLE));
-            }
-        });
-        COL_VALIDE.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Factures, Boolean>, ObservableValue<Boolean>>() {
-            @Override
-            public ObservableValue<Boolean> call(TableColumn.CellDataFeatures<Factures, Boolean> param) {
-                if (param.getValue().getStatutDoc() != null) {
-                    return new SimpleBooleanProperty(param.getValue().getStatutDoc().equals(Constantes.ETAT_VALIDE));
-                } else {
-                    return new SimpleBooleanProperty(false);
-                }
+        COL_CLIENT.setCellValueFactory((TableColumn.CellDataFeatures<Factures, String> param) -> new SimpleObjectProperty(param.getValue().getNomClient()));
+        COL_DATE.setCellValueFactory((TableColumn.CellDataFeatures<Factures, String> param) -> new SimpleObjectProperty((param.getValue().getDate() != null) ? Constantes.dfD.format(param.getValue().getDate()) : ""));
+        COL_TOTAL.setCellValueFactory((TableColumn.CellDataFeatures<Factures, String> param) -> new SimpleObjectProperty((param.getValue().getTotal() != null) ? Constantes.nbf.format(param.getValue().getTotal()) : ""));
+        COL_HEURE.setCellValueFactory((TableColumn.CellDataFeatures<Factures, String> param) -> new SimpleObjectProperty((param.getValue().getHeure() != null) ? Constantes.dfh.format(param.getValue().getHeure()) : ""));
+        COL_D_LIV.setCellValueFactory((TableColumn.CellDataFeatures<Factures, String> param) -> new SimpleObjectProperty((param.getValue().getDateLiv() != null) ? Constantes.dfh.format(param.getValue().getDateLiv()) : ""));
+        COL_ID.setCellValueFactory((TableColumn.CellDataFeatures<Factures, Long> param) -> new SimpleObjectProperty(param.getValue().getId()));
+        COL_N.setCellValueFactory((TableColumn.CellDataFeatures<Factures, Integer> param) -> new SimpleObjectProperty(param.getValue().getNumLine()));
+        COL_NUM.setCellValueFactory((TableColumn.CellDataFeatures<Factures, String> param) -> new SimpleObjectProperty(param.getValue().getNumDoc()));
+        COL_TYPE.setCellValueFactory((TableColumn.CellDataFeatures<Factures, String> param) -> new SimpleObjectProperty(param.getValue().getType()));
+        COL_LIV.setCellValueFactory((TableColumn.CellDataFeatures<Factures, Boolean> param) -> new SimpleBooleanProperty(param.getValue().getStatutLivraison().equals(Constantes.ETAT_LIVRE)));
+        COL_REG.setCellValueFactory((TableColumn.CellDataFeatures<Factures, Boolean> param) -> new SimpleBooleanProperty(param.getValue().getStatutReglement().equals(Constantes.ETAT_REGLE)));
+        COL_VALIDE.setCellValueFactory((TableColumn.CellDataFeatures<Factures, Boolean> param) -> {
+            if (param.getValue().getStatutDoc() != null) {
+                return new SimpleBooleanProperty(param.getValue().getStatutDoc().equals(Constantes.ETAT_VALIDE));
+            } else {
+                return new SimpleBooleanProperty(false);
             }
         });
 
-        COL_REG.setCellFactory(new Callback<TableColumn<Factures, Boolean>, TableCell<Factures, Boolean>>() {
-            @Override
-            public TableCell<Factures, Boolean> call(TableColumn<Factures, Boolean> param) {
-                CheckBoxTableCell cell = new CheckBoxTableCell();
-                cell.setDisable(true);
-                return cell;
-            }
+        COL_REG.setCellFactory((TableColumn<Factures, Boolean> param) -> {
+            CheckBoxTableCell cell = new CheckBoxTableCell();
+            cell.setDisable(true);
+            return cell;
         });
-        COL_VALIDE.setCellFactory(new Callback<TableColumn<Factures, Boolean>, TableCell<Factures, Boolean>>() {
-            @Override
-            public TableCell<Factures, Boolean> call(TableColumn<Factures, Boolean> param) {
-                CheckBoxTableCell cell = new CheckBoxTableCell();
-                cell.setDisable(true);
-                return cell;
-            }
+        COL_VALIDE.setCellFactory((TableColumn<Factures, Boolean> param) -> {
+            CheckBoxTableCell cell = new CheckBoxTableCell();
+            cell.setDisable(true);
+            return cell;
         });
-        COL_LIV.setCellFactory(new Callback<TableColumn<Factures, Boolean>, TableCell<Factures, Boolean>>() {
-            @Override
-            public TableCell<Factures, Boolean> call(TableColumn<Factures, Boolean> param) {
-                CheckBoxTableCell cell = new CheckBoxTableCell();
-                cell.setDisable(true);
-                return cell;
-            }
+        COL_LIV.setCellFactory((TableColumn<Factures, Boolean> param) -> {
+            CheckBoxTableCell cell = new CheckBoxTableCell();
+            cell.setDisable(true);
+            return cell;
         });
-        COL_SYNC.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Factures, Long>, ObservableValue<Long>>() {
-            @Override
-            public ObservableValue<Long> call(TableColumn.CellDataFeatures<Factures, Long> param) {
-                return new SimpleObjectProperty(param.getValue().getIdDistant());
-            }
-        });
+        COL_SYNC.setCellValueFactory((TableColumn.CellDataFeatures<Factures, Long> param) -> new SimpleObjectProperty(param.getValue().getIdDistant()));
         COL_LIV.getStyleClass().add("colsOptions");
         COL_SYNC.getStyleClass().add("colsOptions");
         COL_VALIDE.getStyleClass().add("colsOptions");
@@ -303,29 +242,36 @@ public class ListFacturesController implements Initializable, Controller {
 
     }
 
+    public void initParamsQueries(String type) {
+        paramsOptions.clear();
+        paramsOptions.add(new ParamOption("d.type_doc", type, "="));
+        paramsOptions.add(new ParamOption("d.statut", Constantes.ETAT_ANNULE, "!="));
+        if (UtilsProject.headerDoc != null) {
+            if (type.equals(Constantes.TYPE_FV)) {
+                paramsOptions.add(new ParamOption("e.id", UtilsProject.headerDoc.getId(), "="));
+            } else {
+                paramsOptions.add(new ParamOption("d.statut_livre", Constantes.ETAT_LIVRE, "!="));
+                paramsOptions.add(new ParamOption("e.agence", UtilsProject.currentAgence.getId(), "="));
+            }
+        }
+    }
+
     private void loadDataFactures(String type) {
         try {
             if (UtilsProject.headerDoc != null) {
-                LoaderFacture task = new LoaderFacture(type);
-
+                LoaderFacture task = new LoaderFacture(type, paramsOptions);
                 PROGRESS.progressProperty().unbind();
                 PROGRESS.progressProperty().bind(task.progressProperty());
                 PROGRESS_LABEL.textProperty().unbind();
                 PROGRESS_LABEL.textProperty().bind(task.messageProperty());
-                task.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
-                    @Override
-                    public void handle(WorkerStateEvent event) {
-                        Platform.runLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                items.clear();
-                                items.addAll(task.getValue());
-                                TABLE_FACTURE.setItems(items);
-                                PROGRESS_LABEL.textProperty().unbind();
-                                PROGRESS_LABEL.setText("terminé !");
-                            }
-                        });
-                    }
+                task.setOnSucceeded((WorkerStateEvent event) -> {
+                    Platform.runLater(() -> {
+                        items.clear();
+                        items.addAll(task.getValue());
+                        TABLE_FACTURE.setItems(items);
+                        PROGRESS_LABEL.textProperty().unbind();
+                        PROGRESS_LABEL.setText("terminé !");
+                    });
                 });
                 Thread t = new Thread(task);
                 t.setName("Loader facture");
@@ -337,54 +283,6 @@ public class ListFacturesController implements Initializable, Controller {
             Logger.getLogger(ListFacturesController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-//
-//    @FXML
-//    private void findByClient(KeyEvent event) {
-//        findByClient();
-//    }
-//
-//    @FXML
-//    private void findByNumDoc(KeyEvent event) {
-//        findByNumDoc();
-//    }
-//
-//    @FXML
-//    private void findByTypeDoc(ActionEvent event) {
-//        findByTypeDoc();
-//    }
-////
-////    private void findByNumDoc() {
-//        String operateur = "LIKE";
-//        ParametreRequete p = new ParametreRequete("y.numDoc", "numDoc", null, operateur, "AND");
-//        if (TXT_REF.getText() != null ? !TXT_REF.getText().isEmpty() : false) {
-//            p.setObjet("%" + TXT_REF.getText().toUpperCase() + "%");
-//        }
-//        paginator.addParam(p);
-//        loadDataFactures();
-//    }
-//
-//    private void findByClient() {
-//        ParametreRequete p = new ParametreRequete(null, "client", null, "=", "AND");
-//        String operateuClt = "LIKE";
-//        String predicat = (operateuClt.trim().equals("LIKE")) ? "OR" : "OR";
-//        if (TXT_CLIENT.getText() != null ? !TXT_CLIENT.getText().isEmpty() : false) {
-//            p = new ParametreRequete(null, "client", (opClient(false) + TXT_CLIENT.getText().toUpperCase() + opClient(true)), operateuClt, "AND");
-//            p.getOtherExpression().add(new ParametreRequete("UPPER(y.nomClient)", "client", TXT_CLIENT.getText().toUpperCase() + "%", operateuClt, predicat));
-//            p.getOtherExpression().add(new ParametreRequete("UPPER(y.client.codeClient)", "client", TXT_CLIENT.getText().toUpperCase() + "%", operateuClt, predicat));
-//            p.getOtherExpression().add(new ParametreRequete("UPPER(y.client.nom)", "client", TXT_CLIENT.getText().toUpperCase() + "%", operateuClt, predicat));
-//        }
-//        paginator.addParam(p);
-//        loadDataFactures();
-//    }
-//
-//    private void findByTypeDoc() {
-//        ParametreRequete p = new ParametreRequete("y.typeDoc", "typeDoc", null, "=", "AND");
-//        if (CB_TYPE.getValue() != null ? !CB_TYPE.getValue().isEmpty() : false) {
-//            p.setObjet(CB_TYPE.getValue());
-//        }
-//        paginator.addParam(p);
-//        loadDataFactures();
-//    }
 
     List<YvsComDocVentes> executeQuery() {
         List<YvsComDocVentes> re = null;
@@ -403,32 +301,6 @@ public class ListFacturesController implements Initializable, Controller {
 //                new Object[]{UtilsProject.headerDoc.getCreneau().getCreneauPoint().getPoint(), types, UtilsProject.headerDoc, Constantes.ETAT_VALIDE, UtilsProject.currentAgence, Constantes.ETAT_LIVRE, Constantes.ETAT_REGLE});
 //        re.addAll(l);
         return re;
-    }
-
-    private String opClient(boolean g) {
-//        RadioButton type = (RadioButton) G_CLIENT.getSelectedToggle();
-//        if (type.getText().equals("All")) {
-//            if (g) {
-//                return (type.getText().equals("debut")) ? "%" : "";
-//            } else {
-//                return (type.getText().equals("fin")) ? "%" : "";
-//            }
-//        } else {
-        return "";
-//        }
-    }
-
-    private String opNumdoc(boolean g) {
-//        RadioButton type = (RadioButton) G_REF.getSelectedToggle();
-//        if (!type.getText().equals("All")) {
-//            if (g) {
-//                return (type.getText().equals("debut")) ? "%" : "";
-//            } else {
-//                return (type.getText().equals("fin")) ? "%" : "";
-//            }
-//        } else {
-        return "";
-//        }
     }
 
     private String getOperateur(RadioButton type) {
@@ -524,5 +396,133 @@ public class ListFacturesController implements Initializable, Controller {
         } else {
             LymytzService.openAlertDialog("", "", "Aucune donnée mise à jour", Alert.AlertType.WARNING);
         }
+    }
+
+    @FXML
+    public void filterByStatutLiv(ActionEvent ev) {
+        EtatDoc etat = CB_STATUT_LIV.getValue();
+        ParamOption o = new ParamOption("d.statut_livre", Constantes.ETAT_LIVRE, "!=");
+        if (etat.getCodeEtat() != null) {
+            if (!paramsOptions.contains(o)) {
+                paramsOptions.add(o);
+            } else {
+                int idx = paramsOptions.indexOf(o);
+                paramsOptions.remove(idx);
+                paramsOptions.add(o);
+            }
+        } else {
+            if (type.equals(Constantes.TYPE_FV)) {
+                paramsOptions.remove(o);
+            }
+        }
+        loadDataFactures("");
+    }
+
+    @FXML
+    public void filterByStatutReg(ActionEvent ev) {
+        EtatDoc etat = CB_STATUT_REG.getValue();
+        ParamOption o = new ParamOption("d.statut_regle", Constantes.ETAT_REGLE, "!=");
+        if (etat.getCodeEtat() != null) {
+            if (!paramsOptions.contains(o)) {
+                paramsOptions.add(o);
+            } else {
+                int idx = paramsOptions.indexOf(o);
+                paramsOptions.remove(idx);
+                paramsOptions.add(o);
+            }
+        } else {
+            paramsOptions.remove(o);
+        }
+        loadDataFactures("");
+    }
+
+    @FXML
+    public void filterByStatutDoc(ActionEvent ev) {
+        EtatDoc etat = CB_STATUT_DOC.getValue();
+        ParamOption o = new ParamOption("d.statut", Constantes.ETAT_VALIDE, "!=");
+        if (etat.getCodeEtat() != null) {
+            if (!paramsOptions.contains(o)) {
+                paramsOptions.add(o);
+            } else {
+                int idx = paramsOptions.indexOf(o);
+                paramsOptions.remove(idx);
+                paramsOptions.add(o);
+            }
+        } else {
+            if (!paramsOptions.contains(o)) {
+                paramsOptions.add(o);
+            } else {
+                int idx = paramsOptions.indexOf(o);
+                paramsOptions.remove(idx);
+                paramsOptions.add(new ParamOption("d.statut", Constantes.ETAT_ANNULE, "!="));
+            }
+        }
+        loadDataFactures("");
+    }
+
+    @FXML
+    public void findByNumDoc(KeyEvent ev) {
+        ParamOption o = new ParamOption("d.num_doc", "%" + TXT_REF.getText() + "%", " LIKE ");
+        if (Constantes.asString(TXT_REF.getText())) {
+            if (TXT_REF.getText().length() > 2) {
+                if (!paramsOptions.contains(o)) {
+                    paramsOptions.add(o);
+                } else {
+                    int idx = paramsOptions.indexOf(o);
+                    paramsOptions.remove(idx);
+                    paramsOptions.add(o);
+                }
+                loadDataFactures("");
+            } else if (TXT_REF.getText().length() == 0) {
+                if (paramsOptions.contains(o)) {
+                    paramsOptions.remove(o);
+                    loadDataFactures("");
+                }
+            }
+        } else {
+            if (paramsOptions.contains(o)) {
+                paramsOptions.remove(o);
+                loadDataFactures("");
+            }
+        }
+    }
+
+    @FXML
+    public void findByCustomer(KeyEvent ev) {
+        ParamOption o = new ParamOption("cl.nom", "%" + TXT_CLIENT.getText() + "%", " LIKE ");
+        if (Constantes.asString(TXT_CLIENT.getText())) {
+            if (TXT_CLIENT.getText().length() > 2) {
+                if (!paramsOptions.contains(o)) {
+                    paramsOptions.add(o);
+                } else {
+                    int idx = paramsOptions.indexOf(o);
+                    paramsOptions.remove(idx);
+                    paramsOptions.add(o);
+                }
+                loadDataFactures("");
+            } else if (TXT_CLIENT.getText().length() == 0) {
+                if (paramsOptions.contains(o)) {
+                    paramsOptions.remove(o);
+                    loadDataFactures("");
+                }
+            }
+        } else {
+            if (paramsOptions.contains(o)) {
+                paramsOptions.remove(o);
+                loadDataFactures("");
+            }
+        }
+    }
+
+    @FXML
+    public void findCommandeServi(ActionEvent ev) {
+        ParamOption o = new ParamOption("d.document_lie", null, " IS NOT NULL ");
+        if (CHK_CMDE_SERVIE.isSelected()) {
+            paramsOptions.add(o);
+        } else {
+            int idx = paramsOptions.indexOf(o);
+            paramsOptions.remove(idx);
+        }
+        loadDataFactures("");
     }
 }

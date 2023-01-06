@@ -233,7 +233,6 @@ public class FactureController implements Initializable, Controller {
         if (local != null) {
             date = Date.from(local.atZone(ZoneId.systemDefault()).toInstant());
         }
-        System.err.println(" ... Date confirm Liv"+Constantes.dfD.format(date));
         createFactureVente(selectClient, ty, (CB_SECTEUR.getValue() != null) ? CB_SECTEUR.getValue() : CB_VILLE.getValue(), TXT_NAME_CLIENT.getText(), date, TXT_TEL.getText());
     }
 

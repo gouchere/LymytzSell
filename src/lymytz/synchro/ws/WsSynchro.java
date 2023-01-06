@@ -130,7 +130,6 @@ public class WsSynchro<T extends Serializable> {
             WebTarget target = client.target(getUriAdresse("compta/v1/" + uri));
             Invocation.Builder invocation = target.request(MediaType.APPLICATION_JSON);
             Response rep = invocation.post(Entity.json(entity.toString()));
-            System.err.println("Réponse " + rep.getStatus());
             ResultatAction<T> r = rep.readEntity(ResultatAction.class);
             return r;
 //            }
@@ -202,6 +201,7 @@ public class WsSynchro<T extends Serializable> {
      * @param date
      * @return
      */
+    
     public static Double getStock(long article, long cond, long depot, String date) {
         try {
             Client client = ClientBuilder.newClient(new ClientConfig());
@@ -215,6 +215,25 @@ public class WsSynchro<T extends Serializable> {
             invocation.header("unite", cond);
             invocation.header("lot", 0);
             invocation.header("date", date);
+            Response rep = invocation.get();
+            Double r = rep.readEntity(Double.class);
+            return r;
+        } catch (Exception ex) {
+            LogFiles.addLogInFile("", Severity.ERROR, ConsUtil.SOURCE_LOG_FILE_EXCEPTION, ex);
+            Logger.getLogger(WsSynchro.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+    
+    public static Double getPr(long article, long cond, long depot, String date) {
+        try {
+            Client client = ClientBuilder.newClient(new ClientConfig());
+            WebTarget target = client.target(WsSynchro.getUriAdresse("commercial/getPr"));
+            Invocation.Builder invocation = target.request(MediaType.APPLICATION_JSON);
+            invocation.header("depot_", depot);
+            invocation.header("article_", article);
+            invocation.header("unite_", cond);
+            //invocation.header("date", date);
             Response rep = invocation.get();
             Double r = rep.readEntity(Double.class);
             return r;

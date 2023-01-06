@@ -132,12 +132,12 @@
                               </HBox>
                               <HBox prefHeight="25.0" prefWidth="376.0">
                                  <children>
-                                    <Label prefHeight="73.0" prefWidth="215.0" text="Solde caisse courant" textFill="#7f5151">
+                                    <Label prefHeight="73.0" prefWidth="215.0" text="Commandes Reçu" textFill="#7f5151">
                                        <font>
                                           <Font size="15.0" />
                                        </font>
                                     </Label>
-                                    <Label fx:id="F_SOLDE_CAISSE" prefHeight="71.0" prefWidth="160.0" text="--" textFill="#2232eb">
+                                    <Label fx:id="F_CMDE_RECU" prefHeight="71.0" prefWidth="160.0" text="--" textFill="#2232eb">
                                        <font>
                                           <Font name="System Bold" size="20.0" />
                                        </font>
@@ -151,27 +151,27 @@
                         </HBox>
                         <HBox layoutX="20.0" layoutY="122.0" prefHeight="130.0" prefWidth="534.0" style="-fx-background-color: #cde5fa;">
                            <children>
-                              <HBox prefHeight="25.0" prefWidth="316.0">
+                              <HBox prefHeight="130.0" prefWidth="238.0">
                                  <children>
-                                    <Label prefHeight="134.0" prefWidth="140.0" text="Nombre de tickets" />
-                                              <Label fx:id="F_NB_TICKET_RECU" prefHeight="134.0" prefWidth="193.0" text="NN">
+                                    <Label prefHeight="130.0" prefWidth="107.0" text="Nombre de tickets" />
+                                              <Label fx:id="F_NB_TICKET_RECU" prefHeight="130.0" prefWidth="111.0" text="NN">
                                                   <font>
                                                       <Font name="System Bold" size="15.0" />
                                                   </font>
                                               </Label>
                                  </children>
                               </HBox>
-                              <VBox prefHeight="21.0" prefWidth="374.0">
+                              <VBox prefHeight="130.0" prefWidth="451.0">
                                  <children>
                                     <HBox prefHeight="100.0" prefWidth="200.0">
                                        <children>
-                                          <Label prefHeight="57.0" prefWidth="123.0" text="Factures directe (H.R)" />
-                                                    <Label fx:id="F_NB_FACT_SAVE" prefHeight="70.0" prefWidth="60.0" text="XX">
+                                          <Label prefHeight="57.0" prefWidth="151.0" text="Factures directe (H.R)" />
+                                                    <Label fx:id="F_NB_FACT_SAVE" alignment="CENTER_RIGHT" prefHeight="65.0" prefWidth="126.0" text="XX">
                                                         <font>
                                                             <Font name="System Bold" size="15.0" />
                                                         </font>
                                                     </Label>
-                                          <VBox prefHeight="65.0" prefWidth="190.0">
+                                          <VBox prefHeight="65.0" prefWidth="216.0">
                                              <children>
                                                 <HBox prefHeight="100.0" prefWidth="400.0">
                                                    <children>
@@ -229,12 +229,12 @@
                                     <HBox layoutX="10.0" layoutY="10.0" prefHeight="100.0" prefWidth="200.0">
                                        <children>
                                           <Label prefHeight="63.0" prefWidth="132.0" text="Commandes" />
-                                                    <Label fx:id="F_NB_CMDE_SAVE" prefHeight="61.0" prefWidth="60.0" text="XX">
+                                                    <Label fx:id="F_NB_CMDE_SAVE" alignment="CENTER_RIGHT" contentDisplay="RIGHT" prefHeight="61.0" prefWidth="109.0" text="XX" textAlignment="RIGHT">
                                                         <font>
                                                             <Font name="System Bold" size="15.0" />
                                                         </font>
                                                     </Label>
-                                          <VBox prefHeight="200.0">
+                                          <VBox prefHeight="65.0" prefWidth="201.0">
                                              <children>
                                                 <HBox prefHeight="100.0" prefWidth="200.0">
                                                    <children>

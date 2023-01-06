@@ -96,7 +96,6 @@ public class ServiceCreateFacture implements Runnable {
                 if (!UtilsProject.headerDoc.getDateEntete().after(new Date())) {
                     String numDoc = typeDoc;
                     if (client != null && Constantes.asString(numDoc)) {
-                        LQueryFactories rq = new LQueryFactories();
                         final YvsComDocVentes bean = new YvsComDocVentes();
                         bean.setNumDoc(numDoc);
                         bean.setLivraisonAuto(true);
@@ -121,7 +120,6 @@ public class ServiceCreateFacture implements Runnable {
                         bean.setStatutLivre(Constantes.ETAT_ATTENTE);
                         bean.setStatutRegle(Constantes.ETAT_ATTENTE);
                         bean.setTypeDoc(typeDoc);
-                        System.err.println(" ... Date Liv"+Constantes.dfD.format(dateLiv));
                         bean.setDateLivraisonPrevu(dateLiv);
                         bean.setTelephone(telephone);
                         bean.setOperateur(UtilsProject.currentUser.getUsers());

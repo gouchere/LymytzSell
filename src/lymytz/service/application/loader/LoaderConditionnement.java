@@ -69,6 +69,7 @@ public class LoaderConditionnement extends Task<ObservableList<GridPane>> {
     public ObservableList<GridPane> call() throws Exception {
         ObservableList<GridPane> result = FXCollections.observableArrayList();
         try {
+            System.err.println("Query: "+getQuery());
             List<Object[]> l = Ldao.loadBySQLQuery(getQuery(), new Options[]{
                 new Options(UtilsProject.headerDoc.getCreneau().getCreneauPoint().getPoint().getId(), 1),
                 new Options(UtilsProject.depotLivraison.getId(), 2),
@@ -96,6 +97,9 @@ public class LoaderConditionnement extends Task<ObservableList<GridPane>> {
                 this.updateProgress(j, articles.size() / 2);
                 this.updateMessage(j + " sur " + articles.size());
 
+            }
+            if(total==0){
+                this.updateProgress(0, 0);
             }
         } catch (Exception ex) {
             Logger.getLogger(LoaderConditionnement.class.getName()).log(Level.SEVERE, null, ex);
@@ -212,7 +216,7 @@ public class LoaderConditionnement extends Task<ObservableList<GridPane>> {
             } else {
                 cl.setDesignation("");
             }
-            art.setClasse1(cl);
+//            art.setClasse1(cl);
         }
         YvsBaseFamilleArticle f = new YvsBaseFamilleArticle();
         f.setId((Long) (row[14] != null ? row[14] : -1));
@@ -224,7 +228,7 @@ public class LoaderConditionnement extends Task<ObservableList<GridPane>> {
         art.setPhoto1((String) (row[23] != null ? row[23] : null));
         art.setPhoto2((String) (row[24] != null ? row[24] : null));
         art.setPhoto3((String) (row[25] != null ? row[25] : null));
-        art.setGroupe(g);
+//        art.setGroupe(g);
         return art;
     }
 

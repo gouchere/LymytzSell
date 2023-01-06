@@ -311,17 +311,8 @@ public class UtilsBean {
         val = new Object[]{doc, Constantes.STATUT_DOC_SUSPENDU};
         nameQueri = "YvsComptaCaissePieceVente.findByFactureStatutSDiff";
         query = "SELECT SUM(y.montant) FROM yvs_compta_caisse_piece_vente y WHERE y.vente=? AND y.statut_piece!=? AND COALESCE(y.mouvement,'R')='R'";
-//        a = (Double) dao.findOneObjectByNQ(nameQueri, champ, val);
         a = (Double) dao.findOneObjectBySQLQ(query, new Options[]{new Options(doc.getId(), 1), new Options(Constantes.STATUT_DOC_PAYER, 2)});
-        doc.setMontantPlanifier(a != null ? a : 0);
-
-//        champ = new String[]{"docVente", "sens"};
-//        val = new Object[]{doc, true};
-//        Double p = (Double) dao.findOneObjectByNQ("YvsComCoutSupDocVente.findSumByDocVente", champ, val);
-//        val = new Object[]{doc, false};
-//        Double m = (Double) dao.findOneObjectByNQ("YvsComCoutSupDocVente.findSumByDocVente", champ, val);
-//        double s = (p != null ? p : 0) - (m != null ? m : 0);
-//        doc.setMontantCS(s);
+        doc.setMontantPlanifier(a != null ? a : 0);        
         YvsSocietes scte = UtilsProject.currentSociete;
         doc.setMontantRemise(arrondi(doc.getMontantRemise(), scte));
         doc.setMontantTaxe(arrondi(doc.getMontantTaxe(), scte));
@@ -375,6 +366,18 @@ public class UtilsBean {
         LQueryFactories rq = new LQueryFactories();
         Object val[] = new Object[]{new YvsComEnteteDocVente(header), Constantes.TYPE_BCV};
         Double re = (Double) rq.findOneObjectByNQ("YvsComContenuDocVente.findTotalByTypeDocAndHeader", champ, val);
+        return re != null ? re : 0;
+    }
+    
+    public static double getCommandeRecu(long user, Date date){
+        String query="SELECT SUM(y.montant) FROM yvs_compta_caisse_piece_vente y "
+                + "                         INNER JOIN yvs_com_doc_ventes d ON y.vente = d.id "
+                + "  WHERE (d.type_doc = 'BCV' OR (d.type_doc = 'FV' AND d.document_lie IS NOT NULL)) "
+                + "     AND d.statut = 'V' AND y.statut_piece = 'P' AND y.caissier = ? "
+                + "     AND y.date_paiement BETWEEN ? AND ?";
+        LQueryFactories rq = new LQueryFactories();
+        Options[] options = new Options[]{new Options(user, 1), new Options(date, 2), new Options(date, 3)};
+         Double re = (Double) rq.findOneObjectBySQLQ(query, options);        
         return re != null ? re : 0;
     }
 }

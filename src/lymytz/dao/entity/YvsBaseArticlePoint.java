@@ -71,9 +71,9 @@ public class YvsBaseArticlePoint implements Serializable {
     @JoinColumn(name = "point", referencedColumnName = "id")
     @ManyToOne
     private YvsBasePointVente point;
-    @JoinColumn(name = "author", referencedColumnName = "id")
-    @ManyToOne
-    private YvsUsersAgence author;
+//    @JoinColumn(name = "author", referencedColumnName = "id")
+//    @ManyToOne
+//    private YvsUsersAgence author;
 
     public YvsBaseArticlePoint() {
     }
@@ -170,13 +170,13 @@ public class YvsBaseArticlePoint implements Serializable {
         this.point = point;
     }
 
-    public YvsUsersAgence getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(YvsUsersAgence author) {
-        this.author = author;
-    }
+//    public YvsUsersAgence getAuthor() {
+//        return author;
+//    }
+//
+//    public void setAuthor(YvsUsersAgence author) {
+//        this.author = author;
+//    }
 
     @Override
     public int hashCode() {

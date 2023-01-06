@@ -120,7 +120,7 @@ public class RQueryFactories<T extends Serializable> {
     }
 
     public Long countElement(String table, List<EntityColumn> colonnes) {
-        if (UtilsProject.RcurrentSociete != null) {
+        if (UtilsProject.RcurrentSociete != null && UtilsProject.RcurrentAgence != null) {
             String query = UtilsProject.buildQueryCount(table, colonnes);
             if (RemoteDao.getInstance() != null) {
                 try (PreparedStatement st = RemoteDao.getInstance().getConnection().prepareCall(query, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY)) {

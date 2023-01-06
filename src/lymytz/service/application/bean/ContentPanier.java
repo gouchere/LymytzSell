@@ -6,6 +6,7 @@
 package lymytz.service.application.bean;
 
 import java.beans.PropertyChangeSupport;
+import java.util.Date;
 import java.util.Objects;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -34,6 +35,7 @@ public class ContentPanier {
     private final DoubleProperty montantTotal;  //Net à payer
     private final DoubleProperty montantTotalHT;
     private final DoubleProperty montantTotalTTC;
+    private Date dateSave;
 
     private double pr;
     PropertyChangeSupport pcs = new PropertyChangeSupport(this);
@@ -181,6 +183,14 @@ public class ContentPanier {
 
     public void setFacture(YvsComDocVentes facture) {
         this.facture = facture;
+    }
+
+    public Date getDateSave() {
+        return dateSave;
+    }
+
+    public void setDateSave(Date dateSave) {
+        this.dateSave = dateSave;
     }
 
     @Override

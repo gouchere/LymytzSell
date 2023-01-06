@@ -277,7 +277,7 @@ public class ImportDataController implements Initializable, Controller {
                 TV_REMOTE.getColumns().add(col);
             }
         } catch (Exception e) {
-            System.err.println("********** Patienter.... ");
+           Logger.getLogger(ImportFilterController.class.getName()).log(Level.SEVERE, "");
         }
         //instancie le thread de chargement des données
         loadRemoteData(colonnes, params);

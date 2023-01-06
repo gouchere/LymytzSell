@@ -58,9 +58,9 @@ public class YvsBaseArticleCategorieComptableTaxe implements Serializable {
     @JoinColumn(name = "taxe", referencedColumnName = "id")
     @ManyToOne
     private YvsBaseTaxes taxe;
-    @JoinColumn(name = "author", referencedColumnName = "id")
-    @ManyToOne
-    private YvsUsersAgence author;
+//    @JoinColumn(name = "author", referencedColumnName = "id")
+//    @ManyToOne
+//    private YvsUsersAgence author;
 
     public YvsBaseArticleCategorieComptableTaxe() {
     }
@@ -125,13 +125,13 @@ public class YvsBaseArticleCategorieComptableTaxe implements Serializable {
         this.taxe = taxe;
     }
 
-    public YvsUsersAgence getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(YvsUsersAgence author) {
-        this.author = author;
-    }
+//    public YvsUsersAgence getAuthor() {
+//        return author;
+//    }
+//
+//    public void setAuthor(YvsUsersAgence author) {
+//        this.author = author;
+//    }
 
     @Override
     public int hashCode() {

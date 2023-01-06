@@ -106,9 +106,9 @@ public class YvsBaseArticleDepot implements Serializable {
     @JoinColumn(name = "default_cond", referencedColumnName = "id")
     @ManyToOne
     private YvsBaseConditionnement defaultCond;
-    @JoinColumn(name = "author", referencedColumnName = "id")
-    @ManyToOne
-    private YvsUsersAgence author;
+//    @JoinColumn(name = "author", referencedColumnName = "id")
+//    @ManyToOne
+//    private YvsUsersAgence author;
 
 
     public YvsBaseArticleDepot() {
@@ -293,14 +293,14 @@ public class YvsBaseArticleDepot implements Serializable {
     public void setDefaultCond(YvsBaseConditionnement defaultCond) {
         this.defaultCond = defaultCond;
     }
-
-    public YvsUsersAgence getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(YvsUsersAgence author) {
-        this.author = author;
-    }
+//
+//    public YvsUsersAgence getAuthor() {
+//        return author;
+//    }
+//
+//    public void setAuthor(YvsUsersAgence author) {
+//        this.author = author;
+//    }
     
     
 

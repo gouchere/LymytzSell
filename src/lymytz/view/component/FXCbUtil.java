@@ -30,12 +30,10 @@ public class FXCbUtil {
         comboBox.setEditable(true);
         comboBox.getEditor().focusedProperty().addListener(observable -> {
             if (comboBox.getSelectionModel().getSelectedIndex() < 0) {
-                System.err.println(" Lost focused With index... "+comboBox.getSelectionModel().getSelectedIndex());
             } else {
                 comboBox.removeEventFilter(KeyEvent.KEY_RELEASED, (KeyEvent event) -> {
                     //do nothing
                 });
-                System.err.println("......" + ((YvsComClient) getComboBoxValue(comboBox)).getNom_prenom());
                 comboBox.getEditor().setText(((YvsComClient) getComboBoxValue(comboBox)).getCodeClient());
             }
         });

@@ -42,7 +42,7 @@ public class BCellInit extends AbstractButtonCell<Planning> {
 
     @Override
     public void listenEvent(ActionEvent ev, Planning bean) {
-        mainContoler.mainControler.displayPropertiesFiche(mainContoler.createNewFicheFromCreneaux(bean.getId(), date));
+        mainContoler.mainControler.displayPropertiesFiche(mainContoler.createNewFicheFromCreneaux(bean.getId(), null));
     }
 
 }

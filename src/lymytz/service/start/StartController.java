@@ -174,7 +174,6 @@ public class StartController implements Initializable, Controller {
             });
             KeyCombination control = new KeyCodeCombination(KeyCode.R, KeyCodeCombination.CONTROL_DOWN);
             KeyCombination controlCmde = new KeyCodeCombination(KeyCode.N, KeyCodeCombination.CONTROL_DOWN);
-//            KeyCombination controlcatalogue = new KeyCodeCombination(KeyCode.L, KeyCodeCombination.CONTROL_DOWN);
             KeyCombination controlPrint = new KeyCodeCombination(KeyCode.P, KeyCodeCombination.CONTROL_DOWN);
             KeyCombination controlMyCompte = new KeyCodeCombination(KeyCode.C, KeyCodeCombination.CONTROL_DOWN);
             KeyCombination controlQuit = new KeyCodeCombination(KeyCode.Q, KeyCodeCombination.CONTROL_DOWN);

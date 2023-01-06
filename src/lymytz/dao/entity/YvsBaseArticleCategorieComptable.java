@@ -60,9 +60,9 @@ public class YvsBaseArticleCategorieComptable implements Serializable {
     @JoinColumn(name = "categorie", referencedColumnName = "id")
     @ManyToOne
     private YvsBaseCategorieComptable categorie;
-    @JoinColumn(name = "author", referencedColumnName = "id")
-    @ManyToOne
-    private YvsUsersAgence author;
+//    @JoinColumn(name = "author", referencedColumnName = "id")
+//    @ManyToOne
+//    private YvsUsersAgence author;
 
     public YvsBaseArticleCategorieComptable() {
     }
@@ -127,13 +127,13 @@ public class YvsBaseArticleCategorieComptable implements Serializable {
         this.categorie = categorie;
     }
 
-    public YvsUsersAgence getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(YvsUsersAgence author) {
-        this.author = author;
-    }
+//    public YvsUsersAgence getAuthor() {
+//        return author;
+//    }
+//
+//    public void setAuthor(YvsUsersAgence author) {
+//        this.author = author;
+//    }
 
     @Override
     public int hashCode() {

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox prefHeight="550.0" prefWidth="855.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lymytz.service.application.service.report.ListingController">
+   <children>
+      <VBox fx:id="WRAP_TABLE" prefHeight="510.0" prefWidth="850.0">
+         <children>
+            <Label alignment="CENTER" prefHeight="17.0" prefWidth="799.0" text="Listing des ventes" />
+            <TableView fx:id="TABLE_LISTING" prefHeight="451.0" prefWidth="1100.0">
+              <columns>
+                  <TableColumn fx:id="COL_N" prefWidth="56.0" text="N°" />
+                <TableColumn fx:id="COL_REF" prefWidth="94.0" text="Reférence" />
+                <TableColumn fx:id="COL_ART" prefWidth="96.0" text="Articles" />
+                  <TableColumn fx:id="COL_UNITE" prefWidth="63.0" text="Unité" />
+                  <TableColumn fx:id="COL_QTE" prefWidth="74.0" text="Quantité" />
+                  <TableColumn fx:id="COL_CLIENT" prefWidth="101.0" text="Clients" />
+                  <TableColumn fx:id="COL_NUM_DOC" prefWidth="88.0" text="Facture" />
+                  <TableColumn fx:id="COL_PRIX" prefWidth="66.0" text="Prix U." />
+                  <TableColumn fx:id="COL_TOTAL" prefWidth="72.0" text="Prix Total" />
+                  <TableColumn fx:id="COL_TIME" prefWidth="89.0" text="Heure sasie" />
+                  <TableColumn fx:id="COL_TYPE" prefWidth="60.0" text="Type" />
+                  <TableColumn fx:id="COL_LIV" prefWidth="60.0" text="Livré" />
+              </columns>
+            </TableView>
+            <ProgressBar fx:id="PROGRESS" prefHeight="18.0" prefWidth="855.0" progress="0.0" />
+            <HBox prefHeight="50.0" prefWidth="1100.0" spacing="5.0" style="-fx-background-color: #FFF; -fx-border-color: #008b8b; -fx-border-width: 3;" styleClass="line_bar2">
+               <children>
+                  <VBox prefHeight="50.0" prefWidth="125.0">
+                     <children>
+                        <Label text="Num. Facture" />
+                        <TextField fx:id="F_FACTURE" onKeyReleased="#addParamNumDoc" />
+                     </children>
+                  </VBox>
+                  <VBox layoutX="23.0" layoutY="13.0" prefHeight="50.0" prefWidth="125.0">
+                     <children>
+                        <Label text="Clients" />
+                        <TextField fx:id="F_CLIENT" onKeyReleased="#addParamClient" />
+                     </children>
+                  </VBox>
+                  <VBox layoutX="140.0" layoutY="10.0" prefHeight="50.0" prefWidth="125.0">
+                     <children>
+                        <Label text="Réf. Article" />
+                        <TextField fx:id="F_ARTICLE" onKeyReleased="#addParamRefArticle" />
+                     </children>
+                  </VBox>
+               </children>
+               <padding>
+                  <Insets left="10.0" />
+               </padding>
+            </HBox>
+         </children>
+      </VBox>
+   </children>
+</VBox>

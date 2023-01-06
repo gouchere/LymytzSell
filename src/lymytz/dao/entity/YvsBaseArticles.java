@@ -128,18 +128,19 @@ public class YvsBaseArticles implements Serializable {
     private String executeTrigger;
     @Column(name = "tags")
     private String tags;
-    @JoinColumn(name = "classe1", referencedColumnName = "id")
-    @ManyToOne 
-    private YvsBaseClassesStat classe1;
-    @JoinColumn(name = "classe2", referencedColumnName = "id")
-    @ManyToOne 
-    private YvsBaseClassesStat classe2;
     @JoinColumn(name = "famille", referencedColumnName = "id")
     @ManyToOne 
     private YvsBaseFamilleArticle famille;
-    @JoinColumn(name = "groupe", referencedColumnName = "id")
-    @ManyToOne 
-    private YvsBaseGroupesArticle groupe;
+//    @JoinColumn(name = "classe1", referencedColumnName = "id")
+//    @ManyToOne 
+//    private YvsBaseClassesStat classe1;
+//    @JoinColumn(name = "classe2", referencedColumnName = "id")
+//    @ManyToOne 
+//    private YvsBaseClassesStat classe2;
+//    
+//    @JoinColumn(name = "groupe", referencedColumnName = "id")
+//    @ManyToOne 
+//    private YvsBaseGroupesArticle groupe;
 
     @Transient
     private List<String> photos;
@@ -152,6 +153,11 @@ public class YvsBaseArticles implements Serializable {
 
     public YvsBaseArticles(Long id) {
         this.id = id;
+    }
+    public YvsBaseArticles(Long id, String ref, String designation) {
+        this.id = id;
+        this.refArt=ref;
+        this.designation=designation;
     }
 
     public Long getId() {
@@ -426,21 +432,21 @@ public class YvsBaseArticles implements Serializable {
         this.tags = tags;
     }
 
-    public YvsBaseClassesStat getClasse1() {
-        return classe1;
-    }
-
-    public void setClasse1(YvsBaseClassesStat classe1) {
-        this.classe1 = classe1;
-    }
-
-    public YvsBaseClassesStat getClasse2() {
-        return classe2;
-    }
-
-    public void setClasse2(YvsBaseClassesStat classe2) {
-        this.classe2 = classe2;
-    }
+//    public YvsBaseClassesStat getClasse1() {
+//        return classe1;
+//    }
+//
+//    public void setClasse1(YvsBaseClassesStat classe1) {
+//        this.classe1 = classe1;
+//    }
+//
+//    public YvsBaseClassesStat getClasse2() {
+//        return classe2;
+//    }
+//
+//    public void setClasse2(YvsBaseClassesStat classe2) {
+//        this.classe2 = classe2;
+//    }
 
     public YvsBaseFamilleArticle getFamille() {
         return famille;
@@ -450,13 +456,13 @@ public class YvsBaseArticles implements Serializable {
         this.famille = famille;
     }
 
-    public YvsBaseGroupesArticle getGroupe() {
-        return groupe;
-    }
-
-    public void setGroupe(YvsBaseGroupesArticle groupe) {
-        this.groupe = groupe;
-    }
+//    public YvsBaseGroupesArticle getGroupe() {
+//        return groupe;
+//    }
+//
+//    public void setGroupe(YvsBaseGroupesArticle groupe) {
+//        this.groupe = groupe;
+//    }
 
     @Override
     public int hashCode() {

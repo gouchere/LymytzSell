@@ -21,7 +21,6 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.constraints.Size;
 
 /**
  *
@@ -54,10 +53,8 @@ public class YvsComGrilleRistourne implements Serializable {
     private Double montantMaximal;
     @Column(name = "montant_ristourne")
     private Double montantRistourne;
-    @Size(max = 2147483647)
     @Column(name = "nature_montant")
     private String natureMontant;
-    @Size(max = 2147483647)
     @Column(name = "base")
     private String base;
     @Column(name = "date_update")
@@ -66,7 +63,6 @@ public class YvsComGrilleRistourne implements Serializable {
     @Column(name = "date_save")
     @Temporal(TemporalType.TIMESTAMP)
     private Date dateSave;
-    @Size(max = 2147483647)
     @Column(name = "execute_trigger")
     private String executeTrigger;
     @JoinColumn(name = "article", referencedColumnName = "id")

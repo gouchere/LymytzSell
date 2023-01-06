@@ -34,7 +34,6 @@ public class LocalDao {
             String dbName = UtilsProject.properties.getProperty(Constantes.KEY_LOCAL_DB_NAME);
             String user = EncryptMessage.decrypt(UtilsProject.properties.getProperty(Constantes.KEY_LOCAL_USERS), Constantes.KEY_ENCRYPT);
             String password = EncryptMessage.decrypt(UtilsProject.properties.getProperty(Constantes.KEY_LOCAL_PASSWORD), Constantes.KEY_ENCRYPT);
-            System.err.println(".. " + host + "--" + port + "--" + dbName + "--" + user + "--" + password);
             String URL = "jdbc:postgresql://" + host + ":" + port + "/" + dbName;
             Map<String, String> properties = new HashMap<>();
             properties.put("javax.persistence.jdbc.driver", "org.postgresql.Driver");

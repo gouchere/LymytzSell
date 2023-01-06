@@ -205,8 +205,7 @@ public class ParamConnection implements Serializable {
     }
 
     public Double getP_ml() {
-//        return p_ml != null ? p_ml : 0;
-        return 0d;
+        return p_ml != null ? p_ml : 0;
     }
 
     public void setP_ml(Double p_ml) {

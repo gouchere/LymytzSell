@@ -38,35 +38,40 @@ public class LoaderStock extends Task<VBox> {
     @Override
     public VBox call() throws Exception {
         VBox box = new VBox(2);
-        HBox lineStock = new HBox(2);
+        HBox lineStock ;
         double stock;
 //        Label lstock, lqte;
-        boolean verifiStock;
-        if (!UtilsProject.REPLICATION) {
-            verifiStock = true;
-        } else {
-            if (page.getConnectRemoteServer() != null ? page.getConnectRemoteServer() : false) {
-                verifiStock = true;
-            } else {
-                verifiStock = false;
-               Label lstock = new Label("Impossible d'afficher le stock de cet article car le serveur distant est inaccessible !");
-                lstock.setWrapText(true);
-                lstock.setStyle("-fx-text-fill: red; -fx-font-size:0.9em; ");
-                box.getChildren().addAll(lstock);
-            }
-        }
-        if (verifiStock) {
-            for (YvsBaseDepots d : depots) {
-                Label lstock = new Label(d.getDesignation() + " : ");
-                stock = UtilsProject.getStocks(cond, d.getId());
-                Label lqte = new Label(Constantes.nbf.format(stock));
-                lineStock.getChildren().addAll(lstock, lqte, new Label("  "), new Label(cond.getUnite().getLibelle()+" en stock"));
-                box.getChildren().addAll(lineStock);
-                if (d.equals(UtilsProject.depotLivraison)) {
-                    cond.setStock(stock);
+//        boolean verifiStock;
+//        if (!UtilsProject.REPLICATION) {
+//            verifiStock = true;
+//        } else {
+//            if (page.getConnectRemoteServer() != null ? page.getConnectRemoteServer() : false) {
+//                verifiStock = true;
+//            } else {
+//                verifiStock = false;
+//                Label lstock = new Label("Impossible d'afficher le stock de cet article car le serveur distant est inaccessible !");
+//                lstock.setWrapText(true);
+//                lstock.setStyle("-fx-text-fill: red; -fx-font-size:0.9em; ");
+//                box.getChildren().addAll(lstock);
+//            }
+//        }
+//        if (verifiStock) {
+            try {
+                for (YvsBaseDepots d : depots) {
+                    lineStock = new HBox(2);
+                    Label lstock = new Label(d.getDesignation() + " : ");
+                    stock = UtilsProject.getStocks(cond, d.getId());
+                    Label lqte = new Label(Constantes.nbf.format(stock));
+                    lineStock.getChildren().addAll(lstock, lqte, new Label("  "), new Label(cond.getUnite().getLibelle() + " en stock"));
+                    box.getChildren().addAll(lineStock);
+                    if (d.equals(UtilsProject.depotLivraison)) {
+                        cond.setStock(stock);
+                    }
                 }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        }
+//        }
         return box;
     }
 

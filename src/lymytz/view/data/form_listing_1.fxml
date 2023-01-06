@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox prefHeight="550.0" prefWidth="855.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lymytz.service.application.service.report.ListingCumuleController">
+   <children>
+      <VBox fx:id="WRAP_TABLE" prefHeight="510.0" prefWidth="850.0">
+         <children>
+            <Label alignment="CENTER" prefHeight="17.0" prefWidth="799.0" text="Listing des ventes" />
+            <TableView fx:id="TABLE_LISTING" prefHeight="451.0" prefWidth="1100.0">
+              <columns>
+                  <TableColumn fx:id="COL_N" prefWidth="56.0" text="N°" />
+                <TableColumn fx:id="COL_REF" prefWidth="82.0" text="Reférence" />
+                <TableColumn fx:id="COL_ART" prefWidth="153.0" text="Articles" />
+                  <TableColumn fx:id="COL_UNITE" prefWidth="92.0" text="Unité" />
+                  <TableColumn fx:id="COL_QTE" minWidth="0.0" prefWidth="91.0" text="Quantité" />
+                  <TableColumn fx:id="COL_TOTAL" minWidth="0.0" prefWidth="78.0" text="Prix Total" />
+                  <TableColumn fx:id="COL_TYPE" minWidth="0.0" prefWidth="43.0" text="Type" />
+              </columns>
+            </TableView>
+            <ProgressBar fx:id="PROGRESS" prefHeight="18.0" prefWidth="855.0" progress="0.0" />
+            <HBox prefHeight="50.0" prefWidth="1100.0" spacing="5.0" style="-fx-background-color: #FFF; -fx-border-color: #008b8b; -fx-border-width: 3;" styleClass="line_bar2">
+               <children>
+                  <VBox layoutX="140.0" layoutY="10.0" prefHeight="50.0" prefWidth="125.0">
+                     <children>
+                        <Label text="Réf. Article" />
+                        <TextField fx:id="F_ARTICLE" onKeyReleased="#addParamRefArticle" />
+                     </children>
+                  </VBox>
+               </children>
+               <padding>
+                  <Insets left="10.0" />
+               </padding>
+            </HBox>
+         </children>
+      </VBox>
+   </children>
+</VBox>

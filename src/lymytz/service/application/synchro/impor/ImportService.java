@@ -154,6 +154,7 @@ public class ImportService extends Task<Boolean> {
                     }
                     i++;
                 }
+//                Incrémente l'indicateur graphique de progression
                 if (row.getValue()[0].getTableName().equals(table)) {
                     compteur++;
                     this.updateProgress(compteur, this.listData.size());

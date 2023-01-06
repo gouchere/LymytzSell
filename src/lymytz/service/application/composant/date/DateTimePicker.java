@@ -60,9 +60,7 @@ public class DateTimePicker extends ComboBoxBase<LocalDateTime> {
             if (validateDate(chrono, date)) {
                 lastValidDate = date;
             } else {
-                System.err.println("Restoring value to " +
-                            ((lastValidDate == null) ? "null" : getConverter().toString(lastValidDate)));
-                setValue(lastValidDate);
+               setValue(lastValidDate);
             }
         });
 
@@ -184,7 +182,6 @@ public class DateTimePicker extends ComboBoxBase<LocalDateTime> {
             try {
                 chrono = Chronology.ofLocale(Locale.getDefault(Locale.Category.FORMAT));
             } catch (Exception ex) {
-                System.err.println(ex);
             }
             if (chrono == null) {
                 chrono = IsoChronology.INSTANCE;

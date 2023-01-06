@@ -43,6 +43,7 @@ public class PrintFacture extends JFrame {
 
     /**
      * Initializes the controller class.
+     * @param doc
      */
     public void loadFactureToPrint(YvsComDocVentes doc) {
         String chemin = "src/lymytz/view/reports/icones/";

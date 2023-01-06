@@ -110,12 +110,17 @@
       </HBox>
       <HBox layoutX="10.0" layoutY="74.0">
          <children>
+            <CheckBox fx:id="CHK_CLOTURE" mnemonicParsing="false" prefHeight="25.0" prefWidth="117.0" selected="true" text="Clôturer la fiche" wrapText="true">
+               <HBox.margin>
+                  <Insets left="50.0" />
+               </HBox.margin>
+            </CheckBox>
             <TextField fx:id="TXT_MONTANT" alignment="CENTER" prefHeight="25.0" prefWidth="307.0" promptText="0" style="-fx-background-color: #CCffff; -fx-text-fill: #000000; -fx-font-weight: bold;">
                <font>
                   <Font name="System Bold" size="15.0" />
                </font>
                <HBox.margin>
-                  <Insets left="150.0" />
+                  <Insets left="30.0" />
                </HBox.margin>
             </TextField>
          </children>

@@ -62,8 +62,18 @@ public final class Onglets extends Tab {
         dao = new LQueryFactories();
     }
 
+    public Onglets(Onglets onglet) {
+        this.facture=new YvsComDocVentes(onglet.facture, true);
+        this.netAPayer=onglet.netAPayer;
+        this.montantRecu=onglet.montantRecu;
+        this.contentFacture=new ArrayList<>(onglet.contentFacture);
+        this.dao=onglet.dao;
+        this.page=onglet.page;
+    }
+    
+
     public Onglets(YvsComDocVentes facture, HomeCaisseController page) {
-        this((facture != null ? (facture.getId() > 0 ? facture.getNumDoc() : facture.getTypeDoc()+":"+facture.getClient().getCodeClient() + "-" + facture.getId()) : ""), page);
+        this((facture != null ? (facture.getId() > 0 ? facture.getNumDoc() : facture.getTypeDoc() + ":" + facture.getClient().getCodeClient() + "-" + facture.getId()) : ""), page);
         this.facture = facture;
         //ajoute un évènement
         this.setOnSelectionChanged((Event event) -> {
@@ -71,6 +81,8 @@ public final class Onglets extends Tab {
             if (idx >= 0 && page.TAB_FACTURES.getTabs().size() > idx) {
                 displayMontantsBean();
                 page.displayDetailFacture(((Onglets) page.TAB_FACTURES.getTabs().get(idx)).getFacture());
+            }else if(idx<=0){
+                this.page.ECRAN.setText("0");
             }
         });
     }
@@ -114,8 +126,6 @@ public final class Onglets extends Tab {
         Label textQte = new Label(line.getQuantite() + "");
         textQte.setPadding(new Insets(0, 5, 0, 5));
         eventForLabelQte(textQte, true, this, line);
-//        textQte.textProperty().bind(line.getQuantiteP());
-        //
         ImageView buttonDel = getButtonUpDown("delete-icon.png", line, "DELETE");
         ImageView buttonAdd = getButtonUpDown("add1.png", line, "ADD");
         ImageView buttonMinus = getButtonUpDown("minus_ico.png", line, "MOVE");
@@ -147,9 +157,6 @@ public final class Onglets extends Tab {
         boxTop.getChildren().addAll(UtilsProject.buildImageProduit("coffee.png"), boxInfosArt, new Label("      "), Ltotal, Ldevise);
         resultBox.getChildren().addAll(boxTop, boxBottom);
         resultBox.getStyleClass().add("border_bottom");
-//        resultBox.setPadding(new Insets(3));
-        //Initialise les contrôle bouton
-
         return resultBox;
     }
 
@@ -210,7 +217,7 @@ public final class Onglets extends Tab {
                     if (idx >= 0) {
                         this.getContentFacture().set(idx, line);
                     }
-                }else{
+                } else {
                     moveLineContent(line);
                 }
             } else {
@@ -254,7 +261,11 @@ public final class Onglets extends Tab {
     public ContentPanier evaluePrix(ContentPanier line) {
         if (line != null) {
             PrixArticles prix = getPrixArticle(line.getConditionnement(), line.getQuantite(), getFacture(), line.getPrix());
-            line.setPr(prix.getPr());
+            if (!UtilsProject.REPLICATION && UtilsProject.depotLivraison != null) {
+                //si on est pas en mode replication, calcul immédiatement le stock
+                Double pr = UtilsProject.getPr(line.getConditionnement(), UtilsProject.depotLivraison.getId());
+                line.setPr(pr);
+            }
             line.setPrix(prix.getPrixUnite());
             line.setRemise(prix.getRemise());
             line.setRistourne(prix.getRistourne());
@@ -321,7 +332,14 @@ public final class Onglets extends Tab {
             } else {
                 line.setPrix(prixV);
                 line.setQuantite(qte);
-                tab.addLineContent(evaluePrix(line), true);
+                ContentPanier cp = evaluePrix(line);
+                if (!UtilsProject.paramVente.getSellLowerPr() && cp.getPr() >= cp.getPrix()) {
+                    //On ne vend pas en dessa du pr
+                    LymytzService.openAlertDialog("Impossible d'ajouter cet article !", "Erreur ", "Vous ne pouvez vendre en dessous du prix de revient du produit", Alert.AlertType.ERROR);
+                    return false;
+                } else {
+                    tab.addLineContent(cp, true);
+                }
             }
             int i = 1;
             for (ContentPanier c : tab.getContentFacture()) {

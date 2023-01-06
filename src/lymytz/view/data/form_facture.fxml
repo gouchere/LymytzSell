@@ -51,32 +51,66 @@
                <children>
                   <VBox>
                      <children>
-                        <TextField fx:id="TXT_REF" prefHeight="0.0" prefWidth="149.0" promptText="Référence..." />
+                        <Label text="Numéro de facture" textFill="#6b6a6a">
+                           <font>
+                              <Font size="9.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="TXT_REF" onKeyReleased="#findByNumDoc" prefHeight="0.0" prefWidth="149.0" promptText="Référence..." />
                      </children>
                   </VBox>
                   <VBox>
                      <children>
-                        <TextField fx:id="TXT_CLIENT" promptText="Clients..." />
-                     </children>
-                  </VBox>
-                  <VBox>
-                     <children>
-                        <ComboBox fx:id="CB_TYPE" prefHeight="25.0" prefWidth="101.0" promptText="Types..." style="-fx-background-color: #FFF;" />
-                     </children>
-                  </VBox>
-                  <VBox spacing="3.0">
-                     <children>
-                        <ComboBox fx:id="CB_STATUT_DOC" layoutX="10.0" layoutY="10.0" promptText="Statuts doc..." style="-fx-background-color: #FFF;" />
+                        <Label text="Clients" textFill="#6b6a6a">
+                           <font>
+                              <Font size="9.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="TXT_CLIENT" onKeyReleased="#findByCustomer" promptText="Clients..." />
                      </children>
                   </VBox>
                   <VBox spacing="3.0">
                      <children>
-                        <ComboBox fx:id="CB_STATUT_LIV" layoutX="10.0" layoutY="10.0" promptText="Statuts Liv..." style="-fx-background-color: #FFF;" />
+                        <VBox>
+                           <children>
+                              <Label text="Statut de la facture" textFill="#6b6a6a">
+                                 <font>
+                                    <Font size="9.0" />
+                                 </font>
+                              </Label>
+                              <ComboBox fx:id="CB_STATUT_DOC" layoutX="10.0" layoutY="10.0" onAction="#filterByStatutDoc" promptText="Statuts doc..." style="-fx-background-color: #FFF;" />
+                           </children>
+                        </VBox>
+                     </children>
+                  </VBox>
+                  <VBox spacing="3.0">
+                     <children>
+                        <Label text="Statut de livraison" textFill="#6b6a6a">
+                           <font>
+                              <Font size="9.0" />
+                           </font>
+                        </Label>
+                        <ComboBox fx:id="CB_STATUT_LIV" layoutX="10.0" layoutY="10.0" onAction="#filterByStatutLiv" promptText="Statuts Liv..." style="-fx-background-color: #FFF;" />
                      </children>
                   </VBox>
                   <VBox prefHeight="20.0" prefWidth="111.0">
                      <children>
-                        <ComboBox fx:id="CB_STATUT_REG" layoutX="528.0" layoutY="15.0" promptText="Statuts Reg..." style="-fx-background-color: #FFF;" />
+                        <Label text="Statut de règlement" textFill="#6b6a6a">
+                           <font>
+                              <Font size="9.0" />
+                           </font>
+                        </Label>
+                        <ComboBox fx:id="CB_STATUT_REG" layoutX="528.0" layoutY="15.0" onAction="#filterByStatutReg" promptText="Statuts Reg..." style="-fx-background-color: #FFF;" />
+                     </children>
+                  </VBox>
+                  <VBox layoutX="587.0" layoutY="15.0" prefHeight="20.0" prefWidth="111.0">
+                     <children>
+                        <Label text="Commandes servies" textFill="#6b6a6a">
+                           <font>
+                              <Font size="9.0" />
+                           </font>
+                        </Label>
+                        <CheckBox fx:id="CHK_CMDE_SERVIE" mnemonicParsing="false" onAction="#findCommandeServi" prefHeight="37.0" prefWidth="73.0" />
                      </children>
                   </VBox>
                </children>

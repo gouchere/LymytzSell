@@ -117,11 +117,21 @@ public class ManagedApplication {
                 header = createHeader(creno, ((date != null) ? date : creno.getDateTravail()));
                 UtilsProject.headerDoc = header;
                 LymytzService.success();
+
+                //clôture toutes les fiches non encore clôturé de ce vendeur
+                String query = "UPDATE yvs_com_entete_doc_vente e SET cloturer=true, cloturer_by=?, date_cloturer=?, date_update=? "
+                        + "FROM yvs_com_creneau_horaire_users c "
+                        + "WHERE (e.creneau=c.id AND c.users=? AND e.cloturer=false ) AND e.id!=?";
+                dao.executeSqlQuery(query, new Options[]{new Options(creno.getUsers().getId(), 1),
+                    new Options(new Date(), 2),
+                    new Options(new Date(), 3),
+                    new Options(creno.getUsers().getId(), 4),
+                    new Options(header.getId(), 5)
+                });
             }
-//            displayPropertiesFiche(header);
             return header;
         } else {
-            LymytzService.openAlertDialog("Aucun créno actif n'a été trouvé !", "Objet non trouvé", "Erreur", Alert.AlertType.ERROR);
+            LymytzService.openAlertDialog("Aucun créneau actif n'a été trouvé !", "Objet non trouvé", "Erreur", Alert.AlertType.ERROR);
         }
         return null;
     }
@@ -1058,9 +1068,7 @@ public class ManagedApplication {
 //    }
 //
 //
-   
 //
-
     @FXML
     private void saveOrGenerateBl(ActionEvent event) {
 //        if (UtilsProject.depotLivraison == null) {

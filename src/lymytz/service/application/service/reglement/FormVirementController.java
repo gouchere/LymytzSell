@@ -16,6 +16,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
@@ -27,7 +28,6 @@ import javax.print.attribute.standard.Severity;
 import lymytz.dao.Options;
 import lymytz.dao.UtilsBean;
 import lymytz.dao.entity.YvsBaseCaisse;
-import lymytz.dao.entity.YvsBaseLiaisonCaisse;
 import lymytz.dao.entity.YvsComEnteteDocVente;
 import lymytz.dao.entity.YvsComptaCaissePieceVirement;
 import lymytz.dao.query.LQueryFactories;
@@ -73,8 +73,8 @@ public class FormVirementController implements Initializable, Controller {
     private Label LAB_COMMANDE;
     @FXML
     private Label LAB_VERSE;
-//    @FXML
-//    private Label LAB_VERSEC;
+    @FXML
+    private CheckBox CHK_CLOTURE;
     @FXML
     private TextField TXT_MONTANT;
     @FXML
@@ -98,7 +98,7 @@ public class FormVirementController implements Initializable, Controller {
         this.idHeader = idHeader;
         this.fenDialogue = stage;
         // trouve l'equivalent du header...
-        idRemoteHeader = (UtilsProject.REPLICATION)?UtilEntityBase.findIdRemoteData(Constantes.TABLE_HEADER_DOC_CODE, idHeader):idHeader;
+        idRemoteHeader = (UtilsProject.REPLICATION) ? UtilEntityBase.findIdRemoteData(Constantes.TABLE_HEADER_DOC_CODE, idHeader) : idHeader;
         if (caisseSource != null && Constantes.asLong(this.idRemoteHeader)) {
             caisseSource.setCaissesLiees(rq.loadByNamedQuery("YvsBaseLiaisonCaisse.findBySource", new String[]{"source"}, new Object[]{caisseSource}));
             caisseSource.getCaissesLiees().stream().forEach((lc) -> {
@@ -130,13 +130,7 @@ public class FormVirementController implements Initializable, Controller {
             avanceCmde = avanceCmde != null ? avanceCmde : 0;
             //Accompte perçu
             LAB_COMMANDE.setText(Constantes.nbf.format(avanceCmde != null ? avanceCmde : 0));
-            //Montant déjà versé
-//            Double versement = (Double) rq.findOneObjectByNQ("YvsComptaNotifVersementVente.findSumByHeader", new String[]{"enteteDoc"}, new Object[]{UtilsProject.headerDoc});
-//            Double versementConfirme = (Double) rq.findOneObjectByNQ("YvsComptaNotifVersementVente.findSumByHeaderStatut", new String[]{"enteteDoc", "statut"}, new Object[]{UtilsProject.headerDoc, Constantes.STATUT_DOC_PAYER});
-//            versement = versement != null ? versement : 0;
-//            versementConfirme = versementConfirme != null ? versement : 0;
             LAB_VERSE.setText(Constantes.nbf.format(avanceCmde + totalFacture));
-//            LAB_VERSEC.setText(Constantes.nbf.format(versementConfirme));
             PROGRESS_CLOSE.setVisible(false);
             loadVersementFiche();
         } else {
@@ -147,10 +141,15 @@ public class FormVirementController implements Initializable, Controller {
     @FXML
     private void termineClose(ActionEvent event) {
         //effectue un virement de caisse du montant saisie
+        Double montant = 0d;
         try {
-            Double montant = Double.valueOf(TXT_MONTANT.getText().trim().replaceAll("[^\\d-\\+]", ""));
+            montant = Double.valueOf(TXT_MONTANT.getText().trim().replaceAll("[^\\d-\\+]", ""));
+        } catch (NumberFormatException ex) {
+            montant = 0D;
+        }
+        try {
+            YvsComEnteteDocVente header = (YvsComEnteteDocVente) rq.findOneByNQ("YvsComEnteteDocVente.findById", new String[]{"id"}, new Object[]{idHeader});
             if (montant > 0) {
-                YvsComEnteteDocVente header = (YvsComEnteteDocVente) rq.findOneByNQ("YvsComEnteteDocVente.findById", new String[]{"id"}, new Object[]{idHeader});
                 if (header != null ? !header.getCloturer() : false) {
                     PROGRESS_CLOSE.setVisible(true);
                     if (CB_CAISS_CIBLE.getValue() != null) {
@@ -170,6 +169,7 @@ public class FormVirementController implements Initializable, Controller {
                             entity.setCible(CB_CAISS_CIBLE.getValue());
                             entity.setModel(UtilsProject.modeReg);
                             entity.setSource(UtilsProject.caisse);
+                            entity.setHeader(header);
                             ResultatAction result = ws.saveVirement(UtilExport.exportPieceVirement(entity));
                             if (result != null) {
                                 LymytzService.openAlertDialog(result.getMessage(), "Résultat", result.getCodeInfo() + "", (result.isResult() ? Alert.AlertType.INFORMATION : Alert.AlertType.ERROR));
@@ -177,38 +177,6 @@ public class FormVirementController implements Initializable, Controller {
                                     TXT_MONTANT.setText("0");
                                     //Change le statut de la ligne
                                 }
-                            }
-                            // Nettoie et clôture la fiche
-                            page.cleanVente(header.getId());
-                            if (!header.getCloturer()) {
-                                // Vérifier s'il y a  des factures non réglés et/ou non encore entièrement livré et demander une confirmation
-                                Long nb = (Long) rq.findOneObjectByNQ("YvsComDocVentes.countFactureNonLivreOrNonPayeByHeader", new String[]{"statut", "statutLivre", "statutRegle", "header", "typeDoc"},
-                                        new Object[]{Constantes.ETAT_VALIDE, Constantes.ETAT_LIVRE, Constantes.ETAT_REGLE, header, Constantes.TYPE_FV});
-                                nb = (nb != null) ? nb : 0;
-                                if (nb <= 0) {
-                                    header.setCloturer(Boolean.TRUE);
-                                    header.setCloturerBy(UtilsProject.currentUser.getUsers());
-                                    header.setDateCloturer(new Date());
-                                    header.setDateValider(new Date());
-                                    header.setValiderBy(UtilsProject.currentUser.getUsers());
-                                    header.setDateUpdate(new Date());
-                                    rq.update(header);
-                                    //Initialiser la vue
-                                    page.resetAllView(header);
-                                    // Désactiver le planning
-                                    if (!header.getCreneau().getPermanent()) {
-                                        header.getCreneau().setActif(false);
-                                        header.getCreneau().setDateUpdate(new Date());
-                                        rq.update(header.getCreneau());
-                                    }
-                                    // Initialiser la fiche
-                                    fenDialogue.close();
-                                } else {
-                                    LymytzService.openAlertDialog(nb + " Facture(s) non encore livrée(s) et/ou validée(s) pour ce journal de vente", "Impossible de clôturer", "Impossible de clôturer", Alert.AlertType.ERROR);
-                                }
-
-                            } else {
-                                LymytzService.openAlertDialog("Ce journal est déjà clôturée", "Journal clôturé", "Erreur", Alert.AlertType.WARNING);
                             }
                             PROGRESS_CLOSE.setVisible(false);
                         } catch (Exception ex) {
@@ -226,8 +194,44 @@ public class FormVirementController implements Initializable, Controller {
                         LymytzService.openAlertDialog("Le Header est déjà clôturé", "Erreur lors de la clôture", "L'entete du document est déjà clôturé", Alert.AlertType.ERROR);
                     }
                 }
-            } else {
-                LymytzService.openAlertDialog("Le montant à virer est incorrecte", "Erreur montant", "Montant à virer incorrect", Alert.AlertType.WARNING);
+            }
+            if (header != null ? !header.getCloturer() : false) {
+                // Nettoie et clôture la fiche
+                if (CHK_CLOTURE.isSelected()) {
+                    page.cleanVente(header.getId());
+                    if (!header.getCloturer()) {
+                        // Vérifier s'il y a  des factures non réglés et/ou non encore entièrement livré et demander une confirmation
+                        Long nb = (Long) rq.findOneObjectByNQ("YvsComDocVentes.countFactureNonLivreOrNonPayeByHeader", new String[]{"statut", "statutLivre", "statutRegle", "header", "typeDoc"},
+                                new Object[]{Constantes.ETAT_VALIDE, Constantes.ETAT_LIVRE, Constantes.ETAT_REGLE, header, Constantes.TYPE_FV});
+                        nb = (nb != null) ? nb : 0;
+                        if (nb <= 0) {
+
+                            header.setCloturer(Boolean.TRUE);
+                            header.setCloturerBy(UtilsProject.currentUser.getUsers());
+                            header.setDateCloturer(new Date());
+                            header.setDateValider(new Date());
+                            header.setValiderBy(UtilsProject.currentUser.getUsers());
+                            header.setDateUpdate(new Date());
+                            rq.update(header);
+                            //Initialiser la vue
+                            page.resetAllView(header);
+                            // Désactiver le planning
+                            if (!header.getCreneau().getPermanent()) {
+                                header.getCreneau().setActif(false);
+                                header.getCreneau().setDateUpdate(new Date());
+                                rq.update(header.getCreneau());
+                            }
+
+                            // Initialiser la fiche
+                            fenDialogue.close();
+                        } else {
+                            LymytzService.openAlertDialog(nb + " Facture(s) non encore livrée(s) et/ou validée(s) pour ce journal de vente", "Impossible de clôturer", "Impossible de clôturer", Alert.AlertType.ERROR);
+                        }
+
+                    } else {
+                        LymytzService.openAlertDialog("Ce journal est déjà clôturée", "Journal clôturé", "Erreur", Alert.AlertType.WARNING);
+                    }
+                }
             }
 
         } catch (NumberFormatException ex) {
@@ -237,25 +241,23 @@ public class FormVirementController implements Initializable, Controller {
     }
 
     private void loadVersementFiche() {
-        if (Constantes.asLong(this.idRemoteHeader)) {
+        if (UtilsProject.headerDoc != null && UtilsProject.caisse != null) {
             Thread t = new Thread(() -> {
+                Long idHead = (UtilsProject.REPLICATION) ? idRemoteHeader : UtilsProject.headerDoc.getId();
                 RQueryFactories dao = new RQueryFactories();
                 //charge les versements de la fiche
                 if (RQueryFactories.pingServer()) {
                     YvsComEnteteDocVente header = (YvsComEnteteDocVente) rq.findOneByNQ("YvsComEnteteDocVente.findById", new String[]{"id"}, new Object[]{idHeader});
                     String query = "SELECT y.numero_piece, y.montant FROM yvs_compta_caisse_piece_virement y LEFT JOIN yvs_compta_notif_versement_vente h ON h.piece=y.id "
-                            + " WHERE h.id=? OR y.date_piece=?::date";
-                    List<Object[]> re = dao.loadBySQLQuery(query, new Options[]{new Options(idRemoteHeader, 1), new Options(header.getDateEntete(), 2)});
+                            + " WHERE (h.id=? OR y.date_piece=?::date) AND y.source=?";
+                    List<Object[]> re = dao.loadBySQLQuery(query, new Options[]{new Options(idHead, 1),
+                        new Options(header.getDateEntete(), 2), new Options(UtilsProject.caisse.getId(), 3)});
                     Platform.runLater(() -> {
                         LIST_VER.getItems().clear();
                         Double soe = 0d;
                         for (Object[] l : re) {
                             LIST_VER.getItems().add((String) l[0] + "   --*--   " + ((l[1] != null) ? Constantes.nbf.format(Double.valueOf((String) l[1])) : "0"));
                             soe = soe + ((l[1] != null) ? Double.valueOf((String) l[1]) : 0d);
-                        }
-                        if ((avanceCmde + totalFacture) - soe > 0) {
-                            TXT_MONTANT.setText(Constantes.nbf.format((avanceCmde + totalFacture) - soe));
-                            TXT_MONTANT.selectAll();
                         }
                         MESSAGE.setText("");
                     });

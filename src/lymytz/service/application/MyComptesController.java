@@ -7,18 +7,17 @@ package lymytz.service.application;
 
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
@@ -34,6 +33,7 @@ import javafx.scene.control.TreeTableView;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
+import javafx.util.Callback;
 import lymytz.dao.Options;
 import lymytz.dao.UtilsBean;
 import lymytz.dao.entity.YvsComCreneauHoraireUsers;
@@ -111,7 +111,7 @@ public class MyComptesController extends ManagedApplication implements Initializ
     @FXML
     protected Label F_NB_TICKET_RECU;
     @FXML
-    protected Label F_SOLDE_CAISSE;
+    protected Label F_CMDE_RECU;
     @FXML
     protected Label F_CLIENT_BEST_VENTE;
     @FXML
@@ -202,8 +202,8 @@ public class MyComptesController extends ManagedApplication implements Initializ
                 ZONE_NEW.setVisible(false);
             }
             displayStatHeader(UtilsProject.headerDoc);
-        }else{
-         LymytzService.openAlertDialog("Vous devez être connecté avec un compte utilisateur valide", "Impossible d'ouvrir la page", "Erreur", Alert.AlertType.WARNING);
+        } else {
+            LymytzService.openAlertDialog("Vous devez être connecté avec un compte utilisateur valide", "Impossible d'ouvrir la page", "Erreur", Alert.AlertType.WARNING);
         }
     }
 
@@ -215,7 +215,7 @@ public class MyComptesController extends ManagedApplication implements Initializ
         COL_TRANCHE.setCellValueFactory(new PropertyValueFactory("tranche"));
 //        COL_ACTIF.setCellValueFactory(new PropertyValueFactory("actif"));
         COL_OP.setCellValueFactory(new PropertyValueFactory("id"));
-        COL_DATE.setCellValueFactory(new PropertyValueFactory("date"));
+        COL_DATE.setCellValueFactory(new PropertyValueFactory("date"));       
         COL_ACTIF.setCellValueFactory((TableColumn.CellDataFeatures<Planning, Boolean> param) -> {
             Planning p = param.getValue();
             SimpleBooleanProperty val = new SimpleBooleanProperty(p.getActif());
@@ -229,7 +229,7 @@ public class MyComptesController extends ManagedApplication implements Initializ
             cell.setAlignment(Pos.CENTER);
             return cell;
         });
-        COL_OP.setCellFactory((TableColumn<Planning, Long> param) -> {
+        COL_OP.setCellFactory((TableColumn<Planning, Long> param) -> {            
             BCellInit cell = factoryButtonCell.getBCellInit("Initier une Fiche");
             cell.setMainContoler(current);
             cell.setDate(Constantes.localDateToDate(DATE.getValue()));
@@ -376,12 +376,10 @@ public class MyComptesController extends ManagedApplication implements Initializ
                 //2. Client ayant réalisé la Meilleur vente 
                 F_CLIENT_BEST_VENTE.setText("" + result.get(0)[2]);
             }
-            if (UtilsProject.caisse != null) {
-                double vestAttendu = UtilsBean.getVersementAttenduHeader(header.getId());
-                F_VST_ATTENDU.setText(Constantes.nbf.format(vestAttendu));
-            } else {
-                F_VST_ATTENDU.setText("Aucune caisse trouvéé!");
-            }
+            double vestAttendu = UtilsBean.getVersementAttenduHeader(header.getId());
+            F_VST_ATTENDU.setText(Constantes.nbf.format(vestAttendu));
+            //Récupère les commande recu par le vendeur    
+            F_CMDE_RECU.setText(Constantes.nbf.format(UtilsBean.getCommandeRecu(header.getCreneau().getUsers().getId(), header.getDateEntete())));
             Double val = null;
             //Total Facture validé
             val = (Double) dao.findOneObjectByNQ("YvsComContenuDocVente.findTotalByTypeDocAndHeader", new String[]{"header", "typeDoc"}, new Object[]{header, Constantes.TYPE_FV});

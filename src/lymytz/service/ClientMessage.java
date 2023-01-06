@@ -85,7 +85,6 @@ public class ClientMessage {
             }
         } catch (IOException ex) {
             try {
-                System.err.println(" Lecture du message impossible .... ");
                 page.setConnect(null);
                 changeStatut(false);
                 socketClient.close();

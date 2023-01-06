@@ -22,11 +22,6 @@ import java.util.logging.Logger;
 import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
-import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
 import javax.print.attribute.standard.Severity;
 import lymytz.dao.Options;
@@ -40,8 +35,6 @@ import lymytz.dao.entity.YvsBaseExercice;
 import lymytz.dao.entity.YvsBaseModeReglement;
 import lymytz.dao.entity.YvsBaseModelReglement;
 import lymytz.dao.entity.YvsComClient;
-import lymytz.dao.entity.YvsComContenuDocVente;
-import lymytz.dao.entity.YvsComDocVentes;
 import lymytz.dao.entity.YvsComEnteteDocVente;
 import lymytz.dao.entity.YvsComParametreVente;
 import lymytz.dao.entity.YvsDictionnaire;
@@ -220,6 +213,24 @@ public class UtilsProject {
             Long cond = UtilEntityBase.findIdRemoteData(Constantes.TABLE_CONDITIONNEMENT_CODE, c.getId());
             Long art = UtilEntityBase.findIdRemoteData(Constantes.TABLE_ARTICLE_CODE, c.getArticle().getId());
             re = WsSynchro.getStock(art, cond, Rdepot, Constantes.dfD.format(UtilsProject.headerDoc.getDateEntete()));
+        }
+        return re;
+    }
+    
+    public static double getPr(YvsBaseConditionnement c, long depot) {
+        Double re = 0d;
+        if (!UtilsProject.REPLICATION) {
+            LQueryFactories rq = new LQueryFactories();
+            re = (Double) (rq.findOneObjectBySQLQ("select public.get_pr(?,?,?,?::date,?)", new Options[]{
+                new Options(c.getArticle().getId(), 1), new Options(depot, 2), new Options(0, 3), 
+                new Options(UtilsProject.headerDoc.getDateEntete(), 4), new Options(c.getId(), 5)
+            }));
+        } else {
+            //récupère à partir d'une web service
+            Long Rdepot = UtilEntityBase.findIdRemoteData(Constantes.TABLE_DEPOT_CODE, depot);
+            Long cond = UtilEntityBase.findIdRemoteData(Constantes.TABLE_CONDITIONNEMENT_CODE, c.getId());
+            Long art = UtilEntityBase.findIdRemoteData(Constantes.TABLE_ARTICLE_CODE, c.getArticle().getId());
+            re = WsSynchro.getPr(art, cond, Rdepot, Constantes.dfD.format(UtilsProject.headerDoc.getDateEntete()));
         }
         return re;
     }

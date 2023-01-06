@@ -49,7 +49,7 @@ public class ServiceLivraison {
         //Construction de l'objet avec ses liaisons sur le serveur distant
         JSONObject entityJson = UtilExport.exportDocVente(facture, false, 0L);
         ResultatAction<YvsComDocVentes> result = ws.livraisonDocVente(entityJson, "livrer_facture_vente_caisse");
-        if (result.isResult()) {
+        if (result != null ? result.isResult() : false) {
             //met à jour le statut livré de la facture
             String query = "UPDATE yvs_com_doc_ventes SET statut_livre='L' WHERE id=? ";
             mainPage.dao.executeSqlQuery(query, new Options[]{new Options(facture.getId(), 1)});
@@ -60,7 +60,7 @@ public class ServiceLivraison {
             }
         } else {
             Platform.runLater(() -> {
-                LymytzService.openAlertDialog("", "", result.getMessage(), Alert.AlertType.ERROR);
+                LymytzService.openAlertDialog("", "", (result != null ? result.getMessage() : ""), Alert.AlertType.ERROR);
             });
         }
         return result != null ? result.isResult() : false;
@@ -171,7 +171,6 @@ public class ServiceLivraison {
             //trouve la quantité bonus d'article facturé 
             Double qteBonusFacture = (Double) mainPage.dao.findOneObjectByNQ("YvsComContenuDocVente.findQteBonusByFacture", new String[]{"docVente", "article", "unite"}, new Object[]{c.getDocVente().getDocumentLie(), c.getArticle(), c.getConditionnement()});
             qteBonusFacture = (qteBonusFacture != null) ? qteBonusFacture : 0;
-            System.err.println(" .... facture "+c.getDocVente().getDocumentLie().getStatutRegle());
             if (c.getDocVente().getDocumentLie() != null ? !c.getDocVente().getDocumentLie().getStatutRegle().equals(Constantes.ETAT_REGLE) : true) {
                 //si la facture n'est pas encore réglé, on ne dois pas inclure la quantité bonus dans la quantité à livrer
                 if (c.getQuantite() > (qteFacture - qteLivre)) {
@@ -267,7 +266,7 @@ public class ServiceLivraison {
                     if (d.getStatut().equals(Constantes.ETAT_VALIDE)) {
                         return d;
                     }
-                }  
+                }
             }
             if (commande.getOnfacture().equals(Constantes.ETAT_ENCOURS)) {
                 if (msg) {

@@ -148,7 +148,6 @@ public class LymytzSell extends Application {
 
             // if the user double-clicks on the tray icon, show the main app stage.
             trayIcon.addActionListener((ActionEvent e) -> {
-                System.err.println(" double click sur tary icon");
             });
             java.awt.MenuItem readLogItem = new java.awt.MenuItem("Lire les logs");
             readLogItem.addActionListener((ActionEvent e) -> {

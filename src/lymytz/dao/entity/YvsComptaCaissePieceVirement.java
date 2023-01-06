@@ -21,7 +21,6 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
-import javax.validation.constraints.Size;
 
 /**
  *
@@ -49,7 +48,6 @@ public class YvsComptaCaissePieceVirement extends YvsEntity implements Serializa
     @Basic(optional = false)
     @Column(name = "id")
     private Long id;
-    @Size(max = 2147483647)
     @Column(name = "numero_piece")
     private String numeroPiece;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
@@ -63,7 +61,6 @@ public class YvsComptaCaissePieceVirement extends YvsEntity implements Serializa
     @Column(name = "date_paiement")
     @Temporal(TemporalType.TIMESTAMP)
     private Date datePaiement;
-    @Size(max = 2147483647)
     @Column(name = "note")
     private String note;
     @Column(name = "date_paiment_prevu")

@@ -93,9 +93,9 @@ public class YvsBaseConditionnement implements Serializable {
     @JoinColumn(name = "unite", referencedColumnName = "id")
     @ManyToOne
     private YvsBaseUniteMesure unite;
-    @JoinColumn(name = "author", referencedColumnName = "id")
-    @ManyToOne
-    private YvsUsersAgence author;
+//    @JoinColumn(name = "author", referencedColumnName = "id")
+//    @ManyToOne
+//    private YvsUsersAgence author;
 
     @Transient
     private double stock;
@@ -243,13 +243,13 @@ public class YvsBaseConditionnement implements Serializable {
         this.unite = unite;
     }
 
-    public YvsUsersAgence getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(YvsUsersAgence author) {
-        this.author = author;
-    }
+//    public YvsUsersAgence getAuthor() {
+//        return author;
+//    }
+//
+//    public void setAuthor(YvsUsersAgence author) {
+//        this.author = author;
+//    }
 
     public Boolean getActif() {
         return actif != null ? actif : false;

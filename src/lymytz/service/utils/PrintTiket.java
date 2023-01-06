@@ -22,9 +22,11 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
+import javax.print.attribute.standard.Severity;
 import lymytz.dao.entity.YvsComContenuDocVente;
 import lymytz.dao.entity.YvsComDocVentes;
 import lymytz.service.application.composant.Onglets;
+import lymytz.service.utils.log.LogFiles;
 import lymytz.view.main.HomeCaisseController;
 
 /**
@@ -121,7 +123,7 @@ public class PrintTiket implements Runnable {
         if (lay != null) {
             Platform.runLater(() -> {
                 TextFlow content = print(l);
-                if (print.printPage(lay, content)) {
+                if (print.printPage(lay, content)) {                    
                     print.endJob();
                 }
             });
@@ -130,19 +132,21 @@ public class PrintTiket implements Runnable {
     double tremise = 0d, tristourne = 0d, trabais = 0d;
 
     public TextFlow print(List<YvsComContenuDocVente> contents) {
-//        StringBuilder footer = UtilsProject.FOOTER_TICKET(0d, 0d, tremise, tristourne, avance, netAPayer, montantRecu, montantTotal, montantAvance, facture.getTypeDoc());
-//        wbEngine.loadContent((UtilsProject.HEADERTICKET(facture).append(getBuildText(facture.getContenus())).append(footer)).toString());
         return FOOTER_TICKET_(facture, 0d, 0d, tremise, tristourne, avance, netAPayer, montantRecu, montantTotal, montantAvance, facture.getTypeDoc());
-//        wbEngine.loadContent((UtilsProject.HEADERTICKET(facture).append(getBuildText(facture.getContenus())).append(footer)).toString());
     }
 
     private PageLayout getCustumPage() {
+        try{
         PageLayout pl;
         javafx.print.Paper paper = PrintHelper.createPaper("Perso", 300d, 15000d, Units.INCH);
         PageOrientation PO = (UtilsProject.paramConnection.getOrientation() != null) ? UtilsProject.paramConnection.getOrientation().equals("PAYSAGE") ? PageOrientation.LANDSCAPE : PageOrientation.PORTRAIT : PageOrientation.PORTRAIT;
-//        pl = Printer.getDefaultPrinter().createPageLayout(Paper.A4, PO, UtilsProject.paramConnection.getP_ml(), UtilsProject.paramConnection.getP_mr(), UtilsProject.paramConnection.getP_mt(), UtilsProject.paramConnection.getP_mb());
         pl = Printer.getDefaultPrinter().createPageLayout(paper, PO, UtilsProject.paramConnection.getP_ml(), UtilsProject.paramConnection.getP_mr(), UtilsProject.paramConnection.getP_mt(), UtilsProject.paramConnection.getP_mb());
         return pl;
+        }catch(Exception ex){
+            ex.printStackTrace();
+            LogFiles.addLogInFile("Impossible d'imprimer !", Severity.ERROR, ConsUtil.SOURCE_LOG_FILE_EXCEPTION, ex);
+        }
+        return null;
     }
 
     public TextFlow getBuildText_(List<YvsComContenuDocVente> contents) {
@@ -174,23 +178,6 @@ public class PrintTiket implements Runnable {
         }
         return result;
     }
-//
-//    private String getOpenDiv() {
-//        StringBuilder sb = new StringBuilder("<div style=")
-//                .append("font-size:7pt").append(">");
-//        return sb.toString();
-//    }
-//
-//    private String getOpenDivfoot() {
-//        StringBuilder sb = new StringBuilder("<div style=")
-//                .append("font-size:5pt; white-space: initial;white-space: nowrap;").append(">");
-//        return sb.toString();
-//    }
-//
-//    private String getSpan(String text) {
-//        String sb = "<span style=font-size:6pt; witdh:110px;display:inline-block; float:left>" + text + "</span>";
-//        return sb;
-//    }
 
     public TextFlow FOOTER_TICKET_(YvsComDocVentes facture, Double taxe, Double trabais, Double tremise, Double tristourne, double avance, Double netAPayer, Double montantRecu, Double montantTotal, Double montantAvance, String type) {
 //header

@@ -23,7 +23,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.constraints.Size;
 
 /**
  *
@@ -49,7 +48,6 @@ public class YvsComRemise implements Serializable {
     @Basic(optional = false)
     @Column(name = "id")
     private Long id;
-    @Size(max = 2147483647)
     @Column(name = "ref_remise")
     private String refRemise;
     @Column(name = "permanent")
@@ -68,7 +66,6 @@ public class YvsComRemise implements Serializable {
     @Column(name = "date_save")
     @Temporal(TemporalType.TIMESTAMP)
     private Date dateSave;
-    @Size(max = 2147483647)
     @Column(name = "description")
     private String description;
     @OneToMany(mappedBy = "remise")

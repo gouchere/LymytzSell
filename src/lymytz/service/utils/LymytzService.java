@@ -462,7 +462,6 @@ public class LymytzService {
             stage.centerOnScreen();
             stage.initStyle(StageStyle.UNDECORATED);
             StartController controller=(StartController)load.getController();
-            System.err.println(" .... herer ...");
             stage.show();
             UtilsProject.stageConnect = stage;
             if (!UtilsProject.ENVIRONNEMENT.equals("PRODUCTION")) {

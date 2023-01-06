@@ -167,7 +167,7 @@ public class YvsComParametreVente implements Serializable {
     }
 
     public Boolean getSellLowerPr() {
-        return sellLowerPr;
+        return sellLowerPr!=null? sellLowerPr:true;
     }
 
     public void setSellLowerPr(Boolean sellLowerPr) {

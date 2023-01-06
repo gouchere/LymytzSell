@@ -5,6 +5,7 @@
  */
 package lymytz.service.application.loader;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javafx.collections.FXCollections;
@@ -12,6 +13,7 @@ import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javax.print.attribute.standard.Severity;
 import lymytz.dao.Options;
+import lymytz.dao.ParamOption;
 import lymytz.dao.entity.YvsComEnteteDocVente;
 import lymytz.dao.query.LQueryFactories;
 import lymytz.service.application.bean.Factures;
@@ -27,24 +29,52 @@ public class LoaderFacture extends Task<ObservableList<Factures>> {
 
     LQueryFactories Ldao;
     String type;
+    List<ParamOption> paramsOptions;
 
     public LoaderFacture(String type) {
         Ldao = new LQueryFactories();
         this.type = type;
     }
 
+    public LoaderFacture(String type, List<ParamOption> params) {
+        Ldao = new LQueryFactories();
+        this.type = type;
+        this.paramsOptions = params;
+    }
+
     @Override
     public ObservableList<Factures> call() throws Exception {
-        List<Object[]> factures = Ldao.loadBySQLQuery((UtilsProject.REPLICATION) ? getQuery1(true) : getQuery(true), new Options[]{
-            new Options(UtilsProject.headerDoc.getId(), 1),
-            new Options(this.type, 2),
-            new Options(Constantes.ETAT_ANNULE, 3),});
+        Options[] params = new Options[paramsOptions.size()];
+        int pos = 0;
+        for (ParamOption p : paramsOptions) {
+            params[pos] = new Options(p.getValeur(), pos + 1);
+            pos++;
+        }
+//        if(type.equals(Constantes.TYPE_FV)){
+//            params=new Options[]{
+//            new Options(UtilsProject.headerDoc.getId(), 1),
+//            new Options(this.type, 2),
+//            new Options(Constantes.ETAT_ANNULE, 3),};
+//        }else{
+//            params=new Options[]{
+//            new Options(this.type, 1),
+//            new Options(Constantes.ETAT_ANNULE, 2),
+//            new Options(Constantes.ETAT_LIVRE, 3),
+//            new Options(UtilsProject.currentAgence.getId(), 4)};
+//        }
+        List<Object[]> factures = Ldao.loadBySQLQuery((UtilsProject.REPLICATION) ? getQuery1(true) : getQuery(true), params);
         int i = 1;
         ObservableList<Factures> result = FXCollections.observableArrayList();
+        List<Long> ids = new ArrayList<>();
         if (factures.size() > 0) {
             Factures f = null;
+            Long id;
             for (Object[] art : factures) {
-                result.add(buildBeanFacture(f, art, i));
+                id = (Long) art[0];
+                if (!ids.contains(id)) {
+                    result.add(buildBeanFacture(f, art, i));
+                }
+                ids.add(id);
                 i++;
                 this.updateProgress(i, factures.size());
                 this.updateMessage(i + " sur " + factures.size());
@@ -58,6 +88,33 @@ public class LoaderFacture extends Task<ObservableList<Factures>> {
 
     private String getQuery(boolean withTtc) {
         StringBuilder sb = new StringBuilder("SELECT d.id,");
+        String where = "WHERE ";
+        int pos = 0;
+        for (ParamOption p : paramsOptions) {
+            if (pos < paramsOptions.size() - 1 && paramsOptions.size() > 1) {
+                if (p.getValeur() != null) {
+                    where += p.getParam() + "" + p.getOperateur() + "? AND ";
+                } else {
+                    if (p.getOperateur().equals("IS NULL") || p.getOperateur().equals("IS NOT NULL")) {
+                        where += p.getParam() + "" + p.getOperateur() + " AND ";
+                    }
+                }
+            } else if ((pos == paramsOptions.size() - 1) || paramsOptions.size() == 1) {
+                if (p.getValeur() != null) {
+                    where += p.getParam() + "" + p.getOperateur() + " ?";
+                } else {
+                    if (p.getOperateur().equals("IS NULL") || p.getOperateur().equals("IS NOT NULL")) {
+                        where += p.getParam() + "" + p.getOperateur();
+                    }
+                }
+            }
+            pos++;
+        }
+//        if (type.equals(Constantes.TYPE_FV)) {
+//            where = "WHERE e.id=? AND d.type_doc=? AND d.statut!=? ";
+//        } else {
+//            where = "WHERE d.type_doc=? AND d.statut!=? AND d.statut_livre!=? AND e.agence=? ";
+//        }
         sb.append("e.id, ") //1
                 .append("d.type_doc, ")//2
                 .append("d.statut, ")//3
@@ -79,13 +136,35 @@ public class LoaderFacture extends Task<ObservableList<Factures>> {
                 .append("INNER JOIN yvs_com_client cl ON cl.id=d.client ")
                 .append("INNER JOIN yvs_base_categorie_comptable cc ON cc.id=d.categorie_comptable ")
                 .append("LEFT JOIN yvs_dictionnaire di ON di.id=d.adresse ")
-                .append("WHERE e.id=? AND d.type_doc=? AND d.statut!=? ")
+                .append(where).append(" ")
                 .append("ORDER BY d.type_doc, d.num_doc ");
         return sb.toString();
     }
 
     private String getQuery1(boolean withTtc) {
         StringBuilder sb = new StringBuilder("SELECT DISTINCT d.id,");
+        String where = "WHERE ";
+        int pos = 0;
+        for (ParamOption p : paramsOptions) {
+            if (pos < paramsOptions.size() - 1 && paramsOptions.size() > 1) {
+                if (p.getValeur() != null) {
+                    where += p.getParam() + "" + p.getOperateur() + "? AND ";
+                } else {
+                    if (p.getOperateur().equals("IS NULL") || p.getOperateur().equals("IS NOT NULL")) {
+                        where += p.getParam() + "" + p.getOperateur() + " AND ";
+                    }
+                }
+            } else if ((pos == paramsOptions.size() - 1) || paramsOptions.size() == 1) {
+                if (p.getValeur() != null) {
+                    where += p.getParam() + "" + p.getOperateur() + " ?";
+                } else {
+                    if (p.getOperateur().equals("IS NULL") || p.getOperateur().equals("IS NOT NULL")) {
+                        where += p.getParam() + "" + p.getOperateur();
+                    }
+                }
+            }
+            pos++;
+        }
         sb.append("e.id, ") //1
                 .append("d.type_doc, ")//2
                 .append("d.statut, ")//3
@@ -109,10 +188,9 @@ public class LoaderFacture extends Task<ObservableList<Factures>> {
                 .append("INNER JOIN yvs_com_client cl ON cl.id=d.client ")
                 .append("INNER JOIN yvs_base_categorie_comptable cc ON cc.id=d.categorie_comptable ")
                 .append("LEFT JOIN yvs_dictionnaire di ON di.id=d.adresse ")
-                .append("LEFT JOIN yvs_synchro_listen_table l ON l.id_source=d.id ")
+                .append("LEFT JOIN yvs_synchro_listen_table l ON (l.id_source=d.id AND l.name_table='yvs_com_doc_ventes') ")
                 .append("LEFT JOIN yvs_synchro_data_synchro ds ON ds.id_listen=l.id ")
-                .append("WHERE e.id=? AND d.type_doc=? AND d.statut!=? ")
-                .append("AND l.name_table='yvs_com_doc_ventes'")
+                .append(where).append(" ")
                 .append("ORDER BY d.type_doc, d.num_doc ");
         LogFiles.addLogInFile(sb.toString(), Severity.REPORT);
         return sb.toString();

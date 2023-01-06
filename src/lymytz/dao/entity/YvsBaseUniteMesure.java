@@ -8,7 +8,6 @@ package lymytz.dao.entity;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -19,7 +18,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -66,15 +64,19 @@ public class YvsBaseUniteMesure implements Serializable {
     @JoinColumn(name = "societe", referencedColumnName = "id")
     @ManyToOne
     private YvsSocietes societe;
-    @JoinColumn(name = "author", referencedColumnName = "id")
-    @ManyToOne
-    private YvsUsersAgence author;
+//    @JoinColumn(name = "author", referencedColumnName = "id")
+//    @ManyToOne
+//    private YvsUsersAgence author;
 
     public YvsBaseUniteMesure() {
     }
 
     public YvsBaseUniteMesure(Long id) {
         this.id = id;
+    }
+    public YvsBaseUniteMesure(Long id, String ref) {
+        this.id = id;
+        this.reference=ref;
     }
 
     public Long getId() {
@@ -149,13 +151,13 @@ public class YvsBaseUniteMesure implements Serializable {
         this.societe = societe;
     }
 
-    public YvsUsersAgence getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(YvsUsersAgence author) {
-        this.author = author;
-    }
+//    public YvsUsersAgence getAuthor() {
+//        return author;
+//    }
+//
+//    public void setAuthor(YvsUsersAgence author) {
+//        this.author = author;
+//    }
     
     @Override
     public int hashCode() {

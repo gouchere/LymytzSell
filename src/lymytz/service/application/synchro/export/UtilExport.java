@@ -439,7 +439,6 @@ public class UtilExport {
         try {
             if (localDoc != null) {
                 re = buildExportDocVente(localDoc, null, withChild);
-                System.err.println(" ..... "+re);
                 if (!withChild) {
                     if (re.getContenus() != null) {
                         re.getContenus().clear();
@@ -649,7 +648,6 @@ public class UtilExport {
                     re.setAuthor(new YvsUsersAgence(UtilsProject.currentUser.getId()));
                     re.setCible(new YvsBaseCaisse(re.getCible()));
                     re.setSource(new YvsBaseCaisse(re.getSource()));
-                    System.err.println("...model "+re.getModel());
                     JSONObject jo= UtilEntityBase.factoryJsonObject(re, YvsComptaCaissePieceVirement.class);                    
                     return jo;
                 }

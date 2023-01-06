@@ -73,7 +73,9 @@ public class ServiceReglement {
                     //1.Save l'avance sur commande
                     //2.Save la pièce de règlement
                     //3.Save la liaison
-                    return saveReglement(facture, montant, montantRecu, facture.getMontantResteApayer());
+                    if (montant > 0) {
+                        return saveReglement(facture, montant, montantRecu, facture.getMontantResteApayer());
+                    }
                 } else {
                     LymytzService.openAlertDialog("Vous ne pouvez planifier un paiement au délà de la commande", "Erreur ", "Impossible de terminer cette action", Alert.AlertType.ERROR);
                 }
@@ -97,8 +99,8 @@ public class ServiceReglement {
                     LogFiles.addLogInFile("L'avance de la commande " + facture.getNumDoc() + " n'a pas pue être généré !", Severity.ERROR);
                     return Constantes.ETAT_ATTENTE;
                 }
-            } 
-            montantNet = montantNet - montant;            
+            }
+            montantNet = montantNet - montant;
             piece.setNumeroPiece(numDoc);
             piece.setAuthor(UtilsProject.currentUser);
             piece.setCaisse(UtilsProject.caisse);
@@ -119,7 +121,6 @@ public class ServiceReglement {
             piece.setMouvement(Constantes.MOUV_CAISS_ENTREE.charAt(0));
             piece = (YvsComptaCaissePieceVente) dao.save1(piece);
             bindNotifReglement(avance, piece);
-            System.err.println(" Montant Net... " + montantNet);            
             if (piece.getId() != null) {
                 if (montantNet <= 0) {
                     return Constantes.ETAT_REGLE;

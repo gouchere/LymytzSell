@@ -55,9 +55,9 @@ public class YvsBaseArticleCodeBarre implements Serializable {
     @JoinColumn(name = "conditionnement", referencedColumnName = "id")
     @ManyToOne
     private YvsBaseConditionnement conditionnement;
-    @JoinColumn(name = "author", referencedColumnName = "id")
-    @ManyToOne
-    private YvsUsersAgence author;
+//    @JoinColumn(name = "author", referencedColumnName = "id")
+//    @ManyToOne
+//    private YvsUsersAgence author;
 
     public YvsBaseArticleCodeBarre() {
     }
@@ -113,14 +113,14 @@ public class YvsBaseArticleCodeBarre implements Serializable {
     public void setConditionnement(YvsBaseConditionnement conditionnement) {
         this.conditionnement = conditionnement;
     }
-
-    public YvsUsersAgence getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(YvsUsersAgence author) {
-        this.author = author;
-    }
+//
+//    public YvsUsersAgence getAuthor() {
+//        return author;
+//    }
+//
+//    public void setAuthor(YvsUsersAgence author) {
+//        this.author = author;
+//    }
 
     @Override
     public int hashCode() {

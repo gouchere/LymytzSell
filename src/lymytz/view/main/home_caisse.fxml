@@ -61,8 +61,8 @@
                         </Menu>
                         <Menu mnemonicParsing="false" text="Statistiques">
                             <items>
-                                <MenuItem mnemonicParsing="false" text="Listing" />
-                                <MenuItem mnemonicParsing="false" text="Listing cumulé" />
+                                <MenuItem mnemonicParsing="false" onAction="#openViewListingVente" text="Listing" />
+                                <MenuItem mnemonicParsing="false" onAction="#openViewListingVenteCumule" text="Listing cumulé" />
                             </items>
                         </Menu>
                         <Menu fx:id="MEN_SYNCHRO" mnemonicParsing="false" text="Synchro">
@@ -75,11 +75,6 @@
                                 <MenuItem mnemonicParsing="false" onAction="#openDlgStatusSyncImp" text="Status Importation" />
                             </items>
                         </Menu>
-                        <Menu mnemonicParsing="false" text="Paramètres">
-                            <items>
-                                <MenuItem fx:id="ITEM_CLEAN" mnemonicParsing="false" onAction="#clearDocVenteWithoutContent" text="Nettoyer" />
-                            </items>
-                        </Menu>
                         <Menu mnemonicParsing="false" text="Aide">
                             <items>
                                 <MenuItem fx:id="ITEM_ABOUT" mnemonicParsing="false" onAction="#openViewAbout" text="A propos" />
@@ -87,9 +82,6 @@
                                 <MenuItem fx:id="ITEM_RC" mnemonicParsing="false" onAction="#openViewRaccorcis" text="Raccourcis clavier" />
                                 <MenuItem fx:id="ITEM_PING_L" mnemonicParsing="false" onAction="#testLocalConnect" text="Ping serveur local" />
                                 <MenuItem fx:id="ITEM_PING_R" mnemonicParsing="false" onAction="#testRemoteConnect" text="Ping serveur distant" />
-                                <SeparatorMenuItem mnemonicParsing="false" />
-                                <MenuItem fx:id="ITEM_PING_R1" mnemonicParsing="false" onAction="#testSendMail" text="Test Send Mail" />
-                                <MenuItem fx:id="ITEM_PING_R11" mnemonicParsing="false" onAction="#testLoadData" text="Test_load" />
                             </items>
                         </Menu>
                     </menus>
