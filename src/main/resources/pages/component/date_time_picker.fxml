@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<HBox prefHeight="30.0" prefWidth="217.0" spacing="3.0" xmlns="http://javafx.com/javafx/17.0.12"
+      xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lymytz.lymytzsell.view.component.DateTimePickerController" fx:id="rootPane">
+   <padding>
+      <Insets bottom="3.0" left="3.0" right="3.0" top="3.0"/>
+   </padding>
+   <DatePicker fx:id="FX_DATE" prefHeight="24.0" prefWidth="140.0" showWeekNumbers="true"/>
+   <TextField fx:id="FX_TIME" prefHeight="24.0" prefWidth="66.0" promptText="00:00"/>
+</HBox>
