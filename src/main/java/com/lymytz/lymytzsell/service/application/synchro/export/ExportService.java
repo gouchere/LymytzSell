@@ -8,6 +8,7 @@ package com.lymytz.lymytzsell.service.application.synchro.export;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
+import com.lymytz.lymytzsell.dao.query.LocalQueryFactories;
 import com.lymytz.lymytzsell.service.application.synchro.BuilderEntitySynchro;
 import com.lymytz.lymytzsell.service.application.synchro.UtilEntityBase;
 import javafx.concurrent.Task;
@@ -20,7 +21,6 @@ import com.lymytz.lymytzsell.dao.entity.YvsComptaCaissePieceVente;
 import com.lymytz.lymytzsell.dao.entity.YvsComptaNotifReglementVente;
 import com.lymytz.lymytzsell.dao.entity.service.EntityColumn;
 import com.lymytz.lymytzsell.dao.entity.service.LymytzData;
-import com.lymytz.lymytzsell.dao.query.LQueryFactories;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
 import com.lymytz.lymytzsell.service.utils.log.LogFiles;
@@ -41,7 +41,7 @@ import java.util.logging.Logger;
  */
 public class ExportService<T extends Serializable> extends Task<Boolean> {
 
-    LQueryFactories Ldao = new LQueryFactories();
+    LocalQueryFactories Ldao = new LocalQueryFactories();
     private List<LymytzData> listData;
     ExportDataController page;
     private String source = "T";  // T= (thread: lancé par le schéduler) IHM= lancé lar l'IHM
@@ -640,7 +640,7 @@ public class ExportService<T extends Serializable> extends Task<Boolean> {
     }
 
     public static void addRemoveIdListenWithDependence(Long id_source, Long idListen, String table, boolean add) {
-        LQueryFactories Ldao = new LQueryFactories();
+        LocalQueryFactories Ldao = new LocalQueryFactories();
         switch (table) {
             case Constantes.TABLE_DOC_VENTE_CODE:
                 String query = "SELECT l.id FROM yvs_synchro_listen_table l "

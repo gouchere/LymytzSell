@@ -20,26 +20,6 @@
     </properties>
 
     <dependencies>
-        <!--<dependency>
-            <groupId>org.jdom</groupId>
-            <artifactId>jdom</artifactId>
-            <version>1.1.2</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>maven-plugins</groupId>
-                    <artifactId>maven-cobertura-plugin</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>maven-plugins</groupId>
-                    <artifactId>maven-findbugs-plugin</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>-->
-        <!--  <dependency>
-              <groupId>xstream</groupId>
-              <artifactId>xstream</artifactId>
-              <version>1.2.2</version>
-          </dependency>-->
         <dependency>
             <groupId>org.glassfish.jersey.core</groupId>
             <artifactId>jersey-client</artifactId>
@@ -80,11 +60,6 @@
             <artifactId>javax.persistence-api</artifactId>
             <version>2.2</version>
         </dependency>
-        <!-- <dependency>
-             <groupId>org.hibernate.javax.persistence</groupId>
-             <artifactId>hibernate-jpa-2.1-api</artifactId>
-             <version>1.0.2.Final</version>
-         </dependency>-->
         <dependency>
             <groupId>org.eclipse.persistence</groupId>
             <artifactId>eclipselink</artifactId>
@@ -159,7 +134,11 @@
             <artifactId>log4j-core</artifactId>
             <version>2.20.0</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.glassfish.jersey.inject</groupId>
+            <artifactId>jersey-hk2</artifactId>
+            <version>2.28</version>
+        </dependency>
     </dependencies>
 
     <build>

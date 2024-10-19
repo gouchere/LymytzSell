@@ -20,7 +20,7 @@ import com.lymytz.lymytzsell.dao.entity.YvsBaseConditionnement;
 import com.lymytz.lymytzsell.dao.entity.YvsBaseFamilleArticle;
 import com.lymytz.lymytzsell.dao.entity.YvsBaseGroupesArticle;
 import com.lymytz.lymytzsell.dao.entity.YvsBaseUniteMesure;
-import com.lymytz.lymytzsell.dao.query.LQueryFactories;
+import com.lymytz.lymytzsell.dao.query.LocalQueryFactories;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
 import com.lymytz.lymytzsell.view.component.CustomComponents;
@@ -32,7 +32,7 @@ import com.lymytz.lymytzsell.view.main.HomeCaisseController;
  */
 public class LoaderConditionnement extends Task<ObservableList<GridPane>> {
 
-    LQueryFactories Ldao = new LQueryFactories();
+    LocalQueryFactories Ldao = new LocalQueryFactories();
     HomeCaisseController page;
     String reference;
     List<String> categories;

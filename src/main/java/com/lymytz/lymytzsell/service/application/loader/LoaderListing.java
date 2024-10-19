@@ -8,6 +8,7 @@ package com.lymytz.lymytzsell.service.application.loader;
 import java.util.Date;
 import java.util.List;
 
+import com.lymytz.lymytzsell.dao.query.LocalQueryFactories;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
@@ -19,7 +20,6 @@ import com.lymytz.lymytzsell.dao.entity.YvsBaseArticles;
 import com.lymytz.lymytzsell.dao.entity.YvsBaseConditionnement;
 import com.lymytz.lymytzsell.dao.entity.YvsBaseUniteMesure;
 import com.lymytz.lymytzsell.dao.entity.YvsComDocVentes;
-import com.lymytz.lymytzsell.dao.query.LQueryFactories;
 import com.lymytz.lymytzsell.service.application.bean.ContentPanier;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
 import com.lymytz.lymytzsell.service.utils.log.LogFiles;
@@ -29,11 +29,11 @@ import com.lymytz.lymytzsell.service.utils.log.LogFiles;
  */
 public class LoaderListing extends Task<ObservableList<ContentPanier>> {
 
-    LQueryFactories Ldao;
+    LocalQueryFactories Ldao;
     boolean details;
 
     public LoaderListing(boolean details) {
-        Ldao = new LQueryFactories();
+        Ldao = new LocalQueryFactories();
         this.details = details;
     }
 

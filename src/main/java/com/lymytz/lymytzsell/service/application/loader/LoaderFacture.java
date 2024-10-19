@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.lymytz.lymytzsell.dao.query.LocalQueryFactories;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
@@ -18,7 +19,6 @@ import javax.print.attribute.standard.Severity;
 import com.lymytz.lymytzsell.dao.Options;
 import com.lymytz.lymytzsell.dao.ParamOption;
 import com.lymytz.lymytzsell.dao.entity.YvsComEnteteDocVente;
-import com.lymytz.lymytzsell.dao.query.LQueryFactories;
 import com.lymytz.lymytzsell.service.application.bean.Factures;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
@@ -29,17 +29,17 @@ import com.lymytz.lymytzsell.service.utils.log.LogFiles;
  */
 public class LoaderFacture extends Task<ObservableList<Factures>> {
 
-    LQueryFactories Ldao;
+    LocalQueryFactories Ldao;
     String type;
     List<ParamOption> paramsOptions;
 
     public LoaderFacture(String type) {
-        Ldao = new LQueryFactories();
+        Ldao = new LocalQueryFactories();
         this.type = type;
     }
 
     public LoaderFacture(String type, List<ParamOption> params) {
-        Ldao = new LQueryFactories();
+        Ldao = new LocalQueryFactories();
         this.type = type;
         this.paramsOptions = params;
     }

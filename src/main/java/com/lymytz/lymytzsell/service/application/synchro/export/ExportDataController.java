@@ -31,7 +31,7 @@ import com.lymytz.lymytzsell.dao.entity.service.EntityColumn;
 import com.lymytz.lymytzsell.dao.entity.service.LymytzData;
 import com.lymytz.lymytzsell.dao.entity.service.LymytzEntityClass;
 import com.lymytz.lymytzsell.dao.entity.service.LymytzLoaderEntity;
-import com.lymytz.lymytzsell.dao.query.LQueryFactories;
+import com.lymytz.lymytzsell.dao.query.LocalQueryFactories;
 import com.lymytz.lymytzsell.dao.query.RQueryFactories;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.LymytzService;
@@ -192,7 +192,7 @@ public class ExportDataController implements Initializable, Controller {
                 LymytzService.openAlertDialog("La ligne est déjà présente dans le listen " + o.get(3), "Insertion non nécessaire", "Warning... ", Alert.AlertType.WARNING);
             } else {
                 //ajouter listen
-                LQueryFactories daol = new LQueryFactories();
+                LocalQueryFactories daol = new LocalQueryFactories();
                 if (Constantes.asLong(daol.insertListenData(Long.valueOf((String) o.get(5)), TV_TABLE.getSelectionModel().getSelectedItem().getAnotationTable(), UtilsProject.currentUser.getId(), 0L, true))) {
                     LymytzService.success();
                 }

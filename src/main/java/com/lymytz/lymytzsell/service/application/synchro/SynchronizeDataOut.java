@@ -13,7 +13,7 @@ import javafx.scene.control.Tooltip;
 import javafx.util.Duration;
 import com.lymytz.lymytzsell.dao.Options;
 import com.lymytz.lymytzsell.dao.entity.YvsUsersAgence;
-import com.lymytz.lymytzsell.dao.query.LQueryFactories;
+import com.lymytz.lymytzsell.dao.query.LocalQueryFactories;
 import com.lymytz.lymytzsell.service.application.synchro.export.ExportService;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
@@ -33,12 +33,12 @@ import java.util.logging.Logger;
 public class SynchronizeDataOut extends ScheduledService<Long> {
 
     HomeCaisseController page;
-    LQueryFactories Ldao;
+    LocalQueryFactories Ldao;
     public static boolean running;
 
     public SynchronizeDataOut(int tempsDiffer, HomeCaisseController page) {
         running=true;
-        Ldao = new LQueryFactories<>();
+        Ldao = new LocalQueryFactories<>();
         this.page = page;
         //temps  d'attente avant le demarrage du service...
         this.setDelay(Duration.seconds(tempsDiffer));

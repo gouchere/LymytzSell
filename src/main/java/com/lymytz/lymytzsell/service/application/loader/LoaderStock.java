@@ -6,13 +6,14 @@
 package com.lymytz.lymytzsell.service.application.loader;
 
 import java.util.List;
+
+import com.lymytz.lymytzsell.dao.query.LocalQueryFactories;
 import javafx.concurrent.Task;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import com.lymytz.lymytzsell.dao.entity.YvsBaseConditionnement;
 import com.lymytz.lymytzsell.dao.entity.YvsBaseDepots;
-import com.lymytz.lymytzsell.dao.query.LQueryFactories;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
 import com.lymytz.lymytzsell.view.main.HomeCaisseController;
@@ -23,7 +24,7 @@ import com.lymytz.lymytzsell.view.main.HomeCaisseController;
  */
 public class LoaderStock extends Task<VBox> {
 
-    LQueryFactories Ldao = new LQueryFactories();
+    LocalQueryFactories Ldao = new LocalQueryFactories();
     HomeCaisseController page;
     String reference;
     List<YvsBaseDepots> depots;

@@ -51,21 +51,17 @@ public class ServiceLivraison {
         //Construction de l'objet avec ses liaisons sur le serveur distant
         JSONObject entityJson = UtilExport.exportDocVente(facture, false, 0L);
         ResultatAction<YvsComDocVentes> result = ws.livraisonDocVente(entityJson, "livrer_facture_vente_caisse");
-        if (result != null ? result.isResult() : false) {
+        if (result != null && result.isResult()) {
             //met à jour le statut livré de la facture
             String query = "UPDATE yvs_com_doc_ventes SET statut_livre='L' WHERE id=? ";
             mainPage.dao.executeSqlQuery(query, new Options[]{new Options(facture.getId(), 1)});
             if (message) {
-                Platform.runLater(() -> {
-                    LymytzService.success();
-                });
+                Platform.runLater(LymytzService::success);
             }
         } else {
-            Platform.runLater(() -> {
-                LymytzService.openAlertDialog("", "", (result != null ? result.getMessage() : ""), Alert.AlertType.ERROR);
-            });
+            Platform.runLater(() -> LymytzService.openAlertDialog("", "", (result != null ? result.getMessage() : ""), Alert.AlertType.ERROR));
         }
-        return result != null ? result.isResult() : false;
+        return result != null && result.isResult();
     }
 
     public boolean transmisOrder(YvsComDocVentes commande) {
@@ -75,16 +71,14 @@ public class ServiceLivraison {
             commande.setContenus(contenus);
             commande.setReglements(reglements);
             YvsComDocVentes facture = validerOrder(commande, true);
-            if (facture != null ? facture.getId() > 0 : false) {
+            if (facture != null && facture.getId() > 0) {
                 //si la facture a été généré, il faut la comptabiliser
-                Thread t = new Thread(() -> {
-                    mainPage.comptabilise(facture.getId(), facture.getNumDoc());
-                });
+                Thread t = new Thread(() -> mainPage.comptabilise(facture.getId(), facture.getNumDoc()));
                 t.start();
                 if (controleLivraison(facture, false) && UtilsProject.trancheLivraison != null) {
                     boolean continu = false;
                     String num = UtilsProject.generatedNumDoc(Constantes.TYPE_BLV_NAME);
-                    if (num != null ? num.trim().length() < 1 : true) {
+                    if (num == null || num.trim().isEmpty()) {
                         return false;
                     }
                     YvsComDocVentes y = new YvsComDocVentes(facture);
@@ -120,7 +114,7 @@ public class ServiceLivraison {
                     y.setOperateur(UtilsProject.currentUser.getUsers());
                     y.setId(null);
                     y = (YvsComDocVentes) mainPage.dao.save1(y);
-                    if (y != null ? y.getId() > 0 : false) {
+                    if (y != null && y.getId() > 0) {
                         YvsComContenuDocVente c;
                         for (int i = 0; i < commande.getContenus().size(); i++) {
                             c = new YvsComContenuDocVente(commande.getContenus().get(i));
@@ -131,7 +125,7 @@ public class ServiceLivraison {
                             c = (YvsComContenuDocVente) mainPage.dao.save1(c);
                             y.getContenus().add(0, c);
                         }
-                        if (facture.getReglements() != null ? facture.getReglements().isEmpty() : true) {
+                        if (facture.getReglements() == null || facture.getReglements().isEmpty()) {
                             YvsComptaCaissePieceVente p;
                             for (int i = 0; i < commande.getReglements().size(); i++) {
                                 p = commande.getReglements().get(i);
@@ -173,7 +167,7 @@ public class ServiceLivraison {
             //trouve la quantité bonus d'article facturé 
             Double qteBonusFacture = (Double) mainPage.dao.findOneObjectByNQ("YvsComContenuDocVente.findQteBonusByFacture", new String[]{"docVente", "article", "unite"}, new Object[]{c.getDocVente().getDocumentLie(), c.getArticle(), c.getConditionnement()});
             qteBonusFacture = (qteBonusFacture != null) ? qteBonusFacture : 0;
-            if (c.getDocVente().getDocumentLie() != null ? !c.getDocVente().getDocumentLie().getStatutRegle().equals(Constantes.ETAT_REGLE) : true) {
+            if (c.getDocVente().getDocumentLie() == null || !c.getDocVente().getDocumentLie().getStatutRegle().equals(Constantes.ETAT_REGLE)) {
                 //si la facture n'est pas encore réglé, on ne dois pas inclure la quantité bonus dans la quantité à livrer
                 if (c.getQuantite() > (qteFacture - qteLivre)) {
                     if (silence) {
@@ -216,7 +210,7 @@ public class ServiceLivraison {
                 }
             }
             YvsBaseArticleDepot y = (YvsBaseArticleDepot) mainPage.dao.findOneByNQ("YvsBaseArticleDepot.findByArticleDepot", new String[]{"article", "depot"}, new Object[]{c.getArticle(), UtilsProject.depotLivraison});
-            if (y != null ? y.getId() < 1 : true) {
+            if (y == null || y.getId() < 1) {
                 if (silence) {
                     LogFiles.addLogInFile(facture.getNumDoc() + ": Impossible d'effectuer cette action... Car le dépôt " + UtilsProject.depotLivraison.getDesignation() + " ne possède pas l'article " + c.getArticle().getDesignation(), null, ConsUtil.SOURCE_LOG_FILE_EXCEPTION, null);
                 } else {
@@ -247,7 +241,7 @@ public class ServiceLivraison {
         YvsComDocVentes y = null;
         try {
             boolean continu = false;
-            if (commande.getClient() != null ? commande.getClient().getId() < 1 : true) {
+            if (commande.getClient() == null || commande.getClient().getId() < 1) {
                 if (msg) {
                     LymytzService.openAlertDialog("Aucun client n'a été trouvé !", "Erreur selection", "erreur!!!", Alert.AlertType.ERROR);
                 }
@@ -278,10 +272,10 @@ public class ServiceLivraison {
                     return d;
                 }
             }
-            if (commande.getContenus() != null ? !commande.getContenus().isEmpty() : false) {
+            if (commande.getContenus() != null && !commande.getContenus().isEmpty()) {
                 if (commande.getEnteteDoc() != null) {
                     String num = UtilsProject.generatedNumDoc(Constantes.TYPE_FV_NAME);
-                    if (num != null ? num.trim().length() < 1 : true) {
+                    if (num == null || num.trim().isEmpty()) {
                         return null;
                     }
                     y = new YvsComDocVentes(commande);
@@ -310,7 +304,7 @@ public class ServiceLivraison {
                     y.setOperateur(UtilsProject.currentUser.getUsers());
                     y.setId(null);
                     y = (YvsComDocVentes) mainPage.dao.save1(y);
-                    if (y != null ? y.getId() > 0 : false) {
+                    if (y != null && y.getId() > 0) {
                         YvsComContenuDocVente c;
                         for (int i = 0; i < commande.getContenus().size(); i++) {
                             c = new YvsComContenuDocVente(commande.getContenus().get(i));
@@ -333,7 +327,7 @@ public class ServiceLivraison {
                     }
                 }
             }
-            if (continu ? changeStatut_(Constantes.ETAT_VALIDE, y) : false) {
+            if (continu && changeStatut_(Constantes.ETAT_VALIDE, y)) {
                 commande.setCloturer(false);
                 commande.setAnnulerBy(null);
                 commande.setValiderBy(UtilsProject.currentUser.getUsers());
@@ -358,7 +352,7 @@ public class ServiceLivraison {
     }
 
     public boolean changeStatut_(String etat, YvsComDocVentes doc_) {
-        if (!etat.equals("")) {
+        if (!etat.isEmpty()) {
             if (doc_.getCloturer()) {
                 LymytzService.openAlertDialog("Ce document est vérouillé", "Erreur selection", "erreur!!!", Alert.AlertType.ERROR);
                 return false;

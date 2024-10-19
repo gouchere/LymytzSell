@@ -17,7 +17,7 @@ import com.lymytz.lymytzsell.dao.entity.YvsComDocVentes;
 import com.lymytz.lymytzsell.dao.entity.YvsComEnteteDocVente;
 import com.lymytz.lymytzsell.dao.entity.YvsComptaCaissePieceVente;
 import com.lymytz.lymytzsell.dao.entity.YvsSocietes;
-import com.lymytz.lymytzsell.dao.query.LQueryFactories;
+import com.lymytz.lymytzsell.dao.query.LocalQueryFactories;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
 
@@ -27,7 +27,7 @@ import com.lymytz.lymytzsell.service.utils.UtilsProject;
  */
 public class UtilsBean {
 
-    LQueryFactories dao = new LQueryFactories();
+    LocalQueryFactories dao = new LocalQueryFactories();
 
 
     /*Générer les références des documents*/
@@ -338,7 +338,7 @@ public class UtilsBean {
 
     public static double getTotalCaisse(long societe, long caisse, long mode, String table, String mouvement, String type, Character statut, Date date) {
         String query = "select public.compta_total_caisse(?,?,?,?,?,?,?,?)";
-        LQueryFactories rq = new LQueryFactories();
+        LocalQueryFactories rq = new LocalQueryFactories();
         Options[] options = new Options[]{new Options(societe, 1), new Options(caisse, 2), new Options(mode, 3), new Options(table, 4),
             new Options(mouvement, 5), new Options(type, 6), new Options(statut, 7), new Options(new Date(), 8)};
         Double re = (Double) rq.findOneObjectBySQLQ(query, options);
@@ -347,7 +347,7 @@ public class UtilsBean {
 
     public static double getTotalFacturesHeader(long header) {
         String query = "select public.get_ca_entete_vente(?)";
-        LQueryFactories rq = new LQueryFactories();
+        LocalQueryFactories rq = new LocalQueryFactories();
         Options[] options = new Options[]{new Options(header, 1)};
         Double re = (Double) rq.findOneObjectBySQLQ(query, options);
         return re != null ? re : 0;
@@ -355,7 +355,7 @@ public class UtilsBean {
 
     public static double getVersementAttenduHeader(long header) {
         String query = "select public.com_get_versement_attendu(?)";
-        LQueryFactories rq = new LQueryFactories();
+        LocalQueryFactories rq = new LocalQueryFactories();
         Options[] options = new Options[]{new Options("" + header, 1)};
         Double re = (Double) rq.findOneObjectBySQLQ(query, options);
         return re != null ? re : 0;
@@ -363,7 +363,7 @@ public class UtilsBean {
 
     public static double getTotalCommandeHeader(long header) {
         String champ[] = new String[]{"header", "typeDoc"};
-        LQueryFactories rq = new LQueryFactories();
+        LocalQueryFactories rq = new LocalQueryFactories();
         Object val[] = new Object[]{new YvsComEnteteDocVente(header), Constantes.TYPE_BCV};
         Double re = (Double) rq.findOneObjectByNQ("YvsComContenuDocVente.findTotalByTypeDocAndHeader", champ, val);
         return re != null ? re : 0;
@@ -375,7 +375,7 @@ public class UtilsBean {
                 + "  WHERE (d.type_doc = 'BCV' OR (d.type_doc = 'FV' AND d.document_lie IS NOT NULL)) "
                 + "     AND d.statut = 'V' AND y.statut_piece = 'P' AND y.caissier = ? "
                 + "     AND y.date_paiement BETWEEN ? AND ?";
-        LQueryFactories rq = new LQueryFactories();
+        LocalQueryFactories rq = new LocalQueryFactories();
         Options[] options = new Options[]{new Options(user, 1), new Options(date, 2), new Options(date, 3)};
          Double re = (Double) rq.findOneObjectBySQLQ(query, options);        
         return re != null ? re : 0;

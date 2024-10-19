@@ -32,6 +32,8 @@ import com.lymytz.lymytzsell.view.main.report.PrintFacture;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import static com.lymytz.lymytzsell.service.utils.Constantes.TYPE_FV;
+
 /**
  * FXML Controller class
  *
@@ -45,7 +47,7 @@ public class ClaviersController extends ManagedApplication implements Initializa
     ContentPanier lineContent;
     private boolean avance = false;
     double montantAvance;
-    private String source;  //Indique l'action à la source de l'ouverture du claviers (F=facture à valider, A=avance à recevoir)
+    private String sourceOfAction;  //Indique l'action à la source de l'ouverture du claviers (F=facture à valider, A=avance à recevoir)
     private String action;  //Indique l'action à réaliser à partir du clavier:
     /**
      * SET_QTE, SET_PRIX, VALIDER,REGLER
@@ -77,18 +79,18 @@ public class ClaviersController extends ManagedApplication implements Initializa
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
+        // code d'initialisation de la vue si nécessaire
     }
 
     public void initController(HomeCaisseController page, Onglets fac, Stage fen, String source, String action, ContentPanier line) {
         this.page = page;
         this.selectOnglet = fac;
         this.fenetre = fen;
-        this.source = source;
+        this.sourceOfAction = source;
         this.action = action;
         this.lineContent = line;
         this.BTN_PRINT_ONLY.setVisible(true);
-        if (fac != null ? fac.getFacture() != null : false) {
+        if (fac != null && fac.getFacture() != null) {
             if (!Constantes.asLong(fac.getFacture().getId())) {
                 this.BTN_PRINT_ONLY.setVisible(false);
             }
@@ -115,12 +117,14 @@ public class ClaviersController extends ManagedApplication implements Initializa
                     TITRE_CLAVIER.setText("Entrer le prix !");
                     LAB_TITRE_REST.setText("");
                     break;
+                default:
+                    throw new IllegalStateException("Unexpected value: " + action);
             }
 
         }
     }
 
-    public void initController(HomeCaisseController page, Onglets fac, Stage fen, String source, String action) {
+  /*  public void initController(HomeCaisseController page, Onglets fac, Stage fen, String source, String action) {
         initController(page, fac, fen, source, action, null);
     }
 
@@ -137,7 +141,7 @@ public class ClaviersController extends ManagedApplication implements Initializa
                 avance = false;
             }
         }
-    }
+    }*/
 
     @FXML
     private void clearEcran(ActionEvent event) {
@@ -211,7 +215,7 @@ public class ClaviersController extends ManagedApplication implements Initializa
             LAB_REST.setText(Constantes.nbf.format((selectOnglet.getNetAPayer() - recu)));
         } else {
             if (action.equals("VALIDER") || action.equals("REGLER")) {
-                montantAvance = (selectOnglet.getFacture().getTypeDoc().equals(Constantes.TYPE_FV)) ? selectOnglet.getFacture().getMontantResteApayer() : montantAvance;
+                montantAvance = (selectOnglet.getFacture().getTypeDoc().equals(TYPE_FV)) ? selectOnglet.getFacture().getMontantResteApayer() : montantAvance;
                 LAB_REST.setText(Constantes.nbf.format((recu - montantAvance)));
             }
         }
@@ -221,7 +225,7 @@ public class ClaviersController extends ManagedApplication implements Initializa
 
     private double getMontantAffiche() {
         //calcule
-        return Double.valueOf((!LAB_AFFICH.getText().isEmpty()) ? LAB_AFFICH.getText() : "0");
+        return Double.parseDouble((!LAB_AFFICH.getText().isEmpty()) ? LAB_AFFICH.getText() : "0");
     }
 
     @FXML
@@ -243,46 +247,35 @@ public class ClaviersController extends ManagedApplication implements Initializa
                 case "REGLER":
                     page.LAB_T_AVANCE.setText(Constantes.nbf.format(montantAvance));
                     page.LAB_NET_A_PAYER.setText(Constantes.nbf.format(selectOnglet.getNetAPayer() - montantAvance));
-                    if (source.equals("F")) {
-                        if (selectOnglet.getFacture().getTypeDoc().equals(Constantes.TYPE_FV)) {
-                            if (selectOnglet.getNetAPayer() > getMontantAffiche()) {
-                                LymytzService.openAlertDialog("Le montant reçu n'est pas conforme !", "Erreur montant", "Erreur !", Alert.AlertType.ERROR);
-                                return;
-                            }
-                        }
+                    if (sourceOfAction.equals("F") && TYPE_FV.equals(selectOnglet.getFacture().getTypeDoc()) && selectOnglet.getNetAPayer() > getMontantAffiche()) {
+                        LymytzService.openAlertDialog("Le montant reçu n'est pas conforme !", "Erreur montant", "Erreur !", Alert.AlertType.ERROR);
+                        return;
                     }
-                    switch (source) {
+                    switch (sourceOfAction) {
                         case "F":
-                            /**
-                             * lance la validation dans une thread*
-                             */
+                            //lance la validation dans un thread
                             Thread t = new Thread(() -> {
-                                if (page.confirmValideFacture(selectOnglet, montantAvance, getMontantAffiche(), source)) {
-                                    if (UtilsProject.paramConnection.getUsePrinter()) {                                        
-                                        if (UtilsProject.paramConnection.getTypeRapport().equals(UtilsProject.TYPE_RAPPORT_TICKET)) {
-                                            Platform.runLater(() -> {
-                                                PrintTiket pt = new PrintTiket(page, selectOnglet, montantAvance, "XX");
-                                                pt.setFacture(new YvsComDocVentes(selectOnglet.getFacture()));
-                                                pt.setMontantAvance(selectOnglet.getFacture().getMontantAvance());
-                                                pt.setMontantRecu(selectOnglet.getMontantRecu());
-                                                pt.setMontantTotal(selectOnglet.getFacture().getMontantTotal());
-                                                pt.setNetAPayer(selectOnglet.getFacture().getMontantTotal());
-                                                new Thread(pt).start();
-                                            });
-                                        } else {
-                                            Platform.runLater(() -> {
-                                                PrintFacture preview = new PrintFacture(page, selectOnglet);
-                                                preview.loadFactureToPrint(selectOnglet.getFacture());
-                                            });
-                                        }
+                                if (page.confirmValideFacture(selectOnglet, montantAvance, getMontantAffiche(), sourceOfAction)) {
+                                    if (Boolean.TRUE.equals(UtilsProject.paramConnection.getUsePrinter()) && TYPE_FV.equals(UtilsProject.paramConnection.getTypeRapport())) {
+                                        Platform.runLater(() -> {
+                                            PrintTiket pt = new PrintTiket(page, selectOnglet, montantAvance, "XX");
+                                            pt.setFacture(new YvsComDocVentes(selectOnglet.getFacture()));
+                                            pt.setMontantAvance(selectOnglet.getFacture().getMontantAvance());
+                                            pt.setMontantRecu(selectOnglet.getMontantRecu());
+                                            pt.setMontantTotal(selectOnglet.getFacture().getMontantTotal());
+                                            pt.setNetAPayer(selectOnglet.getFacture().getMontantTotal());
+                                            new Thread(pt).start();
+                                        });
+                                    } else if (Boolean.TRUE.equals(UtilsProject.paramConnection.getUsePrinter())) {
+                                        Platform.runLater(() -> {
+                                            PrintFacture preview = new PrintFacture(page, selectOnglet);
+                                            preview.loadFactureToPrint(selectOnglet.getFacture());
+                                        });
                                     }
                                 }
                             });
                             t.start();
                             fenetre.close();
-                            /**
-                             * end*
-                             */
                             break;
                         case "A":
                             //Enregistrer l'avance sur commande
@@ -290,6 +283,8 @@ public class ClaviersController extends ManagedApplication implements Initializa
                             selectOnglet.displayMontantsBean();
                             fenetre.close();
                             break;
+                        default:
+                            throw new IllegalStateException("Unexpected value: " + sourceOfAction);
                     }
                     break;
                 case "SET_QTE":
@@ -318,6 +313,8 @@ public class ClaviersController extends ManagedApplication implements Initializa
                     }
                     fenetre.close();
                     break;
+                default:
+                    throw new IllegalStateException("Unexpected value: " + this.action);
             }
         }
     }

@@ -23,7 +23,7 @@ import com.lymytz.lymytzsell.dao.entity.YvsBaseModeReglement;
 import com.lymytz.lymytzsell.dao.entity.YvsBaseModelReglement;
 import com.lymytz.lymytzsell.dao.entity.YvsComClient;
 import com.lymytz.lymytzsell.dao.entity.YvsSocietes;
-import com.lymytz.lymytzsell.dao.query.LQueryFactories;
+import com.lymytz.lymytzsell.dao.query.LocalQueryFactories;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.EncryptMessage;
 import com.lymytz.lymytzsell.service.utils.LymytzService;
@@ -50,7 +50,7 @@ import java.util.logging.Logger;
  */
 public class PreferenceController implements Initializable, Controller {
 
-    LQueryFactories dao = new LQueryFactories();
+    LocalQueryFactories dao = new LocalQueryFactories();
 
     @FXML
     private TextField TXT_IP_L;

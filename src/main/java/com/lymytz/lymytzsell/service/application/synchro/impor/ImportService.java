@@ -13,7 +13,7 @@ import com.lymytz.lymytzsell.dao.entity.service.EntityColumn;
 import com.lymytz.lymytzsell.dao.entity.service.LymytzData;
 import com.lymytz.lymytzsell.dao.entity.service.LymytzEntityClass;
 import com.lymytz.lymytzsell.dao.entity.service.LymytzLoaderEntity;
-import com.lymytz.lymytzsell.dao.query.LQueryFactories;
+import com.lymytz.lymytzsell.dao.query.LocalQueryFactories;
 import com.lymytz.lymytzsell.dao.query.RQueryFactories;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
@@ -31,7 +31,7 @@ import java.util.logging.Logger;
  */
 public class ImportService extends Task<Boolean> {
 
-    LQueryFactories Ldao = new LQueryFactories();
+    LocalQueryFactories Ldao = new LocalQueryFactories();
     RQueryFactories Rdao = new RQueryFactories();
 
     Logger log;

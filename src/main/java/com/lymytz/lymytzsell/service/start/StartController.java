@@ -5,6 +5,12 @@
  */
 package com.lymytz.lymytzsell.service.start;
 
+import com.lymytz.lymytzsell.dao.entity.YvsBaseCaisse;
+import com.lymytz.lymytzsell.dao.entity.YvsComCreneauHoraireUsers;
+import com.lymytz.lymytzsell.dao.entity.YvsComEnteteDocVente;
+import com.lymytz.lymytzsell.dao.entity.YvsUsers;
+import com.lymytz.lymytzsell.dao.entity.YvsUsersAgence;
+import com.lymytz.lymytzsell.dao.query.LocalQueryFactories;
 import com.lymytz.lymytzsell.service.application.Controller;
 import com.lymytz.lymytzsell.service.application.composant.Onglets;
 import com.lymytz.lymytzsell.service.application.synchro.UtilEntityBase;
@@ -14,11 +20,11 @@ import com.lymytz.lymytzsell.service.utils.LymytzService;
 import com.lymytz.lymytzsell.service.utils.MdpUtil;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
 import com.lymytz.lymytzsell.service.utils.log.LogFiles;
+import com.lymytz.lymytzsell.view.main.HomeCaisseController;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -33,14 +39,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import com.lymytz.lymytzsell.dao.entity.YvsBaseCaisse;
-import com.lymytz.lymytzsell.dao.entity.YvsComCreneauHoraireUsers;
-import com.lymytz.lymytzsell.dao.entity.YvsComEnteteDocVente;
-import com.lymytz.lymytzsell.dao.entity.YvsUsers;
-import com.lymytz.lymytzsell.dao.entity.YvsUsersAgence;
-import com.lymytz.lymytzsell.dao.query.LQueryFactories;
-import com.lymytz.lymytzsell.view.LocalLoader;
-import com.lymytz.lymytzsell.view.main.HomeCaisseController;
 
 import javax.print.attribute.standard.Severity;
 import java.awt.*;
@@ -59,7 +57,7 @@ import java.util.logging.Logger;
  */
 public class StartController implements Initializable, Controller {
 
-    LQueryFactories dao = new LQueryFactories();
+    LocalQueryFactories dao = new LocalQueryFactories();
 
     @FXML
     private TextField TXT_LOGIN;
@@ -77,11 +75,13 @@ public class StartController implements Initializable, Controller {
     private HomeCaisseController mainController;
 
     public StartController() {
+        // Utile pour la construction du composant
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         BTN_CONNECT.setDisable(false);
+        /*todo: this is only for developpement*/
         TXT_LOGIN.setText("ADMINGLP");
         TXT_PWD.setText("Yves/1910#");
     }
@@ -147,7 +147,7 @@ public class StartController implements Initializable, Controller {
             FXMLLoader load = new FXMLLoader(LymytzService.class.getResource("/pages/main/home_caisse.fxml"));
             BorderPane root = load.load();
             Screen sc = Screen.getPrimary();
-            Rectangle2D bounds = sc.getVisualBounds();
+            //Rectangle2D bounds = sc.getVisualBounds();
             Scene scene = new Scene(root, SCREENWIDTH, SCREENHEIGHT - 80);
             Stage stage = UtilsProject.primaryStage;
             stage.setScene(scene);
@@ -156,7 +156,7 @@ public class StartController implements Initializable, Controller {
             stage.setIconified(false);
             stage.setMaximized(true);
             stage.show();
-            mainController = (HomeCaisseController) load.getController();
+            mainController = load.getController();
             UtilsProject.currentPage = mainController;
             UtilsProject.stageConnect.close();
 
@@ -246,7 +246,7 @@ public class StartController implements Initializable, Controller {
 
     private YvsUsers controleConnection(String login) {
         try {
-            if (LQueryFactories.pingServer()) {
+            if (LocalQueryFactories.pingServer()) {
                 return (YvsUsers) dao.findOneByNQ("YvsUsers.findByCodeUsers_", new String[]{"codeUsers"}, new Object[]{login});
             } else {
                 LymytzService.openAlertDialog("Les paramètres de connexion à la source de données sont certainement incorrecte", "Connexion", "Erreur de connexion à la source de données", Alert.AlertType.ERROR);
@@ -285,7 +285,7 @@ public class StartController implements Initializable, Controller {
         Date d = Constantes.givePrevOrNextDate(new Date(), -4);
         YvsComCreneauHoraireUsers creno = (YvsComCreneauHoraireUsers) dao.findOneByNQ("YvsComCreneauHoraireUsers.findByUsersOnPV", new String[]{"users", "date1", "date2"}, new Object[]{UtilsProject.currentUser.getUsers(), d, new Date()});
         //charge un creneau provisoire
-        boolean re = (creno != null) ? true : (UtilsProject.currentUser.getUsers().getCodeUsers().equals("ADMINGLP"));
+        boolean re = creno != null || (UtilsProject.currentUser.getUsers().getCodeUsers().equals("ADMINGLP"));
         //charge l'agence
         if (creno != null) {
             UtilsProject.currentAgence = creno.getCreneauPoint().getPoint().getAgence();
@@ -314,10 +314,10 @@ public class StartController implements Initializable, Controller {
             }
             if (UtilsProject.REPLICATION && ua != null) {
                 UtilsProject.remoteAuthor = UtilEntityBase.findIdRemoteData(Constantes.TABLE_USER_AGENCE_CODE, ua.getId());
-                if (UtilsProject.remoteAuthor != null ? UtilsProject.remoteAuthor <= 0 : true) {
+                if (UtilsProject.remoteAuthor == null || UtilsProject.remoteAuthor <= 0) {
                     //Synchronise remote author
                     Long r = UtilEntityBase.synchronizeAuthor(new YvsUsersAgence(ua.getId(), ua.getUsers(), ua.getAgence()));
-                    if (r != null ? r > 0 : false) {
+                    if (r != null && r > 0) {
                         UtilsProject.remoteAuthor = r;
                         dao.insertListenData(ua.getId(), Constantes.TABLE_USER_AGENCE_CODE, ua.getId(), r, false);
                     }
@@ -331,27 +331,18 @@ public class StartController implements Initializable, Controller {
     }
 
     public void loadInitData() {
-        Thread t = new Thread(() -> {
+        new Thread(() -> {
             UtilsProject.loadInitData();
             saveOrUpdateNewUser();
-        });
-        t.start();
+        }).start();
     }
 
     public void loadInitDataR() {
-        Thread t = new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-                UtilsProject.loadInitDataR();
-            }
-        });
-        t.start();
+        new Thread(UtilsProject::loadInitDataR).start();
     }
-
     @Override
     public void freeMemoryController() {
-
+        //implement later
     }
 
 }

@@ -5,6 +5,7 @@
  */
 package com.lymytz.lymytzsell.service.application.synchro;
 
+import com.lymytz.lymytzsell.dao.query.LocalQueryFactories;
 import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.ScheduledService;
@@ -16,7 +17,6 @@ import com.lymytz.lymytzsell.dao.entity.service.EntityColumn;
 import com.lymytz.lymytzsell.dao.entity.service.LymytzData;
 import com.lymytz.lymytzsell.dao.entity.service.LymytzEntityClass;
 import com.lymytz.lymytzsell.dao.entity.service.LymytzLoaderEntity;
-import com.lymytz.lymytzsell.dao.query.LQueryFactories;
 import com.lymytz.lymytzsell.dao.query.RQueryFactories;
 import com.lymytz.lymytzsell.service.application.service.ListenServersRemote;
 import com.lymytz.lymytzsell.service.application.synchro.impor.ImportService;
@@ -41,7 +41,7 @@ public class SynchronizeDataIn extends ScheduledService<Boolean> {
 
     HomeCaisseController page;
     RQueryFactories Rdao;
-    LQueryFactories Ldao;
+    LocalQueryFactories Ldao;
     public static boolean running;
 
     public SynchronizeDataIn(int tempsDiffer, HomeCaisseController page) {

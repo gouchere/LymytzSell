@@ -6,11 +6,12 @@
 package com.lymytz.lymytzsell.service.application.loader;
 
 import java.util.List;
+
+import com.lymytz.lymytzsell.dao.query.LocalQueryFactories;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import com.lymytz.lymytzsell.dao.Options;
-import com.lymytz.lymytzsell.dao.query.LQueryFactories;
 import com.lymytz.lymytzsell.service.application.bean.Articles;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
 
@@ -20,7 +21,7 @@ import com.lymytz.lymytzsell.service.utils.UtilsProject;
  */
 public class LoaderCatalogue extends Task<ObservableList<Articles>> {
 
-    LQueryFactories Ldao = new LQueryFactories();
+    LocalQueryFactories Ldao = new LocalQueryFactories();
 
     public LoaderCatalogue() {
     }

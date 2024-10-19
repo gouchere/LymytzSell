@@ -5,6 +5,7 @@
  */
 package com.lymytz.lymytzsell.service.application.synchro.impor;
 
+import com.lymytz.lymytzsell.dao.query.LocalQueryFactories;
 import com.lymytz.lymytzsell.service.application.synchro.ParamQuery;
 import com.lymytz.lymytzsell.service.application.synchro.UtilEntityBase;
 import javafx.concurrent.Task;
@@ -13,7 +14,6 @@ import com.lymytz.lymytzsell.dao.entity.service.EntityColumn;
 import com.lymytz.lymytzsell.dao.entity.service.LymytzData;
 import com.lymytz.lymytzsell.dao.entity.service.LymytzEntityClass;
 import com.lymytz.lymytzsell.dao.entity.service.LymytzLoaderEntity;
-import com.lymytz.lymytzsell.dao.query.LQueryFactories;
 import com.lymytz.lymytzsell.dao.query.RQueryFactories;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
@@ -28,7 +28,7 @@ import java.util.List;
  */
 public class ImportServiceDelFacture extends Task<Boolean> {
 
-    LQueryFactories Ldao = new LQueryFactories();
+    LocalQueryFactories Ldao = new LocalQueryFactories();
     RQueryFactories Rdao = new RQueryFactories();
     private Options[] parametres;
     private List<ParamQuery> params;

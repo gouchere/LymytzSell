@@ -30,7 +30,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import com.lymytz.lymytzsell.dao.entity.YvsComDocVentes;
-import com.lymytz.lymytzsell.dao.query.LQueryFactories;
+import com.lymytz.lymytzsell.dao.query.LocalQueryFactories;
 import com.lymytz.lymytzsell.service.application.bean.ContentPanier;
 import com.lymytz.lymytzsell.service.application.bean.Factures;
 import com.lymytz.lymytzsell.service.application.loader.LoaderListing;
@@ -57,7 +57,7 @@ import java.util.logging.Logger;
 public class ListingCumuleController implements Initializable, Controller {
 
     HomeCaisseController page;
-    LQueryFactories rq = new LQueryFactories();
+    LocalQueryFactories rq = new LocalQueryFactories();
     ObservableList<ContentPanier> items = FXCollections.observableArrayList();
 
     ContextMenu CTM_TV = new ContextMenu();

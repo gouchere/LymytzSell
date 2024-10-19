@@ -17,7 +17,7 @@ import com.lymytz.lymytzsell.dao.entity.YvsComContenuDocVente;
 import com.lymytz.lymytzsell.dao.entity.YvsComDocVentes;
 import com.lymytz.lymytzsell.dao.entity.YvsComEnteteDocVente;
 import com.lymytz.lymytzsell.dao.entity.YvsComTaxeContenuVente;
-import com.lymytz.lymytzsell.dao.query.LQueryFactories;
+import com.lymytz.lymytzsell.dao.query.LocalQueryFactories;
 import com.lymytz.lymytzsell.dao.query.RQueryFactories;
 import com.lymytz.lymytzsell.service.ClientMessage;
 import com.lymytz.lymytzsell.service.ServeurMessage;
@@ -113,6 +113,8 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static com.lymytz.lymytzsell.service.utils.Constantes.TYPE_FV;
+
 /**
  * FXML Controller class
  *
@@ -139,8 +141,6 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
     public Button BTN_COMPTE;
     @FXML
     public Button BTN_QUIT;
-    @FXML
-    private VBox MAIN_PAGE;
     @FXML
     public SplitPane SPLIT_CENTER;
     @FXML
@@ -218,7 +218,7 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
     public ProgressBar PROGRESS;
     @FXML
     public Label PROGRESS_LABEL;
-//
+    //
     @FXML
     public TabPane TAB_FACTURES;
     DoubleProperty EcranWidth, RigthBoxWidth;
@@ -259,7 +259,7 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
     public Label LAB_NET_A_PAYER;
     @FXML
     public Label LAB_T_RIST;
-//contôleur visuel de synchro sortant (export des données)
+    //contôleur visuel de synchro sortant (export des données)
     @FXML
     public ImageView ICO_RUN_ON;
     @FXML
@@ -290,26 +290,16 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
     public Label LAB_DES;
     @FXML
     public Label QTE_FACTURE;
-    public Label LAB_DES2;
-    public Label LAB_FAM;
-    public Label LAB_GROUP;
-    public Label LAB_FABRICANT;
-    public Label LAB_PUV;
-    public Label LAB_REM;
-    public Label LAB_PUV_TTC;
-    public Label LAB_PUV_V;
-    //
     @FXML
     private VBox ZONE_IMG;
-
     @FXML
     private Label SESS_DUREE;
-
     //Footer
     @FXML
     private Label TEXT_SOCIETE;
 
     public HomeCaisseController() {
+        //utile pour l'api javafx
     }
 
     public Boolean getConnectRemoteServer() {
@@ -333,7 +323,7 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
         setMainPage(this);
         //Attacher un listener au text find
         TEXT_FIND.focusedProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
-            if (!newValue) {                
+            if (!newValue) {
                 Onglets tab = (Onglets) TAB_FACTURES.getSelectionModel().getSelectedItem();
                 if (Constantes.asString(TEXT_FIND.getText())) {
                     LoaderConditionnement tache1 = new LoaderConditionnement(HomeCaisseController.this, TEXT_FIND.getText());
@@ -372,12 +362,8 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
     }
 
     public void initComponent() {
-        //Mettre le menubar à la dimension de la fenêtre.
-//        Scale scale = new Scale(1, 1, 0, 0);
         HOMEMENU.setPrefWidth(StartController.SCREENWIDTH);
-        MAIN_PAGE.setPrefWidth(StartController.SCREENWIDTH - 5);
-        MAIN_PAGE.setPrefHeight(StartController.SCREENHEIGHT);
-        BOX_ARTICLES.setPrefHeight(StartController.SCREENHEIGHT - 315);
+        //BOX_ARTICLES.setPrefHeight(StartController.SCREENHEIGHT - 315);
         TAB_FACTURES.setPrefHeight(StartController.SCREENHEIGHT - 345);
         RigthBoxWidth = new SimpleDoubleProperty(RIGHT_BOX.getPrefWidth());
         CustomComponents.custumMenuAndToolBar(this);
@@ -440,24 +426,20 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
                 PROGRESS_LABEL.textProperty().unbind();
                 PROGRESS.progressProperty().bind(tache.progressProperty());
                 PROGRESS_LABEL.textProperty().bind(tache.messageProperty());
-                tache.addEventHandler(WorkerStateEvent.WORKER_STATE_SUCCEEDED, new EventHandler<WorkerStateEvent>() {
-                    @Override
-                    public void handle(WorkerStateEvent event) {
-                        ObservableList<GridPane> value = tache.getValue();
-                        if (value != null) {
-                            BOX_ARTICLES.getChildren().addAll(value);
-                            PROGRESS_LABEL.textProperty().unbind();
-                        }
-                        if (value != null ? value.size() > 0 : false) {
-                            PROGRESS_LABEL.setText("terminé !");
-                        } else {
-                            PROGRESS_LABEL.setText("Aucun résultat trouvé !");
-                        }
+                tache.addEventHandler(WorkerStateEvent.WORKER_STATE_SUCCEEDED, event -> {
+                    ObservableList<GridPane> value = tache.getValue();
+                    if (value != null) {
+                        BOX_ARTICLES.getChildren().addAll(value);
+                        PROGRESS_LABEL.textProperty().unbind();
+                    }
+                    if (value != null && !value.isEmpty()) {
+                        PROGRESS_LABEL.setText("terminé !");
+                    } else {
+                        PROGRESS_LABEL.setText("Aucun résultat trouvé !");
                     }
                 });
                 new Thread(tache).start();
             }
-//            tache.call();
         } catch (Exception ex) {
             Logger.getLogger(HomeCaisseController.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -551,29 +533,26 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
                 depots.add(UtilsProject.depotLivraison);
             }
             PAN_STOCK.getChildren().clear();
-            if (UtilsProject.headerDoc != null ? UtilsProject.headerDoc.getCreneau() != null : false) {
+            if (UtilsProject.headerDoc != null && UtilsProject.headerDoc.getCreneau() != null) {
                 //compte la quantité de l'article facturé
                 Double qte = (Double) dao.findOneObjectByNQ("YvsComContenuDocVente.countQteVendu", new String[]{"conditionnement", "header"}, new Object[]{art, UtilsProject.headerDoc});
-                if (qte != null ? qte > 0 : false) {
+                if (qte != null && qte > 0) {
                     QTE_FACTURE.setText(Constantes.nbf.format(qte));
                 } else {
                     QTE_FACTURE.setText(Constantes.nbf.format(0));
                 }
-                if (!UtilsProject.REPLICATION && UtilsProject.depotLivraison != null) {
+                if (Boolean.TRUE.equals(!UtilsProject.REPLICATION) && UtilsProject.depotLivraison != null) {
                     //si on est pas en mode replication, calcul immédiatement le stock
-                    Double stock = UtilsProject.getStocks(art, UtilsProject.depotLivraison.getId());
+                    double stock = UtilsProject.getStocks(art, UtilsProject.depotLivraison.getId());
                     art.setStock(stock);
                 }
                 try {
                     LoaderStock service = new LoaderStock(this, depots, art);
                     service.addEventHandler(WorkerStateEvent.WORKER_STATE_SUCCEEDED, (WorkerStateEvent event) -> {
                         VBox re1 = service.getValue();
-                        Platform.runLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                PAN_STOCK.getChildren().clear();
-                                PAN_STOCK.getChildren().add(re1);
-                            }
+                        Platform.runLater(() -> {
+                            PAN_STOCK.getChildren().clear();
+                            PAN_STOCK.getChildren().add(re1);
                         });
                     });
                     new Thread(service).start();
@@ -589,7 +568,7 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
 // créée une nouvelle facture     
         try {
             if (UtilsProject.headerDoc != null) {
-                ServiceCreateFacture f = new ServiceCreateFacture(UtilsProject.clientDivers, Constantes.TYPE_FV, UtilsProject.defaultAdresse, "Client Divers", UtilsProject.headerDoc.getDateEntete(), null, this);
+                ServiceCreateFacture f = new ServiceCreateFacture(UtilsProject.clientDivers, TYPE_FV, UtilsProject.defaultAdresse, "Client Divers", UtilsProject.headerDoc.getDateEntete(), null, this);
                 Thread t = new Thread(f);
                 t.start();
             } else {
@@ -608,9 +587,10 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
     }
 
     public void afterCreateFacture() {
-        Long nb = (Long) dao.findOneObjectByNQ("YvsComDocVentes.countDocByHeaderAndType", new String[]{"type1", "type2", "header"}, new Object[]{Constantes.TYPE_FV, Constantes.TYPE_BCV, UtilsProject.headerDoc});
+        Long nb = (Long) dao.findOneObjectByNQ("YvsComDocVentes.countDocByHeaderAndType", new String[]{"type1", "type2", "header"}, new Object[]{TYPE_FV, Constantes.TYPE_BCV, UtilsProject.headerDoc});
         L_TOTAL.setText(nb != null ? nb.toString() : "0");
     }
+
     ButtonType re;
 
     public void giveFocusAtTxtFind() {
@@ -652,57 +632,37 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
         return lc;
     }
 
-    public boolean confirmValideFacture(Onglets fac, double montantPaye, double montantRecu, String source) {
-        String etatLivre = Constantes.ETAT_ATTENTE;
-        String etatRegle = Constantes.ETAT_ATTENTE;
-        //5. contrôle les valeurs de paiement
-        if (fac.getFacture().getTypeDoc().equals(Constantes.TYPE_FV)) {
-            if (fac.getNetAPayer() != montantPaye) {
-                // erreur paiement insuffisant
-                Platform.runLater(() -> {
-                    LymytzService.openAlertDialog("Incohérence des montants !", "Erreur", "Le montant payé de la facture est différent du TTC !", Alert.AlertType.ERROR);
-                });
-                return false;
-            }
-        } else {
-            // contrôle le montant d'avance
-            if (montantPaye > fac.getNetAPayer()) {
-                Platform.runLater(() -> {
-                    LymytzService.openAlertDialog("Incohérence des montants !", "Erreur", "Le montant d'avance de la commande est suppérieure au TTC !", Alert.AlertType.ERROR);
-                });
-                return false;
-            }
-        }
-        List<YvsComContenuDocVente> l = new ArrayList<>(fac.getFacture().getContenus());
-        fac.getFacture().getContenus().clear();
-        YvsComDocVentes d = saveFacture(fac.getFacture());
+    public boolean confirmValideFacture(Onglets currentOnglet, double montantPaye, double montantRecu, String source) {
+        if (!controleMontantPaye(currentOnglet, montantPaye)) return false;
+        List<YvsComContenuDocVente> contenuDuPanier = new ArrayList<>(currentOnglet.getFacture().getContenus());
+        currentOnglet.getFacture().getContenus().clear();
+        YvsComDocVentes d = saveFacture(currentOnglet.getFacture());
         if (d != null) {
-            fac.setFacture(d);
-            fac.getFacture().setContenus(l);
-            if (saveContentFacture(fac.getFacture().getContenus(), fac.getFacture())) {
-//                fac.getFacture().setStatut((fac.getFacture().getTypeDoc().equals(Constantes.TYPE_FV)) ? Constantes.ETAT_VALIDE : Constantes.ETAT_EDITABLE);
-                fac.getFacture().setStatut(Constantes.ETAT_VALIDE);
-                fac.getFacture().setEtapeValide(1);
-                fac.getFacture().setStatutLivre(etatLivre);
-                fac.getFacture().setStatutRegle(etatRegle);
-                fac.getFacture().setMontantAvance(montantPaye);
-                List<YvsComContenuDocVente> temp = new ArrayList<>(fac.getFacture().getContenus());
-                fac.getFacture().getContenus().clear();
-                if (fac.getFacture().getTypeDoc().equals(Constantes.TYPE_BCV)) {
-                    fac.getFacture().setLivraisonAuto(Boolean.FALSE);
+            currentOnglet.setFacture(d);
+            currentOnglet.getFacture().setContenus(contenuDuPanier);
+            if (saveContentFacture(currentOnglet.getFacture().getContenus(), currentOnglet.getFacture())) {
+                currentOnglet.getFacture().setStatut(Constantes.ETAT_VALIDE);
+                currentOnglet.getFacture().setEtapeValide(1);
+                currentOnglet.getFacture().setStatutLivre(Constantes.ETAT_ATTENTE);
+                currentOnglet.getFacture().setStatutRegle(Constantes.ETAT_ATTENTE);
+                currentOnglet.getFacture().setMontantAvance(montantPaye);
+                List<YvsComContenuDocVente> temp = new ArrayList<>(currentOnglet.getFacture().getContenus());
+                currentOnglet.getFacture().getContenus().clear();
+                if (currentOnglet.getFacture().getTypeDoc().equals(Constantes.TYPE_BCV)) {
+                    currentOnglet.getFacture().setLivraisonAuto(Boolean.FALSE);
                 }
-                dao.update(fac.getFacture());
-                fac.getFacture().getContenus().addAll(temp);
+                dao.update(currentOnglet.getFacture());
+                currentOnglet.getFacture().getContenus().addAll(temp);
                 Thread tcompta = new Thread(() -> {
-                    saveLivraisonAndreglement(new YvsComDocVentes(fac.getFacture()), montantPaye, montantRecu);
-                    if (!UtilsProject.REPLICATION && fac.getFacture().getTypeDoc().equals(Constantes.TYPE_FV)) {
-                        comptabilise(fac.getFacture().getId(), fac.getFacture().getNumDoc());
+                    saveLivraisonAndreglement(new YvsComDocVentes(currentOnglet.getFacture()), montantPaye, montantRecu);
+                    if (!UtilsProject.REPLICATION && currentOnglet.getFacture().getTypeDoc().equals(TYPE_FV)) {
+                        comptabilise(currentOnglet.getFacture().getId(), currentOnglet.getFacture().getNumDoc());
                     }
                 });
                 tcompta.start();
                 if (!source.equals("A")) {
                     Platform.runLater(() -> {
-                        TAB_FACTURES.getTabs().remove(fac);
+                        TAB_FACTURES.getTabs().remove(currentOnglet);
                         if (!TAB_FACTURES.getTabs().isEmpty()) {
                             TAB_FACTURES.getSelectionModel().select(0);
                         } else {
@@ -717,10 +677,28 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
         return true;
     }
 
+    private boolean controleMontantPaye(Onglets fac, double montantPaye) {
+        //5. contrôle les valeurs de paiement
+        if (TYPE_FV.equals(fac.getFacture().getTypeDoc())) {
+            if (fac.getNetAPayer() != montantPaye) {
+                // erreur paiement insuffisant
+                Platform.runLater(() -> LymytzService.openAlertDialog("Incohérence des montants !", "Erreur", "Le montant payé de la facture est différent du TTC !", Alert.AlertType.ERROR));
+                return false;
+            }
+        } else {
+            // contrôle le montant d'avance
+            if (montantPaye > fac.getNetAPayer()) {
+                Platform.runLater(() -> LymytzService.openAlertDialog("Incohérence des montants !", "Erreur", "Le montant d'avance de la commande est suppérieure au TTC !", Alert.AlertType.ERROR));
+                return false;
+            }
+        }
+        return true;
+    }
+
     private YvsComDocVentes saveFacture(YvsComDocVentes doc) {
         if (UtilsProject.headerDoc != null) {
             if (doc.getId() <= 0) {
-                String numDoc = UtilsProject.generatedNumDoc((doc.getTypeDoc().equals(Constantes.TYPE_FV)) ? Constantes.TYPE_FV_NAME : Constantes.TYPE_BCV_NAME);
+                String numDoc = UtilsProject.generatedNumDoc((doc.getTypeDoc().equals(TYPE_FV)) ? Constantes.TYPE_FV_NAME : Constantes.TYPE_BCV_NAME);
                 if (Constantes.asString(numDoc)) {
                     doc.setId(null);
                     doc.setNumDoc(numDoc);
@@ -731,28 +709,21 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
                     doc = (YvsComDocVentes) dao.save1(doc);
                     new ServiceCreateFacture(this).saveCurrentCommercial(doc);
                 } else {
-                    Platform.runLater(() -> {
-                        LymytzService.openAlertDialog("Génération de a facture non réussi !", "Erreur ", "Le numéro de référence n'a pas pu être généré !", Alert.AlertType.ERROR);
-                    });
+                    Platform.runLater(() -> LymytzService.openAlertDialog("Génération de a facture non réussi !", "Erreur ", "Le numéro de référence n'a pas pu être généré !", Alert.AlertType.ERROR));
                     return null;
                 }
-            }else{
+            } else {
                 return doc;
             }
         } else {
-            Platform.runLater(() -> {
-                LymytzService.openAlertDialog("Génération de a facture non réussi !", "Erreur ", "L'en-tête de la facture n'a pas été trouvé!", Alert.AlertType.ERROR);
-            });
+            Platform.runLater(() -> LymytzService.openAlertDialog("Génération de a facture non réussi !", "Erreur ", "L'en-tête de la facture n'a pas été trouvé!", Alert.AlertType.ERROR));
             return null;
         }
         return doc;
     }
 
     private boolean saveContentFacture(List<YvsComContenuDocVente> contents, YvsComDocVentes doc) {
-        if (!contents.stream().noneMatch((c) -> (!saveContentFacture(c, doc)))) {
-            return false;
-        }
-        return true;
+        return contents.stream().noneMatch(c -> (!saveContentFacture(c, doc)));
     }
 
     private boolean saveContentFacture(YvsComContenuDocVente c, YvsComDocVentes doc) {
@@ -771,7 +742,7 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
     }
 
     public void saveAllTaxe(YvsComContenuDocVente y) {
-        if (y != null ? (y.getId() != null ? y.getId() > 0 : false) : false) {
+        if (y != null && (y.getId() != null && y.getId() > 0)) {
             double prix = y.getPrix() - y.getRabais();
             double qte = y.getQuantite();
             double remise = y.getRemise();
@@ -782,7 +753,7 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
 
             String nameQueri = "YvsBaseArticleCategorieComptable.findByCategorieArticle";
             YvsBaseArticleCategorieComptable acc = (YvsBaseArticleCategorieComptable) dao.findOneByNQ(nameQueri, new String[]{"categorie", "article"}, new Object[]{new YvsBaseCategorieComptable(categorie), y.getArticle()});
-            if (acc != null ? (acc.getId() != null ? acc.getId() > 0 : false) : false) {
+            if (acc != null && (acc.getId() != null && acc.getId() > 0)) {
                 if (y.getArticle().getPuvTtc()) {
                     for (YvsBaseArticleCategorieComptableTaxe t : acc.getTaxes()) {
                         taxe += t.getTaxe().getTaux();
@@ -800,7 +771,7 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
                     taxe = dao.arrondi(UtilsProject.currentSociete.getId(), taxe);
 
                     YvsComTaxeContenuVente ct = (YvsComTaxeContenuVente) dao.findOneByNQ("YvsComTaxeContenuVente.findOne", new String[]{"contenu", "taxe"}, new Object[]{y, t.getTaxe()});
-                    if (ct != null ? (ct.getId() != null ? ct.getId() > 0 : false) : false) {
+                    if (ct != null && (ct.getId() != null && ct.getId() > 0)) {
                         ct.setMontant(taxe);
                         ct.setAuthor(UtilsProject.currentUser);
                         dao.update(ct);
@@ -833,11 +804,11 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
         if (!UtilsProject.REPLICATION) {
             if (!facture.getTypeDoc().equals(Constantes.TYPE_BCV)) {
                 ServiceLivraison serviceL = new ServiceLivraison(this);
-                if(facture.getTrancheLivrer()==null){
+                if (facture.getTrancheLivrer() == null) {
                     facture.setTrancheLivrer(UtilsProject.headerDoc.getCreneau().getCreneauDepot().getTranche());
                     dao.update(facture);
                 }
-                 serviceL.saveLivraison(facture, false);
+                serviceL.saveLivraison(facture, false);
             } else {
                 String etatLivre = Constantes.ETAT_ATTENTE;
             }
@@ -873,7 +844,8 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
         Double recu = (Double) dao.findOneObjectByNQ("YvsComptaCaissePieceVente.findMontantRecuByFacture", new String[]{"vente"}, new Object[]{doc});
         ong.setMontantRecu(recu != null ? recu : 0);
     }
-//
+
+    //
     /*Barre d'outils*/
     int num = 5;
 
@@ -888,21 +860,19 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
     public void openViewImport(ActionEvent ev) {
         //Ouvre la fenêtre de gestion des imports
         BorderPane root = null;
-        long memoire = Runtime.getRuntime().freeMemory();
         CustomWindow w = LymytzService.openWindowNew("/main/synchro/import_data.fxml", "Lymytz /Importation", root, 1000.0, 500.0, true);
         ImportDataController controler = (ImportDataController) w.getController();
         this.stageCreateFacture = w.getStage();
         if (controler != null) {
             controler.initComponents(this);
         }
-        long memoire2 = Runtime.getRuntime().freeMemory();
     }
 
     @FXML
     public void openViewExport(ActionEvent ev) {
         //Ouvre la fenêtre de gestion des imports
         BorderPane root = null;
-        ExportDataController controler = LymytzService.openWindow("main/synchro/export_data.fxml", "Lymytz /Exportation", root, 1000.0, 600.0);
+        LymytzService.openWindow("main/synchro/export_data.fxml", "Lymytz /Exportation", root, 1000.0, 600.0);
     }
 
     @FXML
@@ -925,7 +895,7 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
     public void openViewPreference(ActionEvent ev) {
         //Ouvre la fenêtre de gestion des imports
         VBox root = null;
-        PreferenceController controler = LymytzService.openWindow("/main/preference.fxml", "Lymytz /Préférence", root, 550.0, 600.0);
+        PreferenceController controler = LymytzService.openWindow("/pages/main/preference.fxml", "Lymytz /Préférence", root, 550.0, 600.0);
     }
 
     @FXML
@@ -947,7 +917,7 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
 
     @FXML
     private void testLocalConnect(ActionEvent event) {
-        if (!LQueryFactories.pingServer()) {
+        if (!LocalQueryFactories.pingServer()) {
             LymytzService.openAlertDialog("Impossible d'ouvrir une connexion à la base de données locale, veuillez consulter le fichier de log pour en connaître la cause", "Echec de connexion", "Echec de connexion à la source de données locale", Alert.AlertType.ERROR);
         } else {
             LymytzService.success();
@@ -1014,7 +984,7 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
         VBox root = null;
         ListFacturesController controler = LymytzService.openWindow("/pages/data/form_facture.fxml", "Lymytz /Liste de Factures", root, 950.0, 605.0, true, this);
         if (controler != null) {
-            controler.initPage(this, Constantes.TYPE_FV);
+            controler.initPage(this, TYPE_FV);
         }
     }
 
@@ -1079,46 +1049,42 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
         }
     }
 
-    @FXML
+   /* @FXML
     private void generatedBlFromDoc(ActionEvent event) {
         //1. Controle la caisse et le mode de paiement  
         Onglets tab = (Onglets) TAB_FACTURES.getSelectionModel().getSelectedItem();
         if (tab != null) {
-            Thread t = new Thread(new Runnable() {
+            Thread t = new Thread(() -> {
+                YvsComDocVentes dv = tab.getFacture();
+                JSONObject entityJson = UtilExport.exportDocVente(tab.getFacture(), false, null);
+                if (entityJson != null) {
+                    WsSynchro ws = new WsSynchro();
+                    if (dv.getTypeDoc().equals(TYPE_FV)) {
+                        ws.livraisonDocVente(entityJson, "livrer_facture_vente");
+                    } else if (dv.getTypeDoc().equals(Constantes.TYPE_BCV)) {
 
-                @Override
-                public void run() {
-                    YvsComDocVentes dv = tab.getFacture();
-                    JSONObject entityJson = UtilExport.exportDocVente(tab.getFacture(), false, null);
-                    if (entityJson != null) {
-                        WsSynchro ws = new WsSynchro();
-                        if (dv.getTypeDoc().equals(Constantes.TYPE_FV)) {
-                            ws.livraisonDocVente(entityJson, "livrer_facture_vente");
-                        } else if (dv.getTypeDoc().equals(Constantes.TYPE_BCV)) {
-
-                        }
                     }
                 }
             });
         }
-    }
+    }*/
 
-    @FXML
+/*    @FXML
     private void clearDocVenteWithoutContent(ActionEvent event) {
         //1. Controle la caisse et le mode de paiement  
         if (UtilsProject.headerDoc != null) {
             dao.cleanDocWithoutContent(UtilsProject.headerDoc.getId());
         }
-    }
+    }*/
 
     public void openDlgCalculatrice(Onglets onglet, String source, String action, ContentPanier content) {
         try {
-            if (onglet != null ? onglet.getContentFacture().isEmpty() : true) {
+            if (onglet == null || onglet.getContentFacture().isEmpty()) {
                 LymytzService.openAlertDialog("Votre panier est vide", "erreur contenu", "Erreur !", Alert.AlertType.ERROR);
                 return;
 
             }
-            FXMLLoader load = new FXMLLoader(LocalLoader.class.getResource("/component/claviers.fxml"));
+            FXMLLoader load = new FXMLLoader(LocalLoader.class.getResource("/pages/component/claviers.fxml"));
             VBox root = load.load();
             Scene scene = new Scene(root, 485, 566);
             Stage stage = new Stage();
@@ -1129,19 +1095,15 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
             stage.initOwner(UtilsProject.primaryStage);
             stage.setResizable(false);
             stage.show();
-            ClaviersController controler = (ClaviersController) load.getController();
+            ClaviersController controler = load.getController();
             controler.initController(this, onglet, stage, source, action, content);
-            scene.setOnKeyReleased(new EventHandler<KeyEvent>() {
-
-                @Override
-                public void handle(KeyEvent event) {
-                    if (event.getCode().equals(KeyCode.ESCAPE)) {
-                        stage.close();
-                    }
+            scene.setOnKeyReleased(event -> {
+                if (event.getCode().equals(KeyCode.ESCAPE)) {
+                    stage.close();
                 }
             });
         } catch (IOException ex) {
-            Logger.getLogger(ManagedApplication.class
+            Logger.getLogger(HomeCaisseController.class
                     .getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -1241,16 +1203,16 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
         saveOrGenerateBl(fac);
     }
 
-    public void saveOrGenerateBl(Onglets onglet) {
-        if (onglet != null) {
+    public void saveOrGenerateBl(Onglets currentOnglet) {
+        if (currentOnglet != null) {
             ServiceLivraison service = new ServiceLivraison(this);
-            if (!onglet.getFacture().getTypeDoc().equals(Constantes.TYPE_BCV)) {
-                service.saveLivraison(onglet.getFacture(), true);
+            if (!currentOnglet.getFacture().getTypeDoc().equals(Constantes.TYPE_BCV)) {
+                service.saveLivraison(currentOnglet.getFacture(), true);
             } else {
                 Alert dlg = new Alert(Alert.AlertType.CONFIRMATION, "Confirmez vous la livraison de ce bon de commande ?", new ButtonType("Oui"), new ButtonType("Non"));
                 Optional<ButtonType> resp = dlg.showAndWait();
                 if (resp.get().getText().equals("Oui")) {
-                    if (service.transmisOrder(onglet.getFacture())) {
+                    if (service.transmisOrder(currentOnglet.getFacture())) {
                         BTN_LIVRER.setVisible(false);
                     }
                 } else {

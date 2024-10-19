@@ -5,6 +5,7 @@
  */
 package com.lymytz.lymytzsell.service.application.service;
 
+import com.lymytz.lymytzsell.dao.query.LocalQueryFactories;
 import javafx.application.Platform;
 import javafx.concurrent.ScheduledService;
 import javafx.concurrent.Task;
@@ -12,7 +13,6 @@ import javafx.concurrent.WorkerStateEvent;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.util.Duration;
-import com.lymytz.lymytzsell.dao.query.LQueryFactories;
 import com.lymytz.lymytzsell.view.LocalLoader;
 import com.lymytz.lymytzsell.view.main.HomeCaisseController;
 
@@ -67,7 +67,7 @@ public class ListenServersLocal extends ScheduledService<Long> {
             @Override
             protected Long call() throws Exception {
                 new Thread(() -> {
-                    localConnect = LQueryFactories.pingServer();
+                    localConnect = LocalQueryFactories.pingServer();
                 }).start();
                 return 0L;
             }

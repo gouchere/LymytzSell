@@ -6,6 +6,8 @@
 
 package com.lymytz.lymytzsell.dao.entity;
 
+import lombok.Data;
+
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Basic;
@@ -43,6 +45,7 @@ import javax.persistence.TemporalType;
     @NamedQuery(name = "YvsComParametreVente.findByGenererFactureAuto", query = "SELECT y FROM YvsComParametreVente y WHERE y.genererFactureAuto = :genererFactureAuto"),
     @NamedQuery(name = "YvsComParametreVente.findByModelFactureVente", query = "SELECT y FROM YvsComParametreVente y WHERE y.modelFactureVente = :modelFactureVente"),
     @NamedQuery(name = "YvsComParametreVente.findBySellLowerPr", query = "SELECT y FROM YvsComParametreVente y WHERE y.sellLowerPr = :sellLowerPr")})
+@Data
 public class YvsComParametreVente implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -85,111 +88,6 @@ public class YvsComParametreVente implements Serializable {
     public YvsComParametreVente(Integer id) {
         this.id = id;
     }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public Integer getJourAnterieur() {
-        return jourAnterieur;
-    }
-
-    public void setJourAnterieur(Integer jourAnterieur) {
-        this.jourAnterieur = jourAnterieur;
-    }
-
-    public Boolean getComptabilisationAuto() {
-        return comptabilisationAuto;
-    }
-
-    public void setComptabilisationAuto(Boolean comptabilisationAuto) {
-        this.comptabilisationAuto = comptabilisationAuto;
-    }
-
-    public String getComptabilisationMode() {
-        return comptabilisationMode;
-    }
-
-    public void setComptabilisationMode(String comptabilisationMode) {
-        this.comptabilisationMode = comptabilisationMode;
-    }
-
-    public Date getDateUpdate() {
-        return dateUpdate;
-    }
-
-    public void setDateUpdate(Date dateUpdate) {
-        this.dateUpdate = dateUpdate;
-    }
-
-    public Date getDateSave() {
-        return dateSave;
-    }
-
-    public void setDateSave(Date dateSave) {
-        this.dateSave = dateSave;
-    }
-
-    public Boolean getPaieWithoutValide() {
-        return paieWithoutValide;
-    }
-
-    public void setPaieWithoutValide(Boolean paieWithoutValide) {
-        this.paieWithoutValide = paieWithoutValide;
-    }
-
-    public Integer getNbFicheMax() {
-        return nbFicheMax;
-    }
-
-    public void setNbFicheMax(Integer nbFicheMax) {
-        this.nbFicheMax = nbFicheMax;
-    }
-
-    public Boolean getGenererFactureAuto() {
-        return genererFactureAuto;
-    }
-
-    public void setGenererFactureAuto(Boolean genererFactureAuto) {
-        this.genererFactureAuto = genererFactureAuto;
-    }
-
-    public String getModelFactureVente() {
-        return modelFactureVente;
-    }
-
-    public void setModelFactureVente(String modelFactureVente) {
-        this.modelFactureVente = modelFactureVente;
-    }
-
-    public Boolean getSellLowerPr() {
-        return sellLowerPr!=null? sellLowerPr:true;
-    }
-
-    public void setSellLowerPr(Boolean sellLowerPr) {
-        this.sellLowerPr = sellLowerPr;
-    }
-
-    public YvsAgences getAgence() {
-        return agence;
-    }
-
-    public void setAgence(YvsAgences agence) {
-        this.agence = agence;
-    }
-
-    public YvsUsersAgence getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(YvsUsersAgence author) {
-        this.author = author;
-    }
-
     @Override
     public int hashCode() {
         int hash = 0;

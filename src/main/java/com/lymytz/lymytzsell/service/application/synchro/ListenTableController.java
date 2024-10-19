@@ -5,6 +5,7 @@
  */
 package com.lymytz.lymytzsell.service.application.synchro;
 
+import com.lymytz.lymytzsell.dao.query.LocalQueryFactories;
 import com.lymytz.lymytzsell.service.application.Controller;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
@@ -25,7 +26,6 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.Tooltip;
 import com.lymytz.lymytzsell.dao.Options;
 import com.lymytz.lymytzsell.dao.entity.YvsComDocVentes;
-import com.lymytz.lymytzsell.dao.query.LQueryFactories;
 import com.lymytz.lymytzsell.service.application.bean.ListenTableBean;
 import com.lymytz.lymytzsell.service.application.loader.LoaderListenTable;
 import com.lymytz.lymytzsell.service.utils.Constantes;
@@ -195,21 +195,21 @@ public class ListenTableController implements Initializable, Controller {
                     switch (row.getTable()) {
                         case Constantes.TABLE_DOC_VENTE_CODE:
                             {
-                                LQueryFactories dao=new LQueryFactories();
+                                LocalQueryFactories dao=new LocalQueryFactories();
                                 YvsComDocVentes d=(YvsComDocVentes) dao.findOneByNQ("YvsComDocVentes.findById", new String[]{"id"}, new Object[]{row.getIdSource()});
                                 page.displayFactureOnView(d);
                                 break;
                             }
                         case Constantes.TABLE_CONTENT_DOC_VENTE_CODE:
                             {
-                                LQueryFactories dao=new LQueryFactories();
+                                LocalQueryFactories dao=new LocalQueryFactories();
                                 YvsComDocVentes d=(YvsComDocVentes) dao.findOneByNQ("YvsComContenuDocVente.findDocById", new String[]{"id"}, new Object[]{row.getIdSource()});
                                 page.displayFactureOnView(d);
                                 break;
                             }
                         case Constantes.TABLE_PIECE_CAISSE_VENTE_CODE:
                             {
-                                LQueryFactories dao=new LQueryFactories();
+                                LocalQueryFactories dao=new LocalQueryFactories();
                                 YvsComDocVentes d=(YvsComDocVentes) dao.findOneByNQ("YvsComptaCaissePieceVente.findDocById", new String[]{"id"}, new Object[]{row.getIdSource()});
                                 page.displayFactureOnView(d);
                                 break;

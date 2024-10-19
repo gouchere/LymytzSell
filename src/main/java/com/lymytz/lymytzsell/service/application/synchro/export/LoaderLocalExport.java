@@ -7,7 +7,7 @@ package com.lymytz.lymytzsell.service.application.synchro.export;
 
 import com.lymytz.lymytzsell.dao.entity.service.EntityColumn;
 import com.lymytz.lymytzsell.dao.entity.service.LymytzData;
-import com.lymytz.lymytzsell.dao.query.LQueryFactories;
+import com.lymytz.lymytzsell.dao.query.LocalQueryFactories;
 import com.lymytz.lymytzsell.dao.query.RQueryFactories;
 import com.lymytz.lymytzsell.service.utils.log.LogFiles;
 import javafx.collections.FXCollections;
@@ -28,7 +28,7 @@ import java.util.logging.Logger;
  */
 public class LoaderLocalExport extends Task<ObservableList<ObservableList>> {
 
-    LQueryFactories dao = new LQueryFactories();
+    LocalQueryFactories dao = new LocalQueryFactories();
     private String methode;
     private String table;
     private String colFilter;

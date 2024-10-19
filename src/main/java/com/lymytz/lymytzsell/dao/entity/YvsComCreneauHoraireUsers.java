@@ -5,6 +5,9 @@
  */
 package com.lymytz.lymytzsell.dao.entity;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Basic;
@@ -43,6 +46,8 @@ import javax.persistence.TemporalType;
 
     @NamedQuery(name = "YvsComCreneauHoraireUsers.findByDateUpdate", query = "SELECT y FROM YvsComCreneauHoraireUsers y WHERE y.dateUpdate = :dateUpdate"),
     @NamedQuery(name = "YvsComCreneauHoraireUsers.findByDateSave", query = "SELECT y FROM YvsComCreneauHoraireUsers y WHERE y.dateSave = :dateSave")})
+@Getter
+@Setter
 public class YvsComCreneauHoraireUsers implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -84,94 +89,6 @@ public class YvsComCreneauHoraireUsers implements Serializable {
 
     public YvsComCreneauHoraireUsers(Long id) {
         this.id = id;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Boolean getActif() {
-        return actif;
-    }
-
-    public void setActif(Boolean actif) {
-        this.actif = actif;
-    }
-
-    public Date getDateTravail() {
-        return dateTravail;
-    }
-
-    public void setDateTravail(Date dateTravail) {
-        this.dateTravail = dateTravail;
-    }
-
-    public Boolean getPermanent() {
-        return permanent;
-    }
-
-    public void setPermanent(Boolean permanent) {
-        this.permanent = permanent;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public Date getDateUpdate() {
-        return dateUpdate;
-    }
-
-    public void setDateUpdate(Date dateUpdate) {
-        this.dateUpdate = dateUpdate;
-    }
-
-    public Date getDateSave() {
-        return dateSave;
-    }
-
-    public void setDateSave(Date dateSave) {
-        this.dateSave = dateSave;
-    }
-
-    public YvsComCreneauDepot getCreneauDepot() {
-        return creneauDepot;
-    }
-
-    public void setCreneauDepot(YvsComCreneauDepot creneauDepot) {
-        this.creneauDepot = creneauDepot;
-    }
-
-    public YvsComCreneauPoint getCreneauPoint() {
-        return creneauPoint;
-    }
-
-    public void setCreneauPoint(YvsComCreneauPoint creneauPoint) {
-        this.creneauPoint = creneauPoint;
-    }
-
-    public YvsUsers getUsers() {
-        return users;
-    }
-
-    public void setUsers(YvsUsers users) {
-        this.users = users;
-    }
-
-    public YvsUsersAgence getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(YvsUsersAgence author) {
-        this.author = author;
     }
 
     @Override

@@ -9,12 +9,11 @@ import com.lymytz.lymytzsell.dao.entity.YvsComClient;
 import com.lymytz.lymytzsell.dao.entity.YvsComCreneauHoraireUsers;
 import com.lymytz.lymytzsell.dao.entity.YvsComEnteteDocVente;
 import com.lymytz.lymytzsell.dao.entity.YvsDictionnaire;
-import com.lymytz.lymytzsell.dao.query.LQueryFactories;
+import com.lymytz.lymytzsell.dao.query.LocalQueryFactories;
 import com.lymytz.lymytzsell.service.application.service.ServiceCreateFacture;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.LymytzService;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
-import com.lymytz.lymytzsell.view.LocalLoader;
 import com.lymytz.lymytzsell.view.component.DateTimePickerController;
 import com.lymytz.lymytzsell.view.main.HomeCaisseController;
 import impl.org.controlsfx.skin.AutoCompletePopup;
@@ -24,9 +23,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Parent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListCell;
@@ -40,7 +37,6 @@ import javafx.scene.shape.Rectangle;
 import javafx.util.StringConverter;
 import org.controlsfx.control.textfield.TextFields;
 
-import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -58,7 +54,7 @@ import java.util.stream.Collectors;
  */
 public class FactureController implements Initializable, Controller {
 
-    LQueryFactories dao = new LQueryFactories();
+    LocalQueryFactories dao = new LocalQueryFactories();
     HomeCaisseController mainController;
     ToggleGroup TYPE_DOC = new ToggleGroup();
     YvsComClient selectClient;

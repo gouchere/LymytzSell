@@ -5,6 +5,10 @@
  */
 package com.lymytz.lymytzsell.dao.entity;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Basic;
@@ -22,22 +26,24 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 /**
- *
  * @author LYMYTZ
  */
 @Entity
 @Table(name = "yvs_dictionnaire")
 @NamedQueries({
-    @NamedQuery(name = "YvsDictionnaire.findAll", query = "SELECT y FROM YvsDictionnaire y"),
-    @NamedQuery(name = "YvsDictionnaire.findById", query = "SELECT y FROM YvsDictionnaire y WHERE y.id = :id"),
-    @NamedQuery(name = "YvsDictionnaire.findByLibele", query = "SELECT y FROM YvsDictionnaire y WHERE y.libele = :libele"),
-    @NamedQuery(name = "YvsDictionnaire.findByTitre", query = "SELECT y FROM YvsDictionnaire y WHERE y.titre = :titre"),
-    @NamedQuery(name = "YvsDictionnaire.findByActif", query = "SELECT y FROM YvsDictionnaire y WHERE y.actif = :actif"),
-    @NamedQuery(name = "YvsDictionnaire.findByAbreviation", query = "SELECT y FROM YvsDictionnaire y WHERE y.abreviation = :abreviation"),
-    @NamedQuery(name = "YvsDictionnaire.findVilles", query = "SELECT DISTINCT d FROM YvsDictionnaire d LEFT JOIN FETCH d.parent WHERE d.titre = 'Villes' ORDER BY d.libele"),
-    @NamedQuery(name = "YvsDictionnaire.findAllByParent", query = "SELECT DISTINCT d FROM YvsDictionnaire d LEFT JOIN FETCH d.parent WHERE d.parent = :parent ORDER BY d.libele"),
-    @NamedQuery(name = "YvsDictionnaire.findByDateUpdate", query = "SELECT y FROM YvsDictionnaire y WHERE y.dateUpdate = :dateUpdate"),
-    @NamedQuery(name = "YvsDictionnaire.findByDateSave", query = "SELECT y FROM YvsDictionnaire y WHERE y.dateSave = :dateSave")})
+        @NamedQuery(name = "YvsDictionnaire.findAll", query = "SELECT y FROM YvsDictionnaire y"),
+        @NamedQuery(name = "YvsDictionnaire.findById", query = "SELECT y FROM YvsDictionnaire y WHERE y.id = :id"),
+        @NamedQuery(name = "YvsDictionnaire.findByLibele", query = "SELECT y FROM YvsDictionnaire y WHERE y.libele = :libele"),
+        @NamedQuery(name = "YvsDictionnaire.findByTitre", query = "SELECT y FROM YvsDictionnaire y WHERE y.titre = :titre"),
+        @NamedQuery(name = "YvsDictionnaire.findByActif", query = "SELECT y FROM YvsDictionnaire y WHERE y.actif = :actif"),
+        @NamedQuery(name = "YvsDictionnaire.findByAbreviation", query = "SELECT y FROM YvsDictionnaire y WHERE y.abreviation = :abreviation"),
+        @NamedQuery(name = "YvsDictionnaire.findVilles", query = "SELECT DISTINCT d FROM YvsDictionnaire d LEFT JOIN FETCH d.parent WHERE d.titre = 'Villes' ORDER BY d.libele"),
+        @NamedQuery(name = "YvsDictionnaire.findAllByParent", query = "SELECT DISTINCT d FROM YvsDictionnaire d LEFT JOIN FETCH d.parent WHERE d.parent = :parent ORDER BY d.libele"),
+        @NamedQuery(name = "YvsDictionnaire.findByDateUpdate", query = "SELECT y FROM YvsDictionnaire y WHERE y.dateUpdate = :dateUpdate"),
+        @NamedQuery(name = "YvsDictionnaire.findByDateSave", query = "SELECT y FROM YvsDictionnaire y WHERE y.dateSave = :dateSave")})
+@Getter
+@Setter
+@NoArgsConstructor
 public class YvsDictionnaire implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -64,75 +70,8 @@ public class YvsDictionnaire implements Serializable {
     @ManyToOne
     private YvsDictionnaire parent;
 
-    public YvsDictionnaire() {
-    }
-
     public YvsDictionnaire(Long id) {
         this.id = id;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getLibele() {
-        return libele;
-    }
-
-    public void setLibele(String libele) {
-        this.libele = libele;
-    }
-
-    public String getTitre() {
-        return titre;
-    }
-
-    public void setTitre(String titre) {
-        this.titre = titre;
-    }
-
-    public Boolean getActif() {
-        return actif;
-    }
-
-    public void setActif(Boolean actif) {
-        this.actif = actif;
-    }
-
-    public String getAbreviation() {
-        return abreviation;
-    }
-
-    public void setAbreviation(String abreviation) {
-        this.abreviation = abreviation;
-    }
-
-    public Date getDateUpdate() {
-        return dateUpdate;
-    }
-
-    public void setDateUpdate(Date dateUpdate) {
-        this.dateUpdate = dateUpdate;
-    }
-
-    public Date getDateSave() {
-        return dateSave;
-    }
-
-    public void setDateSave(Date dateSave) {
-        this.dateSave = dateSave;
-    }
-
-    public YvsDictionnaire getParent() {
-        return parent;
-    }
-
-    public void setParent(YvsDictionnaire parent) {
-        this.parent = parent;
     }
 
     @Override

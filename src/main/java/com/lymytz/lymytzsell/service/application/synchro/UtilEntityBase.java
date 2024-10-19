@@ -9,12 +9,12 @@ import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.lymytz.lymytzsell.dao.query.LocalQueryFactories;
 import javafx.application.Platform;
 import com.lymytz.lymytzsell.dao.Options;
 import com.lymytz.lymytzsell.dao.entity.YvsAgences;
 import com.lymytz.lymytzsell.dao.entity.YvsUsers;
 import com.lymytz.lymytzsell.dao.entity.YvsUsersAgence;
-import com.lymytz.lymytzsell.dao.query.LQueryFactories;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.DoubleAdapter;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
@@ -39,7 +39,7 @@ public class UtilEntityBase {
     public static Long findIdRemoteData(String table, Long localId) {
         Long id = -1L;
         if (Constantes.asLong(localId)) {
-            LQueryFactories dao = new LQueryFactories();
+            LocalQueryFactories dao = new LocalQueryFactories();
             String query = "SELECT id_distant FROM yvs_synchro_listen_table l "
                     + "INNER JOIN  yvs_synchro_data_synchro ds ON ds.id_listen=l.id "
                     + "WHERE l.name_table=? AND l.id_source=? ";
@@ -65,7 +65,7 @@ public class UtilEntityBase {
     }
 
     public static Long findIdLocalFromIdListen(String table, Long localId) {
-        LQueryFactories dao = new LQueryFactories();
+        LocalQueryFactories dao = new LocalQueryFactories();
         String query = "SELECT id_source FROM yvs_synchro_listen_table l INNER JOIN yvs_synchro_data_synchro s ON s.id_listen=l.id "
                 + "WHERE l.name_table=? AND s.id_distant=? ";
         Long id = (Long) dao.findOneObjectBySQLQ(query, new Options[]{new Options(table, 1), new Options(localId, 2)});
@@ -73,7 +73,7 @@ public class UtilEntityBase {
     }
 
     public static Long findIdListen(String table, Long localId, String action) {
-        LQueryFactories dao = new LQueryFactories();
+        LocalQueryFactories dao = new LocalQueryFactories();
         String query = "SELECT id FROM yvs_synchro_listen_table l "
                 + "WHERE l.name_table=? AND l.id_source=? AND l.action_name=? ";
         Long id = (Long) dao.findOneObjectBySQLQ(query, new Options[]{new Options(table, 1), new Options(localId, 2), new Options(action, 3)});

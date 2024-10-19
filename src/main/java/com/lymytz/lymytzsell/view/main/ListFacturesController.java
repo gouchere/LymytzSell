@@ -39,7 +39,7 @@ import javafx.stage.Stage;
 import com.lymytz.lymytzsell.dao.Options;
 import com.lymytz.lymytzsell.dao.ParamOption;
 import com.lymytz.lymytzsell.dao.entity.YvsComDocVentes;
-import com.lymytz.lymytzsell.dao.query.LQueryFactories;
+import com.lymytz.lymytzsell.dao.query.LocalQueryFactories;
 import com.lymytz.lymytzsell.dao.query.RQueryFactories;
 import com.lymytz.lymytzsell.service.application.Controller;
 import com.lymytz.lymytzsell.service.application.bean.Factures;
@@ -48,6 +48,8 @@ import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.EtatDoc;
 import com.lymytz.lymytzsell.service.utils.LymytzService;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.IOException;
 import java.net.URL;
@@ -65,12 +67,12 @@ import java.util.logging.Logger;
 public class ListFacturesController implements Initializable, Controller {
 
     HomeCaisseController page;
-    LQueryFactories rq = new LQueryFactories();
+    LocalQueryFactories rq = new LocalQueryFactories();
+    @Getter
+    @Setter
     ObservableList<Factures> items = FXCollections.observableArrayList();
 
     ContextMenu CTM_TV = new ContextMenu();
-
-    private List<String> types;
     private String type;
     List<ParamOption> paramsOptions;
 
@@ -120,14 +122,6 @@ public class ListFacturesController implements Initializable, Controller {
     @FXML
     private CheckBox CHK_CMDE_SERVIE;
 
-    public ObservableList<Factures> getItems() {
-        return items;
-    }
-
-    public void setItems(ObservableList<Factures> items) {
-        this.items = items;
-    }
-
     /**
      * Initializes the controller class.
      *
@@ -136,7 +130,6 @@ public class ListFacturesController implements Initializable, Controller {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
         paramsOptions = new ArrayList<>();
         initColumnData();
     }
@@ -154,25 +147,18 @@ public class ListFacturesController implements Initializable, Controller {
         initParamsQueries(type);
         loadDataFactures(type);
         initInfoSearch();
-        if (UtilsProject.REPLICATION) {
+        if (Boolean.TRUE.equals(UtilsProject.REPLICATION)) {
             TABLE_FACTURE.setContextMenu(CTM_TV);
         }
         TABLE_FACTURE.setItems(items);
-        TABLE_FACTURE.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Factures>() {
-
-            @Override
-            public void changed(ObservableValue<? extends Factures> observable, Factures oldValue, Factures newValue) {
-                YvsComDocVentes doc = (YvsComDocVentes) rq.findOneByNQ("YvsComDocVentes.findById", new String[]{"id"}, new Object[]{newValue.getId()});
-                doc.setContenus(rq.loadByNamedQuery("YvsComContenuDocVente.findByDocVente", new String[]{"docVente"}, new Object[]{doc}));
-                page.displayFactureOnView(doc);
-            }
+        TABLE_FACTURE.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            YvsComDocVentes doc = (YvsComDocVentes) rq.findOneByNQ("YvsComDocVentes.findById", new String[]{"id"}, new Object[]{newValue.getId()});
+            doc.setContenus(rq.loadByNamedQuery("YvsComContenuDocVente.findByDocVente", new String[]{"docVente"}, new Object[]{doc}));
+            page.displayFactureOnView(doc);
         });
         CB_STATUT_DOC.getItems().addAll(new EtatDoc(null, "Tout"), new EtatDoc(Constantes.ETAT_VALIDE, "Non Validé "));
         CB_STATUT_LIV.getItems().addAll(new EtatDoc(null, "Tout"), new EtatDoc(Constantes.ETAT_LIVRE, "Non Livré "));
         CB_STATUT_REG.getItems().addAll(new EtatDoc(null, "Tout"), new EtatDoc(Constantes.ETAT_REGLE, "Non Réglé "));
-        types = new ArrayList<>();
-//        types.add(Constantes.TYPE_FV);
-        types.add(Constantes.TYPE_BCV);
         itemSynchro.setOnAction((ActionEvent event) -> {
             Factures select = TABLE_FACTURE.getSelectionModel().getSelectedItem();
             changeStatutSynchronize(select);
@@ -185,7 +171,7 @@ public class ListFacturesController implements Initializable, Controller {
                     TABLE_FACTURE.refresh();
                     String query = "UPDATE yvs_com_doc_ventes SET statut_livre=?, statut_regle=? WHERE id=?";
                     rq.executeSqlQuery(query, new Options[]{new Options(select.getStatutLivraison(), 1),
-                        new Options(select.getStatutReglement(), 2), new Options(select.getId(), 3)});
+                            new Options(select.getStatutReglement(), 2), new Options(select.getId(), 3)});
                 } else {
                     LymytzService.openAlertDialog("Le serveur distant n'est pas connecté", "Serveur distant déconnecté", "", Alert.AlertType.ERROR);
                 }
@@ -194,15 +180,15 @@ public class ListFacturesController implements Initializable, Controller {
     }
 
     private void initColumnData() {
-        COL_CLIENT.setCellValueFactory((TableColumn.CellDataFeatures<Factures, String> param) -> new SimpleObjectProperty(param.getValue().getNomClient()));
-        COL_DATE.setCellValueFactory((TableColumn.CellDataFeatures<Factures, String> param) -> new SimpleObjectProperty((param.getValue().getDate() != null) ? Constantes.dfD.format(param.getValue().getDate()) : ""));
-        COL_TOTAL.setCellValueFactory((TableColumn.CellDataFeatures<Factures, String> param) -> new SimpleObjectProperty((param.getValue().getTotal() != null) ? Constantes.nbf.format(param.getValue().getTotal()) : ""));
-        COL_HEURE.setCellValueFactory((TableColumn.CellDataFeatures<Factures, String> param) -> new SimpleObjectProperty((param.getValue().getHeure() != null) ? Constantes.dfh.format(param.getValue().getHeure()) : ""));
-        COL_D_LIV.setCellValueFactory((TableColumn.CellDataFeatures<Factures, String> param) -> new SimpleObjectProperty((param.getValue().getDateLiv() != null) ? Constantes.dfh.format(param.getValue().getDateLiv()) : ""));
-        COL_ID.setCellValueFactory((TableColumn.CellDataFeatures<Factures, Long> param) -> new SimpleObjectProperty(param.getValue().getId()));
-        COL_N.setCellValueFactory((TableColumn.CellDataFeatures<Factures, Integer> param) -> new SimpleObjectProperty(param.getValue().getNumLine()));
-        COL_NUM.setCellValueFactory((TableColumn.CellDataFeatures<Factures, String> param) -> new SimpleObjectProperty(param.getValue().getNumDoc()));
-        COL_TYPE.setCellValueFactory((TableColumn.CellDataFeatures<Factures, String> param) -> new SimpleObjectProperty(param.getValue().getType()));
+        COL_CLIENT.setCellValueFactory((TableColumn.CellDataFeatures<Factures, String> param) -> new SimpleObjectProperty<>(param.getValue().getNomClient()));
+        COL_DATE.setCellValueFactory((TableColumn.CellDataFeatures<Factures, String> param) -> new SimpleObjectProperty<>((param.getValue().getDate() != null) ? Constantes.dfD.format(param.getValue().getDate()) : ""));
+        COL_TOTAL.setCellValueFactory((TableColumn.CellDataFeatures<Factures, String> param) -> new SimpleObjectProperty<>((param.getValue().getTotal() != null) ? Constantes.nbf.format(param.getValue().getTotal()) : ""));
+        COL_HEURE.setCellValueFactory((TableColumn.CellDataFeatures<Factures, String> param) -> new SimpleObjectProperty<>((param.getValue().getHeure() != null) ? Constantes.dfh.format(param.getValue().getHeure()) : ""));
+        COL_D_LIV.setCellValueFactory((TableColumn.CellDataFeatures<Factures, String> param) -> new SimpleObjectProperty<>((param.getValue().getDateLiv() != null) ? Constantes.dfh.format(param.getValue().getDateLiv()) : ""));
+        COL_ID.setCellValueFactory((TableColumn.CellDataFeatures<Factures, Long> param) -> new SimpleObjectProperty<>(param.getValue().getId()));
+        COL_N.setCellValueFactory((TableColumn.CellDataFeatures<Factures, Integer> param) -> new SimpleObjectProperty<>(param.getValue().getNumLine()));
+        COL_NUM.setCellValueFactory((TableColumn.CellDataFeatures<Factures, String> param) -> new SimpleObjectProperty<>(param.getValue().getNumDoc()));
+        COL_TYPE.setCellValueFactory((TableColumn.CellDataFeatures<Factures, String> param) -> new SimpleObjectProperty<>(param.getValue().getType()));
         COL_LIV.setCellValueFactory((TableColumn.CellDataFeatures<Factures, Boolean> param) -> new SimpleBooleanProperty(param.getValue().getStatutLivraison().equals(Constantes.ETAT_LIVRE)));
         COL_REG.setCellValueFactory((TableColumn.CellDataFeatures<Factures, Boolean> param) -> new SimpleBooleanProperty(param.getValue().getStatutReglement().equals(Constantes.ETAT_REGLE)));
         COL_VALIDE.setCellValueFactory((TableColumn.CellDataFeatures<Factures, Boolean> param) -> {
@@ -214,7 +200,7 @@ public class ListFacturesController implements Initializable, Controller {
         });
 
         COL_REG.setCellFactory((TableColumn<Factures, Boolean> param) -> {
-            CheckBoxTableCell cell = new CheckBoxTableCell();
+            CheckBoxTableCell cell = new CheckBoxTableCell<>();
             cell.setDisable(true);
             return cell;
         });
@@ -228,7 +214,7 @@ public class ListFacturesController implements Initializable, Controller {
             cell.setDisable(true);
             return cell;
         });
-        COL_SYNC.setCellValueFactory((TableColumn.CellDataFeatures<Factures, Long> param) -> new SimpleObjectProperty(param.getValue().getIdDistant()));
+        COL_SYNC.setCellValueFactory((TableColumn.CellDataFeatures<Factures, Long> param) -> new SimpleObjectProperty<>(param.getValue().getIdDistant()));
         COL_LIV.getStyleClass().add("colsOptions");
         COL_SYNC.getStyleClass().add("colsOptions");
         COL_VALIDE.getStyleClass().add("colsOptions");
@@ -312,7 +298,6 @@ public class ListFacturesController implements Initializable, Controller {
     @FXML
     private void openDlgDetails(ActionEvent event) {
         try {
-            long id = TABLE_FACTURE.getSelectionModel().getSelectedItem().getId();
             FXMLLoader load = new FXMLLoader(LocalLoader.class.getResource("/main/reglement/list_details_facture.fxml"));
             AnchorPane root = load.load();
             Scene scene = new Scene(root, 820, 600);
@@ -324,11 +309,8 @@ public class ListFacturesController implements Initializable, Controller {
             stage.initOwner(UtilsProject.primaryStage);
             stage.setResizable(false);
             stage.show();
-//            ListDetailFactController pageImportController = (ListDetailFactController) load.getController();
-//            YvsComDocVentes dv = (YvsComDocVentes) rq.findOneEntity("YvsComDocVentes.findById", new String[]{"id"}, new Object[]{id});
-// pageImportController  controler.initController(this, dv);
         } catch (IOException ex) {
-            Logger.getLogger(HomeCaisseController.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ListFacturesController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

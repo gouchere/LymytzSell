@@ -31,7 +31,7 @@ import com.lymytz.lymytzsell.dao.entity.YvsSocietes;
 import com.lymytz.lymytzsell.dao.entity.YvsSynchroServeurs;
 import com.lymytz.lymytzsell.dao.entity.YvsUsers;
 import com.lymytz.lymytzsell.dao.entity.YvsUsersAgence;
-import com.lymytz.lymytzsell.dao.query.LQueryFactories;
+import com.lymytz.lymytzsell.dao.query.LocalQueryFactories;
 import com.lymytz.lymytzsell.service.application.synchro.UtilEntityBase;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.LymytzService;
@@ -51,7 +51,7 @@ import java.util.logging.Logger;
  */
 public class UtilExport {
 
-    public static LQueryFactories dao = new LQueryFactories();
+    public static LocalQueryFactories dao = new LocalQueryFactories();
 
     public UtilExport() {
     }

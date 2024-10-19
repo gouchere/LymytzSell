@@ -6,7 +6,7 @@
 package com.lymytz.lymytzsell.service.application.loader;
 
 import com.lymytz.lymytzsell.dao.Options;
-import com.lymytz.lymytzsell.dao.query.LQueryFactories;
+import com.lymytz.lymytzsell.dao.query.LocalQueryFactories;
 import com.lymytz.lymytzsell.dao.query.RQueryFactories;
 import com.lymytz.lymytzsell.service.application.bean.ListenTableBean;
 import com.lymytz.lymytzsell.service.utils.Constantes;
@@ -28,7 +28,7 @@ import java.util.logging.Logger;
  */
 public class LoaderListenTable extends Task<ObservableList<ListenTableBean>> {
 
-    LQueryFactories Ldao;
+    LocalQueryFactories Ldao;
     RQueryFactories Rdao;
     boolean local;
     boolean loadAll;
@@ -37,7 +37,7 @@ public class LoaderListenTable extends Task<ObservableList<ListenTableBean>> {
         this.local = local;
         this.loadAll = all;
         if (local) {
-            Ldao = new LQueryFactories();
+            Ldao = new LocalQueryFactories();
         } else {
             Rdao = new RQueryFactories();
         }

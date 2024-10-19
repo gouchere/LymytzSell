@@ -7,11 +7,12 @@ package com.lymytz.lymytzsell.service.application.loader;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import com.lymytz.lymytzsell.dao.query.LocalQueryFactories;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import com.lymytz.lymytzsell.dao.entity.YvsComEnteteDocVente;
-import com.lymytz.lymytzsell.dao.query.LQueryFactories;
 import com.lymytz.lymytzsell.service.application.bean.HeaderDoc;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
@@ -22,10 +23,10 @@ import com.lymytz.lymytzsell.service.utils.UtilsProject;
  */
 public class LoaderFiches extends Task<ObservableList<HeaderDoc>> {
 
-    LQueryFactories Ldao;
+    LocalQueryFactories Ldao;
 
     public LoaderFiches() {
-        Ldao = new LQueryFactories();
+        Ldao = new LocalQueryFactories();
     }
 
     @Override

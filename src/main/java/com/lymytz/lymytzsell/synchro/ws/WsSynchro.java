@@ -37,7 +37,6 @@ import java.util.logging.Logger;
 public class WsSynchro<T extends Serializable> {
 
     public static boolean runningOut = false; // est à true lorsque la synchronisation est en cours
-//    public static boolean running = false;
     public static boolean runningIn = false; //pour controler la synchronisation entrante
     public static boolean dialogOpen = false;
     public static Long countI = -1L, countU = -1L, countD = -1L;
@@ -45,6 +44,7 @@ public class WsSynchro<T extends Serializable> {
     public static HashSet<Long> currentListen = new HashSet<>();
 
     public WsSynchro() {
+        //  nécessaire pour le demarrage du composant
     }
 
     public static URI getUriAdresse(String service) {
@@ -52,7 +52,7 @@ public class WsSynchro<T extends Serializable> {
         if (UtilsProject.properties != null) {
             String adresse = UtilsProject.properties.getProperty(Constantes.KEY_WEB_HOST);
             String port = UtilsProject.properties.getProperty(Constantes.KEY_WEB_PORT);
-            if ((adresse != null ? !adresse.trim().isEmpty() : false) && (port != null ? !port.trim().isEmpty() : false)) {
+            if ((adresse != null && !adresse.trim().isEmpty()) && (port != null && !port.trim().isEmpty())) {
                 return UriBuilder.fromUri("http://" + adresse + ":" + port + "/Lymytz_Web/ws/services/" + service).build();
             }
         }
@@ -68,16 +68,14 @@ public class WsSynchro<T extends Serializable> {
             dialogOpen = false;
             return (rep.getStatus() == 200);
         } catch (Exception ex) {
-            if (!dialogOpen) {
-                if (ex.getCause() != null) {
-                    if (ex.getCause().getClass().equals(ConnectException.class)) {
+            if (!dialogOpen && (ex.getCause() != null && (ex.getCause().getClass().equals(ConnectException.class)))) {
                         Platform.runLater(() -> {
                             LymytzService.openAlertDialog("Impossible de trouver les services distants! Verifiez votre connexion au serveur de "
                                     + "replication; si votre connexion est correcte, contactez votre Administrateur", "Connexion non trouvé !", "Connexion aux service distants impossible", Alert.AlertType.ERROR);
                             dialogOpen = true;
                         });
-                    }
-                }
+
+
             }
             return false;
         }
@@ -92,7 +90,7 @@ public class WsSynchro<T extends Serializable> {
             invocation.header("user", entity.getUsers().getId());
             Response rep = invocation.get();
             Long r = rep.readEntity(Long.class);
-            if (r != null ? r > 0 : false) {
+            if (r != null && r > 0) {
                 UtilsProject.remoteAuthor = r;
             }
             return r;
@@ -108,12 +106,11 @@ public class WsSynchro<T extends Serializable> {
             Client client = ClientBuilder.newClient(new ClientConfig());
             WebTarget target = client.target(getUriAdresse("commercial/v1/" + uri));
             Invocation.Builder invocation = target.request(MediaType.APPLICATION_JSON);
-            Response rep = invocation.post(Entity.json(entity.toString()));
-            ResultatAction<T> r = rep.readEntity(ResultatAction.class);
-            return r;
-        } catch (JSONException ex) {
-            LogFiles.addLogInFile("", Severity.ERROR, ConsUtil.SOURCE_LOG_FILE_EXCEPTION, ex);
-            Logger.getLogger(WsSynchro.class.getName()).log(Level.SEVERE, null, ex);
+            ResultatAction<T> resultatAction;
+            try (Response rep = invocation.post(Entity.json(entity.toString()))) {
+                resultatAction = rep.readEntity(ResultatAction.class);
+            }
+            return resultatAction;
         } catch (Exception ex) {
             LogFiles.addLogInFile("", Severity.ERROR, ConsUtil.SOURCE_LOG_FILE_EXCEPTION, ex);
             Logger.getLogger(WsSynchro.class.getName()).log(Level.SEVERE, null, ex);
@@ -127,9 +124,7 @@ public class WsSynchro<T extends Serializable> {
             WebTarget target = client.target(getUriAdresse("compta/v1/" + uri));
             Invocation.Builder invocation = target.request(MediaType.APPLICATION_JSON);
             Response rep = invocation.post(Entity.json(entity.toString()));
-            ResultatAction<T> r = rep.readEntity(ResultatAction.class);
-            return r;
-//            }
+            return rep.readEntity(ResultatAction.class);
         } catch (Exception ex) {
             LogFiles.addLogInFile("", Severity.ERROR, ConsUtil.SOURCE_LOG_FILE_EXCEPTION, ex);
             Logger.getLogger(WsSynchro.class.getName()).log(Level.SEVERE, null, ex);
@@ -145,8 +140,7 @@ public class WsSynchro<T extends Serializable> {
             invocation.header("id", idDistant);
             invocation.header("table", table);
             Response rep = invocation.get();
-            Boolean re = rep.readEntity(Boolean.class);
-            return re;
+            return rep.readEntity(Boolean.class);
         } catch (Exception ex) {
             LogFiles.addLogInFile("", Severity.ERROR, ConsUtil.SOURCE_LOG_FILE_EXCEPTION, ex);
             Logger.getLogger(WsSynchro.class.getName()).log(Level.SEVERE, null, ex);
@@ -170,8 +164,7 @@ public class WsSynchro<T extends Serializable> {
             invocation.header("doc", idDocVente);
             invocation.header("idUser", auteur);
             Response rep = invocation.post(Entity.text("{doc:"+idDocVente+", idUser:"+auteur+"}"));
-            ResultatAction r = rep.readEntity(ResultatAction.class);
-            return r;
+            return rep.readEntity(ResultatAction.class);
         } catch (Exception ex) {
             LogFiles.addLogInFile("", Severity.ERROR, ConsUtil.SOURCE_LOG_FILE_EXCEPTION, ex);
             Logger.getLogger(WsSynchro.class.getName()).log(Level.SEVERE, null, ex);
@@ -213,8 +206,7 @@ public class WsSynchro<T extends Serializable> {
             invocation.header("lot", 0);
             invocation.header("date", date);
             Response rep = invocation.get();
-            Double r = rep.readEntity(Double.class);
-            return r;
+            return rep.readEntity(Double.class);
         } catch (Exception ex) {
             LogFiles.addLogInFile("", Severity.ERROR, ConsUtil.SOURCE_LOG_FILE_EXCEPTION, ex);
             Logger.getLogger(WsSynchro.class.getName()).log(Level.SEVERE, null, ex);
@@ -232,8 +224,7 @@ public class WsSynchro<T extends Serializable> {
             invocation.header("unite_", cond);
             //invocation.header("date", date);
             Response rep = invocation.get();
-            Double r = rep.readEntity(Double.class);
-            return r;
+            return rep.readEntity(Double.class);
         } catch (Exception ex) {
             LogFiles.addLogInFile("", Severity.ERROR, ConsUtil.SOURCE_LOG_FILE_EXCEPTION, ex);
             Logger.getLogger(WsSynchro.class.getName()).log(Level.SEVERE, null, ex);
@@ -246,10 +237,9 @@ public class WsSynchro<T extends Serializable> {
             Client client = ClientBuilder.newClient(new ClientConfig());
             WebTarget target = client.target(getUriAdresse("commercial/v1/" + uri));
             Invocation.Builder invocation = target.request(MediaType.APPLICATION_JSON);
-            Response rep = invocation.post(Entity.json(entity.toString()));
-            ResultatAction<T> r = rep.readEntity(ResultatAction.class);
-            
-            return r;
+            try (Response rep = invocation.post(Entity.json(entity.toString()))) {
+                return rep.readEntity(ResultatAction.class);
+            }
         } catch (Exception ex) {
             LogFiles.addLogInFile("", Severity.ERROR, ConsUtil.SOURCE_LOG_FILE_EXCEPTION, ex);
             Logger.getLogger(WsSynchro.class.getName()).log(Level.SEVERE, null, ex);
@@ -263,13 +253,12 @@ public class WsSynchro<T extends Serializable> {
                 Client clt = ClientBuilder.newClient(new ClientConfig());
                 WebTarget target = clt.target(getUriAdresse("compta/v1/save_virement_caisse"));
                 Invocation.Builder builder = target.request(MediaType.APPLICATION_JSON);
-                Response response = builder.post(Entity.json(entity.toString()));
-                ResultatAction<T> r = response.readEntity(ResultatAction.class);
-                return r;
+                ResultatAction<T> resultatAction;
+                try (Response response = builder.post(Entity.json(entity.toString()))) {
+                    resultatAction = response.readEntity(ResultatAction.class);
+                }
+                return resultatAction;
             }
-        } catch (JSONException ex) {
-            LogFiles.addLogInFile("", Severity.ERROR, ConsUtil.SOURCE_LOG_FILE_EXCEPTION, ex);
-            Logger.getLogger(WsSynchro.class.getName()).log(Level.SEVERE, null, ex);
         } catch (Exception ex) {
             LogFiles.addLogInFile("", Severity.ERROR, ConsUtil.SOURCE_LOG_FILE_EXCEPTION, ex);
             Logger.getLogger(WsSynchro.class.getName()).log(Level.SEVERE, null, ex);

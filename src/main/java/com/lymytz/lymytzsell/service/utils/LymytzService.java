@@ -19,6 +19,7 @@ import java.net.UnknownHostException;
 import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -61,7 +62,7 @@ public class LymytzService {
 
     public static boolean stopThread = false;
 
-    public LymytzService() {
+    private LymytzService() {
     }
 
     public static void alertConnexion() {
@@ -70,7 +71,7 @@ public class LymytzService {
         dlg.setHeaderText("Erreur base de données non accessible !");
         dlg.setContentText("Base de données innaccessible!");
         Stage stage = (Stage) dlg.getDialogPane().getScene().getWindow();
-        stage.getIcons().add(new Image(LymytzService.class.getResourceAsStream("/icones/memo_apps.png")));
+        stage.getIcons().add(new Image(Objects.requireNonNull(LymytzService.class.getResourceAsStream("/icones/memo_apps.png"))));
         dlg.showAndWait();
     }
 
@@ -80,7 +81,7 @@ public class LymytzService {
         dlg.setHeaderText(headersg);
         dlg.setContentText(message);
         Stage stage = (Stage) dlg.getDialogPane().getScene().getWindow();
-        stage.getIcons().add(new Image(LymytzService.class.getResourceAsStream("/icones/memo_apps.png")));
+        stage.getIcons().add(new Image(Objects.requireNonNull(LymytzService.class.getResourceAsStream("/icones/memo_apps.png"))));
         dlg.showAndWait();
     }
 

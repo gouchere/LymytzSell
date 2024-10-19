@@ -5,6 +5,7 @@
  */
 package com.lymytz.lymytzsell.service.application.service.reglement;
 
+import com.lymytz.lymytzsell.dao.query.LocalQueryFactories;
 import com.lymytz.lymytzsell.service.application.Controller;
 import com.lymytz.lymytzsell.service.application.synchro.UtilEntityBase;
 import com.lymytz.lymytzsell.service.application.synchro.export.UtilExport;
@@ -28,7 +29,6 @@ import com.lymytz.lymytzsell.dao.UtilsBean;
 import com.lymytz.lymytzsell.dao.entity.YvsBaseCaisse;
 import com.lymytz.lymytzsell.dao.entity.YvsComEnteteDocVente;
 import com.lymytz.lymytzsell.dao.entity.YvsComptaCaissePieceVirement;
-import com.lymytz.lymytzsell.dao.query.LQueryFactories;
 import com.lymytz.lymytzsell.dao.query.RQueryFactories;
 import com.lymytz.lymytzsell.service.utils.ConsUtil;
 import com.lymytz.lymytzsell.service.utils.Constantes;
@@ -52,7 +52,7 @@ import java.util.ResourceBundle;
  */
 public class FormVirementController implements Initializable, Controller {
 
-    LQueryFactories rq = new LQueryFactories();
+    LocalQueryFactories rq = new LocalQueryFactories();
 
     HomeCaisseController page;
     Stage fenDialogue;

@@ -20,6 +20,7 @@ import javax.persistence.FlushModeType;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.Table;
+
 import com.lymytz.lymytzsell.dao.LocalDao;
 import com.lymytz.lymytzsell.dao.LocalSqlDao;
 import com.lymytz.lymytzsell.dao.Options;
@@ -31,14 +32,14 @@ import com.lymytz.lymytzsell.dao.entity.service.EntityColumn;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
 import com.lymytz.lymytzsell.service.utils.log.LogFiles;
-/**
- *
- * @author Admin gestionnaire des requêtes locale
- * @param <T>
- */
-public class LQueryFactories<T extends Serializable> {
 
-    public LQueryFactories() {
+/**
+ * @param <T>
+ * @author Admin gestionnaire des requêtes locale
+ */
+public class LocalQueryFactories<T extends Serializable> {
+    /*todo: replace this wonstructor with builder*/
+    public LocalQueryFactories() {
     }
 
     public static boolean pingServer() {
@@ -64,7 +65,7 @@ public class LQueryFactories<T extends Serializable> {
     }
 
     public T save1(T entity) {
-        return (T) save1(entity, true);
+        return save1(entity, true);
     }
 
     public T save1(T entity, boolean synchronise) {
@@ -84,7 +85,7 @@ public class LQueryFactories<T extends Serializable> {
                 //Logging de l'erreur
                 LogFiles.addLogInFile("Echec de l'execution de la requete save " + (entity.toString()), ex);
                 LocalDao.setInstance(null);
-                Logger.getLogger(LQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(LocalQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         return null;
@@ -111,7 +112,7 @@ public class LQueryFactories<T extends Serializable> {
                 //Logging de l'erreur
                 LogFiles.addLogInFile("Echec de l'execution de la requete save " + (entity.toString()), ex);
                 LocalDao.setInstance(null);
-                Logger.getLogger(LQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(LocalQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         return null;
@@ -130,7 +131,7 @@ public class LQueryFactories<T extends Serializable> {
                         i++;
                     }
                     qr.setMaxResults(1);
-                    result = (Object) qr.getSingleResult();
+                    result = qr.getSingleResult();
                     em.close();
                     return result;
                 } catch (NoResultException ex) {
@@ -140,7 +141,7 @@ public class LQueryFactories<T extends Serializable> {
                 //Logging de l'erreur
                 LogFiles.addLogInFile("Echec de l'execution de la requete: " + query, ex);
                 LocalDao.setInstance(null);
-                Logger.getLogger(LQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(LocalQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         return null;
@@ -173,7 +174,7 @@ public class LQueryFactories<T extends Serializable> {
                 //Logging de l'erreur
                 LogFiles.addLogInFile("Echec de l'execution de la requete: " + query, ex);
                 LocalDao.setInstance(null);
-                Logger.getLogger(LQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(LocalQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         return null;
@@ -191,7 +192,7 @@ public class LQueryFactories<T extends Serializable> {
 
                     }
                     qr.setMaxResults(1);
-                    result = (Object) qr.getSingleResult();
+                    result = qr.getSingleResult();
                     em.close();
                     return result;
                 } catch (NoResultException ex) {
@@ -201,7 +202,7 @@ public class LQueryFactories<T extends Serializable> {
                 //Logging de l'erreur
                 LogFiles.addLogInFile("Echec de l'execution de la requete: " + query, ex);
                 LocalDao.setInstance(null);
-                Logger.getLogger(LQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(LocalQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         return null;
@@ -225,7 +226,7 @@ public class LQueryFactories<T extends Serializable> {
                 //Logging de l'erreur
                 LogFiles.addLogInFile("Echec de l'execution de la requete: " + query, ex);
                 LocalDao.setInstance(null);
-                Logger.getLogger(LQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(LocalQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         return result;
@@ -251,7 +252,7 @@ public class LQueryFactories<T extends Serializable> {
                 //Logging de l'erreur
                 LogFiles.addLogInFile("Echec de l'execution de la requete: " + query, ex);
                 LocalDao.setInstance(null);
-                Logger.getLogger(LQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(LocalQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         return result;
@@ -273,7 +274,7 @@ public class LQueryFactories<T extends Serializable> {
                 //Logging de l'erreur
                 LogFiles.addLogInFile("Echec de l'execution de la requete: " + query, ex);
                 LocalDao.setInstance(null);
-                Logger.getLogger(LQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(LocalQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         return result;
@@ -297,7 +298,7 @@ public class LQueryFactories<T extends Serializable> {
                 //Logging de l'erreur
                 LogFiles.addLogInFile("Echec de l'execution de la requete: " + query, ex);
                 LocalDao.setInstance(null);
-                Logger.getLogger(LQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(LocalQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         return result;
@@ -321,9 +322,9 @@ public class LQueryFactories<T extends Serializable> {
                 try {
                     LogFiles.addLogInFile("Echec de l'execution de la requete: ", ex);
                     LocalDao.setInstance(null);
-                    Logger.getLogger(LQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(LocalQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (Exception ex1) {
-                    Logger.getLogger(LQueryFactories.class.getName()).log(Level.SEVERE, null, ex1);
+                    Logger.getLogger(LocalQueryFactories.class.getName()).log(Level.SEVERE, null, ex1);
                 }
             }
         }
@@ -341,7 +342,7 @@ public class LQueryFactories<T extends Serializable> {
                 }
             } catch (SQLException ex) {
                 LogFiles.addLogInFile("Echec de l'execution de la requete: ", ex);
-                Logger.getLogger(LQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(LocalQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         return st;
@@ -358,13 +359,13 @@ public class LQueryFactories<T extends Serializable> {
                     st.setObject(1, valueFilter);
                 }
             } catch (SQLException ex) {
-                Logger.getLogger(LQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(LocalQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         return st;
     }
 
-//    public boolean asString(String valeur) {
+    //    public boolean asString(String valeur) {
 //        if (valeur != null ? valeur.trim().length() > 0 : false) {
 //            return true;
 //        }
@@ -391,15 +392,15 @@ public class LQueryFactories<T extends Serializable> {
                     //Logging de l'erreur
                     LogFiles.addLogInFile("Echec de l'execution de la requete " + query, ex);
                     LocalDao.setInstance(null);
-                    Logger.getLogger(LQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(LocalQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         }
         return 0L;
     }
-    
+
     public boolean getEquilibreVente(long vente) {
-        
+
         try {
             Boolean dr = null;
             EntityManager em = LocalDao.getInstance().getEntityManagerFactory().createEntityManager();
@@ -408,19 +409,19 @@ public class LQueryFactories<T extends Serializable> {
                 javax.persistence.Query q = em.createNativeQuery("select * from public.equilibre_vente(?)");
                 q.setParameter(1, vente);
                 Object[] re = (Object[]) q.getSingleResult();
-                if(re!=null){                    
-                    dr=(re[0]=="L");
+                if (re != null) {
+                    dr = (re[0] == "L");
                 }
                 em.getTransaction().commit();
             }
             return dr != null ? dr : false;
         } catch (Exception ex) {
             try {
-                LogFiles.addLogInFile("",ex);
+                LogFiles.addLogInFile("", ex);
                 LocalDao.setInstance(null);
-                Logger.getLogger(LQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(LocalQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
             } catch (Exception ex1) {
-                Logger.getLogger(LQueryFactories.class.getName()).log(Level.SEVERE, null, ex1);
+                Logger.getLogger(LocalQueryFactories.class.getName()).log(Level.SEVERE, null, ex1);
             }
         }
         return false;
@@ -445,7 +446,7 @@ public class LQueryFactories<T extends Serializable> {
                     //Logging de l'erreur
                     LogFiles.addLogInFile("Echec de l'execution de la requete " + query, ex);
                     LocalDao.setInstance(null);
-                    Logger.getLogger(LQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(LocalQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         }
@@ -498,7 +499,7 @@ public class LQueryFactories<T extends Serializable> {
                 //Logging de l'erreur
                 LogFiles.addLogInFile("Echec de l'execution de la requete: " + query, ex);
                 LocalDao.setInstance(null);
-                Logger.getLogger(LQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(LocalQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
@@ -524,7 +525,7 @@ public class LQueryFactories<T extends Serializable> {
                     //Logging de l'erreur
                     LogFiles.addLogInFile("Echec de l'execution de la requete " + rq, ex);
                     LocalDao.setInstance(null);
-                    Logger.getLogger(LQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(LocalQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
                 }
 //            }
             } else {
@@ -562,7 +563,7 @@ public class LQueryFactories<T extends Serializable> {
                         //Logging de l'erreur
                         LogFiles.addLogInFile("Echec de l'execution de la requete " + sb.toString(), ex);
                         LocalDao.setInstance(null);
-                        Logger.getLogger(LQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(LocalQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
             }
@@ -596,21 +597,20 @@ public class LQueryFactories<T extends Serializable> {
                 //Logging de l'erreur
                 LogFiles.addLogInFile("Echec de l'execution de la requete " + sb.toString(), ex);
                 LocalDao.setInstance(null);
-                Logger.getLogger(LQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(LocalQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         return null;
     }
 
     /**
-     *
      * @param idListen: id da la table yvs_synchro_listen_table qui doit être
-     * mis à jour
+     *                  mis à jour
      * @param remoteId: représentant sur le seurveur de l'information local;
-     * @param message: message de retour du serveur à inserer dans la table
-     * yvs_synchro_listen_table
-     * @param insert: determine si on doit inserer dans yvs_synchro_data_synchro
-     * juste en cas de succès de l'opération
+     * @param message:  message de retour du serveur à inserer dans la table
+     *                  yvs_synchro_listen_table
+     * @param insert:   determine si on doit inserer dans yvs_synchro_data_synchro
+     *                  juste en cas de succès de l'opération
      */
     public void insertDataSynchro(Long idListen, Long remoteId, String message, boolean insert) {
         //vérifie avant que l'information local ne se trouve pas déjà dans synchro_data
@@ -644,7 +644,7 @@ public class LQueryFactories<T extends Serializable> {
             }
         } catch (Exception ex) {
             LogFiles.addLogInFile("", ex);
-            Logger.getLogger(LQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(LocalQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -667,7 +667,7 @@ public class LQueryFactories<T extends Serializable> {
                 return (!re.isEmpty()) ? re.get(0) : null;
             } catch (NoResultException ex) {
                 LogFiles.addLogInFile("Echec de l'execution de la requete " + query, ex);
-                Logger.getLogger(LQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(LocalQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
                 return null;
             }
         } catch (Exception ex) {
@@ -694,7 +694,8 @@ public class LQueryFactories<T extends Serializable> {
                             if (serveur != null ? serveur.getId() < 1 : true) {
                                 serveur = null;
                             }
-                            YvsSynchroListenTable listen = (YvsSynchroListenTable) findOneByNQ("YvsSynchroListenTable.findByActionSource", new String[]{"idSource", "nameTable", "action"}, new Object[]{instance.getId(), name, "DELETE"});;
+                            YvsSynchroListenTable listen = (YvsSynchroListenTable) findOneByNQ("YvsSynchroListenTable.findByActionSource", new String[]{"idSource", "nameTable", "action"}, new Object[]{instance.getId(), name, "DELETE"});
+                            ;
                             YvsSynchroDataSynchro synchro;
                             if (listen != null ? listen.getId() < 1 : true) {
                                 listen = new YvsSynchroListenTable();
@@ -728,7 +729,7 @@ public class LQueryFactories<T extends Serializable> {
             }
         } catch (IllegalArgumentException | SecurityException ex) {
             LogFiles.addLogInFile("", ex);
-            Logger.getLogger(LQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(LocalQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
         }
         return entity;
     }
@@ -739,7 +740,7 @@ public class LQueryFactories<T extends Serializable> {
             executeSqlQuery(query, new Options[]{new Options(nbFailed, 1), new Options(idListenn, 2)});
         } catch (NoResultException ex) {
             LogFiles.addLogInFile("Echec de l'execution de la requete " + query, ex);
-            Logger.getLogger(LQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(LocalQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -749,7 +750,7 @@ public class LQueryFactories<T extends Serializable> {
             executeSqlQuery(query, new Options[]{new Options(message, 1), new Options(idListenn, 2)});
         } catch (NoResultException ex) {
             LogFiles.addLogInFile("Echec de l'execution de la requete " + query, ex);
-            Logger.getLogger(LQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(LocalQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }

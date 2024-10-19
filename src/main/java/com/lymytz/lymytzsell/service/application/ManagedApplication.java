@@ -16,6 +16,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.lymytz.lymytzsell.LymytzSell;
+import com.lymytz.lymytzsell.dao.query.LocalQueryFactories;
 import com.lymytz.lymytzsell.service.application.service.ListenServersRemote;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -49,7 +50,6 @@ import com.lymytz.lymytzsell.dao.Options;
 import com.lymytz.lymytzsell.dao.entity.YvsBaseArticles;
 import com.lymytz.lymytzsell.dao.entity.YvsComCreneauHoraireUsers;
 import com.lymytz.lymytzsell.dao.entity.YvsComEnteteDocVente;
-import com.lymytz.lymytzsell.dao.query.LQueryFactories;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.LymytzService;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
@@ -65,7 +65,7 @@ import com.lymytz.lymytzsell.view.main.HomeCaisseController;
  */
 public class ManagedApplication {
 
-    public LQueryFactories dao = new LQueryFactories();
+    public LocalQueryFactories dao = new LocalQueryFactories();
     private HomeCaisseController mainPage;
     public ListenServersRemote serviceListen;
     private List<Long> idDepots;

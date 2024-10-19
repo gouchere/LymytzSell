@@ -5,6 +5,7 @@
  */
 package com.lymytz.lymytzsell.service.application.synchro.impor;
 
+import com.lymytz.lymytzsell.dao.query.LocalQueryFactories;
 import com.lymytz.lymytzsell.service.application.Controller;
 import com.lymytz.lymytzsell.service.application.synchro.ParamQuery;
 import javafx.application.Platform;
@@ -36,7 +37,6 @@ import com.lymytz.lymytzsell.dao.entity.service.EntityColumn;
 import com.lymytz.lymytzsell.dao.entity.service.LymytzData;
 import com.lymytz.lymytzsell.dao.entity.service.LymytzEntityClass;
 import com.lymytz.lymytzsell.dao.entity.service.LymytzLoaderEntity;
-import com.lymytz.lymytzsell.dao.query.LQueryFactories;
 import com.lymytz.lymytzsell.dao.query.RQueryFactories;
 import com.lymytz.lymytzsell.service.application.bean.TableBean;
 import com.lymytz.lymytzsell.service.utils.Constantes;
@@ -62,7 +62,7 @@ import java.util.logging.Logger;
 public class ImportDataController implements Initializable, Controller {
 
     RQueryFactories Rdao = new RQueryFactories();   //dao sur la base de donnée distante
-    LQueryFactories dao = new LQueryFactories();   //dao sur la base de donnée distante
+    LocalQueryFactories dao = new LocalQueryFactories();   //dao sur la base de donnée distante
     public List<LymytzData> listRemoteData;
     public List<LymytzData> listDataLocal;
     Thread tLoaderR, tLoaderL;

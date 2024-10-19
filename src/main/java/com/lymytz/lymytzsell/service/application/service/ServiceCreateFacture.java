@@ -28,7 +28,7 @@ import com.lymytz.lymytzsell.dao.entity.YvsComCommercialVente;
 import com.lymytz.lymytzsell.dao.entity.YvsComCreneauPoint;
 import com.lymytz.lymytzsell.dao.entity.YvsComDocVentes;
 import com.lymytz.lymytzsell.dao.entity.YvsDictionnaire;
-import com.lymytz.lymytzsell.dao.query.LQueryFactories;
+import com.lymytz.lymytzsell.dao.query.LocalQueryFactories;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.LymytzService;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
@@ -44,12 +44,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
  * @author LYMYTZ
  */
 public class ServiceCreateFacture implements Runnable {
 
-    LQueryFactories dao = new LQueryFactories();
+    LocalQueryFactories dao = new LocalQueryFactories();
     YvsComClient client;
     String typeDoc;
     YvsDictionnaire adresse;
@@ -213,61 +212,56 @@ public class ServiceCreateFacture implements Runnable {
     }
 
     public void saveCurrentCommercial(YvsComDocVentes facture) {
-        if (UtilsProject.headerDoc != null) {
-            if (UtilsProject.headerDoc.getCreneau() != null ? (UtilsProject.headerDoc.getCreneau().getId() != null ? UtilsProject.headerDoc.getCreneau().getId() > 0 : false) : false) {
-                char commissionFor = 'C';
-                YvsBasePointVente pv = null;
-                YvsComCreneauPoint cr = UtilsProject.headerDoc.getCreneau().getCreneauPoint();
-                if (cr != null ? cr.getId() > 0 : false) {
-                    pv = cr.getPoint();
-                    if (pv != null ? pv.getId() > 0 : false) {
-                        pv = (YvsBasePointVente) dao.findOneByNQ("YvsBasePointVente.findById", new String[]{"id"}, new Object[]{pv.getId()});
-                        if (pv != null ? pv.getId() > 0 : false) {
-                            commissionFor = pv.getCommissionFor();
-                        }
-                    }
-                }
-                YvsComComerciale y = (YvsComComerciale) dao.findOneByNQ("YvsComComerciale.findByUser", new String[]{"user"}, new Object[]{UtilsProject.headerDoc.getCreneau().getUsers()});
-                if (y == null) { //Commerciale est celui rattaché au user en cours
-                    YvsComCommercialVente bean;
-                    double taux = pv.getCommerciaux().size() > 0 ? (100 / pv.getCommerciaux().size()) : 0;
-                    for (YvsComCommercialPoint cp : pv.getCommerciaux()) {
-                        bean = new YvsComCommercialVente();
-                        bean.setFacture(facture);
-                        bean.setTaux(taux);
-                        bean.setResponsable(false);
-                        bean.setCommercial(cp.getCommercial());
-                        saveNewCommercial(bean);
-                    }
-                } else {
-                    YvsComCommercialVente bean = new YvsComCommercialVente();
-                    bean.setCommercial(y);
-                    bean.setFacture(facture);
-                    bean.setResponsable(true);
-                    bean.setTaux(100d);
-                    saveNewCommercial(bean);
+        if (UtilsProject.headerDoc != null && (UtilsProject.headerDoc.getCreneau() != null && (UtilsProject.headerDoc.getCreneau().getId() != null && UtilsProject.headerDoc.getCreneau().getId() > 0))) {
+            YvsBasePointVente pv = null;
+            YvsComCreneauPoint cr = UtilsProject.headerDoc.getCreneau().getCreneauPoint();
+            if (cr != null && cr.getId() > 0) {
+                pv = cr.getPoint();
+                if (pv != null && pv.getId() > 0) {
+                    pv = (YvsBasePointVente) dao.findOneByNQ("YvsBasePointVente.findById", new String[]{"id"}, new Object[]{pv.getId()});
                 }
             }
+            YvsComComerciale y = (YvsComComerciale) dao.findOneByNQ("YvsComComerciale.findByUser", new String[]{"user"}, new Object[]{UtilsProject.headerDoc.getCreneau().getUsers()});
+            if (y == null && pv != null) { //Commerciale est celui rattaché au user en cours
+                YvsComCommercialVente bean;
+                double taux = !pv.getCommerciaux().isEmpty() ? ((double) 100 / pv.getCommerciaux().size()) : 0;
+                for (YvsComCommercialPoint cp : pv.getCommerciaux()) {
+                    bean = new YvsComCommercialVente();
+                    bean.setFacture(facture);
+                    bean.setTaux(taux);
+                    bean.setResponsable(false);
+                    bean.setCommercial(cp.getCommercial());
+                    saveNewCommercial(bean);
+                }
+            } else {
+                YvsComCommercialVente bean = new YvsComCommercialVente();
+                bean.setCommercial(y);
+                bean.setFacture(facture);
+                bean.setResponsable(true);
+                bean.setTaux(100d);
+                saveNewCommercial(bean);
+            }
+
         }
     }
 
     public void saveNewCommercial(YvsComCommercialVente y) {
         try {
-            if (y != null ? y.getCommercial() != null : false) {
+            if (y != null && y.getCommercial() != null) {
                 y.setAuthor(UtilsProject.currentUser);
                 y.setDateSave(new Date());
                 y.setDateUpdate(new Date());
-                if (y.getId() != null ? y.getId() < 1 : true) {
+                if (y.getId() == null || y.getId() < 1) {
                     y.setId(null);
                     y = (YvsComCommercialVente) dao.save1(y);
                 } else {
                     dao.update(y);
                 }
-                if (y.getResponsable()) {
-                    if (y.getFacture() != null ? y.getCommercial().getTiers() != null : false) {
-                        if (y.getFacture().getTiers() != null ? !y.getFacture().getTiers().getId().equals(y.getCommercial().getTiers().getId()) : true) {
+                if (Boolean.TRUE.equals(y.getResponsable())) {
+                    if (y.getFacture() != null && y.getCommercial().getTiers() != null) {
+                        if (y.getFacture().getTiers() == null || !y.getFacture().getTiers().getId().equals(y.getCommercial().getTiers().getId())) {
                             YvsComClient tiers = null;
-                            if (y.getCommercial().getTiers().getId() > 0 ? y.getCommercial().getTiers().getClients() != null ? !y.getCommercial().getTiers().getClients().isEmpty() : false : false) {
+                            if (y.getCommercial().getTiers().getId() > 0 && (y.getCommercial().getTiers().getClients() != null && !y.getCommercial().getTiers().getClients().isEmpty())) {
                                 tiers = y.getCommercial().getTiers().getClients().get(0);
                             }
                             if (tiers != null) {
@@ -356,12 +350,12 @@ public class ServiceCreateFacture implements Runnable {
                                 Livraison task = new Livraison(fac.getFacture());
                                 task.addEventHandler(WorkerStateEvent.WORKER_STATE_SUCCEEDED, new EventHandler<Event>() {
 
-                                    @Override
-                                    public void handle(Event event) {
-                                        Boolean result = task.getValue();
-                                        LymytzService.success();
-                                    }
-                                }
+                                            @Override
+                                            public void handle(Event event) {
+                                                Boolean result = task.getValue();
+                                                LymytzService.success();
+                                            }
+                                        }
                                 );
                                 new Thread(task).start();
                             } else {

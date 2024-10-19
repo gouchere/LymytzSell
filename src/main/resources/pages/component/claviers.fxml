@@ -11,7 +11,7 @@
 
 <VBox onKeyReleased="#saisieOnClavier" prefHeight="566.0" prefWidth="472.0" styleClass="mainFxmlClass" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lymytz.lymytzsell.service.application.composant.ClaviersController">
     <stylesheets>
-        <URL value="@/lymytz/view/main/form_application.css" />
+        <URL value="@/pages/main/form_application.css" />
     </stylesheets>
     <children>
         <AnchorPane>

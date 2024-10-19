@@ -5,25 +5,6 @@
  */
 package com.lymytz.lymytzsell.service.utils;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.ServerSocket;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javafx.scene.control.Alert;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.stage.Stage;
-import javax.print.attribute.standard.Severity;
 import com.lymytz.lymytzsell.dao.Options;
 import com.lymytz.lymytzsell.dao.ParamConnection;
 import com.lymytz.lymytzsell.dao.UtilsBean;
@@ -42,24 +23,43 @@ import com.lymytz.lymytzsell.dao.entity.YvsGrhTrancheHoraire;
 import com.lymytz.lymytzsell.dao.entity.YvsSocietes;
 import com.lymytz.lymytzsell.dao.entity.YvsUsersAgence;
 import com.lymytz.lymytzsell.dao.entity.service.EntityColumn;
-import com.lymytz.lymytzsell.dao.query.LQueryFactories;
+import com.lymytz.lymytzsell.dao.query.LocalQueryFactories;
 import com.lymytz.lymytzsell.dao.query.RQueryFactories;
 import com.lymytz.lymytzsell.service.application.synchro.UtilEntityBase;
-import com.lymytz.lymytzsell.service.start.StartController;
 import com.lymytz.lymytzsell.service.utils.log.LogFiles;
 import com.lymytz.lymytzsell.synchro.ws.WsSynchro;
 import com.lymytz.lymytzsell.view.LocalLoader;
 import com.lymytz.lymytzsell.view.main.HomeCaisseController;
+import javafx.application.Platform;
+import javafx.scene.control.Alert;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.stage.Stage;
+
+import javax.print.attribute.standard.Severity;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
+import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 //import static com.lymytz.lymytzsell.service.utils.Uti
 
 /**
- *
  * @author LENOVO Regroupe les fonctionnalité statiques partagé de
  * l'application. Les actions sollicités par les autres classes
  */
 public class UtilsProject {
 
-    LQueryFactories dao = new LQueryFactories();
+    LocalQueryFactories dao = new LocalQueryFactories();
 
     public UtilsProject() {
     }
@@ -109,7 +109,7 @@ public class UtilsProject {
     }
 
     public static boolean verifyDateVente(Date date) {
-        LQueryFactories dao = new LQueryFactories();
+        LocalQueryFactories dao = new LocalQueryFactories();
         int ecart = -1;
         int nbFiches = -1;
         if (date != null ? date.after(new Date()) : true) {
@@ -134,18 +134,15 @@ public class UtilsProject {
     }
 
     public static boolean verifyDate(Date date, int ecart) {
-        LQueryFactories dao = new LQueryFactories();
-//        if (autoriser("com_save_hors_limit")) {
-//            return true;
-//        }
+        LocalQueryFactories dao = new LocalQueryFactories<>();
         String[] champ = new String[]{"dateJour"};
         Object[] val = new Object[]{date};
         YvsBaseExercice exo = (YvsBaseExercice) dao.findOneByNQ("YvsBaseExercice.findActifByDate", champ, val);
-        if (exo != null ? exo.getId() < 1 : true) {
+        if (exo == null || exo.getId() < 1) {
             LymytzService.openAlertDialog("Le document doit etre enregistré dans un exercice actif", "Erreur facture", "Aucun exercice actif trouvé", Alert.AlertType.ERROR);
             return false;
         }
-        if (exo.getCloturer()) {
+        if (Boolean.TRUE.equals(exo.getCloturer())) {
             LymytzService.openAlertDialog("Le document ne peut pas etre enregistré dans un exercice cloturé", "Erreur facture", "Exercice clôturé", Alert.AlertType.ERROR);
             return false;
         }
@@ -189,12 +186,12 @@ public class UtilsProject {
     }
 
     public static double getStocks(YvsBaseConditionnement c, long depot) {
-        Double re = 0d;
+        Double re;
         if (!UtilsProject.REPLICATION) {
-            LQueryFactories rq = new LQueryFactories();
+            LocalQueryFactories rq = new LocalQueryFactories();
             re = (Double) (rq.findOneObjectBySQLQ("select public.get_stock_reel(?,?,?,?,?,?::date,?,?)", new Options[]{
-                new Options(c.getArticle().getId(), 1), new Options(0, 2), new Options(depot, 3), new Options(0, 4), new Options(0, 5),
-                new Options(UtilsProject.headerDoc.getDateEntete(), 6), new Options(c.getId(), 7), new Options(0, 8)
+                    new Options(c.getArticle().getId(), 1), new Options(0, 2), new Options(depot, 3), new Options(0, 4), new Options(0, 5),
+                    new Options(UtilsProject.headerDoc.getDateEntete(), 6), new Options(c.getId(), 7), new Options(0, 8)
             }));
         } else {
             //récupère à partir d'une web service
@@ -203,25 +200,25 @@ public class UtilsProject {
             Long art = UtilEntityBase.findIdRemoteData(Constantes.TABLE_ARTICLE_CODE, c.getArticle().getId());
             re = WsSynchro.getStock(art, cond, Rdepot, Constantes.dfD.format(UtilsProject.headerDoc.getDateEntete()));
         }
-        return re;
+        return re != null ? re : 0;
     }
-    
+
     public static double getPr(YvsBaseConditionnement c, long depot) {
-        Double re = 0d;
-        if (!UtilsProject.REPLICATION) {
-            LQueryFactories rq = new LQueryFactories();
-            re = (Double) (rq.findOneObjectBySQLQ("select public.get_pr(?,?,?,?::date,?)", new Options[]{
-                new Options(c.getArticle().getId(), 1), new Options(depot, 2), new Options(0, 3), 
-                new Options(UtilsProject.headerDoc.getDateEntete(), 4), new Options(c.getId(), 5)
+        Double prixDeRevient;
+        if (Boolean.FALSE.equals(UtilsProject.REPLICATION)) {
+            var queryFactorie = new LocalQueryFactories<>();
+            prixDeRevient = (Double) (queryFactorie.findOneObjectBySQLQ("select public.get_pr(?,?,?,?::date,?)", new Options[]{
+                    new Options(c.getArticle().getId(), 1), new Options(depot, 2), new Options(0, 3),
+                    new Options(UtilsProject.headerDoc.getDateEntete(), 4), new Options(c.getId(), 5)
             }));
         } else {
             //récupère à partir d'une web service
-            Long Rdepot = UtilEntityBase.findIdRemoteData(Constantes.TABLE_DEPOT_CODE, depot);
+            Long remoteIdDepot = UtilEntityBase.findIdRemoteData(Constantes.TABLE_DEPOT_CODE, depot);
             Long cond = UtilEntityBase.findIdRemoteData(Constantes.TABLE_CONDITIONNEMENT_CODE, c.getId());
             Long art = UtilEntityBase.findIdRemoteData(Constantes.TABLE_ARTICLE_CODE, c.getArticle().getId());
-            re = WsSynchro.getPr(art, cond, Rdepot, Constantes.dfD.format(UtilsProject.headerDoc.getDateEntete()));
+            prixDeRevient = WsSynchro.getPr(art, cond, remoteIdDepot, Constantes.dfD.format(UtilsProject.headerDoc.getDateEntete()));
         }
-        return re;
+        return prixDeRevient != null ? prixDeRevient : 0;
     }
 
     public static String getVal(String key) {
@@ -252,7 +249,7 @@ public class UtilsProject {
                 paramConnection.setDataBase(getVal(Constantes.KEY_LOCAL_DB_NAME));
                 paramConnection.setDataBaseRemote(getVal(Constantes.KEY_REMOTE_DB_NAME));
                 paramConnection.setHostWeb(getVal(Constantes.KEY_WEB_HOST));
-                paramConnection.setIdRemoteScte((Constantes.asString(getVal(Constantes.KEY_REMOTE_SOCIETE))) ? Long.valueOf(getVal(Constantes.KEY_REMOTE_SOCIETE)) : 0l);
+                paramConnection.setIdRemoteScte((Constantes.asString(getVal(Constantes.KEY_REMOTE_SOCIETE))) ? Long.parseLong(getVal(Constantes.KEY_REMOTE_SOCIETE)) : 0l);
                 paramConnection.setModeReg((Constantes.asString(getVal(Constantes.KEY_MODE_REGLEMENT))) ? Long.valueOf(getVal(Constantes.KEY_MODE_REGLEMENT)) : 0l);
                 paramConnection.setModelReg((Constantes.asString(getVal(Constantes.KEY_MODEL_REGLEMENT))) ? Long.valueOf(getVal(Constantes.KEY_MODEL_REGLEMENT)) : 0l);
                 paramConnection.setP_default((Constantes.asString(getVal(Constantes.KEY_USE_PRINTER))) ? Boolean.valueOf(getVal(Constantes.KEY_USE_PRINTER)) : true);
@@ -270,13 +267,13 @@ public class UtilsProject {
                 paramConnection.setSever(getVal(Constantes.KEY_LOCAL_HOST));
                 paramConnection.setSeverRemote(getVal(Constantes.KEY_REMOTE_HOST));
                 paramConnection.setTypeRapport(getVal(Constantes.KEY_TYPE_PRINT));
-                paramConnection.setUseCodeBarre((Constantes.asString(getVal(Constantes.KEY_USE_CODE_BARRE))) ? Boolean.valueOf(getVal(Constantes.KEY_USE_CODE_BARRE)) : true);
-                paramConnection.setUsePrinter((Constantes.asString(getVal(Constantes.KEY_USE_PRINTER))) ? Boolean.valueOf(getVal(Constantes.KEY_USE_PRINTER)) : true);
+                paramConnection.setUseCodeBarre(!Constantes.asString(getVal(Constantes.KEY_USE_CODE_BARRE)) || Boolean.parseBoolean(getVal(Constantes.KEY_USE_CODE_BARRE)));
+                paramConnection.setUsePrinter(!Constantes.asString(getVal(Constantes.KEY_USE_PRINTER)) || Boolean.parseBoolean(getVal(Constantes.KEY_USE_PRINTER)));
                 paramConnection.setUsers(getVal(Constantes.KEY_LOCAL_USERS));
                 paramConnection.setUsersRemote(getVal(Constantes.KEY_REMOTE_USERS));
             }
         } catch (IOException ex) {
-            Logger.getLogger(StartController.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(UtilsProject.class.getName()).log(Level.SEVERE, null, ex);
             LogFiles.addLogInFile("Fichier d'Environnement non trouvé !", Severity.ERROR, ConsUtil.SOURCE_LOG_FILE_EXCEPTION, ex);
 
         }
@@ -293,12 +290,12 @@ public class UtilsProject {
                 REPLICATION = getReplication();
             }
             ID_SERVEUR = RQueryFactories.getIdServer();
-            if (ID_SERVEUR != null ? ID_SERVEUR <= 0 : true) {
+            if (ID_SERVEUR == null || ID_SERVEUR <= 0) {
                 //save adresse ip serveur
                 ID_SERVEUR = RQueryFactories.insertInfoServeur();
             }
         } catch (NumberFormatException ex) {
-            Logger.getLogger(StartController.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(UtilsProject.class.getName()).log(Level.SEVERE, null, ex);
             LogFiles.addLogInFile("Fichier d'Environnement non trouvé !", Severity.ERROR, ConsUtil.SOURCE_LOG_FILE_EXCEPTION, ex);
         }
     }
@@ -308,41 +305,37 @@ public class UtilsProject {
             RcurrentSociete = new YvsSocietes(Long.valueOf(properties.getProperty(Constantes.KEY_REMOTE_SOCIETE)));
         }
         ID_SERVEUR = RQueryFactories.getIdServer();
-        if (ID_SERVEUR != null ? ID_SERVEUR <= 0 : true) {
+        if (ID_SERVEUR == null || ID_SERVEUR <= 0) {
             //save adresse ip serveur
             ID_SERVEUR = RQueryFactories.insertInfoServeur();
         }
     }
 
     public static void loadInitData() {
-        /**
-         * Exécuté une action qui controle la conformité des propriétés
-         * necessaire dans le fichier .properties*
-         */
-        LQueryFactories dao = new LQueryFactories();
+        LocalQueryFactories dao = new LocalQueryFactories<>();
         if (paramConnection == null) {
             paramConnection = new ParamConnection();
         }
         loadFilePropertie();
         if (Constantes.asString((String) properties.get(Constantes.KEY_LOCAL_AGENCE))) {
-            paramConnection.setCodeAgence(Long.valueOf(properties.get(Constantes.KEY_LOCAL_AGENCE).toString()));
+            paramConnection.setCodeAgence(Long.parseLong(properties.get(Constantes.KEY_LOCAL_AGENCE).toString()));
         }
         if (Constantes.asString((String) properties.get(Constantes.KEY_LOCAL_SOCIETE))) {
-            paramConnection.setCodeSociete(Long.valueOf(properties.get(Constantes.KEY_LOCAL_SOCIETE).toString()));
+            paramConnection.setCodeSociete(Long.parseLong(properties.get(Constantes.KEY_LOCAL_SOCIETE).toString()));
         }
         //Charge la liste des villes
         villes = dao.loadByNamedQuery("YvsDictionnaire.findVilles", new String[]{}, new Object[]{});
         //charge l'agence par defaut
         if (currentAgence != null && Constantes.asLong(currentAgence.getId())) {
-          paramVente = (YvsComParametreVente) dao.findOneByNQ("YvsComParametreVente.findByAgence", new String[]{"agence"}, new Object[]{new YvsAgences(paramConnection.getCodeAgence())});
+            paramVente = (YvsComParametreVente) dao.findOneByNQ("YvsComParametreVente.findByAgence", new String[]{"agence"}, new Object[]{new YvsAgences(currentAgence.getId())});
             if (currentAgence == null) {
-                LymytzService.openAlertDialog("Impossible de trouver l'agence locale", "Erreur au demarrage", "Aucune Agence n'a été trouvé !", Alert.AlertType.ERROR);
+                Platform.runLater(()->LymytzService.openAlertDialog("Impossible de trouver l'agence locale", "Erreur au demarrage", "Aucune Agence n'a été trouvé !", Alert.AlertType.ERROR));
             }
         }
         if (Constantes.asLong(paramConnection.getCodeSociete())) {
             currentSociete = (YvsSocietes) dao.findOneByNQ("YvsSocietes.findById", new String[]{"id"}, new Object[]{paramConnection.getCodeSociete()});
             if (currentSociete == null) {
-                LymytzService.openAlertDialog("Impossible de trouver la société", "Erreur au demarrage", "Aucune société n'a été trouvé !", Alert.AlertType.ERROR);
+                Platform.runLater(() -> LymytzService.openAlertDialog("Impossible de trouver la société", "Erreur au demarrage", "Aucune société n'a été trouvé !", Alert.AlertType.ERROR));
             }
         }
         if (Constantes.asLong(paramConnection.getClientDivers())) {
@@ -358,8 +351,8 @@ public class UtilsProject {
             modelReg = (YvsBaseModelReglement) dao.findOneByNQ("YvsBaseModelReglement.findById", new String[]{"id"}, new Object[]{paramConnection.getModelReg()});
         }
         REPLICATION = getReplication();
-       if (REPLICATION) {
-            if (currentAgence != null ? currentAgence.getId() > 0 : false) {
+        if (Boolean.TRUE.equals(REPLICATION)) {
+            if (currentAgence != null && currentAgence.getId() > 0) {
                 RcurrentAgence = new YvsAgences(UtilEntityBase.findIdRemoteData(Constantes.TABLE_AGENCE_CODE, currentAgence.getId()));
             }
             initDataR();
@@ -379,7 +372,7 @@ public class UtilsProject {
         return !host.equals(hostR) || !db.equals(dbR);
     }
 
-    public static ParamConnection readProperty() {
+    /*public static ParamConnection readProperty() {
         FileInputStream fis = null;
         try {
             //ouvre le fichier initialisé
@@ -399,10 +392,10 @@ public class UtilsProject {
             }
         }
         return null;
-    }
+    }*/
 
-    
-    private static String getOpenDiv() {
+
+/*    private static String getOpenDiv() {
         StringBuilder sb = new StringBuilder("<div style=")
                 .append("font-size:7pt").append(">");
         return sb.toString();
@@ -418,10 +411,10 @@ public class UtilsProject {
         StringBuilder sb = new StringBuilder("<span style=")
                 .append("font-size:6pt; witdh:110px;display:inline-block; float:left").append(">").append(text).append("</span>");
         return sb.toString();
-    }
+    }*/
 
     public static ImageView buildImageProduit(String path) {
-        ImageView img = new ImageView(new Image(LocalLoader.class.getResourceAsStream("/icones/" + path)));
+        ImageView img = new ImageView(new Image(Objects.requireNonNull(LocalLoader.class.getResourceAsStream("/icones/" + path))));
         img.setFitHeight(80);
         img.setFitWidth(70);
         return img;
@@ -431,7 +424,7 @@ public class UtilsProject {
         String re = null;
         try {
             if (type != null) {
-                switch (type) {
+                switch (type.toLowerCase()) {
                     case "bigint":
                     case "integer":
                     case "bigserial":
@@ -441,8 +434,6 @@ public class UtilsProject {
                         re = ((rs.getObject(colIndex) != null) ? String.valueOf(rs.getDouble(colIndex)) : "");
                         break;
                     case "character varying":
-                        re = ((rs.getObject(colIndex) != null) ? String.valueOf(rs.getString(colIndex)) : "");
-                        break;
                     case "timestamp":
                         re = ((rs.getObject(colIndex) != null) ? String.valueOf(rs.getString(colIndex)) : "");
                         break;
@@ -453,23 +444,23 @@ public class UtilsProject {
                 }
             }
         } catch (SQLException ex) {
-            Logger.getLogger(RQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(UtilsProject.class.getName()).log(Level.SEVERE, null, ex);
         }
         return re;
     }
 
-    public static LQuery buildQueryRemote(String table, List<EntityColumn> colonnes, String[] colFilter, Long idListen) {
+  /*  public static LQuery buildQueryRemote(String table, List<EntityColumn> colonnes, String[] colFilter, Long idListen) {
         return buildQueryRemote(table, colonnes, colFilter, true, idListen);
-    }
+    }*/
 
     public static LQuery buildQueryRemote(String table, List<EntityColumn> colonnes, String[] colFilter, boolean withDefaultFilter, Long idListen) {
         String param = "";
-        String query = "SELECT l.id, ";
+        StringBuilder query = new StringBuilder("SELECT l.id, ");
         int i = 0;
         boolean hasAgence = false;
         boolean hasSociete = false;
         for (EntityColumn c : colonnes) {
-            query += ((i == 0) ? "y." : ", y.") + c.getColumnName();
+            query.append((i == 0) ? "y." : ", y.").append(c.getColumnName());
             if (c.getColumnName().equals("agence")) {
                 hasAgence = true;
             }
@@ -481,109 +472,109 @@ public class UtilsProject {
         switch (table) {
             case Constantes.TABLE_USER_AGENCE_CODE:
                 if (withDefaultFilter) {
-                    query += " FROM " + table + " y INNER JOIN yvs_users u ON u.id=y.users INNER JOIN yvs_agences a ON a.id=u.agence INNER JOIN yvs_societes s ON s.id=a.societe LEFT JOIN yvs_synchro_listen_table l ON (l.id_source=y.id AND l.name_table='" + table + "' AND l.action_name='INSERT') WHERE s.id=?";
+                    query.append(" FROM ").append(table).append(" y INNER JOIN yvs_users u ON u.id=y.users INNER JOIN yvs_agences a ON a.id=u.agence INNER JOIN yvs_societes s ON s.id=a.societe LEFT JOIN yvs_synchro_listen_table l ON (l.id_source=y.id AND l.name_table='").append(table).append("' AND l.action_name='INSERT') WHERE s.id=?");
                     param += "societe";
                 } else {
-                    query += " FROM " + table + " y LEFT JOIN yvs_synchro_listen_table l ON (l.id_source=y.id AND l.name_table='" + table + "')";
+                    query.append(" FROM ").append(table).append(" y LEFT JOIN yvs_synchro_listen_table l ON (l.id_source=y.id AND l.name_table='").append(table).append("')");
                 }
                 break;
             case Constantes.TABLE_ARTICLE_CODE:
                 if (withDefaultFilter) {
-                    query += " FROM " + table + " y INNER JOIN yvs_base_famille_article f ON f.id=y.famille LEFT JOIN yvs_synchro_listen_table l ON (l.id_source=y.id AND l.name_table='" + table + "' AND l.action_name='INSERT') WHERE f.societe=?";
+                    query.append(" FROM ").append(table).append(" y INNER JOIN yvs_base_famille_article f ON f.id=y.famille LEFT JOIN yvs_synchro_listen_table l ON (l.id_source=y.id AND l.name_table='").append(table).append("' AND l.action_name='INSERT') WHERE f.societe=?");
                     if (!param.contains("societe")) {
                         param += "societe";
                     }
                 } else {
-                    query += " FROM " + table + " y LEFT JOIN yvs_synchro_listen_table l ON (l.id_source=y.id AND l.name_table='" + table + "')";
+                    query.append(" FROM ").append(table).append(" y LEFT JOIN yvs_synchro_listen_table l ON (l.id_source=y.id AND l.name_table='").append(table).append("')");
                 }
                 break;
             case Constantes.TABLE_ARTICLE_DEPOT_CODE:
                 if (withDefaultFilter) {
-                    query += " FROM " + table + " y INNER JOIN yvs_base_depots d ON d.id=y.depot LEFT JOIN yvs_synchro_listen_table l ON (l.id_source=y.id AND l.name_table='" + table + "' AND l.action_name='INSERT') WHERE d.agence=?";
+                    query.append(" FROM ").append(table).append(" y INNER JOIN yvs_base_depots d ON d.id=y.depot LEFT JOIN yvs_synchro_listen_table l ON (l.id_source=y.id AND l.name_table='").append(table).append("' AND l.action_name='INSERT') WHERE d.agence=?");
                     if (!param.contains("agence")) {
                         param += "agence";
                     }
                 } else {
-                    query += " FROM " + table + " y LEFT JOIN yvs_synchro_listen_table l ON (l.id_source=y.id AND l.name_table='" + table + "')";
+                    query.append(" FROM ").append(table).append(" y LEFT JOIN yvs_synchro_listen_table l ON (l.id_source=y.id AND l.name_table='").append(table).append("')");
                 }
                 break;
             case Constantes.TABLE_ARTICLE_POINT_CODE:
                 if (withDefaultFilter) {
-                    query += " FROM " + table + " y INNER JOIN yvs_base_point_vente p ON p.id=y.point LEFT JOIN yvs_synchro_listen_table l ON (l.id_source=y.id AND l.name_table='" + table + "' AND l.action_name='INSERT') WHERE p.agence=?";
+                    query.append(" FROM ").append(table).append(" y INNER JOIN yvs_base_point_vente p ON p.id=y.point LEFT JOIN yvs_synchro_listen_table l ON (l.id_source=y.id AND l.name_table='").append(table).append("' AND l.action_name='INSERT') WHERE p.agence=?");
                     if (!param.contains("agence")) {
                         param += "agence";
                     }
                 } else {
-                    query += " FROM " + table + " y LEFT JOIN yvs_synchro_listen_table l ON (l.id_source=y.id AND l.name_table='" + table + "')";
+                    query.append(" FROM ").append(table).append(" y LEFT JOIN yvs_synchro_listen_table l ON (l.id_source=y.id AND l.name_table='").append(table).append("')");
                 }
                 break;
             case Constantes.TABLE_CONDITIONNEMENT_POINT_CODE:
                 if (withDefaultFilter) {
-                    query += " FROM " + table + " y INNER JOIN yvs_base_article_point ap ON ap.id=y.article INNER JOIN yvs_base_point_vente p ON p.id=ap.point LEFT JOIN yvs_synchro_listen_table l ON (l.id_source=y.id AND l.name_table='" + table + "' AND l.action_name='INSERT') WHERE p.agence=?";
+                    query.append(" FROM ").append(table).append(" y INNER JOIN yvs_base_article_point ap ON ap.id=y.article INNER JOIN yvs_base_point_vente p ON p.id=ap.point LEFT JOIN yvs_synchro_listen_table l ON (l.id_source=y.id AND l.name_table='").append(table).append("' AND l.action_name='INSERT') WHERE p.agence=?");
                     if (!param.contains("agence")) {
                         param += "agence";
                     }
                 } else {
-                    query += " FROM " + table + " y LEFT JOIN yvs_synchro_listen_table l ON (l.id_source=y.id AND l.name_table='" + table + "')";
+                    query.append(" FROM ").append(table).append(" y LEFT JOIN yvs_synchro_listen_table l ON (l.id_source=y.id AND l.name_table='").append(table).append("')");
                 }
                 break;
             case Constantes.TABLE_ELEMENT_REFERENCE_CODE:
             case Constantes.TABLE_DICTIONNAIRES_CODE:
-                query += " FROM " + table + " y LEFT JOIN yvs_synchro_listen_table l ON (l.id_source=y.id AND l.name_table='" + table + "' AND l.action_name='INSERT')";
+                query.append(" FROM ").append(table).append(" y LEFT JOIN yvs_synchro_listen_table l ON (l.id_source=y.id AND l.name_table='").append(table).append("' AND l.action_name='INSERT')");
                 break;
             case Constantes.TABLE_CRENEAU_HORAIRE_USER_CODE:
                 if (withDefaultFilter) {
-                    query += " FROM " + table + " y INNER JOIN yvs_users_agence ua ON ua.id=y.author INNER JOIN yvs_agences a ON a.id=ua.agence LEFT JOIN yvs_synchro_listen_table l ON (l.id_source=y.id AND l.name_table='" + table + "' AND l.action_name='INSERT') WHERE y.creneau_point IS NOT NULL AND a.id=? ";
+                    query.append(" FROM ").append(table).append(" y INNER JOIN yvs_users_agence ua ON ua.id=y.author INNER JOIN yvs_agences a ON a.id=ua.agence LEFT JOIN yvs_synchro_listen_table l ON (l.id_source=y.id AND l.name_table='").append(table).append("' AND l.action_name='INSERT') WHERE y.creneau_point IS NOT NULL AND a.id=? ");
                     if (!param.contains("agence")) {
                         param += "agence";
                     }
                 } else {
-                    query += " FROM " + table + " y LEFT JOIN yvs_synchro_listen_table l ON (l.id_source=y.id AND l.name_table='" + table + "')";
+                    query.append(" FROM ").append(table).append(" y LEFT JOIN yvs_synchro_listen_table l ON (l.id_source=y.id AND l.name_table='").append(table).append("')");
                 }
                 break;
             default:
                 if (withDefaultFilter) {
                     if (hasSociete) {
-                        query += " FROM " + table + " y LEFT JOIN yvs_synchro_listen_table l ON (l.id_source=y.id AND l.name_table='" + table + "' AND l.action_name='INSERT') WHERE y.societe=? ";
+                        query.append(" FROM ").append(table).append(" y LEFT JOIN yvs_synchro_listen_table l ON (l.id_source=y.id AND l.name_table='").append(table).append("' AND l.action_name='INSERT') WHERE y.societe=? ");
                         if (!param.contains("societe")) {
                             param += "societe";
                         }
                     } else if (hasAgence) {
-                        query += " FROM " + table + " y INNER JOIN yvs_agences a ON a.id=y.agence LEFT JOIN yvs_synchro_listen_table l ON (l.id_source=y.id AND l.name_table='" + table + "' AND l.action_name='INSERT') WHERE a.societe=? ";
+                        query.append(" FROM ").append(table).append(" y INNER JOIN yvs_agences a ON a.id=y.agence LEFT JOIN yvs_synchro_listen_table l ON (l.id_source=y.id AND l.name_table='").append(table).append("' AND l.action_name='INSERT') WHERE a.societe=? ");
                         if (!param.contains("societe")) {
                             param += "societe";
                         }
                     } else {
-                        query += " FROM " + table + " y INNER JOIN yvs_users_agence ua ON ua.id=y.author INNER JOIN yvs_agences a ON a.id=ua.agence LEFT JOIN yvs_synchro_listen_table l ON (l.id_source=y.id AND l.name_table='" + table + "' AND l.action_name='INSERT') WHERE a.societe=? ";
+                        query.append(" FROM ").append(table).append(" y INNER JOIN yvs_users_agence ua ON ua.id=y.author INNER JOIN yvs_agences a ON a.id=ua.agence LEFT JOIN yvs_synchro_listen_table l ON (l.id_source=y.id AND l.name_table='").append(table).append("' AND l.action_name='INSERT') WHERE a.societe=? ");
                         if (!param.contains("societe")) {
                             param += "societe";
                         }
                     }
                 } else {
-                    query += " FROM " + table + " y LEFT JOIN yvs_synchro_listen_table l ON (l.id_source=y.id AND l.name_table='" + table + "')";
+                    query.append(" FROM ").append(table).append(" y LEFT JOIN yvs_synchro_listen_table l ON (l.id_source=y.id AND l.name_table='").append(table).append("')");
                 }
         }
-        if (colFilter != null ? colFilter.length > 0 : false) {
-            if (query.contains("WHERE")) {
+        if (colFilter != null && colFilter.length > 0) {
+            if (query.toString().contains("WHERE")) {
                 if (Constantes.asLong(idListen)) {
-                    query += "  AND l.id=" + idListen;
+                    query.append("  AND l.id=").append(idListen);
                 }
                 for (String s : colFilter) {
-                    query += " AND " + s + " =? ";
+                    query.append(" AND ").append(s).append(" =? ");
                 }
             } else {
                 if (Constantes.asLong(idListen)) {
-                    query += " WHERE l.id=" + idListen;
+                    query.append(" WHERE l.id=").append(idListen);
                 } else {
-                    query += " WHERE y.id=y.id ";
+                    query.append(" WHERE y.id=y.id ");
                 }
                 for (String s : colFilter) {
-                    query += " AND " + s + " =? ";
+                    query.append(" AND ").append(s).append(" =? ");
                 }
             }
-            param += "-" + colFilter;
+            param += "-" + Arrays.toString(colFilter);
         }
-        return new LQuery(query, param);
+        return new LQuery(query.toString(), param);
     }
 
     public static String buildQueryCount(String table, List<EntityColumn> colonnes) {
@@ -608,15 +599,15 @@ public class UtilsProject {
                 query += " FROM " + table + " y INNER JOIN yvs_base_famille_article f ON f.id=y.famille WHERE f.societe=?";
 
                 break;
-                
+
             case Constantes.TABLE_ARTICLE_DEPOT_CODE:
                 query += " FROM " + table + " y INNER JOIN yvs_base_depots d ON d.id=y.depot LEFT JOIN yvs_synchro_listen_table l ON (l.id_source=y.id AND l.name_table='" + table + "' AND l.action_name='INSERT') WHERE d.agence=?";
-                break;                
+                break;
             case Constantes.TABLE_ARTICLE_POINT_CODE:
-                query += " FROM " + table + " y INNER JOIN yvs_base_point_vente p ON p.id=y.point LEFT JOIN yvs_synchro_listen_table l ON (l.id_source=y.id AND l.name_table='" + table + "' AND l.action_name='INSERT') WHERE p.agence=?";                    
+                query += " FROM " + table + " y INNER JOIN yvs_base_point_vente p ON p.id=y.point LEFT JOIN yvs_synchro_listen_table l ON (l.id_source=y.id AND l.name_table='" + table + "' AND l.action_name='INSERT') WHERE p.agence=?";
                 break;
             case Constantes.TABLE_CONDITIONNEMENT_POINT_CODE:
-                query += " FROM " + table + " y INNER JOIN yvs_base_article_point ap ON ap.id=y.article INNER JOIN yvs_base_point_vente p ON p.id=ap.point LEFT JOIN yvs_synchro_listen_table l ON (l.id_source=y.id AND l.name_table='" + table + "' AND l.action_name='INSERT') WHERE p.agence=?";               
+                query += " FROM " + table + " y INNER JOIN yvs_base_article_point ap ON ap.id=y.article INNER JOIN yvs_base_point_vente p ON p.id=ap.point LEFT JOIN yvs_synchro_listen_table l ON (l.id_source=y.id AND l.name_table='" + table + "' AND l.action_name='INSERT') WHERE p.agence=?";
                 break;
             case Constantes.TABLE_ELEMENT_REFERENCE_CODE:
             case Constantes.TABLE_DICTIONNAIRES_CODE:
@@ -638,36 +629,31 @@ public class UtilsProject {
     }
 
     public static String buildQueryLocal(String table, List<EntityColumn> colonnes, String colFilter) {
-        String query = "SELECT MAX(ds.id_distant), ";
+        StringBuilder query = new StringBuilder("SELECT MAX(ds.id_distant), ");
         int i = 0;
         for (EntityColumn c : colonnes) {
-            query += ((i == 0) ? "y." : ", y.") + c.getColumnName();
+            query.append((i == 0) ? "y." : ", y.").append(c.getColumnName());
             i++;
         }
-        query += " FROM " + table + " y LEFT JOIN yvs_synchro_listen_table l ON (y.id=l.id_source AND l.name_table='" + table + "') "
-                + "LEFT JOIN yvs_synchro_data_synchro ds ON ds.id_listen=l.id ";
+        query.append(" FROM ").append(table).append(" y LEFT JOIN yvs_synchro_listen_table l ON (y.id=l.id_source AND l.name_table='").append(table).append("') ").append("LEFT JOIN yvs_synchro_data_synchro ds ON ds.id_listen=l.id ");
 
         if (colFilter != null) {
-            query += " WHERE y." + colFilter + " =? GROUP BY y.id ORDER BY y.id";
+            query.append(" WHERE y.").append(colFilter).append(" =? GROUP BY y.id ORDER BY y.id");
         } else {
-            query += "GROUP BY y.id ORDER BY y.id";
+            query.append("GROUP BY y.id ORDER BY y.id");
         }
-        return query;
+        return query.toString();
     }
 
     public static String buildQueryToSynchro(String table, List<EntityColumn> colonnes, String colFilter) {
-        String query = "SELECT ds.id id_ds, ds.id_distant,l.id id_listen, l.action_name, ";
+        StringBuilder query = new StringBuilder("SELECT ds.id id_ds, ds.id_distant,l.id id_listen, l.action_name, ");
         int i = 0;
         for (EntityColumn c : colonnes) {
-            query += ((i == 0) ? "y." : ", y.") + c.getColumnName();
+            query.append((i == 0) ? "y." : ", y.").append(c.getColumnName());
             i++;
         }
-        query += " FROM " + table + " y LEFT JOIN yvs_synchro_listen_table l ON (l.id_source=y.id AND l.name_table=?) "
-                + " LEFT JOIN  yvs_synchro_data_synchro ds ON ds.id_listen=l.id LIMIT 2000";
-//        if (colFilter != null) {
-//            query += " WHERE " + colFilter + " =?";
-//        }
-        return query;
+        query.append(" FROM ").append(table).append(" y LEFT JOIN yvs_synchro_listen_table l ON (l.id_source=y.id AND l.name_table=?) ").append(" LEFT JOIN  yvs_synchro_data_synchro ds ON ds.id_listen=l.id LIMIT 2000");
+        return query.toString();
     }
 
     public static Options[] buildValueParam(EntityColumn[] colonnes, int length) {
@@ -731,7 +717,7 @@ public class UtilsProject {
         return sb.toString();
     }
 
-    public static Long getValKey(EntityColumn[] row) {
+  /*  public static Long getValKey(EntityColumn[] row) {
         if (row != null) {
             for (EntityColumn e : row) {
                 if (e.getColumnName().equals("id")) {
@@ -740,7 +726,7 @@ public class UtilsProject {
             }
         }
         return null;
-    }
+    }*/
 
     private static String getParam(EntityColumn c) {
         if (c.getTypeDatabase() != null) {
@@ -785,10 +771,10 @@ public class UtilsProject {
     public static EntityColumn fillColumn(String type, EntityColumn c, ResultSet rs, int colIndex) {
         EntityColumn re = null;
         try {
-            if (type.toLowerCase() != null) {
+            if (type != null) {
                 re = new EntityColumn(c);
-                re.setTypeDatabase(type);
-                switch (type) {
+                re.setTypeDatabase(type.toLowerCase());
+                switch (type.toLowerCase()) {
                     case "int":
                     case "int2":
                     case "bigint":
@@ -821,7 +807,7 @@ public class UtilsProject {
                 }
             }
         } catch (SQLException ex) {
-            Logger.getLogger(RQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(UtilsProject.class.getName()).log(Level.SEVERE, null, ex);
         }
         return re;
     }
@@ -831,7 +817,7 @@ public class UtilsProject {
             try {
                 switch (o.getClass().getSimpleName()) {
                     case "Long":
-                        st.setLong(indice, Long.valueOf(o.toString()));
+                        st.setLong(indice, Long.parseLong(o.toString()));
                         break;
                     case "String":
                         st.setString(indice, o.toString());
