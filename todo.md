@@ -8,3 +8,8 @@
   - type d'affichage
 - [ ] La vue Préférence a besoin d'être retouché
 - [ ] La vue d'import peut être visible même si on est pas en mode synchro
+- [ ] Construire un installeur
+
+# Approche optimiste de l'enregistrement des factures:
+Il s'agit de lancer l'impression du ticket en parallèle de l'enregistrement de la facture
+Si l'enregistrement de la facture échoue, il faut être capable de la reprendre.

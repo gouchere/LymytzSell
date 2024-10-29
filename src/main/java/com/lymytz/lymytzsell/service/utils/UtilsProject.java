@@ -36,6 +36,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 
+import javax.enterprise.inject.Any;
 import javax.print.attribute.standard.Severity;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -187,8 +188,8 @@ public class UtilsProject {
 
     public static double getStocks(YvsBaseConditionnement c, long depot) {
         Double re;
-        if (!UtilsProject.REPLICATION) {
-            LocalQueryFactories rq = new LocalQueryFactories();
+        if (Boolean.FALSE.equals(UtilsProject.REPLICATION)) {
+            LocalQueryFactories rq = new LocalQueryFactories<>();
             re = (Double) (rq.findOneObjectBySQLQ("select public.get_stock_reel(?,?,?,?,?,?::date,?,?)", new Options[]{
                     new Options(c.getArticle().getId(), 1), new Options(0, 2), new Options(depot, 3), new Options(0, 4), new Options(0, 5),
                     new Options(UtilsProject.headerDoc.getDateEntete(), 6), new Options(c.getId(), 7), new Options(0, 8)

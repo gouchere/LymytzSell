@@ -5,14 +5,14 @@
  */
 package com.lymytz.lymytzsell.view.component;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.lymytz.lymytzsell.dao.entity.YvsBaseConditionnement;
+import com.lymytz.lymytzsell.service.application.composant.ButtonArticles;
+import com.lymytz.lymytzsell.service.start.StartController;
+import com.lymytz.lymytzsell.service.utils.Constantes;
+import com.lymytz.lymytzsell.view.LocalLoader;
+import com.lymytz.lymytzsell.view.main.HomeCaisseController;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.WorkerStateEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
@@ -22,24 +22,17 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import com.lymytz.lymytzsell.dao.ParamConnection;
-import com.lymytz.lymytzsell.dao.entity.YvsBaseConditionnement;
-import com.lymytz.lymytzsell.service.application.composant.ButtonArticles;
-import com.lymytz.lymytzsell.service.start.StartController;
-import com.lymytz.lymytzsell.service.utils.Constantes;
-import com.lymytz.lymytzsell.service.utils.LymytzService;
-import com.lymytz.lymytzsell.view.LocalLoader;
-import com.lymytz.lymytzsell.view.main.HomeCaisseController;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
+import java.util.Objects;
 
 /**
  *
  * @author Admin
  */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CustomComponents {
-
-    public CustomComponents() {
-    }
-
     /**
      * Gestion des tailles et redimensionnement*
      * @param home
@@ -57,10 +50,10 @@ public class CustomComponents {
     }
 
     public static void custumMenuAndToolBar(HomeCaisseController home) {
-        final ImageView btn_save = new ImageView(new Image(CustomComponents.class.getResourceAsStream("/icones/save.png")));
-        final ImageView btn_print = new ImageView(new Image(LocalLoader.class.getResourceAsStream("/icones/print.png")));
-        final ImageView btn_reg = new ImageView(new Image(LocalLoader.class.getResourceAsStream("/icones/money.png")));
-        final ImageView btn_liv = new ImageView(new Image(LocalLoader.class.getResourceAsStream("/icones/cdcopy.png")));
+        final ImageView btn_save = new ImageView(new Image(Objects.requireNonNull(CustomComponents.class.getResourceAsStream("/icones/save.png"))));
+        final ImageView btn_print = new ImageView(new Image(Objects.requireNonNull(LocalLoader.class.getResourceAsStream("/icones/print.png"))));
+        final ImageView btn_reg = new ImageView(new Image(Objects.requireNonNull(LocalLoader.class.getResourceAsStream("/icones/money.png"))));
+        final ImageView btn_liv = new ImageView(new Image(Objects.requireNonNull(LocalLoader.class.getResourceAsStream("/icones/cdcopy.png"))));
 
         home.BTN_SAVE.setGraphic(btn_save);
         home.BTN_SAVE.getStylesheets().add("mes_boutons");
@@ -68,19 +61,19 @@ public class CustomComponents {
         home.BTN_REGLER.setGraphic(btn_reg);
         home.BTN_LIVRER.setGraphic(btn_liv);
 
-        ImageView imv1 = new ImageView(new Image(LocalLoader.class.getResourceAsStream("/icones/12346.png")));
-        ImageView imv2 = new ImageView(new Image(LocalLoader.class.getResourceAsStream("/icones/details.png")));
-        ImageView imv3 = new ImageView(new Image(LocalLoader.class.getResourceAsStream("/icones/log_out.png")));
-        ImageView imv4 = new ImageView(new Image(LocalLoader.class.getResourceAsStream("/icones/compte.png")));
-        ImageView imv_quit_M = new ImageView(new Image(LocalLoader.class.getResourceAsStream("/icones/log_out.png")));
-        ImageView imv_new_M = new ImageView(new Image(LocalLoader.class.getResourceAsStream("/icones/12346.png")));
-        ImageView imv_compte_M = new ImageView(new Image(LocalLoader.class.getResourceAsStream("/icones/compte.png")));
-        ImageView imv_pref_M = new ImageView(new Image(LocalLoader.class.getResourceAsStream("/icones/connect.png")));
+        ImageView imv1 = new ImageView(new Image(Objects.requireNonNull(LocalLoader.class.getResourceAsStream("/icones/12346.png"))));
+        ImageView imv2 = new ImageView(new Image(Objects.requireNonNull(LocalLoader.class.getResourceAsStream("/icones/details.png"))));
+        ImageView imv3 = new ImageView(new Image(Objects.requireNonNull(LocalLoader.class.getResourceAsStream("/icones/log_out.png"))));
+        ImageView imv4 = new ImageView(new Image(Objects.requireNonNull(LocalLoader.class.getResourceAsStream("/icones/compte.png"))));
+        ImageView imv_quit_M = new ImageView(new Image(Objects.requireNonNull(LocalLoader.class.getResourceAsStream("/icones/log_out.png"))));
+        ImageView imv_new_M = new ImageView(new Image(Objects.requireNonNull(LocalLoader.class.getResourceAsStream("/icones/12346.png"))));
+        ImageView imv_compte_M = new ImageView(new Image(Objects.requireNonNull(LocalLoader.class.getResourceAsStream("/icones/compte.png"))));
+        ImageView imv_pref_M = new ImageView(new Image(Objects.requireNonNull(LocalLoader.class.getResourceAsStream("/icones/connect.png"))));
 
-        ImageView imv_help_4 = new ImageView(new Image(LocalLoader.class.getResourceAsStream("/icones/ico_server.png")));
-        ImageView imv_help_3 = new ImageView(new Image(LocalLoader.class.getResourceAsStream("/icones/ico_server.png")));
-        ImageView imv_help_1 = new ImageView(new Image(LocalLoader.class.getResourceAsStream("/icones/about.png")));
-        ImageView imv_help_2 = new ImageView(new Image(LocalLoader.class.getResourceAsStream("/icones/manual.png")));
+        ImageView imv_help_4 = new ImageView(new Image(Objects.requireNonNull(LocalLoader.class.getResourceAsStream("/icones/ico_server.png"))));
+        ImageView imv_help_3 = new ImageView(new Image(Objects.requireNonNull(LocalLoader.class.getResourceAsStream("/icones/ico_server.png"))));
+        ImageView imv_help_1 = new ImageView(new Image(Objects.requireNonNull(LocalLoader.class.getResourceAsStream("/icones/about.png"))));
+        ImageView imv_help_2 = new ImageView(new Image(Objects.requireNonNull(LocalLoader.class.getResourceAsStream("/icones/manual.png"))));
         //        
         imv1.setFitHeight(Constantes.HEIGHT_ICON_TOOL_BAR);
         imv1.setFitWidth(Constantes.WIDTH_ICON_TOOL_BAR);
@@ -110,12 +103,12 @@ public class CustomComponents {
         imv_help_4.setFitHeight(Constantes.HEIGHT_ICON_MENU_BAR);
         imv_help_4.setFitWidth(Constantes.WIDTH_ICON_MENU_BAR);
         //
-        ImageView imv_fich_1 = new ImageView(new Image(LocalLoader.class.getResourceAsStream("/icones/list.png")));
-        ImageView imv_fich_2 = new ImageView(new Image(LocalLoader.class.getResourceAsStream("/icones/list.png")));
-        ImageView imv_fich_3 = new ImageView(new Image(LocalLoader.class.getResourceAsStream("/icones/catalogue1.png")));
+        ImageView imv_fich_1 = new ImageView(new Image(Objects.requireNonNull(LocalLoader.class.getResourceAsStream("/icones/list.png"))));
+        ImageView imv_fich_2 = new ImageView(new Image(Objects.requireNonNull(LocalLoader.class.getResourceAsStream("/icones/list.png"))));
+        ImageView imv_fich_3 = new ImageView(new Image(Objects.requireNonNull(LocalLoader.class.getResourceAsStream("/icones/catalogue1.png"))));
 
-        ImageView imv_data_1 = new ImageView(new Image(LocalLoader.class.getResourceAsStream("/icones/import_data.png")));
-        ImageView imv_data_2 = new ImageView(new Image(LocalLoader.class.getResourceAsStream("/icones/export_data.png")));
+        ImageView imv_data_1 = new ImageView(new Image(Objects.requireNonNull(LocalLoader.class.getResourceAsStream("/icones/import_data.png"))));
+        ImageView imv_data_2 = new ImageView(new Image(Objects.requireNonNull(LocalLoader.class.getResourceAsStream("/icones/export_data.png"))));
 
         imv_fich_1.setFitHeight(Constantes.HEIGHT_ICON_MENU_BAR);
         imv_fich_1.setFitWidth(Constantes.WIDTH_ICON_MENU_BAR);
@@ -195,16 +188,12 @@ public class CustomComponents {
         vbox1.getChildren().add(hbox1);
         // ajoute l'image...
         LoaderImage serv = new LoaderImage(y1.getArticle().getPhoto());
-        serv.addEventHandler(WorkerStateEvent.WORKER_STATE_SUCCEEDED, new EventHandler<WorkerStateEvent>() {
-
-            @Override
-            public void handle(WorkerStateEvent event) {
-                hbox1.getChildren().remove(pi);
-                if (serv.getValue() != null) {
-                    hbox1.getChildren().add(0, serv.getValue());
-                } else {
-                    hbox1.getChildren().add(0, new ImageView(new Image(LocalLoader.class.getResourceAsStream("/icones/coffee.png"))));
-                }
+        serv.addEventHandler(WorkerStateEvent.WORKER_STATE_SUCCEEDED, event -> {
+            hbox1.getChildren().remove(pi);
+            if (serv.getValue() != null) {
+                hbox1.getChildren().add(0, serv.getValue());
+            } else {
+                hbox1.getChildren().add(0, new ImageView(new Image(Objects.requireNonNull(LocalLoader.class.getResourceAsStream("/icones/coffee.png")))));
             }
         });
         new Thread(serv).start();
@@ -224,8 +213,7 @@ public class CustomComponents {
     }
 
     public static Label getLabelN(String text) {
-        Label lab = new Label(text);
-        lab.getStyleClass().add("bold");
+        Label lab = getLabelBold(text);
         lab.getStyleClass().add("label_text");
         return lab;
     }

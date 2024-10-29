@@ -227,7 +227,7 @@ public class ExportService<T extends Serializable> extends Task<Boolean> {
                     }
                     if (!Constantes.asLong(idListen) && action.equals(Constantes.INSERT_ACTION)) {
                         // insère une ligne de listen
-                        idListen = Ldao.insertNewListenData(localKey, table, UtilsProject.currentUser.getId(), null);
+                        idListen = Ldao.insertNewListenData(localKey, table, UtilsProject.currentUser.getId());
                     }
                 }
                 afterSynchroniseDocVente(result, idListen, localKey);

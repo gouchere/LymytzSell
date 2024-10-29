@@ -5,10 +5,11 @@
  */
 package com.lymytz.lymytzsell.service.utils;
 
+import com.lymytz.lymytzsell.dao.entity.YvsComContenuDocVente;
+import com.lymytz.lymytzsell.dao.entity.YvsComDocVentes;
+import com.lymytz.lymytzsell.service.utils.log.LogFiles;
 import com.sun.javafx.print.PrintHelper;
 import com.sun.javafx.print.Units;
-import java.util.Date;
-import java.util.List;
 import javafx.application.Platform;
 import javafx.geometry.NodeOrientation;
 import javafx.print.PageLayout;
@@ -22,24 +23,25 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.print.attribute.standard.Severity;
-import com.lymytz.lymytzsell.dao.entity.YvsComContenuDocVente;
-import com.lymytz.lymytzsell.dao.entity.YvsComDocVentes;
-import com.lymytz.lymytzsell.service.application.composant.Onglets;
-import com.lymytz.lymytzsell.service.utils.log.LogFiles;
-import com.lymytz.lymytzsell.view.main.HomeCaisseController;
+import java.util.Date;
+import java.util.List;
 
 /**
  *
  * @author LENOVO
  */
+@Getter
+@Setter
 public class PrintTiket implements Runnable {
 
-    HomeCaisseController mainPage;
     PrinterJob print;
     private double avance;
     String message;
-    private WebView view = new WebView();
+    private WebView view ;
     private WebEngine wbEngine;
     private Double netAPayer;
     private Double montantRecu;
@@ -47,8 +49,7 @@ public class PrintTiket implements Runnable {
     private Double montantTotal;
     private YvsComDocVentes facture;
 
-    public PrintTiket(HomeCaisseController main, Onglets onglet, double avance, String message) {
-        this.mainPage = main;
+    public PrintTiket(double avance, String message) {
         this.avance = avance;
         this.message = message;
         view = new WebView();
@@ -58,71 +59,23 @@ public class PrintTiket implements Runnable {
         view.setNodeOrientation(NodeOrientation.LEFT_TO_RIGHT);
     }
 
-    public Double getNetAPayer() {
-        return netAPayer;
-    }
-
-    public void setNetAPayer(Double netAPayer) {
-        this.netAPayer = netAPayer;
-    }
-
-    public Double getMontantRecu() {
-        return montantRecu;
-    }
-
-    public void setMontantRecu(Double montantRecu) {
-        this.montantRecu = montantRecu;
-    }
-
-    public Double getMontantAvance() {
-        return montantAvance;
-    }
-
-    public void setMontantAvance(Double montantAvance) {
-        this.montantAvance = montantAvance;
-    }
-
-    public Double getMontantTotal() {
-        return montantTotal;
-    }
-
-    public void setMontantTotal(Double montantTotal) {
-        this.montantTotal = montantTotal;
-    }
-
-    public YvsComDocVentes getFacture() {
-        return facture;
-    }
-
-    public void setFacture(YvsComDocVentes facture) {
-        this.facture = facture;
-    }
-
-    public double getAvance() {
-        return avance;
-    }
-
-    public void setAvance(double avance) {
-        this.avance = avance;
-    }
-
     @Override
     public void run() {
         if (facture != null) {
-            dataPrint(facture.getContenus());
+            dataPrint();
         } else {
             LymytzService.openAlertDialog("Aucune facture n'a été trouvé !", "Erreur de validation", "Erreur Ticket", Alert.AlertType.ERROR);
         }
 
     }
 
-    private void dataPrint(List<YvsComContenuDocVente> l) {
+    private void dataPrint() {
         print = PrinterJob.createPrinterJob();
         print.getJobSettings().setJobName("Lymytz_caisse_print_ticket");
         PageLayout lay = getCustumPage();
         if (lay != null) {
             Platform.runLater(() -> {
-                TextFlow content = print(l);
+                TextFlow content = print();
                 if (print.printPage(lay, content)) {                    
                     print.endJob();
                 }
@@ -131,7 +84,7 @@ public class PrintTiket implements Runnable {
     }
     double tremise = 0d, tristourne = 0d, trabais = 0d;
 
-    public TextFlow print(List<YvsComContenuDocVente> contents) {
+    public TextFlow print() {
         return FOOTER_TICKET_(facture, 0d, 0d, tremise, tristourne, avance, netAPayer, montantRecu, montantTotal, montantAvance, facture.getTypeDoc());
     }
 
@@ -147,36 +100,6 @@ public class PrintTiket implements Runnable {
             LogFiles.addLogInFile("Impossible d'imprimer !", Severity.ERROR, ConsUtil.SOURCE_LOG_FILE_EXCEPTION, ex);
         }
         return null;
-    }
-
-    public TextFlow getBuildText_(List<YvsComContenuDocVente> contents) {
-        //content
-        TextFlow result = new TextFlow();
-        Text headCol = getText("Qté \t Prix.U \t Total \t N.A.P \n", 9, true);
-        result.getChildren().add(headCol);
-        tremise = tristourne = 0;
-        Text line, rabais, rem, rist;
-        for (YvsComContenuDocVente c : contents) {
-            result.getChildren().add(getText(c.getArticle().getDesignation() + " \n", 9, false));
-            result.getChildren().add(getText(Constantes.nbf.format(c.getQuantite()) + " \t\t " + Constantes.nbf.format(c.getPrix()) + "\t\t "
-                    + "" + Constantes.nbf.format(c.getPrix() * c.getQuantite()) + "\t\t " + Constantes.nbf.format((c.getPrix() - c.getRemise() - c.getRabais()) * c.getQuantite()) + "\n", 8, false));
-            if (c.getRabais() > 0 || c.getRemise() > 0 || c.getRistourne() > 0) {
-                if (c.getRabais() > 0) {
-                    result.getChildren().add(getText("Rabais: \t\t\t" + Constantes.nbf.format(c.getRabais()) + " \n", 8, false));
-                }
-                if (c.getRemise() > 0) {
-                    result.getChildren().add(getText("Remise: \t\t\t" + Constantes.nbf.format(c.getRemise()) + " \n", 8, false));
-                }
-                if (c.getRistourne() > 0) {
-                    result.getChildren().add(getText("Risttourne: \t\t\t" + Constantes.nbf.format(c.getRistourne()) + " \n", 8, false));
-                }
-            }
-
-            tremise = tremise + c.getRemise();
-            tristourne = tristourne + c.getRistourne();
-            trabais = trabais + c.getRabais();
-        }
-        return result;
     }
 
     public TextFlow FOOTER_TICKET_(YvsComDocVentes facture, Double taxe, Double trabais, Double tremise, Double tristourne, double avance, Double netAPayer, Double montantRecu, Double montantTotal, Double montantAvance, String type) {
@@ -198,7 +121,7 @@ public class PrintTiket implements Runnable {
             Text telClt = new Text("");
             if (facture.getTypeDoc().equals(Constantes.TYPE_BCV)) {
                 dateL = getText("Liv. le:    \t " + Constantes.dfh.format(facture.getDateLivraisonPrevu()) + "\n", 9, false);
-                telClt = getText("Tel. client:\t " + facture.getTelephone() != null ? facture.getTelephone() : "" + "\n", 9, false);
+                telClt = getText(facture.getTelephone(), 9, false);
             }
             Text vend = getText("Vendeur:    \t " + UtilsProject.currentUser.getUsers().getNomUsers() + "\n", 9, false);
             TextFlow tf = new TextFlow(wel, bp, rc, contr, tel1, tel2, numDoc, cltC, cltN, date, dateP, dateL, telClt,vend);
@@ -206,7 +129,6 @@ public class PrintTiket implements Runnable {
             Text headCol = getText("Quantité \t Prix.U \t P.Total \t N.A.P \n", 9, true);
             tf.getChildren().add(headCol);
             tremise = tristourne = trabais = 0d;
-            Text line, rabais, rem, rist;
             for (YvsComContenuDocVente c : facture.getContenus()) {
                 tf.getChildren().add(getText(c.getArticle().getDesignation() + " \n", 8, false));
                 tf.getChildren().add(getText(" \t" + Constantes.nbf.format(c.getQuantite()) + "\t\t" + Constantes.nbf.format(c.getPrix()) + "\t\t"

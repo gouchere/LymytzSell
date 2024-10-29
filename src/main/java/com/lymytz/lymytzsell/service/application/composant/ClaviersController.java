@@ -5,6 +5,8 @@
  */
 package com.lymytz.lymytzsell.service.application.composant;
 
+import com.lymytz.lymytzsell.business.helpers.EtatMontantPayer;
+import com.lymytz.lymytzsell.business.helpers.HelperFactureVente;
 import com.lymytz.lymytzsell.service.application.Controller;
 import com.lymytz.lymytzsell.service.application.ManagedApplication;
 import javafx.application.Platform;
@@ -32,6 +34,7 @@ import com.lymytz.lymytzsell.view.main.report.PrintFacture;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import static com.lymytz.lymytzsell.business.helpers.HelperFactureVente.isValideMontantPaye;
 import static com.lymytz.lymytzsell.service.utils.Constantes.TYPE_FV;
 
 /**
@@ -151,10 +154,9 @@ public class ClaviersController extends ManagedApplication implements Initializa
 
     @FXML
     private void effacerEcran(ActionEvent event) {
-        if (LAB_AFFICH.getText() != null) {
-            if (!LAB_AFFICH.getText().isEmpty()) {
+        if (LAB_AFFICH.getText() != null && (!LAB_AFFICH.getText().isEmpty())) {
                 LAB_AFFICH.setText(LAB_AFFICH.getText().substring(0, LAB_AFFICH.getText().length() - 1));
-            }
+
         }
         displayReste();
     }
@@ -210,7 +212,7 @@ public class ClaviersController extends ManagedApplication implements Initializa
 
     private void displayReste() {
         //calcule
-        double recu = Double.valueOf((!LAB_AFFICH.getText().isEmpty()) ? LAB_AFFICH.getText() : "0");
+        double recu = Double.parseDouble((!LAB_AFFICH.getText().isEmpty()) ? LAB_AFFICH.getText() : "0");
         if (avance) {
             LAB_REST.setText(Constantes.nbf.format((selectOnglet.getNetAPayer() - recu)));
         } else {
@@ -243,8 +245,7 @@ public class ClaviersController extends ManagedApplication implements Initializa
             }
         } else {
             switch (this.action) {
-                case "VALIDER":
-                case "REGLER":
+                case "VALIDER", "REGLER":
                     page.LAB_T_AVANCE.setText(Constantes.nbf.format(montantAvance));
                     page.LAB_NET_A_PAYER.setText(Constantes.nbf.format(selectOnglet.getNetAPayer() - montantAvance));
                     if (sourceOfAction.equals("F") && TYPE_FV.equals(selectOnglet.getFacture().getTypeDoc()) && selectOnglet.getNetAPayer() > getMontantAffiche()) {
@@ -254,27 +255,19 @@ public class ClaviersController extends ManagedApplication implements Initializa
                     switch (sourceOfAction) {
                         case "F":
                             //lance la validation dans un thread
-                            Thread t = new Thread(() -> {
-                                if (page.confirmValideFacture(selectOnglet, montantAvance, getMontantAffiche(), sourceOfAction)) {
-                                    if (Boolean.TRUE.equals(UtilsProject.paramConnection.getUsePrinter()) && TYPE_FV.equals(UtilsProject.paramConnection.getTypeRapport())) {
-                                        Platform.runLater(() -> {
-                                            PrintTiket pt = new PrintTiket(page, selectOnglet, montantAvance, "XX");
-                                            pt.setFacture(new YvsComDocVentes(selectOnglet.getFacture()));
-                                            pt.setMontantAvance(selectOnglet.getFacture().getMontantAvance());
-                                            pt.setMontantRecu(selectOnglet.getMontantRecu());
-                                            pt.setMontantTotal(selectOnglet.getFacture().getMontantTotal());
-                                            pt.setNetAPayer(selectOnglet.getFacture().getMontantTotal());
-                                            new Thread(pt).start();
-                                        });
-                                    } else if (Boolean.TRUE.equals(UtilsProject.paramConnection.getUsePrinter())) {
-                                        Platform.runLater(() -> {
-                                            PrintFacture preview = new PrintFacture(page, selectOnglet);
-                                            preview.loadFactureToPrint(selectOnglet.getFacture());
-                                        });
-                                    }
+                            var statutMontantPaye = isValideMontantPaye(selectOnglet.getFacture().getTypeDoc(), montantAvance ,selectOnglet.getNetAPayer());
+                            if (EtatMontantPayer.OK.equals(statutMontantPaye)) {
+                                //todo: envisager une action si l'enregistrement ne se termine pas.
+                                new Thread(() -> page.confirmValideFacture(selectOnglet, montantAvance, getMontantAffiche(), sourceOfAction)).start();
+                                printTicketFacture(selectOnglet.getFacture(), selectOnglet.getMontantRecu());
+                                page.closeOngletFacture(selectOnglet);
+                            } else {
+                                if (EtatMontantPayer.KO_NET_FACTURE.equals(statutMontantPaye)) {
+                                    Platform.runLater(() -> LymytzService.openAlertDialog("Incohérence des montants !", "Erreur", "Le montant payé de la facture est différent du TTC !", Alert.AlertType.ERROR));
+                                } else if (EtatMontantPayer.KO_NET_COMMANDE.equals(statutMontantPaye)) {
+                                    Platform.runLater(() -> LymytzService.openAlertDialog("Incohérence des montants !", "Erreur", "Le montant d'avance de la commande est suppérieure au TTC !", Alert.AlertType.ERROR));
                                 }
-                            });
-                            t.start();
+                            }
                             fenetre.close();
                             break;
                         case "A":
@@ -316,6 +309,25 @@ public class ClaviersController extends ManagedApplication implements Initializa
                 default:
                     throw new IllegalStateException("Unexpected value: " + this.action);
             }
+        }
+    }
+
+    private void printTicketFacture(YvsComDocVentes facture, double montantRecu) {
+        if (Boolean.TRUE.equals(UtilsProject.paramConnection.getUsePrinter()) && TYPE_FV.equals(UtilsProject.paramConnection.getTypeRapport())) {
+            Platform.runLater(() -> {
+                PrintTiket pt = new PrintTiket(montantAvance, "XX");
+                pt.setFacture(new YvsComDocVentes(facture));
+                pt.setMontantAvance(facture.getMontantAvance());
+                pt.setMontantRecu(montantRecu);
+                pt.setMontantTotal(facture.getMontantTotal());
+                pt.setNetAPayer(facture.getMontantTotal());
+                new Thread(pt).start();
+            });
+        } else if (Boolean.TRUE.equals(UtilsProject.paramConnection.getUsePrinter())) {
+            Platform.runLater(() -> {
+                PrintFacture preview = new PrintFacture();
+                preview.loadFactureToPrint(facture);
+            });
         }
     }
 

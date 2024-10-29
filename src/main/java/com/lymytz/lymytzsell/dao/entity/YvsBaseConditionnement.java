@@ -5,8 +5,10 @@
  */
 package com.lymytz.lymytzsell.dao.entity;
 
-import java.io.Serializable;
-import java.util.Date;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -22,30 +24,34 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlTransient;
+import java.io.Serializable;
+import java.util.Date;
 
 /**
- *
  * @author Admin
  */
 @Entity
 @Table(name = "yvs_base_conditionnement")
 @NamedQueries({
-    @NamedQuery(name = "YvsBaseConditionnement.findAll", query = "SELECT y FROM YvsBaseConditionnement y WHERE y.article.actif=true"),
-    @NamedQuery(name = "YvsBaseConditionnement.findById", query = "SELECT y FROM YvsBaseConditionnement y WHERE y.id = :id"),
-    @NamedQuery(name = "YvsBaseConditionnement.findByPrix", query = "SELECT y FROM YvsBaseConditionnement y WHERE y.prix = :prix"),
-    @NamedQuery(name = "YvsBaseConditionnement.findByPrixMin", query = "SELECT y FROM YvsBaseConditionnement y WHERE y.prixMin = :prixMin"),
-    @NamedQuery(name = "YvsBaseConditionnement.findByNaturePrixMin", query = "SELECT y FROM YvsBaseConditionnement y WHERE y.naturePrixMin = :naturePrixMin"),
-    @NamedQuery(name = "YvsBaseConditionnement.findByRemise", query = "SELECT y FROM YvsBaseConditionnement y WHERE y.remise = :remise"),
-    @NamedQuery(name = "YvsBaseConditionnement.findByCondVente", query = "SELECT y FROM YvsBaseConditionnement y WHERE y.condVente = :condVente"),
-    @NamedQuery(name = "YvsBaseConditionnement.findByDateUpdate", query = "SELECT y FROM YvsBaseConditionnement y WHERE y.dateUpdate = :dateUpdate"),
-    @NamedQuery(name = "YvsBaseConditionnement.findByDateSave", query = "SELECT y FROM YvsBaseConditionnement y WHERE y.dateSave = :dateSave"),
-    @NamedQuery(name = "YvsBaseConditionnement.findByPrixAchat", query = "SELECT y FROM YvsBaseConditionnement y WHERE y.prixAchat = :prixAchat"),
-    @NamedQuery(name = "YvsBaseConditionnement.findByPhoto", query = "SELECT y FROM YvsBaseConditionnement y WHERE y.photo = :photo"),
-    @NamedQuery(name = "YvsBaseConditionnement.findByByAchat", query = "SELECT y FROM YvsBaseConditionnement y WHERE y.byAchat = :byAchat"),
-    @NamedQuery(name = "YvsBaseConditionnement.findByByProd", query = "SELECT y FROM YvsBaseConditionnement y WHERE y.byProd = :byProd"),
-    @NamedQuery(name = "YvsBaseConditionnement.findByDefaut", query = "SELECT y FROM YvsBaseConditionnement y WHERE y.defaut = :defaut"),
-    @NamedQuery(name = "YvsBaseConditionnement.findByPrixProd", query = "SELECT y FROM YvsBaseConditionnement y WHERE y.prixProd = :prixProd"),
-    @NamedQuery(name = "YvsBaseConditionnement.findByMargeMin", query = "SELECT y FROM YvsBaseConditionnement y WHERE y.margeMin = :margeMin")})
+        @NamedQuery(name = "YvsBaseConditionnement.findAll", query = "SELECT y FROM YvsBaseConditionnement y WHERE y.article.actif=true"),
+        @NamedQuery(name = "YvsBaseConditionnement.findById", query = "SELECT y FROM YvsBaseConditionnement y WHERE y.id = :id"),
+        @NamedQuery(name = "YvsBaseConditionnement.findByPrix", query = "SELECT y FROM YvsBaseConditionnement y WHERE y.prix = :prix"),
+        @NamedQuery(name = "YvsBaseConditionnement.findByPrixMin", query = "SELECT y FROM YvsBaseConditionnement y WHERE y.prixMin = :prixMin"),
+        @NamedQuery(name = "YvsBaseConditionnement.findByNaturePrixMin", query = "SELECT y FROM YvsBaseConditionnement y WHERE y.naturePrixMin = :naturePrixMin"),
+        @NamedQuery(name = "YvsBaseConditionnement.findByRemise", query = "SELECT y FROM YvsBaseConditionnement y WHERE y.remise = :remise"),
+        @NamedQuery(name = "YvsBaseConditionnement.findByCondVente", query = "SELECT y FROM YvsBaseConditionnement y WHERE y.condVente = :condVente"),
+        @NamedQuery(name = "YvsBaseConditionnement.findByDateUpdate", query = "SELECT y FROM YvsBaseConditionnement y WHERE y.dateUpdate = :dateUpdate"),
+        @NamedQuery(name = "YvsBaseConditionnement.findByDateSave", query = "SELECT y FROM YvsBaseConditionnement y WHERE y.dateSave = :dateSave"),
+        @NamedQuery(name = "YvsBaseConditionnement.findByPrixAchat", query = "SELECT y FROM YvsBaseConditionnement y WHERE y.prixAchat = :prixAchat"),
+        @NamedQuery(name = "YvsBaseConditionnement.findByPhoto", query = "SELECT y FROM YvsBaseConditionnement y WHERE y.photo = :photo"),
+        @NamedQuery(name = "YvsBaseConditionnement.findByByAchat", query = "SELECT y FROM YvsBaseConditionnement y WHERE y.byAchat = :byAchat"),
+        @NamedQuery(name = "YvsBaseConditionnement.findByByProd", query = "SELECT y FROM YvsBaseConditionnement y WHERE y.byProd = :byProd"),
+        @NamedQuery(name = "YvsBaseConditionnement.findByDefaut", query = "SELECT y FROM YvsBaseConditionnement y WHERE y.defaut = :defaut"),
+        @NamedQuery(name = "YvsBaseConditionnement.findByPrixProd", query = "SELECT y FROM YvsBaseConditionnement y WHERE y.prixProd = :prixProd"),
+        @NamedQuery(name = "YvsBaseConditionnement.findByMargeMin", query = "SELECT y FROM YvsBaseConditionnement y WHERE y.margeMin = :margeMin")})
+@Getter
+@Setter
+@NoArgsConstructor
 public class YvsBaseConditionnement implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -54,7 +60,6 @@ public class YvsBaseConditionnement implements Serializable {
     @Basic(optional = false)
     @Column(name = "id")
     private Long id;
-    // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Column(name = "prix")
     private Double prix;
     @Column(name = "prix_min")
@@ -93,25 +98,10 @@ public class YvsBaseConditionnement implements Serializable {
     @JoinColumn(name = "unite", referencedColumnName = "id")
     @ManyToOne
     private YvsBaseUniteMesure unite;
-//    @JoinColumn(name = "author", referencedColumnName = "id")
-//    @ManyToOne
-//    private YvsUsersAgence author;
-
     @Transient
     private double stock;
 
-    public YvsBaseConditionnement() {
-    }
-
     public YvsBaseConditionnement(Long id) {
-        this.id = id;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
         this.id = id;
     }
 
@@ -119,153 +109,17 @@ public class YvsBaseConditionnement implements Serializable {
         return prix != null ? prix : 0d;
     }
 
-    public void setPrix(Double prix) {
-        this.prix = prix;
-    }
-
     public Double getPrixMin() {
         return prixMin != null ? prixMin : 0d;
     }
 
-    public void setPrixMin(Double prixMin) {
-        this.prixMin = prixMin;
-    }
-
-    public String getNaturePrixMin() {
-        return naturePrixMin;
-    }
-
-    public void setNaturePrixMin(String naturePrixMin) {
-        this.naturePrixMin = naturePrixMin;
-    }
-
-    public Double getRemise() {
-        return remise;
-    }
-
-    public void setRemise(Double remise) {
-        this.remise = remise;
-    }
-
-    public Boolean getCondVente() {
-        return condVente;
-    }
-
-    public void setCondVente(Boolean condVente) {
-        this.condVente = condVente;
-    }
-
-    public Date getDateUpdate() {
-        return dateUpdate;
-    }
-
-    public void setDateUpdate(Date dateUpdate) {
-        this.dateUpdate = dateUpdate;
-    }
-
-    public Date getDateSave() {
-        return dateSave;
-    }
-
-    public void setDateSave(Date dateSave) {
-        this.dateSave = dateSave;
-    }
-
-    public Double getPrixAchat() {
-        return prixAchat != null ? prixAchat : 0d;
-    }
-
-    public void setPrixAchat(Double prixAchat) {
-        this.prixAchat = prixAchat;
-    }
-
-    public String getPhoto() {
-        return photo;
-    }
-
-    public void setPhoto(String photo) {
-        this.photo = photo;
-    }
-
-    public Boolean getByAchat() {
-        return byAchat;
-    }
-
-    public void setByAchat(Boolean byAchat) {
-        this.byAchat = byAchat;
-    }
-
-    public Boolean getByProd() {
-        return byProd;
-    }
-
-    public void setByProd(Boolean byProd) {
-        this.byProd = byProd;
-    }
-
-    public Boolean getDefaut() {
-        return defaut;
-    }
-
-    public void setDefaut(Boolean defaut) {
-        this.defaut = defaut;
-    }
-
-    public Double getPrixProd() {
-        return prixProd;
-    }
-
-    public void setPrixProd(Double prixProd) {
-        this.prixProd = prixProd;
-    }
-
-    public Double getMargeMin() {
-        return margeMin;
-    }
-
-    public void setMargeMin(Double margeMin) {
-        this.margeMin = margeMin;
-    }
-
-    public YvsBaseArticles getArticle() {
-        return article;
-    }
-
-    public void setArticle(YvsBaseArticles article) {
-        this.article = article;
-    }
-
-    public YvsBaseUniteMesure getUnite() {
-        return unite;
-    }
-
-    public void setUnite(YvsBaseUniteMesure unite) {
-        this.unite = unite;
-    }
-
-//    public YvsUsersAgence getAuthor() {
-//        return author;
-//    }
-//
-//    public void setAuthor(YvsUsersAgence author) {
-//        this.author = author;
-//    }
-
     public Boolean getActif() {
-        return actif != null ? actif : false;
-    }
-
-    public void setActif(Boolean actif) {
-        this.actif = actif;
+        return actif != null && actif;
     }
 
     @XmlTransient
     public double getStock() {
         return stock;
-    }
-
-    public void setStock(double stock) {
-        this.stock = stock;
     }
 
     @Override
@@ -277,7 +131,6 @@ public class YvsBaseConditionnement implements Serializable {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof YvsBaseConditionnement)) {
             return false;
         }

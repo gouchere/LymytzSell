@@ -7,7 +7,6 @@
 package com.lymytz.lymytzsell.service.utils.log;
 
 
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -19,12 +18,12 @@ import java.nio.file.WatchService;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import com.lymytz.lymytzsell.service.utils.ConsUtil;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.LymytzService;
 
 /**
- *
  * @author LENOVO
  */
 public class ListenFolder implements Runnable {
@@ -62,20 +61,17 @@ public class ListenFolder implements Runnable {
                 watchKey = service.take();
                 //traiter les evenements
                 for (WatchEvent ev : watchKey.pollEvents()) {
-                    String fileName_ = ev.context().toString();
                     if (StandardWatchEventKinds.ENTRY_MODIFY.equals(ev.kind())) {
                         File logFile = new File(this.path.toFile().getAbsoluteFile() + "\\" + ev.context().toString());
-                        if (ev.context().toString().equals(ConsUtil.SOURCE_LOG_FILE_SYNC) || ev.context().toString().equals(ConsUtil.SOURCE_LOG_FILE_EXCEPTION) || ev.context().toString().equals(ConsUtil.SOURCE_LOG_FILE_USER)) {
-                            if ((logFile.length() / (1024 * 1024)) > 1) { //1Mo
-                                File dest = new File(this.path.toFile().getAbsoluteFile() + "\\"+ev.context().toString().replace(".log", "")+"_log_" + Constantes.dfh.format(new Date()).replaceAll(" ", "").replaceAll(":", "").replaceAll("-", "") + ".log");
-                                logFile.setExecutable(true);
-                                logFile.setWritable(true);
-                                if (logFile.renameTo(dest)) {
-                                }
-                                //création d'un nouvveau fichier
-                                logFile = new File(this.path.toFile().getAbsoluteFile() + "\\" + ev.context().toString());
-                                logFile.createNewFile();
-                            }
+                        if (ev.context().toString().equals(ConsUtil.SOURCE_LOG_FILE_SYNC) || ev.context().toString().equals(ConsUtil.SOURCE_LOG_FILE_EXCEPTION) || ev.context().toString().equals(ConsUtil.SOURCE_LOG_FILE_USER) && ((logFile.length() / (1024 * 1024)) > 1)) { //1Mo
+                            File dest = new File(this.path.toFile().getAbsoluteFile() + "\\" + ev.context().toString().replace(".log", "") + "_log_" + Constantes.dfh.format(new Date()).replaceAll(" ", "").replaceAll(":", "").replaceAll("-", "") + ".log");
+                            logFile.setExecutable(true);
+                            logFile.setWritable(true);
+                            logFile.renameTo(dest);
+                            //création d'un nouvveau fichier
+                            logFile = new File(this.path.toFile().getAbsoluteFile() + "\\" + ev.context().toString());
+                            logFile.createNewFile();
+
                         }
 
                     }

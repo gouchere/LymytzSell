@@ -1,0 +1,2 @@
+-- get_stock_reel(art_ bigint, tranche_ bigint, depot_ bigint, agence_ bigint, societe_ bigint, date_ date, unite_ bigint, lot_ bigint)
+select get_stock_reel(7946, null, 1923, 0, 0, current_date, 685, 0);

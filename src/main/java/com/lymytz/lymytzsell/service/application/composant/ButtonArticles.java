@@ -12,6 +12,8 @@ import javafx.scene.layout.VBox;
 import com.lymytz.lymytzsell.dao.entity.YvsBaseConditionnement;
 import com.lymytz.lymytzsell.service.utils.LymytzService;
 import com.lymytz.lymytzsell.view.main.HomeCaisseController;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  *
@@ -19,9 +21,11 @@ import com.lymytz.lymytzsell.view.main.HomeCaisseController;
  */
 public class ButtonArticles extends VBox {
 
+    @Setter
+    @Getter
     private YvsBaseConditionnement conditionnement;
-    private HomeCaisseController page;
-    private ButtonArticles current;
+    private final HomeCaisseController page;
+    private final ButtonArticles current;
 
     public ButtonArticles(YvsBaseConditionnement conditionnement, HomeCaisseController home) {
         super();
@@ -42,14 +46,6 @@ public class ButtonArticles extends VBox {
             }
         });
 
-    }
-
-    public YvsBaseConditionnement getConditionnement() {
-        return conditionnement;
-    }
-
-    public void setConditionnement(YvsBaseConditionnement conditionnement) {
-        this.conditionnement = conditionnement;
     }
 
 }

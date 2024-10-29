@@ -12,6 +12,8 @@ import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.URL;
+import java.util.Objects;
+
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
@@ -113,7 +115,7 @@ public class LymytzSell extends Application {
 
     private void startApps() {
         try {
-            final Image imgIcon1 = new Image(getClass().getResourceAsStream("/icones/memo_apps.png"));
+            final Image imgIcon1 = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/icones/memo_apps.png")));
             primaryStage.getIcons().add(imgIcon1);
             setUserAgentStylesheet(STYLESHEET_CASPIAN);
             LymytzService.openApps(primaryStage);

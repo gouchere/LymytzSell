@@ -7,8 +7,6 @@ package com.lymytz.lymytzsell.view.main.report;
 
 import com.lymytz.lymytzsell.dao.LocalSqlDao;
 import com.lymytz.lymytzsell.dao.entity.YvsComDocVentes;
-import com.lymytz.lymytzsell.service.application.ManagedApplication;
-import com.lymytz.lymytzsell.service.application.composant.Onglets;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
 import net.sf.jasperreports.engine.JRException;
@@ -31,15 +29,6 @@ import java.util.logging.Logger;
  * @author LENOVO
  */
 public class PrintFacture extends JFrame {
-
-    ManagedApplication page;
-    Onglets onglet;
-
-    public PrintFacture(ManagedApplication page, Onglets ong) {
-        this.page = page;
-        this.onglet = ong;
-    }
-
     /**
      * Initializes the controller class.
      * @param doc
