@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import javafx.event.Event;
 import javafx.geometry.Insets;
@@ -168,7 +169,7 @@ public final class Onglets extends Tab {
         contentPanier.setIdContent(-1);
         contentPanier.setPrix(cond.getPrix());
         contentPanier.setPrixMin(cond.getPrixMin());
-        contentPanier.setQuantite(1);
+        contentPanier.setQuantite(0);
         contentPanier.setMontantTotalTTC(contentPanier.getQuantite() * contentPanier.getPrix());
         return contentPanier;
     }
@@ -269,15 +270,8 @@ public final class Onglets extends Tab {
             if (Boolean.FALSE.equals(UtilsProject.REPLICATION) && Constantes.TYPE_FV.equals(tab.getFacture().getTypeDoc()) && cond.getStock() - q < 0 && (valideStock(cond, tab, line))) {
                 return false;
             }
-            double qte = q;
-            if (tab.getContentFacture().contains(line)) {
-                line = tab.getContentFacture().get(tab.getContentFacture().indexOf(line));
-                if (!resetQte) {
-                    qte = line.getQuantite() + q;
-                } else {
-                    qte = q;
-                }
-            }
+            line = tab.getContentFacture().stream().filter(line::equals).findFirst().orElse(line);
+            double qte = (resetQte) ? q : line.getQuantite() + q;
             if (qte <= 0) {
                 tab.moveLineContent(line);
             } else {
@@ -302,13 +296,7 @@ public final class Onglets extends Tab {
                 page.giveFocusAtTxtFind();
             }
         } else {
-            if (tab == null) {
-                LymytzService.openAlertDialog("Modification de la facture impossible !", "Erreur ", "Aucune facture n'a été initié !", Alert.AlertType.ERROR);
-                return false;
-            } else {
-                LymytzService.openAlertDialog("Modification de la facture impossible !", "Erreur ", "Cette facture n'est plus éditable", Alert.AlertType.ERROR);
-            }
-            return false;
+            LymytzService.openAlertDialog("Modification de la facture impossible !", "Erreur ", tab == null ? "Aucune facture n'a été initié!" : "Cette facture n'est plus éditable", Alert.AlertType.ERROR);
         }
         return true;
     }

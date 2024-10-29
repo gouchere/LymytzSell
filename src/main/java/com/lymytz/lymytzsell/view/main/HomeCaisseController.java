@@ -323,37 +323,15 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
         setMainPage(this);
         //Attacher un listener au text find
         TEXT_FIND.focusedProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
-            if (!newValue) {
-                Onglets tab = (Onglets) TAB_FACTURES.getSelectionModel().getSelectedItem();
-                if (Constantes.asString(TEXT_FIND.getText())) {
-                    LoaderConditionnement tache1 = new LoaderConditionnement(HomeCaisseController.this, TEXT_FIND.getText());
-                    YvsBaseConditionnement art = tache1.findOneArticle(TEXT_FIND.getText());
-                    if (art != null) {
-                        if (tab.addArticleOnFacture(art, 1, false, art.getPrix())) {
-                            giveFocusAtTxtFind();
-                        }
-                    } else {
-                        loadCatalogue(TEXT_FIND.getText());
-                    }
-                }
+            if (Boolean.FALSE.equals(newValue)) {
+                filterArticleFromSearchField();
             }
         });
         TEXT_FIND.setOnKeyReleased((KeyEvent event) -> {
             if (event.getCode().equals(KeyCode.ENTER)) {
                 Onglets tab = (Onglets) TAB_FACTURES.getSelectionModel().getSelectedItem();
                 if (tab != null) {
-                    if (Constantes.asString(TEXT_FIND.getText())) {
-                        LoaderConditionnement tache1 = new LoaderConditionnement(HomeCaisseController.this, TEXT_FIND.getText());
-                        YvsBaseConditionnement art = tache1.findOneArticle(TEXT_FIND.getText());
-                        if (art != null) {
-                            if (tab.addArticleOnFacture(art, 1, false, art.getPrix())) {
-                                giveFocusAtTxtFind();
-                            }
-
-                        } else {
-                            loadCatalogue(TEXT_FIND.getText());
-                        }
-                    }
+                    filterArticleFromSearchField();
                 } else {
                     LymytzService.openAlertDialog("Aucune facture n'a été trouvé !", "Erreur", "Vous devez enregistrer la facture !", Alert.AlertType.ERROR);
                 }
@@ -361,9 +339,23 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
         });
     }
 
+    private void filterArticleFromSearchField() {
+        Onglets tab = (Onglets) TAB_FACTURES.getSelectionModel().getSelectedItem();
+        if (tab != null && Constantes.asString(TEXT_FIND.getText())) {
+            LoaderConditionnement tache1 = new LoaderConditionnement(HomeCaisseController.this, TEXT_FIND.getText());
+            YvsBaseConditionnement art = tache1.findOneArticle();
+            if (art != null) {
+                if (tab.addArticleOnFacture(art, 1, false, art.getPrix())) {
+                    giveFocusAtTxtFind();
+                }
+            } else {
+                loadCatalogue(TEXT_FIND.getText());
+            }
+        }
+    }
+
     public void initComponent() {
         HOMEMENU.setPrefWidth(StartController.SCREENWIDTH);
-        //BOX_ARTICLES.setPrefHeight(StartController.SCREENHEIGHT - 315);
         TAB_FACTURES.setPrefHeight(StartController.SCREENHEIGHT - 345);
         RigthBoxWidth = new SimpleDoubleProperty(RIGHT_BOX.getPrefWidth());
         CustomComponents.custumMenuAndToolBar(this);
@@ -516,7 +508,7 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
         }
     }
 
-    public void displayPropertyArticle(YvsBaseConditionnement art, boolean allppte) {
+    public void displayPropertyArticle(YvsBaseConditionnement art, boolean displayAllProperties) {
         if (art != null) {
             LAB_REF.setText(art.getArticle().getRefArt());
             LAB_DES.setText(art.getArticle().getDesignation());
@@ -524,7 +516,7 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
             createImageProduit(art.getArticle());
             ZONE_IMG.getChildren().add(pagination);
             List<YvsBaseDepots> depots = null;
-            if (allppte) {
+            if (displayAllProperties) {
                 depots = dao.loadByNamedQuery("YvsBaseArticleDepot.findDepotActifByArt", new String[]{"article"}, new Object[]{art.getArticle()});
                 depots.remove(UtilsProject.depotLivraison);
                 depots.add(0, UtilsProject.depotLivraison);
@@ -534,34 +526,37 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
             }
             PAN_STOCK.getChildren().clear();
             if (UtilsProject.headerDoc != null && UtilsProject.headerDoc.getCreneau() != null) {
-                //compte la quantité de l'article facturé
-                Double qte = (Double) dao.findOneObjectByNQ("YvsComContenuDocVente.countQteVendu", new String[]{"conditionnement", "header"}, new Object[]{art, UtilsProject.headerDoc});
-                if (qte != null && qte > 0) {
-                    QTE_FACTURE.setText(Constantes.nbf.format(qte));
-                } else {
-                    QTE_FACTURE.setText(Constantes.nbf.format(0));
-                }
-                if (Boolean.TRUE.equals(!UtilsProject.REPLICATION) && UtilsProject.depotLivraison != null) {
-                    //si on est pas en mode replication, calcul immédiatement le stock
-                    double stock = UtilsProject.getStocks(art, UtilsProject.depotLivraison.getId());
-                    art.setStock(stock);
-                }
-                try {
-                    LoaderStock service = new LoaderStock(this, depots, art);
-                    service.addEventHandler(WorkerStateEvent.WORKER_STATE_SUCCEEDED, (WorkerStateEvent event) -> {
-                        VBox re1 = service.getValue();
-                        Platform.runLater(() -> {
-                            PAN_STOCK.getChildren().clear();
-                            PAN_STOCK.getChildren().add(re1);
-                        });
-                    });
-                    new Thread(service).start();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                getAndDisplayArticleProperties(art, depots);
             }
         }
-        //Afficher la description de l'article
+    }
+
+    private void getAndDisplayArticleProperties(YvsBaseConditionnement art, List<YvsBaseDepots> depots) {
+        //compte la quantité de l'article facturé
+        Double qte = (Double) dao.findOneObjectByNQ("YvsComContenuDocVente.countQteVendu", new String[]{"conditionnement", "header"}, new Object[]{art, UtilsProject.headerDoc});
+        if (qte != null && qte > 0) {
+            QTE_FACTURE.setText(Constantes.nbf.format(qte));
+        } else {
+            QTE_FACTURE.setText(Constantes.nbf.format(0));
+        }
+        if (Boolean.TRUE.equals(!UtilsProject.REPLICATION) && UtilsProject.depotLivraison != null) {
+            //si on est pas en mode replication, calcul immédiatement le stock
+            double stock = UtilsProject.getStocks(art, UtilsProject.depotLivraison.getId());
+            art.setStock(stock);
+        }
+        try {
+            LoaderStock service = new LoaderStock(this, depots, art);
+            service.addEventHandler(WorkerStateEvent.WORKER_STATE_SUCCEEDED, (WorkerStateEvent event) -> {
+                VBox re1 = service.getValue();
+                Platform.runLater(() -> {
+                    PAN_STOCK.getChildren().clear();
+                    PAN_STOCK.getChildren().add(re1);
+                });
+            });
+            new Thread(service).start();
+        } catch (Exception e) {
+            Logger.getLogger(HomeCaisseController.class.getName()).log(Level.SEVERE, null, e);
+        }
     }
 
     public void createFactureDivers() {
@@ -633,7 +628,7 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
     }
 
     public boolean confirmValideFacture(Onglets currentOnglet, double montantPaye, double montantRecu, String source) {
-        if (!controleMontantPaye(currentOnglet, montantPaye)) return false;
+      //  if (!controleMontantPaye(currentOnglet, montantPaye)) return false;
         List<YvsComContenuDocVente> contenuDuPanier = new ArrayList<>(currentOnglet.getFacture().getContenus());
         currentOnglet.getFacture().getContenus().clear();
         YvsComDocVentes d = saveFacture(currentOnglet.getFacture());
@@ -660,21 +655,25 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
                     }
                 });
                 tcompta.start();
-                if (!source.equals("A")) {
-                    Platform.runLater(() -> {
-                        TAB_FACTURES.getTabs().remove(currentOnglet);
-                        if (!TAB_FACTURES.getTabs().isEmpty()) {
-                            TAB_FACTURES.getSelectionModel().select(0);
-                        } else {
-                            ECRAN.setText("0");
-                        }
-                    });
-                }
+                /*if (!source.equals("A")) {
+                    closeOngletFacture(currentOnglet);
+                }*/
             }
         } else {
             return false;
         }
         return true;
+    }
+
+    public void closeOngletFacture(Onglets currentOnglet) {
+        Platform.runLater(() -> {
+            TAB_FACTURES.getTabs().remove(currentOnglet);
+            if (!TAB_FACTURES.getTabs().isEmpty()) {
+                TAB_FACTURES.getSelectionModel().select(0);
+            } else {
+                ECRAN.setText("0");
+            }
+        });
     }
 
     private boolean controleMontantPaye(Onglets fac, double montantPaye) {
@@ -1024,7 +1023,7 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
             if (ong != null) {
                 ong.setNetAPayer(ong.getFacture().getMontantTTC());
                 if (param.getTypeRapport().equals(UtilsProject.TYPE_RAPPORT_TICKET)) {
-                    PrintTiket pt = new PrintTiket(this, ong, 0, "");
+                    PrintTiket pt = new PrintTiket(0, "");
                     pt.setFacture(ong.getFacture());
                     pt.setMontantAvance(ong.getFacture().getMontantAvance());
                     pt.setMontantRecu(ong.getMontantRecu());
@@ -1032,7 +1031,7 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
                     pt.setNetAPayer(ong.getNetAPayer());
                     new Thread(pt).start();
                 } else {
-                    PrintFacture preview = new PrintFacture(this, ong);
+                    PrintFacture preview = new PrintFacture();
                     preview.loadFactureToPrint(ong.getFacture());
                 }
             }
