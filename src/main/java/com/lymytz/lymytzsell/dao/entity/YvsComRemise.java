@@ -6,9 +6,11 @@
 
 package com.lymytz.lymytzsell.dao.entity;
 
-import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -23,24 +25,30 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
 
 /**
- *
  * @author LYMYTZ
  */
 @Entity
 @Table(name = "yvs_com_remise")
 @NamedQueries({
-    @NamedQuery(name = "YvsComRemise.findAll", query = "SELECT y FROM YvsComRemise y"),
-    @NamedQuery(name = "YvsComRemise.findById", query = "SELECT y FROM YvsComRemise y WHERE y.id = :id"),
-    @NamedQuery(name = "YvsComRemise.findByRefRemise", query = "SELECT y FROM YvsComRemise y WHERE y.refRemise = :refRemise"),
-    @NamedQuery(name = "YvsComRemise.findByPermanent", query = "SELECT y FROM YvsComRemise y WHERE y.permanent = :permanent"),
-    @NamedQuery(name = "YvsComRemise.findByActif", query = "SELECT y FROM YvsComRemise y WHERE y.actif = :actif"),
-    @NamedQuery(name = "YvsComRemise.findByDateDebut", query = "SELECT y FROM YvsComRemise y WHERE y.dateDebut = :dateDebut"),
-    @NamedQuery(name = "YvsComRemise.findByDateFin", query = "SELECT y FROM YvsComRemise y WHERE y.dateFin = :dateFin"),
-    @NamedQuery(name = "YvsComRemise.findByDateUpdate", query = "SELECT y FROM YvsComRemise y WHERE y.dateUpdate = :dateUpdate"),
-    @NamedQuery(name = "YvsComRemise.findByDateSave", query = "SELECT y FROM YvsComRemise y WHERE y.dateSave = :dateSave"),
-    @NamedQuery(name = "YvsComRemise.findByDescription", query = "SELECT y FROM YvsComRemise y WHERE y.description = :description")})
+        @NamedQuery(name = "YvsComRemise.findAll", query = "SELECT y FROM YvsComRemise y"),
+        @NamedQuery(name = "YvsComRemise.findById", query = "SELECT y FROM YvsComRemise y WHERE y.id = :id"),
+        @NamedQuery(name = "YvsComRemise.findByRefRemise", query = "SELECT y FROM YvsComRemise y WHERE y.refRemise = :refRemise"),
+        @NamedQuery(name = "YvsComRemise.findByPermanent", query = "SELECT y FROM YvsComRemise y WHERE y.permanent = :permanent"),
+        @NamedQuery(name = "YvsComRemise.findByActif", query = "SELECT y FROM YvsComRemise y WHERE y.actif = :actif"),
+        @NamedQuery(name = "YvsComRemise.findByDateDebut", query = "SELECT y FROM YvsComRemise y WHERE y.dateDebut = :dateDebut"),
+        @NamedQuery(name = "YvsComRemise.findByDateFin", query = "SELECT y FROM YvsComRemise y WHERE y.dateFin = :dateFin"),
+        @NamedQuery(name = "YvsComRemise.findByDateUpdate", query = "SELECT y FROM YvsComRemise y WHERE y.dateUpdate = :dateUpdate"),
+        @NamedQuery(name = "YvsComRemise.findByDateSave", query = "SELECT y FROM YvsComRemise y WHERE y.dateSave = :dateSave"),
+        @NamedQuery(name = "YvsComRemise.findByDescription", query = "SELECT y FROM YvsComRemise y WHERE y.description = :description")})
+@Getter
+@Setter
+@EqualsAndHashCode(of = {"id"})
+@NoArgsConstructor
 public class YvsComRemise implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -77,132 +85,13 @@ public class YvsComRemise implements Serializable {
     @ManyToOne
     private YvsUsersAgence author;
 
-    public YvsComRemise() {
-    }
-
     public YvsComRemise(Long id) {
         this.id = id;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getRefRemise() {
-        return refRemise;
-    }
-
-    public void setRefRemise(String refRemise) {
-        this.refRemise = refRemise;
-    }
-
-    public Boolean getPermanent() {
-        return permanent;
-    }
-
-    public void setPermanent(Boolean permanent) {
-        this.permanent = permanent;
-    }
-
-    public Boolean getActif() {
-        return actif;
-    }
-
-    public void setActif(Boolean actif) {
-        this.actif = actif;
-    }
-
-    public Date getDateDebut() {
-        return dateDebut;
-    }
-
-    public void setDateDebut(Date dateDebut) {
-        this.dateDebut = dateDebut;
-    }
-
-    public Date getDateFin() {
-        return dateFin;
-    }
-
-    public void setDateFin(Date dateFin) {
-        this.dateFin = dateFin;
-    }
-
-    public Date getDateUpdate() {
-        return dateUpdate;
-    }
-
-    public void setDateUpdate(Date dateUpdate) {
-        this.dateUpdate = dateUpdate;
-    }
-
-    public Date getDateSave() {
-        return dateSave;
-    }
-
-    public void setDateSave(Date dateSave) {
-        this.dateSave = dateSave;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public List<YvsComGrilleRemise> getYvsComGrilleRemiseList() {
-        return yvsComGrilleRemiseList;
-    }
-
-    public void setYvsComGrilleRemiseList(List<YvsComGrilleRemise> yvsComGrilleRemiseList) {
-        this.yvsComGrilleRemiseList = yvsComGrilleRemiseList;
-    }
-
-    public YvsSocietes getSociete() {
-        return societe;
-    }
-
-    public void setSociete(YvsSocietes societe) {
-        this.societe = societe;
-    }
-
-    public YvsUsersAgence getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(YvsUsersAgence author) {
-        this.author = author;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof YvsComRemise)) {
-            return false;
-        }
-        YvsComRemise other = (YvsComRemise) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
     }
 
     @Override
     public String toString() {
         return "lymytz.dao.entity.YvsComRemise[ id=" + id + " ]";
     }
-    
+
 }

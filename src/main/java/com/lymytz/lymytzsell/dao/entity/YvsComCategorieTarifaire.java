@@ -6,8 +6,11 @@
 
 package com.lymytz.lymytzsell.dao.entity;
 
-import java.io.Serializable;
-import java.util.Date;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -21,23 +24,28 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import java.io.Serializable;
+import java.util.Date;
 
 /**
- *
  * @author LYMYTZ
  */
 @Entity
 @Table(name = "yvs_com_categorie_tarifaire")
 @NamedQueries({
-    @NamedQuery(name = "YvsComCategorieTarifaire.findAll", query = "SELECT y FROM YvsComCategorieTarifaire y"),
-    @NamedQuery(name = "YvsComCategorieTarifaire.findById", query = "SELECT y FROM YvsComCategorieTarifaire y WHERE y.id = :id"),
-    @NamedQuery(name = "YvsComCategorieTarifaire.findByDateDebut", query = "SELECT y FROM YvsComCategorieTarifaire y WHERE y.dateDebut = :dateDebut"),
-    @NamedQuery(name = "YvsComCategorieTarifaire.findByDateFin", query = "SELECT y FROM YvsComCategorieTarifaire y WHERE y.dateFin = :dateFin"),
-    @NamedQuery(name = "YvsComCategorieTarifaire.findByPriorite", query = "SELECT y FROM YvsComCategorieTarifaire y WHERE y.priorite = :priorite"),
-    @NamedQuery(name = "YvsComCategorieTarifaire.findByActif", query = "SELECT y FROM YvsComCategorieTarifaire y WHERE y.actif = :actif"),
-    @NamedQuery(name = "YvsComCategorieTarifaire.findByPermanent", query = "SELECT y FROM YvsComCategorieTarifaire y WHERE y.permanent = :permanent"),
-    @NamedQuery(name = "YvsComCategorieTarifaire.findByDateUpdate", query = "SELECT y FROM YvsComCategorieTarifaire y WHERE y.dateUpdate = :dateUpdate"),
-    @NamedQuery(name = "YvsComCategorieTarifaire.findByDateSave", query = "SELECT y FROM YvsComCategorieTarifaire y WHERE y.dateSave = :dateSave")})
+        @NamedQuery(name = "YvsComCategorieTarifaire.findAll", query = "SELECT y FROM YvsComCategorieTarifaire y"),
+        @NamedQuery(name = "YvsComCategorieTarifaire.findById", query = "SELECT y FROM YvsComCategorieTarifaire y WHERE y.id = :id"),
+        @NamedQuery(name = "YvsComCategorieTarifaire.findByDateDebut", query = "SELECT y FROM YvsComCategorieTarifaire y WHERE y.dateDebut = :dateDebut"),
+        @NamedQuery(name = "YvsComCategorieTarifaire.findByDateFin", query = "SELECT y FROM YvsComCategorieTarifaire y WHERE y.dateFin = :dateFin"),
+        @NamedQuery(name = "YvsComCategorieTarifaire.findByPriorite", query = "SELECT y FROM YvsComCategorieTarifaire y WHERE y.priorite = :priorite"),
+        @NamedQuery(name = "YvsComCategorieTarifaire.findByActif", query = "SELECT y FROM YvsComCategorieTarifaire y WHERE y.actif = :actif"),
+        @NamedQuery(name = "YvsComCategorieTarifaire.findByPermanent", query = "SELECT y FROM YvsComCategorieTarifaire y WHERE y.permanent = :permanent"),
+        @NamedQuery(name = "YvsComCategorieTarifaire.findByDateUpdate", query = "SELECT y FROM YvsComCategorieTarifaire y WHERE y.dateUpdate = :dateUpdate"),
+        @NamedQuery(name = "YvsComCategorieTarifaire.findByDateSave", query = "SELECT y FROM YvsComCategorieTarifaire y WHERE y.dateSave = :dateSave")})
+@Getter
+@Setter
+@EqualsAndHashCode(of = {"id"})
+@NoArgsConstructor
 public class YvsComCategorieTarifaire implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -73,124 +81,13 @@ public class YvsComCategorieTarifaire implements Serializable {
     @ManyToOne
     private YvsUsersAgence author;
 
-    public YvsComCategorieTarifaire() {
-    }
-
     public YvsComCategorieTarifaire(Long id) {
         this.id = id;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Date getDateDebut() {
-        return dateDebut;
-    }
-
-    public void setDateDebut(Date dateDebut) {
-        this.dateDebut = dateDebut;
-    }
-
-    public Date getDateFin() {
-        return dateFin;
-    }
-
-    public void setDateFin(Date dateFin) {
-        this.dateFin = dateFin;
-    }
-
-    public Integer getPriorite() {
-        return priorite;
-    }
-
-    public void setPriorite(Integer priorite) {
-        this.priorite = priorite;
-    }
-
-    public Boolean getActif() {
-        return actif;
-    }
-
-    public void setActif(Boolean actif) {
-        this.actif = actif;
-    }
-
-    public Boolean getPermanent() {
-        return permanent;
-    }
-
-    public void setPermanent(Boolean permanent) {
-        this.permanent = permanent;
-    }
-
-    public Date getDateUpdate() {
-        return dateUpdate;
-    }
-
-    public void setDateUpdate(Date dateUpdate) {
-        this.dateUpdate = dateUpdate;
-    }
-
-    public Date getDateSave() {
-        return dateSave;
-    }
-
-    public void setDateSave(Date dateSave) {
-        this.dateSave = dateSave;
-    }
-
-    public YvsComClient getClient() {
-        return client;
-    }
-
-    public void setClient(YvsComClient client) {
-        this.client = client;
-    }
-
-    public YvsUsersAgence getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(YvsUsersAgence author) {
-        this.author = author;
-    }
-
-    public YvsBaseCategorieClient getCategorie() {
-        return categorie;
-    }
-
-    public void setCategorie(YvsBaseCategorieClient categorie) {
-        this.categorie = categorie;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof YvsComCategorieTarifaire)) {
-            return false;
-        }
-        YvsComCategorieTarifaire other = (YvsComCategorieTarifaire) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
     }
 
     @Override
     public String toString() {
         return "lymytz.dao.entity.YvsComCategorieTarifaire[ id=" + id + " ]";
     }
-    
+
 }

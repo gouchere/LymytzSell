@@ -5,6 +5,7 @@
  */
 package com.lymytz.lymytzsell.dao.entity;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -51,6 +52,7 @@ import java.util.Date;
         @NamedQuery(name = "YvsBaseConditionnement.findByMargeMin", query = "SELECT y FROM YvsBaseConditionnement y WHERE y.margeMin = :margeMin")})
 @Getter
 @Setter
+@EqualsAndHashCode(of = {"id"})
 @NoArgsConstructor
 public class YvsBaseConditionnement implements Serializable {
 
@@ -120,25 +122,6 @@ public class YvsBaseConditionnement implements Serializable {
     @XmlTransient
     public double getStock() {
         return stock;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        if (!(object instanceof YvsBaseConditionnement)) {
-            return false;
-        }
-        YvsBaseConditionnement other = (YvsBaseConditionnement) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
     }
 
     @Override

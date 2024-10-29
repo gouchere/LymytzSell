@@ -5,8 +5,10 @@
  */
 package com.lymytz.lymytzsell.dao.entity;
 
-import java.io.Serializable;
-import java.util.Date;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -20,24 +22,28 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import java.io.Serializable;
+import java.util.Date;
 
 /**
- *
  * @author LYMYTZ
  */
 @Entity
 @Table(name = "yvs_base_article_point")
 @NamedQueries({
-    @NamedQuery(name = "YvsBaseArticlePoint.findAll", query = "SELECT y FROM YvsBaseArticlePoint y"),
-    @NamedQuery(name = "YvsBaseArticlePoint.findById", query = "SELECT y FROM YvsBaseArticlePoint y WHERE y.id = :id"),
-    @NamedQuery(name = "YvsBaseArticlePoint.findByChangePrix", query = "SELECT y FROM YvsBaseArticlePoint y WHERE y.changePrix = :changePrix"),
-    @NamedQuery(name = "YvsBaseArticlePoint.findByActif", query = "SELECT y FROM YvsBaseArticlePoint y WHERE y.actif = :actif"),
-    @NamedQuery(name = "YvsBaseArticlePoint.findByPrioritaire", query = "SELECT y FROM YvsBaseArticlePoint y WHERE y.prioritaire = :prioritaire"),
-    @NamedQuery(name = "YvsBaseArticlePoint.findByNaturePrixMin", query = "SELECT y FROM YvsBaseArticlePoint y WHERE y.naturePrixMin = :naturePrixMin"),
-    @NamedQuery(name = "YvsBaseArticlePoint.findByRemise", query = "SELECT y FROM YvsBaseArticlePoint y WHERE y.remise = :remise"),
-    @NamedQuery(name = "YvsBaseArticlePoint.findByNatureRemise", query = "SELECT y FROM YvsBaseArticlePoint y WHERE y.natureRemise = :natureRemise"),
-    @NamedQuery(name = "YvsBaseArticlePoint.findByDateUpdate", query = "SELECT y FROM YvsBaseArticlePoint y WHERE y.dateUpdate = :dateUpdate"),
-    @NamedQuery(name = "YvsBaseArticlePoint.findByDateSave", query = "SELECT y FROM YvsBaseArticlePoint y WHERE y.dateSave = :dateSave")})
+        @NamedQuery(name = "YvsBaseArticlePoint.findAll", query = "SELECT y FROM YvsBaseArticlePoint y"),
+        @NamedQuery(name = "YvsBaseArticlePoint.findById", query = "SELECT y FROM YvsBaseArticlePoint y WHERE y.id = :id"),
+        @NamedQuery(name = "YvsBaseArticlePoint.findByChangePrix", query = "SELECT y FROM YvsBaseArticlePoint y WHERE y.changePrix = :changePrix"),
+        @NamedQuery(name = "YvsBaseArticlePoint.findByActif", query = "SELECT y FROM YvsBaseArticlePoint y WHERE y.actif = :actif"),
+        @NamedQuery(name = "YvsBaseArticlePoint.findByPrioritaire", query = "SELECT y FROM YvsBaseArticlePoint y WHERE y.prioritaire = :prioritaire"),
+        @NamedQuery(name = "YvsBaseArticlePoint.findByNaturePrixMin", query = "SELECT y FROM YvsBaseArticlePoint y WHERE y.naturePrixMin = :naturePrixMin"),
+        @NamedQuery(name = "YvsBaseArticlePoint.findByRemise", query = "SELECT y FROM YvsBaseArticlePoint y WHERE y.remise = :remise"),
+        @NamedQuery(name = "YvsBaseArticlePoint.findByNatureRemise", query = "SELECT y FROM YvsBaseArticlePoint y WHERE y.natureRemise = :natureRemise"),
+        @NamedQuery(name = "YvsBaseArticlePoint.findByDateUpdate", query = "SELECT y FROM YvsBaseArticlePoint y WHERE y.dateUpdate = :dateUpdate"),
+        @NamedQuery(name = "YvsBaseArticlePoint.findByDateSave", query = "SELECT y FROM YvsBaseArticlePoint y WHERE y.dateSave = :dateSave")})
+@Getter
+@Setter
+@EqualsAndHashCode(of = {"id"})
 public class YvsBaseArticlePoint implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -71,131 +77,12 @@ public class YvsBaseArticlePoint implements Serializable {
     @JoinColumn(name = "point", referencedColumnName = "id")
     @ManyToOne
     private YvsBasePointVente point;
-//    @JoinColumn(name = "author", referencedColumnName = "id")
-//    @ManyToOne
-//    private YvsUsersAgence author;
 
     public YvsBaseArticlePoint() {
     }
 
     public YvsBaseArticlePoint(Long id) {
         this.id = id;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Boolean getChangePrix() {
-        return changePrix;
-    }
-
-    public void setChangePrix(Boolean changePrix) {
-        this.changePrix = changePrix;
-    }
-
-    public Boolean getActif() {
-        return actif;
-    }
-
-    public void setActif(Boolean actif) {
-        this.actif = actif;
-    }
-
-    public Boolean getPrioritaire() {
-        return prioritaire;
-    }
-
-    public void setPrioritaire(Boolean prioritaire) {
-        this.prioritaire = prioritaire;
-    }
-
-    public String getNaturePrixMin() {
-        return naturePrixMin;
-    }
-
-    public void setNaturePrixMin(String naturePrixMin) {
-        this.naturePrixMin = naturePrixMin;
-    }
-
-    public Double getRemise() {
-        return remise;
-    }
-
-    public void setRemise(Double remise) {
-        this.remise = remise;
-    }
-
-    public String getNatureRemise() {
-        return natureRemise;
-    }
-
-    public void setNatureRemise(String natureRemise) {
-        this.natureRemise = natureRemise;
-    }
-
-    public Date getDateUpdate() {
-        return dateUpdate;
-    }
-
-    public void setDateUpdate(Date dateUpdate) {
-        this.dateUpdate = dateUpdate;
-    }
-
-    public Date getDateSave() {
-        return dateSave;
-    }
-
-    public void setDateSave(Date dateSave) {
-        this.dateSave = dateSave;
-    }
-
-    public YvsBaseArticles getArticle() {
-        return article;
-    }
-
-    public void setArticle(YvsBaseArticles article) {
-        this.article = article;
-    }
-
-    public YvsBasePointVente getPoint() {
-        return point;
-    }
-
-    public void setPoint(YvsBasePointVente point) {
-        this.point = point;
-    }
-
-//    public YvsUsersAgence getAuthor() {
-//        return author;
-//    }
-//
-//    public void setAuthor(YvsUsersAgence author) {
-//        this.author = author;
-//    }
-
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof YvsBaseArticlePoint)) {
-            return false;
-        }
-        YvsBaseArticlePoint other = (YvsBaseArticlePoint) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
     }
 
     @Override

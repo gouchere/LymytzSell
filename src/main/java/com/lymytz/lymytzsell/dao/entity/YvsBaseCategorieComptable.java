@@ -6,9 +6,10 @@
 
 package com.lymytz.lymytzsell.dao.entity;
 
-import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -19,10 +20,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import java.io.Serializable;
+import java.util.Date;
 
 /**
  *
@@ -40,6 +42,9 @@ import javax.persistence.TemporalType;
     @NamedQuery(name = "YvsBaseCategorieComptable.findByActif", query = "SELECT y FROM YvsBaseCategorieComptable y WHERE y.actif = :actif"),
     @NamedQuery(name = "YvsBaseCategorieComptable.findByDateUpdate", query = "SELECT y FROM YvsBaseCategorieComptable y WHERE y.dateUpdate = :dateUpdate"),
     @NamedQuery(name = "YvsBaseCategorieComptable.findByDateSave", query = "SELECT y FROM YvsBaseCategorieComptable y WHERE y.dateSave = :dateSave")})
+@Getter
+@Setter
+@EqualsAndHashCode(of = {"id"})
 public class YvsBaseCategorieComptable implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -81,107 +86,6 @@ public class YvsBaseCategorieComptable implements Serializable {
         codeAppel=y.codeAppel;
         code=y.code;
         nature=y.nature;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getCodeAppel() {
-        return codeAppel;
-    }
-
-    public void setCodeAppel(String codeAppel) {
-        this.codeAppel = codeAppel;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getNature() {
-        return nature;
-    }
-
-    public void setNature(String nature) {
-        this.nature = nature;
-    }
-
-    public String getDesignation() {
-        return designation;
-    }
-
-    public void setDesignation(String designation) {
-        this.designation = designation;
-    }
-
-    public Boolean getActif() {
-        return actif;
-    }
-
-    public void setActif(Boolean actif) {
-        this.actif = actif;
-    }
-
-    public Date getDateUpdate() {
-        return dateUpdate;
-    }
-
-    public void setDateUpdate(Date dateUpdate) {
-        this.dateUpdate = dateUpdate;
-    }
-
-    public Date getDateSave() {
-        return dateSave;
-    }
-
-    public void setDateSave(Date dateSave) {
-        this.dateSave = dateSave;
-    }
-
-    public YvsSocietes getSociete() {
-        return societe;
-    }
-
-    public void setSociete(YvsSocietes societe) {
-        this.societe = societe;
-    }
-
-    public YvsUsersAgence getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(YvsUsersAgence author) {
-        this.author = author;
-    }
-    
-
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof YvsBaseCategorieComptable)) {
-            return false;
-        }
-        YvsBaseCategorieComptable other = (YvsBaseCategorieComptable) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
     }
 
     @Override

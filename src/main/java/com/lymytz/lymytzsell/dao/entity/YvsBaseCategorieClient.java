@@ -5,6 +5,10 @@
  */
 package com.lymytz.lymytzsell.dao.entity;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -40,6 +44,9 @@ import javax.persistence.TemporalType;
     @NamedQuery(name = "YvsBaseCategorieClient.findByActif", query = "SELECT y FROM YvsBaseCategorieClient y WHERE y.actif = :actif"),
     @NamedQuery(name = "YvsBaseCategorieClient.findByDateUpdate", query = "SELECT y FROM YvsBaseCategorieClient y WHERE y.dateUpdate = :dateUpdate"),
     @NamedQuery(name = "YvsBaseCategorieClient.findByDateSave", query = "SELECT y FROM YvsBaseCategorieClient y WHERE y.dateSave = :dateSave")})
+@Getter
+@Setter
+@EqualsAndHashCode(of = {"id"})
 public class YvsBaseCategorieClient implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -82,123 +89,6 @@ public class YvsBaseCategorieClient implements Serializable {
     public YvsBaseCategorieClient(Long id) {
         this.id = id;
     }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getLibelle() {
-        return libelle;
-    }
-
-    public void setLibelle(String libelle) {
-        this.libelle = libelle;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Boolean getLierClient() {
-        return lierClient;
-    }
-
-    public void setLierClient(Boolean lierClient) {
-        this.lierClient = lierClient;
-    }
-
-    public Boolean getDefaut() {
-        return defaut;
-    }
-
-    public void setDefaut(Boolean defaut) {
-        this.defaut = defaut;
-    }
-
-    public Boolean getActif() {
-        return actif;
-    }
-
-    public void setActif(Boolean actif) {
-        this.actif = actif;
-    }
-
-    public Date getDateUpdate() {
-        return dateUpdate;
-    }
-
-    public void setDateUpdate(Date dateUpdate) {
-        this.dateUpdate = dateUpdate;
-    }
-
-    public Date getDateSave() {
-        return dateSave;
-    }
-
-    public void setDateSave(Date dateSave) {
-        this.dateSave = dateSave;
-    }
-
-    public YvsBaseCategorieClient getParent() {
-        return parent;
-    }
-
-    public void setParent(YvsBaseCategorieClient parent) {
-        this.parent = parent;
-    }
-
-    public YvsSocietes getSociete() {
-        return societe;
-    }
-
-    public void setSociete(YvsSocietes societe) {
-        this.societe = societe;
-    }
-
-    public YvsUsersAgence getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(YvsUsersAgence author) {
-        this.author = author;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof YvsBaseCategorieClient)) {
-            return false;
-        }
-        YvsBaseCategorieClient other = (YvsBaseCategorieClient) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
-    }
-
     @Override
     public String toString() {
         return "lymytz.dao.entity.YvsBaseCategorieClient[ id=" + id + " ]";

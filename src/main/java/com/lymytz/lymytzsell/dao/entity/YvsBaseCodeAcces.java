@@ -6,6 +6,10 @@
 
 package com.lymytz.lymytzsell.dao.entity;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -37,6 +41,9 @@ import javax.persistence.TemporalType;
     @NamedQuery(name = "YvsBaseCodeAcces.findByDescription", query = "SELECT y FROM YvsBaseCodeAcces y WHERE y.description = :description"),
     @NamedQuery(name = "YvsBaseCodeAcces.findByDateSave", query = "SELECT y FROM YvsBaseCodeAcces y WHERE y.dateSave = :dateSave"),
     @NamedQuery(name = "YvsBaseCodeAcces.findByDateUpdate", query = "SELECT y FROM YvsBaseCodeAcces y WHERE y.dateUpdate = :dateUpdate")})
+@Getter
+@Setter
+@EqualsAndHashCode(of = {"id"})
 public class YvsBaseCodeAcces implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -66,82 +73,6 @@ public class YvsBaseCodeAcces implements Serializable {
 
     public YvsBaseCodeAcces(Long id) {
         this.id = id;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Date getDateSave() {
-        return dateSave;
-    }
-
-    public void setDateSave(Date dateSave) {
-        this.dateSave = dateSave;
-    }
-
-    public Date getDateUpdate() {
-        return dateUpdate;
-    }
-
-    public void setDateUpdate(Date dateUpdate) {
-        this.dateUpdate = dateUpdate;
-    }
-
-    public YvsSocietes getSociete() {
-        return societe;
-    }
-
-    public void setSociete(YvsSocietes societe) {
-        this.societe = societe;
-    }
-
-    public YvsUsersAgence getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(YvsUsersAgence author) {
-        this.author = author;
-    }    
-
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof YvsBaseCodeAcces)) {
-            return false;
-        }
-        YvsBaseCodeAcces other = (YvsBaseCodeAcces) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
     }
 
     @Override

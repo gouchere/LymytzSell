@@ -5,8 +5,11 @@
  */
 package com.lymytz.lymytzsell.dao.entity;
 
-import java.io.Serializable;
-import java.util.Date;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -20,20 +23,25 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import java.io.Serializable;
+import java.util.Date;
 
 /**
- *
  * @author LYMYTZ
  */
 @Entity
 @Table(name = "yvs_com_plan_ristourne")
 @NamedQueries({
-    @NamedQuery(name = "YvsComPlanRistourne.findAll", query = "SELECT y FROM YvsComPlanRistourne y"),
-    @NamedQuery(name = "YvsComPlanRistourne.findById", query = "SELECT y FROM YvsComPlanRistourne y WHERE y.id = :id"),
-    @NamedQuery(name = "YvsComPlanRistourne.findByActif", query = "SELECT y FROM YvsComPlanRistourne y WHERE y.actif = :actif"),
-    @NamedQuery(name = "YvsComPlanRistourne.findByReference", query = "SELECT y FROM YvsComPlanRistourne y WHERE y.reference = :reference"),
-    @NamedQuery(name = "YvsComPlanRistourne.findByDateUpdate", query = "SELECT y FROM YvsComPlanRistourne y WHERE y.dateUpdate = :dateUpdate"),
-    @NamedQuery(name = "YvsComPlanRistourne.findByDateSave", query = "SELECT y FROM YvsComPlanRistourne y WHERE y.dateSave = :dateSave")})
+        @NamedQuery(name = "YvsComPlanRistourne.findAll", query = "SELECT y FROM YvsComPlanRistourne y"),
+        @NamedQuery(name = "YvsComPlanRistourne.findById", query = "SELECT y FROM YvsComPlanRistourne y WHERE y.id = :id"),
+        @NamedQuery(name = "YvsComPlanRistourne.findByActif", query = "SELECT y FROM YvsComPlanRistourne y WHERE y.actif = :actif"),
+        @NamedQuery(name = "YvsComPlanRistourne.findByReference", query = "SELECT y FROM YvsComPlanRistourne y WHERE y.reference = :reference"),
+        @NamedQuery(name = "YvsComPlanRistourne.findByDateUpdate", query = "SELECT y FROM YvsComPlanRistourne y WHERE y.dateUpdate = :dateUpdate"),
+        @NamedQuery(name = "YvsComPlanRistourne.findByDateSave", query = "SELECT y FROM YvsComPlanRistourne y WHERE y.dateSave = :dateSave")})
+@Getter
+@Setter
+@EqualsAndHashCode(of = {"id"})
+@NoArgsConstructor
 public class YvsComPlanRistourne implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -56,79 +64,8 @@ public class YvsComPlanRistourne implements Serializable {
     @ManyToOne
     private YvsSocietes societe;
 
-    public YvsComPlanRistourne() {
-    }
-
     public YvsComPlanRistourne(Long id) {
         this.id = id;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Boolean getActif() {
-        return actif;
-    }
-
-    public void setActif(Boolean actif) {
-        this.actif = actif;
-    }
-
-    public String getReference() {
-        return reference;
-    }
-
-    public void setReference(String reference) {
-        this.reference = reference;
-    }
-
-    public Date getDateUpdate() {
-        return dateUpdate;
-    }
-
-    public void setDateUpdate(Date dateUpdate) {
-        this.dateUpdate = dateUpdate;
-    }
-
-    public Date getDateSave() {
-        return dateSave;
-    }
-
-    public void setDateSave(Date dateSave) {
-        this.dateSave = dateSave;
-    }
-
-    public YvsSocietes getSociete() {
-        return societe;
-    }
-
-    public void setSociete(YvsSocietes societe) {
-        this.societe = societe;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof YvsComPlanRistourne)) {
-            return false;
-        }
-        YvsComPlanRistourne other = (YvsComPlanRistourne) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
     }
 
     @Override

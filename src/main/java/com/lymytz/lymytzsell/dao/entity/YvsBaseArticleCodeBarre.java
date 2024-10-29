@@ -6,6 +6,10 @@
 
 package com.lymytz.lymytzsell.dao.entity;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Basic;
@@ -35,6 +39,9 @@ import javax.persistence.TemporalType;
     @NamedQuery(name = "YvsBaseArticleCodeBarre.findByDescription", query = "SELECT y FROM YvsBaseArticleCodeBarre y WHERE y.description = :description"),
     @NamedQuery(name = "YvsBaseArticleCodeBarre.findByDateSave", query = "SELECT y FROM YvsBaseArticleCodeBarre y WHERE y.dateSave = :dateSave"),
     @NamedQuery(name = "YvsBaseArticleCodeBarre.findByDateUpdate", query = "SELECT y FROM YvsBaseArticleCodeBarre y WHERE y.dateUpdate = :dateUpdate")})
+@Getter
+@Setter
+@EqualsAndHashCode(of = {"id"})
 public class YvsBaseArticleCodeBarre implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -55,9 +62,6 @@ public class YvsBaseArticleCodeBarre implements Serializable {
     @JoinColumn(name = "conditionnement", referencedColumnName = "id")
     @ManyToOne
     private YvsBaseConditionnement conditionnement;
-//    @JoinColumn(name = "author", referencedColumnName = "id")
-//    @ManyToOne
-//    private YvsUsersAgence author;
 
     public YvsBaseArticleCodeBarre() {
     }
@@ -65,83 +69,6 @@ public class YvsBaseArticleCodeBarre implements Serializable {
     public YvsBaseArticleCodeBarre(Long id) {
         this.id = id;
     }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getCodeBarre() {
-        return codeBarre;
-    }
-
-    public void setCodeBarre(String codeBarre) {
-        this.codeBarre = codeBarre;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Date getDateSave() {
-        return dateSave;
-    }
-
-    public void setDateSave(Date dateSave) {
-        this.dateSave = dateSave;
-    }
-
-    public Date getDateUpdate() {
-        return dateUpdate;
-    }
-
-    public void setDateUpdate(Date dateUpdate) {
-        this.dateUpdate = dateUpdate;
-    }
-
-    public YvsBaseConditionnement getConditionnement() {
-        return conditionnement;
-    }
-
-    public void setConditionnement(YvsBaseConditionnement conditionnement) {
-        this.conditionnement = conditionnement;
-    }
-//
-//    public YvsUsersAgence getAuthor() {
-//        return author;
-//    }
-//
-//    public void setAuthor(YvsUsersAgence author) {
-//        this.author = author;
-//    }
-
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof YvsBaseArticleCodeBarre)) {
-            return false;
-        }
-        YvsBaseArticleCodeBarre other = (YvsBaseArticleCodeBarre) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
-    }
-
     @Override
     public String toString() {
         return "lymytz.dao.entity.YvsBaseArticleCodeBarre[ id=" + id + " ]";

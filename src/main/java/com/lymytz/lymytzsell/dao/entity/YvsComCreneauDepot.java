@@ -6,8 +6,11 @@
 
 package com.lymytz.lymytzsell.dao.entity;
 
-import java.io.Serializable;
-import java.util.Date;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -21,20 +24,25 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import java.io.Serializable;
+import java.util.Date;
 
 /**
- *
  * @author LYMYTZ
  */
 @Entity
 @Table(name = "yvs_com_creneau_depot")
 @NamedQueries({
-    @NamedQuery(name = "YvsComCreneauDepot.findAll", query = "SELECT y FROM YvsComCreneauDepot y"),
-    @NamedQuery(name = "YvsComCreneauDepot.findById", query = "SELECT y FROM YvsComCreneauDepot y WHERE y.id = :id"),
-    @NamedQuery(name = "YvsComCreneauDepot.findByActif", query = "SELECT y FROM YvsComCreneauDepot y WHERE y.actif = :actif"),
-    @NamedQuery(name = "YvsComCreneauDepot.findByPermanent", query = "SELECT y FROM YvsComCreneauDepot y WHERE y.permanent = :permanent"),
-    @NamedQuery(name = "YvsComCreneauDepot.findByDateUpdate", query = "SELECT y FROM YvsComCreneauDepot y WHERE y.dateUpdate = :dateUpdate"),
-    @NamedQuery(name = "YvsComCreneauDepot.findByDateSave", query = "SELECT y FROM YvsComCreneauDepot y WHERE y.dateSave = :dateSave")})
+        @NamedQuery(name = "YvsComCreneauDepot.findAll", query = "SELECT y FROM YvsComCreneauDepot y"),
+        @NamedQuery(name = "YvsComCreneauDepot.findById", query = "SELECT y FROM YvsComCreneauDepot y WHERE y.id = :id"),
+        @NamedQuery(name = "YvsComCreneauDepot.findByActif", query = "SELECT y FROM YvsComCreneauDepot y WHERE y.actif = :actif"),
+        @NamedQuery(name = "YvsComCreneauDepot.findByPermanent", query = "SELECT y FROM YvsComCreneauDepot y WHERE y.permanent = :permanent"),
+        @NamedQuery(name = "YvsComCreneauDepot.findByDateUpdate", query = "SELECT y FROM YvsComCreneauDepot y WHERE y.dateUpdate = :dateUpdate"),
+        @NamedQuery(name = "YvsComCreneauDepot.findByDateSave", query = "SELECT y FROM YvsComCreneauDepot y WHERE y.dateSave = :dateSave")})
+@Getter
+@Setter
+@EqualsAndHashCode(of = {"id"})
+@NoArgsConstructor
 public class YvsComCreneauDepot implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -59,91 +67,13 @@ public class YvsComCreneauDepot implements Serializable {
     @ManyToOne
     private YvsGrhTrancheHoraire tranche;
 
-    public YvsComCreneauDepot() {
-    }
-
     public YvsComCreneauDepot(Long id) {
         this.id = id;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Boolean getActif() {
-        return actif;
-    }
-
-    public void setActif(Boolean actif) {
-        this.actif = actif;
-    }
-
-    public Boolean getPermanent() {
-        return permanent;
-    }
-
-    public void setPermanent(Boolean permanent) {
-        this.permanent = permanent;
-    }
-
-    public Date getDateUpdate() {
-        return dateUpdate;
-    }
-
-    public void setDateUpdate(Date dateUpdate) {
-        this.dateUpdate = dateUpdate;
-    }
-
-    public Date getDateSave() {
-        return dateSave;
-    }
-
-    public void setDateSave(Date dateSave) {
-        this.dateSave = dateSave;
-    }
-
-    public YvsBaseDepots getDepot() {
-        return depot;
-    }
-
-    public void setDepot(YvsBaseDepots depot) {
-        this.depot = depot;
-    }
-
-    public YvsGrhTrancheHoraire getTranche() {
-        return tranche;
-    }
-
-    public void setTranche(YvsGrhTrancheHoraire tranche) {
-        this.tranche = tranche;
-    }
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof YvsComCreneauDepot)) {
-            return false;
-        }
-        YvsComCreneauDepot other = (YvsComCreneauDepot) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
     }
 
     @Override
     public String toString() {
         return "lymytz.dao.entity.YvsComCreneauDepot[ id=" + id + " ]";
     }
-    
+
 }

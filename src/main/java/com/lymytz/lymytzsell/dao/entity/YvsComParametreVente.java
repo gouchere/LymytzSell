@@ -6,10 +6,11 @@
 
 package com.lymytz.lymytzsell.dao.entity;
 
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import java.io.Serializable;
-import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -23,29 +24,33 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import java.io.Serializable;
+import java.util.Date;
 
 /**
- *
  * @author LYMYTZ
  */
 @Entity
 @Table(name = "yvs_com_parametre_vente")
 @NamedQueries({
-    @NamedQuery(name = "YvsComParametreVente.findAll", query = "SELECT y FROM YvsComParametreVente y"),
-    @NamedQuery(name = "YvsComParametreVente.findByAgence", query = "SELECT y FROM YvsComParametreVente y WHERE y.agence = :agence"),
-    @NamedQuery(name = "YvsComParametreVente.findNJMAxByAgence", query = "SELECT y.nbFicheMax FROM YvsComParametreVente y WHERE y.agence = :agence"),
-    @NamedQuery(name = "YvsComParametreVente.findById", query = "SELECT y FROM YvsComParametreVente y WHERE y.id = :id"),
-    @NamedQuery(name = "YvsComParametreVente.findByJourAnterieur", query = "SELECT y FROM YvsComParametreVente y WHERE y.jourAnterieur = :jourAnterieur"),
-    @NamedQuery(name = "YvsComParametreVente.findByComptabilisationAuto", query = "SELECT y FROM YvsComParametreVente y WHERE y.comptabilisationAuto = :comptabilisationAuto"),
-    @NamedQuery(name = "YvsComParametreVente.findByComptabilisationMode", query = "SELECT y FROM YvsComParametreVente y WHERE y.comptabilisationMode = :comptabilisationMode"),
-    @NamedQuery(name = "YvsComParametreVente.findByDateUpdate", query = "SELECT y FROM YvsComParametreVente y WHERE y.dateUpdate = :dateUpdate"),
-    @NamedQuery(name = "YvsComParametreVente.findByDateSave", query = "SELECT y FROM YvsComParametreVente y WHERE y.dateSave = :dateSave"),
-    @NamedQuery(name = "YvsComParametreVente.findByPaieWithoutValide", query = "SELECT y FROM YvsComParametreVente y WHERE y.paieWithoutValide = :paieWithoutValide"),
-    @NamedQuery(name = "YvsComParametreVente.findByNbFicheMax", query = "SELECT y FROM YvsComParametreVente y WHERE y.nbFicheMax = :nbFicheMax"),
-    @NamedQuery(name = "YvsComParametreVente.findByGenererFactureAuto", query = "SELECT y FROM YvsComParametreVente y WHERE y.genererFactureAuto = :genererFactureAuto"),
-    @NamedQuery(name = "YvsComParametreVente.findByModelFactureVente", query = "SELECT y FROM YvsComParametreVente y WHERE y.modelFactureVente = :modelFactureVente"),
-    @NamedQuery(name = "YvsComParametreVente.findBySellLowerPr", query = "SELECT y FROM YvsComParametreVente y WHERE y.sellLowerPr = :sellLowerPr")})
-@Data
+        @NamedQuery(name = "YvsComParametreVente.findAll", query = "SELECT y FROM YvsComParametreVente y"),
+        @NamedQuery(name = "YvsComParametreVente.findByAgence", query = "SELECT y FROM YvsComParametreVente y WHERE y.agence = :agence"),
+        @NamedQuery(name = "YvsComParametreVente.findNJMAxByAgence", query = "SELECT y.nbFicheMax FROM YvsComParametreVente y WHERE y.agence = :agence"),
+        @NamedQuery(name = "YvsComParametreVente.findById", query = "SELECT y FROM YvsComParametreVente y WHERE y.id = :id"),
+        @NamedQuery(name = "YvsComParametreVente.findByJourAnterieur", query = "SELECT y FROM YvsComParametreVente y WHERE y.jourAnterieur = :jourAnterieur"),
+        @NamedQuery(name = "YvsComParametreVente.findByComptabilisationAuto", query = "SELECT y FROM YvsComParametreVente y WHERE y.comptabilisationAuto = :comptabilisationAuto"),
+        @NamedQuery(name = "YvsComParametreVente.findByComptabilisationMode", query = "SELECT y FROM YvsComParametreVente y WHERE y.comptabilisationMode = :comptabilisationMode"),
+        @NamedQuery(name = "YvsComParametreVente.findByDateUpdate", query = "SELECT y FROM YvsComParametreVente y WHERE y.dateUpdate = :dateUpdate"),
+        @NamedQuery(name = "YvsComParametreVente.findByDateSave", query = "SELECT y FROM YvsComParametreVente y WHERE y.dateSave = :dateSave"),
+        @NamedQuery(name = "YvsComParametreVente.findByPaieWithoutValide", query = "SELECT y FROM YvsComParametreVente y WHERE y.paieWithoutValide = :paieWithoutValide"),
+        @NamedQuery(name = "YvsComParametreVente.findByNbFicheMax", query = "SELECT y FROM YvsComParametreVente y WHERE y.nbFicheMax = :nbFicheMax"),
+        @NamedQuery(name = "YvsComParametreVente.findByGenererFactureAuto", query = "SELECT y FROM YvsComParametreVente y WHERE y.genererFactureAuto = :genererFactureAuto"),
+        @NamedQuery(name = "YvsComParametreVente.findByModelFactureVente", query = "SELECT y FROM YvsComParametreVente y WHERE y.modelFactureVente = :modelFactureVente"),
+        @NamedQuery(name = "YvsComParametreVente.findBySellLowerPr", query = "SELECT y FROM YvsComParametreVente y WHERE y.sellLowerPr = :sellLowerPr")})
+@Getter
+@Setter
+@EqualsAndHashCode(of = {"id"})
+@NoArgsConstructor
 public class YvsComParametreVente implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -82,35 +87,13 @@ public class YvsComParametreVente implements Serializable {
     @ManyToOne
     private YvsUsersAgence author;
 
-    public YvsComParametreVente() {
-    }
-
     public YvsComParametreVente(Integer id) {
         this.id = id;
-    }
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof YvsComParametreVente)) {
-            return false;
-        }
-        YvsComParametreVente other = (YvsComParametreVente) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
     }
 
     @Override
     public String toString() {
         return "lymytz.dao.entity.YvsComParametreVente[ id=" + id + " ]";
     }
-    
+
 }

@@ -6,14 +6,18 @@ package com.lymytz.lymytzsell.dao.entity;
  * and open the template in the editor.
  */
 
-import java.io.Serializable;
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.Column;
 import javax.persistence.Transient;
+import java.io.Serializable;
 
 /**
- *
  * @author Lymytz Dowes
  */
+@Getter
+@Setter
 public abstract class YvsEntity implements Serializable {
 
     @Column(name = "execute_trigger")
@@ -23,30 +27,6 @@ public abstract class YvsEntity implements Serializable {
 
     @Transient
     protected long idDistant;
-
-    public long getIdDistant() {
-        return idDistant;
-    }
-
-    public void setIdDistant(long idDistant) {
-        this.idDistant = idDistant;
-    }
-
-    public String getAdresseServeur() {
-        return adresseServeur;
-    }
-
-    public void setAdresseServeur(String adresseServeur) {
-        this.adresseServeur = adresseServeur;
-    }
-
-    public String getExecuteTrigger() {
-        return executeTrigger;
-    }
-
-    public void setExecuteTrigger(String executeTrigger) {
-        this.executeTrigger = executeTrigger;
-    }
 
     public Long getId() {
         return 0L;

@@ -5,10 +5,11 @@
  */
 package com.lymytz.lymytzsell.dao.entity;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import com.lymytz.lymytzsell.service.utils.Constantes;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -27,10 +28,10 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlTransient;
-
-import com.lymytz.lymytzsell.service.utils.Constantes;
-import lombok.Getter;
-import lombok.Setter;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * @author LYMYTZ
@@ -80,6 +81,7 @@ import lombok.Setter;
         @NamedQuery(name = "YvsComDocVentes.findByNotes", query = "SELECT y FROM YvsComDocVentes y WHERE y.notes = :notes")})
 @Getter
 @Setter
+@EqualsAndHashCode(of = {"id"}, callSuper = false)
 public class YvsComDocVentes extends YvsEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -102,7 +104,6 @@ public class YvsComDocVentes extends YvsEntity implements Serializable {
     @Column(name = "heure_doc")
     @Temporal(TemporalType.TIME)
     private Date heureDoc;
-    // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Column(name = "montant_avance")
     private Double montantAvance;
     @Column(name = "date_save")
@@ -446,26 +447,6 @@ public class YvsComDocVentes extends YvsEntity implements Serializable {
     public boolean isFacture() {
         facture = (typeDoc != null && (typeDoc.equals("FV") || (typeDoc.equals("FAV") || (typeDoc.equals("FRV")))));
         return facture;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof YvsComDocVentes)) {
-            return false;
-        }
-        YvsComDocVentes other = (YvsComDocVentes) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
     }
 
     @Override

@@ -6,6 +6,11 @@
 
 package com.lymytz.lymytzsell.dao.entity;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -34,6 +39,10 @@ import javax.persistence.Table;
     @NamedQuery(name = "YvsSynchroServeurs.findByPort", query = "SELECT y FROM YvsSynchroServeurs y WHERE y.port = :port"),
     @NamedQuery(name = "YvsSynchroServeurs.findByUsers", query = "SELECT y FROM YvsSynchroServeurs y WHERE y.users = :users"),
     @NamedQuery(name = "YvsSynchroServeurs.findByPassword", query = "SELECT y FROM YvsSynchroServeurs y WHERE y.password = :password")})
+@Getter
+@Setter
+@EqualsAndHashCode(of = {"id"})
+@NoArgsConstructor
 public class YvsSynchroServeurs implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -58,103 +67,8 @@ public class YvsSynchroServeurs implements Serializable {
     @Column(name = "password")
     private String password;
 
-    public YvsSynchroServeurs() {
-    }
-
     public YvsSynchroServeurs(Long id) {
         this.id = id;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getNomServeur() {
-        return nomServeur;
-    }
-
-    public void setNomServeur(String nomServeur) {
-        this.nomServeur = nomServeur;
-    }
-
-    public String getAdresseIp() {
-        return adresseIp;
-    }
-
-    public void setAdresseIp(String adresseIp) {
-        this.adresseIp = adresseIp;
-    }
-
-    public Boolean getActif() {
-        return actif;
-    }
-
-    public void setActif(Boolean actif) {
-        this.actif = actif;
-    }
-
-    public Boolean getOnline() {
-        return online;
-    }
-
-    public void setOnline(Boolean online) {
-        this.online = online;
-    }
-
-    public String getDatabase() {
-        return database;
-    }
-
-    public void setDatabase(String database) {
-        this.database = database;
-    }
-
-    public Integer getPort() {
-        return port;
-    }
-
-    public void setPort(Integer port) {
-        this.port = port;
-    }
-
-    public String getUsers() {
-        return users;
-    }
-
-    public void setUsers(String users) {
-        this.users = users;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof YvsSynchroServeurs)) {
-            return false;
-        }
-        YvsSynchroServeurs other = (YvsSynchroServeurs) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
     }
 
     @Override

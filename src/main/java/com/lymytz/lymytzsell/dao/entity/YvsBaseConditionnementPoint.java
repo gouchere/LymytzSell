@@ -5,8 +5,11 @@
  */
 package com.lymytz.lymytzsell.dao.entity;
 
-import java.io.Serializable;
-import java.util.Date;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -20,24 +23,29 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import java.io.Serializable;
+import java.util.Date;
 
 /**
- *
  * @author LYMYTZ
  */
 @Entity
 @Table(name = "yvs_base_conditionnement_point")
 @NamedQueries({
-    @NamedQuery(name = "YvsBaseConditionnementPoint.findAll", query = "SELECT y FROM YvsBaseConditionnementPoint y"),
-    @NamedQuery(name = "YvsBaseConditionnementPoint.findById", query = "SELECT y FROM YvsBaseConditionnementPoint y WHERE y.id = :id"),
-    @NamedQuery(name = "YvsBaseConditionnementPoint.findByPuv", query = "SELECT y FROM YvsBaseConditionnementPoint y WHERE y.puv = :puv"),
-    @NamedQuery(name = "YvsBaseConditionnementPoint.findByPrixMin", query = "SELECT y FROM YvsBaseConditionnementPoint y WHERE y.prixMin = :prixMin"),
-    @NamedQuery(name = "YvsBaseConditionnementPoint.findByNaturePrixMin", query = "SELECT y FROM YvsBaseConditionnementPoint y WHERE y.naturePrixMin = :naturePrixMin"),
-    @NamedQuery(name = "YvsBaseConditionnementPoint.findByRemise", query = "SELECT y FROM YvsBaseConditionnementPoint y WHERE y.remise = :remise"),
-    @NamedQuery(name = "YvsBaseConditionnementPoint.findByNatureRemise", query = "SELECT y FROM YvsBaseConditionnementPoint y WHERE y.natureRemise = :natureRemise"),
-    @NamedQuery(name = "YvsBaseConditionnementPoint.findByDateUpdate", query = "SELECT y FROM YvsBaseConditionnementPoint y WHERE y.dateUpdate = :dateUpdate"),
-    @NamedQuery(name = "YvsBaseConditionnementPoint.findByDateSave", query = "SELECT y FROM YvsBaseConditionnementPoint y WHERE y.dateSave = :dateSave"),
-    @NamedQuery(name = "YvsBaseConditionnementPoint.findByAvanceCommance", query = "SELECT y FROM YvsBaseConditionnementPoint y WHERE y.avanceCommance = :avanceCommance")})
+        @NamedQuery(name = "YvsBaseConditionnementPoint.findAll", query = "SELECT y FROM YvsBaseConditionnementPoint y"),
+        @NamedQuery(name = "YvsBaseConditionnementPoint.findById", query = "SELECT y FROM YvsBaseConditionnementPoint y WHERE y.id = :id"),
+        @NamedQuery(name = "YvsBaseConditionnementPoint.findByPuv", query = "SELECT y FROM YvsBaseConditionnementPoint y WHERE y.puv = :puv"),
+        @NamedQuery(name = "YvsBaseConditionnementPoint.findByPrixMin", query = "SELECT y FROM YvsBaseConditionnementPoint y WHERE y.prixMin = :prixMin"),
+        @NamedQuery(name = "YvsBaseConditionnementPoint.findByNaturePrixMin", query = "SELECT y FROM YvsBaseConditionnementPoint y WHERE y.naturePrixMin = :naturePrixMin"),
+        @NamedQuery(name = "YvsBaseConditionnementPoint.findByRemise", query = "SELECT y FROM YvsBaseConditionnementPoint y WHERE y.remise = :remise"),
+        @NamedQuery(name = "YvsBaseConditionnementPoint.findByNatureRemise", query = "SELECT y FROM YvsBaseConditionnementPoint y WHERE y.natureRemise = :natureRemise"),
+        @NamedQuery(name = "YvsBaseConditionnementPoint.findByDateUpdate", query = "SELECT y FROM YvsBaseConditionnementPoint y WHERE y.dateUpdate = :dateUpdate"),
+        @NamedQuery(name = "YvsBaseConditionnementPoint.findByDateSave", query = "SELECT y FROM YvsBaseConditionnementPoint y WHERE y.dateSave = :dateSave"),
+        @NamedQuery(name = "YvsBaseConditionnementPoint.findByAvanceCommance", query = "SELECT y FROM YvsBaseConditionnementPoint y WHERE y.avanceCommance = :avanceCommance")})
+@Getter
+@Setter
+@EqualsAndHashCode(of = {"id"})
+@NoArgsConstructor
 public class YvsBaseConditionnementPoint implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -79,143 +87,8 @@ public class YvsBaseConditionnementPoint implements Serializable {
     @ManyToOne
     private YvsUsersAgence author;
 
-    public YvsBaseConditionnementPoint() {
-    }
-
     public YvsBaseConditionnementPoint(Long id) {
         this.id = id;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Double getPuv() {
-        return puv;
-    }
-
-    public void setPuv(Double puv) {
-        this.puv = puv;
-    }
-
-    public Double getPrixMin() {
-        return prixMin;
-    }
-
-    public void setPrixMin(Double prixMin) {
-        this.prixMin = prixMin;
-    }
-
-    public String getNaturePrixMin() {
-        return naturePrixMin;
-    }
-
-    public void setNaturePrixMin(String naturePrixMin) {
-        this.naturePrixMin = naturePrixMin;
-    }
-
-    public Double getRemise() {
-        return remise;
-    }
-
-    public void setRemise(Double remise) {
-        this.remise = remise;
-    }
-
-    public String getNatureRemise() {
-        return natureRemise;
-    }
-
-    public void setNatureRemise(String natureRemise) {
-        this.natureRemise = natureRemise;
-    }
-
-    public Date getDateUpdate() {
-        return dateUpdate;
-    }
-
-    public void setDateUpdate(Date dateUpdate) {
-        this.dateUpdate = dateUpdate;
-    }
-
-    public Date getDateSave() {
-        return dateSave;
-    }
-
-    public void setDateSave(Date dateSave) {
-        this.dateSave = dateSave;
-    }
-
-    public Double getAvanceCommance() {
-        return avanceCommance;
-    }
-
-    public void setAvanceCommance(Double avanceCommance) {
-        this.avanceCommance = avanceCommance;
-    }
-
-    public YvsBaseArticlePoint getArticle() {
-        return article;
-    }
-
-    public void setArticle(YvsBaseArticlePoint article) {
-        this.article = article;
-    }
-
-    public YvsBaseConditionnement getConditionnement() {
-        return conditionnement;
-    }
-
-    public void setConditionnement(YvsBaseConditionnement conditionnement) {
-        this.conditionnement = conditionnement;
-    }
-
-    public YvsUsersAgence getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(YvsUsersAgence author) {
-        this.author = author;
-    }
-
-    public Boolean getActif() {
-        return actif != null ? actif : false;
-    }
-
-    public void setActif(Boolean actif) {
-        this.actif = actif;
-    }
-
-    public Boolean isChangePrix() {
-        return changePrix != null ? changePrix : false;
-    }
-
-    public void setChangePrix(Boolean changePrix) {
-        this.changePrix = changePrix;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof YvsBaseConditionnementPoint)) {
-            return false;
-        }
-        YvsBaseConditionnementPoint other = (YvsBaseConditionnementPoint) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
     }
 
     @Override

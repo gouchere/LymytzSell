@@ -5,8 +5,10 @@
  */
 package com.lymytz.lymytzsell.dao.entity;
 
-import java.io.Serializable;
-import java.util.Date;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -20,23 +22,27 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import java.io.Serializable;
+import java.util.Date;
 
 /**
- *
  * @author Admin
  */
 @Entity
 @Table(name = "yvs_base_classes_stat")
 @NamedQueries({
-    @NamedQuery(name = "YvsBaseClassesStat.findAll", query = "SELECT y FROM YvsBaseClassesStat y"),
-    @NamedQuery(name = "YvsBaseClassesStat.findById", query = "SELECT y FROM YvsBaseClassesStat y WHERE y.id = :id"),
-    @NamedQuery(name = "YvsBaseClassesStat.findByCodeRef", query = "SELECT y FROM YvsBaseClassesStat y WHERE y.codeRef = :codeRef"),
-    @NamedQuery(name = "YvsBaseClassesStat.findByDesignation", query = "SELECT y FROM YvsBaseClassesStat y WHERE y.designation = :designation"),
-    @NamedQuery(name = "YvsBaseClassesStat.findByActif", query = "SELECT y FROM YvsBaseClassesStat y WHERE y.actif = :actif"),
-    @NamedQuery(name = "YvsBaseClassesStat.findByVisibleSynthese", query = "SELECT y FROM YvsBaseClassesStat y WHERE y.visibleSynthese = :visibleSynthese"),
-    @NamedQuery(name = "YvsBaseClassesStat.findByVisibleJournal", query = "SELECT y FROM YvsBaseClassesStat y WHERE y.visibleJournal = :visibleJournal"),
-    @NamedQuery(name = "YvsBaseClassesStat.findByDateSave", query = "SELECT y FROM YvsBaseClassesStat y WHERE y.dateSave = :dateSave"),
-    @NamedQuery(name = "YvsBaseClassesStat.findByDateUpdate", query = "SELECT y FROM YvsBaseClassesStat y WHERE y.dateUpdate = :dateUpdate")})
+        @NamedQuery(name = "YvsBaseClassesStat.findAll", query = "SELECT y FROM YvsBaseClassesStat y"),
+        @NamedQuery(name = "YvsBaseClassesStat.findById", query = "SELECT y FROM YvsBaseClassesStat y WHERE y.id = :id"),
+        @NamedQuery(name = "YvsBaseClassesStat.findByCodeRef", query = "SELECT y FROM YvsBaseClassesStat y WHERE y.codeRef = :codeRef"),
+        @NamedQuery(name = "YvsBaseClassesStat.findByDesignation", query = "SELECT y FROM YvsBaseClassesStat y WHERE y.designation = :designation"),
+        @NamedQuery(name = "YvsBaseClassesStat.findByActif", query = "SELECT y FROM YvsBaseClassesStat y WHERE y.actif = :actif"),
+        @NamedQuery(name = "YvsBaseClassesStat.findByVisibleSynthese", query = "SELECT y FROM YvsBaseClassesStat y WHERE y.visibleSynthese = :visibleSynthese"),
+        @NamedQuery(name = "YvsBaseClassesStat.findByVisibleJournal", query = "SELECT y FROM YvsBaseClassesStat y WHERE y.visibleJournal = :visibleJournal"),
+        @NamedQuery(name = "YvsBaseClassesStat.findByDateSave", query = "SELECT y FROM YvsBaseClassesStat y WHERE y.dateSave = :dateSave"),
+        @NamedQuery(name = "YvsBaseClassesStat.findByDateUpdate", query = "SELECT y FROM YvsBaseClassesStat y WHERE y.dateUpdate = :dateUpdate")})
+@Getter
+@Setter
+@EqualsAndHashCode(of = {"id"})
 public class YvsBaseClassesStat implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -76,114 +82,6 @@ public class YvsBaseClassesStat implements Serializable {
 
     public YvsBaseClassesStat(Long id) {
         this.id = id;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getCodeRef() {
-        return codeRef;
-    }
-
-    public void setCodeRef(String codeRef) {
-        this.codeRef = codeRef;
-    }
-
-    public String getDesignation() {
-        return designation;
-    }
-
-    public void setDesignation(String designation) {
-        this.designation = designation;
-    }
-
-    public Boolean getActif() {
-        return actif!=null?actif:false;
-    }
-
-    public void setActif(Boolean actif) {
-        this.actif = actif;
-    }
-
-    public Boolean getVisibleSynthese() {
-        return visibleSynthese!=null?visibleSynthese:false;
-    }
-
-    public void setVisibleSynthese(Boolean visibleSynthese) {
-        this.visibleSynthese = visibleSynthese;
-    }
-
-    public Boolean getVisibleJournal() {
-        return visibleJournal!=null?visibleJournal:false;
-    }
-
-    public void setVisibleJournal(Boolean visibleJournal) {
-        this.visibleJournal = visibleJournal;
-    }
-
-    public Date getDateSave() {
-        return dateSave;
-    }
-
-    public void setDateSave(Date dateSave) {
-        this.dateSave = dateSave;
-    }
-
-    public Date getDateUpdate() {
-        return dateUpdate;
-    }
-
-    public void setDateUpdate(Date dateUpdate) {
-        this.dateUpdate = dateUpdate;
-    }
-
-    public YvsBaseClassesStat getParent() {
-        return parent;
-    }
-
-    public void setParent(YvsBaseClassesStat parent) {
-        this.parent = parent;
-    }
-
-    public YvsSocietes getSociete() {
-        return societe;
-    }
-
-    public void setSociete(YvsSocietes societe) {
-        this.societe = societe;
-    }
-
-    public YvsUsersAgence getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(YvsUsersAgence author) {
-        this.author = author;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof YvsBaseClassesStat)) {
-            return false;
-        }
-        YvsBaseClassesStat other = (YvsBaseClassesStat) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
     }
 
     @Override

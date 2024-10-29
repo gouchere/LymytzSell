@@ -5,6 +5,11 @@
  */
 package com.lymytz.lymytzsell.dao.entity;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Basic;
@@ -34,6 +39,10 @@ import javax.persistence.TemporalType;
     @NamedQuery(name = "YvsBaseElementReference.findByDateSave", query = "SELECT y FROM YvsBaseElementReference y WHERE y.dateSave = :dateSave"),
     @NamedQuery(name = "YvsBaseElementReference.findByModelCourant", query = "SELECT y FROM YvsBaseElementReference y WHERE y.modelCourant = :modelCourant"),
     @NamedQuery(name = "YvsBaseElementReference.findByDefaultPrefix", query = "SELECT y FROM YvsBaseElementReference y WHERE y.defaultPrefix = :defaultPrefix")})
+@Getter
+@Setter
+@EqualsAndHashCode(of = {"id"})
+@NoArgsConstructor
 public class YvsBaseElementReference implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -57,87 +66,8 @@ public class YvsBaseElementReference implements Serializable {
     @Column(name = "default_prefix")
     private String defaultPrefix;
 
-    public YvsBaseElementReference() {
-    }
-
     public YvsBaseElementReference(Long id) {
         this.id = id;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getDesignation() {
-        return designation;
-    }
-
-    public void setDesignation(String designation) {
-        this.designation = designation;
-    }
-
-    public String getModule() {
-        return module;
-    }
-
-    public void setModule(String module) {
-        this.module = module;
-    }
-
-    public Date getDateUpdate() {
-        return dateUpdate;
-    }
-
-    public void setDateUpdate(Date dateUpdate) {
-        this.dateUpdate = dateUpdate;
-    }
-
-    public Date getDateSave() {
-        return dateSave;
-    }
-
-    public void setDateSave(Date dateSave) {
-        this.dateSave = dateSave;
-    }
-
-    public Boolean getModelCourant() {
-        return modelCourant;
-    }
-
-    public void setModelCourant(Boolean modelCourant) {
-        this.modelCourant = modelCourant;
-    }
-
-    public String getDefaultPrefix() {
-        return defaultPrefix;
-    }
-
-    public void setDefaultPrefix(String defaultPrefix) {
-        this.defaultPrefix = defaultPrefix;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof YvsBaseElementReference)) {
-            return false;
-        }
-        YvsBaseElementReference other = (YvsBaseElementReference) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
     }
 
     @Override
