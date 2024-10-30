@@ -5,27 +5,12 @@
  */
 package com.lymytz.lymytzsell.service.utils;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.net.SocketException;
-import java.net.UnknownHostException;
-import java.time.LocalDate;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import com.lymytz.lymytzsell.LymytzSell;
-import javafx.event.EventHandler;
+import com.lymytz.lymytzsell.service.application.ManagedApplication;
+import com.lymytz.lymytzsell.service.start.StartController;
+import com.lymytz.lymytzsell.service.utils.log.LogFiles;
+import com.lymytz.lymytzsell.view.LocalLoader;
+import com.lymytz.lymytzsell.view.main.HomeCaisseController;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
@@ -48,12 +33,22 @@ import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
 
 import javax.print.attribute.standard.Severity;
-
-import com.lymytz.lymytzsell.service.application.ManagedApplication;
-import com.lymytz.lymytzsell.service.start.StartController;
-import com.lymytz.lymytzsell.service.utils.log.LogFiles;
-import com.lymytz.lymytzsell.view.LocalLoader;
-import com.lymytz.lymytzsell.view.main.HomeCaisseController;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.net.UnknownHostException;
+import java.util.Date;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author LENOVO
@@ -110,35 +105,10 @@ public class LymytzService {
         dlg.setTitle("Success !");
         dlg.setHeaderText("Success !");
         dlg.setContentText("");
-        Stage stage = (Stage) dlg.getDialogPane().getScene().getWindow();
+        dlg.getDialogPane().getScene().getWindow();
         dlg.showAndWait();
     }
 
-    //    public static boolean autoriserRessource(String ressource) {
-//        Requete rq = new Requete();
-//        YvsNiveauAcces niveau = null;
-//        for (YvsNiveauUsers nu : UtilsProject.currentUser.getUsers().getNiveauxAcces()) {
-//            if (nu.getIdNiveau().getSociete().equals(UtilsProject.currentSociete)) {
-//                niveau = nu.getIdNiveau();
-//                break;
-//            }
-//        }
-//        Boolean re = (Boolean) rq.loadObjectByNameQueries("YvsAutorisationRessourcesPage.findAccesRessource", new String[]{"reference", "niveau"}, new Object[]{ressource, niveau});
-//        return re != null ? re : false;
-//    }
-//    public static boolean autoriserPage(String ressource) {
-//        Requete rq = new Requete();
-//        YvsNiveauAcces niveau = null;
-//        for (YvsNiveauUsers nu : UtilsProject.currentUser.getUsers().getNiveauxAcces()) {
-//            if (nu.getIdNiveau().getSociete().equals(UtilsProject.currentSociete)) {
-//                niveau = nu.getIdNiveau();
-//                break;
-//            }
-//        }
-////        Boolean re = (Boolean) rq.loadObjectByNameQueries("YvsAutorisationPageModule.findAccesRessource", new String[]{"reference", "niveau"}, new Object[]{ressource, niveau});
-//        YvsAutorisationPageModule re = (YvsAutorisationPageModule) rq.loadObjectByNameQueries("YvsAutorisationPageModule.findAccesRessource", new String[]{"reference", "niveau"}, new Object[]{ressource, niveau});
-//        return re != null ? re.getAcces() : false;
-//    }
     public static void openExceptionDialog(String message, String title, String headersg, Alert.AlertType type, Exception ex) {
         Alert dlg = new Alert(type);
         dlg.setTitle(title);
@@ -197,7 +167,7 @@ public class LymytzService {
                 stage.close();
             });
             if (home != null) {
-                home.stageCreateFacture = stage;
+                home.setStageCreateFacture(stage);
             }
             return load.getController();
 
@@ -207,13 +177,11 @@ public class LymytzService {
         return null;
     }
 
-    public static CustomWindow openWindowNew(String page, String titlePage, Parent layout, Double width, Double height, boolean resize) {
+    public static <T> CustomWindow<T> openWindowNew(String page, String titlePage, Parent layout, Double width, Double height, boolean resize) {
         try {
-            CustomWindow re = new CustomWindow();
+            CustomWindow<T> customWindow = new CustomWindow<>();
             FXMLLoader load = new FXMLLoader(LocalLoader.class.getResource(page));
             layout = load.load();
-            Screen sc = Screen.getPrimary();
-            Rectangle2D bounds = sc.getVisualBounds();
             Scene scene = new Scene(layout, width, height);
             Stage stage = new Stage();
             stage.setScene(scene);
@@ -223,31 +191,27 @@ public class LymytzService {
             stage.initOwner(UtilsProject.primaryStage);
             stage.setResizable(resize);
             stage.show();
-            re.setController(load.getController());
-            re.setStage(stage);
-            scene.setOnKeyReleased(new EventHandler<KeyEvent>() {
-
-                @Override
-                public void handle(KeyEvent event) {
-                    if (event.getCode().equals(KeyCode.ESCAPE)) {
-                        stage.close();
-                    }
+            customWindow.setController(load.getController());
+            customWindow.setStage(stage);
+            scene.setOnKeyReleased(event -> {
+                if (event.getCode().equals(KeyCode.ESCAPE)) {
+                    stage.close();
                 }
             });
             stage.setOnCloseRequest((WindowEvent event) -> {
                 try {
-                    Method m = re.getController().getClass().getMethod("freeMemoryController");
-                    m.invoke(re.getController());
+                    Method m = customWindow.getController().getClass().getMethod("freeMemoryController");
+                    m.invoke(customWindow.getController());
                 } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException |
                          InvocationTargetException ex) {
                     Logger.getLogger(LymytzService.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 stage.close();
             });
-            return re;
+            return customWindow;
 
         } catch (IOException ex) {
-            Logger.getLogger(ManagedApplication.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(LymytzService.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
     }
@@ -258,27 +222,6 @@ public class LymytzService {
 
     public static <T> T openWindow(String page, String titlePage, Parent layout, Double width, Double height, boolean resize) {
         return openWindow(page, titlePage, layout, width, height, resize, null);
-    }
-
-    public static Date onlyDate(Date d) {
-        Calendar c = Calendar.getInstance();
-        c.set(Calendar.HOUR, 0);
-        c.set(Calendar.MINUTE, 0);
-        c.set(Calendar.SECOND, 0);
-        c.set(Calendar.MILLISECOND, 0);
-        return c.getTime();
-    }
-
-    public static Date giveDate(LocalDate d) {
-        Calendar c = Calendar.getInstance();
-        c.set(Calendar.HOUR, 0);
-        c.set(Calendar.MINUTE, 0);
-        c.set(Calendar.SECOND, 0);
-        c.set(Calendar.MILLISECOND, 0);
-        c.set(Calendar.DAY_OF_MONTH, d.getDayOfMonth());
-        c.set(Calendar.MONTH, d.getMonthValue() - 1);
-        c.set(Calendar.YEAR, d.getYear());
-        return c.getTime();
     }
 
     public static FileInputStream getFileInputStream() {
@@ -453,13 +396,12 @@ public class LymytzService {
     }
 
     public static void openApps(Stage primary) {
-        boolean openParam = false;
         UtilsProject.primaryStage = primary;
         //Test l'existance des info du fichier de paramétrage
         try {
             FXMLLoader load = new FXMLLoader(LymytzService.class.getResource("/pages/start/form_start.fxml"));
             Pane root = load.load();
-            Screen sc = Screen.getPrimary();
+            Screen.getPrimary();
             Scene scene = new Scene(root, 500, 280);
             Stage stage = new Stage();
             stage.setScene(scene);

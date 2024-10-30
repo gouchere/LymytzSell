@@ -7,6 +7,7 @@ package com.lymytz.lymytzsell.service.application.service;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.lymytz.lymytzsell.business.helpers.KeyBoardAction;
 import com.lymytz.lymytzsell.service.application.composant.Onglets;
 import com.lymytz.lymytzsell.service.application.synchro.UtilEntityBase;
 import com.lymytz.lymytzsell.service.application.synchro.export.UtilExport;
@@ -202,8 +203,8 @@ public class ServiceCreateFacture implements Runnable {
                         page.BTN_LIVRER.setVisible(getFacture().getStatutLivre().equals(Constantes.ETAT_LIVRE));
                         page.afterCreateFacture();
                         page.TEXT_FIND.requestFocus();
-                        if (page.stageCreateFacture != null) {
-                            page.stageCreateFacture.close();
+                        if (page.getStageCreateFacture() != null) {
+                            page.getStageCreateFacture().close();
                         }
                     }
                 });
@@ -308,7 +309,7 @@ public class ServiceCreateFacture implements Runnable {
     private boolean controleSaveFacture(YvsComDocVentes bean) {
         if (controleSaveReglement(bean)) {
             //1. la fature dois être ditable, non encore livré, non encore soldé
-            if (bean.getStatut().equals(Constantes.ETAT_VALIDE) || bean.getStatut().equals(Constantes.ETAT_VALIDE)) {
+            if (Constantes.ETAT_VALIDE.equals(bean.getStatut())) {
                 LymytzService.openAlertDialog("Impossible de modifier le statut de la facture !", "Erreur ", "Cette facture est déjà validé", Alert.AlertType.ERROR);
                 return false;
             }
@@ -329,7 +330,7 @@ public class ServiceCreateFacture implements Runnable {
         if (fac != null) {
             if (controleSaveFacture(fac.getFacture())) { //1. Enregistrer le contenu
                 if (fac.getFacture().getTypeDoc().equals(Constantes.TYPE_FV)) {
-                    page.openDlgCalculatrice(fac, "F", "VALIDER");
+                    page.openDlgCalculatrice(fac, "F", KeyBoardAction.VALIDER);
                 } else {
                     //cas de la commande
                     //On vérifie avant tout que la commande soit réglé
@@ -337,7 +338,7 @@ public class ServiceCreateFacture implements Runnable {
                         if (fac.getFacture().getId() > 0) {
                             saveOrGeneratedPaiement_(fac);
                         } else {
-                            page.openDlgCalculatrice(fac, "F", "VALIDER");
+                            page.openDlgCalculatrice(fac, "F", KeyBoardAction.VALIDER);
                         }
                     } else {
                         //Appelle le service de validation des commandes
@@ -373,7 +374,7 @@ public class ServiceCreateFacture implements Runnable {
 
     public void saveOrGeneratedPaiement_(Onglets onglet) {
         if (controleSaveReglement(onglet.getFacture())) {
-            page.openDlgCalculatrice(onglet, onglet.getFacture().getTypeDoc().equals(Constantes.TYPE_BCV) ? "A" : "F", "REGLER");
+            page.openDlgCalculatrice(onglet, onglet.getFacture().getTypeDoc().equals(Constantes.TYPE_BCV) ? "A" : "F", KeyBoardAction.REGLER);
         }
     }
     /*Cette methode vérifie que les élément de la commande ont tous été synchronisé avant*/

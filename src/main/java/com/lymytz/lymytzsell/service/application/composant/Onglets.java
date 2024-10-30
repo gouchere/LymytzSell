@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import com.lymytz.lymytzsell.business.helpers.KeyBoardAction;
 import javafx.event.Event;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -374,7 +375,6 @@ public final class Onglets extends Tab {
             page.LAB_TTC.setText(Constantes.nbf.format(ttc));
             page.LAB_T_REM.setText(Constantes.nbf.format(remise));
             page.LAB_T_RIST.setText(Constantes.nbf.format(ristourne));
-//            LAB_T_TAXE.setText(Constantes.nbF.format(taxe));            
             page.LAB_T_AVANCE.setText(Constantes.nbf.format(getFacture().getMontantAvance()));
             page.LAB_NET_A_PAYER.setText(Constantes.nbf.format(getFacture().getMontantResteApayer()));
             page.ECRAN.setText(Constantes.nbf.format(net));
@@ -429,12 +429,12 @@ public final class Onglets extends Tab {
                 //ouvre la calculatrice
                 if (event.getClickCount() > 1 && !qte) {
                     if (Boolean.TRUE.equals(content.getConditionnement().getArticle().getChangePrix())) {
-                        page.openDlgCalculatrice(onglet, "F", "SET_PRIX", content);
+                        page.openDlgCalculatrice(onglet, "F", KeyBoardAction.SET_PRIX, content);
                     } else {
                         LymytzService.openAlertDialog("Vous ne pouvez modifier le prix de cet article", "Modification du prix Impossible", "Impossible de modifier le prix de cet article", Alert.AlertType.ERROR);
                     }
                 } else {
-                    page.openDlgCalculatrice(onglet, "F", (qte ? "SET_QTE" : "SET_PRIX"), content);
+                    page.openDlgCalculatrice(onglet, "F", (qte ? KeyBoardAction.SET_QTE : KeyBoardAction.SET_PRIX), content);
                 }
             }
         });

@@ -26,6 +26,7 @@ import java.io.Serializable;
 import java.net.ConnectException;
 import java.net.URI;
 import java.util.HashSet;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -37,7 +38,7 @@ import java.util.logging.Logger;
 public class WsSynchro<T extends Serializable> {
 
     public static boolean runningOut = false; // est à true lorsque la synchronisation est en cours
-    public static boolean runningIn = false; //pour controler la synchronisation entrante
+    public static final AtomicBoolean runningIn = new AtomicBoolean(false); //pour controler la synchronisation entrante
     public static boolean dialogOpen = false;
     public static Long countI = -1L, countU = -1L, countD = -1L;
     public static Long countOutI = 0L, countOutU = 0L, countOutD = 0L;

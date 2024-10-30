@@ -7,6 +7,7 @@ package com.lymytz.lymytzsell.service.application.composant;
 
 import com.lymytz.lymytzsell.business.helpers.EtatMontantPayer;
 import com.lymytz.lymytzsell.business.helpers.HelperFactureVente;
+import com.lymytz.lymytzsell.business.helpers.KeyBoardAction;
 import com.lymytz.lymytzsell.service.application.Controller;
 import com.lymytz.lymytzsell.service.application.ManagedApplication;
 import javafx.application.Platform;
@@ -51,10 +52,7 @@ public class ClaviersController extends ManagedApplication implements Initializa
     private boolean avance = false;
     double montantAvance;
     private String sourceOfAction;  //Indique l'action à la source de l'ouverture du claviers (F=facture à valider, A=avance à recevoir)
-    private String action;  //Indique l'action à réaliser à partir du clavier:
-    /**
-     * SET_QTE, SET_PRIX, VALIDER,REGLER
-     */
+    private KeyBoardAction action;  //Indique l'action à réaliser à partir du clavier:
 
     @FXML
     private Label LAB_AFFICH;
@@ -85,7 +83,7 @@ public class ClaviersController extends ManagedApplication implements Initializa
         // code d'initialisation de la vue si nécessaire
     }
 
-    public void initController(HomeCaisseController page, Onglets fac, Stage fen, String source, String action, ContentPanier line) {
+    public void initController(HomeCaisseController page, Onglets fac, Stage fen, String source, KeyBoardAction action, ContentPanier line) {
         this.page = page;
         this.selectOnglet = fac;
         this.fenetre = fen;
@@ -98,8 +96,7 @@ public class ClaviersController extends ManagedApplication implements Initializa
                 this.BTN_PRINT_ONLY.setVisible(false);
             }
             switch (action) {
-                case "VALIDER":
-                case "REGLER":
+                case VALIDER, REGLER:
                     if (fac.getFacture().getTypeDoc().equals(Constantes.TYPE_BCV)) {
                         TITRE_CLAVIER.setText("Entrer le montant d'avance de la commande !");
                         LAB_TITRE_REST.setText("Reste à payer");
@@ -111,40 +108,19 @@ public class ClaviersController extends ManagedApplication implements Initializa
                     }
                     LAB_TITRE_REST.setText("A restituer");
                     break;
-                case "SET_QTE":
+                case SET_QTE:
                     TITRE_CLAVIER.setText("Entrer la quantité !");
                     LAB_TITRE_REST.setText("");
                     avance = false;
                     break;
-                case "SET_PRIX":
+                case SET_PRIX:
                     TITRE_CLAVIER.setText("Entrer le prix !");
                     LAB_TITRE_REST.setText("");
                     break;
-                default:
-                    throw new IllegalStateException("Unexpected value: " + action);
             }
 
         }
     }
-
-  /*  public void initController(HomeCaisseController page, Onglets fac, Stage fen, String source, String action) {
-        initController(page, fac, fen, source, action, null);
-    }
-
-    public void iManagedApplicationer(Onglets fac, Stage fen, String source) {
-        this.selectOnglet = fac;
-        this.fenetre = fen;
-        this.source = source;
-        if (fac != null ? fac.getFacture() != null : false) {
-            if (fac.getFacture().getTypeDoc().equals(Constantes.TYPE_BCV)) {
-                TITRE_CLAVIER.setText("Entrer le montant d'avance de la commande !");
-                avance = true;
-            } else {
-                TITRE_CLAVIER.setText("Entrer le montant reçu du client");
-                avance = false;
-            }
-        }
-    }*/
 
     @FXML
     private void clearEcran(ActionEvent event) {
@@ -155,7 +131,7 @@ public class ClaviersController extends ManagedApplication implements Initializa
     @FXML
     private void effacerEcran(ActionEvent event) {
         if (LAB_AFFICH.getText() != null && (!LAB_AFFICH.getText().isEmpty())) {
-                LAB_AFFICH.setText(LAB_AFFICH.getText().substring(0, LAB_AFFICH.getText().length() - 1));
+            LAB_AFFICH.setText(LAB_AFFICH.getText().substring(0, LAB_AFFICH.getText().length() - 1));
 
         }
         displayReste();
@@ -178,35 +154,17 @@ public class ClaviersController extends ManagedApplication implements Initializa
     private void saisieOnClavier(KeyEvent event) {
         if (event.getCode().isDigitKey()) {
             for (Node node : PAN_BUTONS.getChildren()) {
-                if (node instanceof Button) {
-                    if (event.getText().equals(((Button) node).getText())) {
-                        Button b = (Button) node;
-                        b.fire();
-                        Platform.runLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                b.requestFocus();
-                            }
-                        });
-                    }
+                if (node instanceof Button button && (event.getText().equals(button.getText()))) {
+                    button.fire();
+                    Platform.runLater(button::requestFocus);
                 }
             }
         } else if (event.getCode().equals(KeyCode.ENTER) || event.getCode().equals(KeyCode.ACCEPT)) {
             BTN_VALID.fire();
-            Platform.runLater(new Runnable() {
-                @Override
-                public void run() {
-                    BTN_VALID.requestFocus();
-                }
-            });
+            Platform.runLater(() -> BTN_VALID.requestFocus());
         } else if (event.getCode().equals(KeyCode.BACK_SPACE) || event.getCode().equals(KeyCode.BACK_SLASH)) {
             BTN_BACK.fire();
-            Platform.runLater(new Runnable() {
-                @Override
-                public void run() {
-                    BTN_BACK.requestFocus();
-                }
-            });
+            Platform.runLater(() -> BTN_BACK.requestFocus());
         }
     }
 
@@ -216,7 +174,7 @@ public class ClaviersController extends ManagedApplication implements Initializa
         if (avance) {
             LAB_REST.setText(Constantes.nbf.format((selectOnglet.getNetAPayer() - recu)));
         } else {
-            if (action.equals("VALIDER") || action.equals("REGLER")) {
+            if (action.equals(KeyBoardAction.VALIDER) || action.equals(KeyBoardAction.REGLER)) {
                 montantAvance = (selectOnglet.getFacture().getTypeDoc().equals(TYPE_FV)) ? selectOnglet.getFacture().getMontantResteApayer() : montantAvance;
                 LAB_REST.setText(Constantes.nbf.format((recu - montantAvance)));
             }
@@ -245,7 +203,7 @@ public class ClaviersController extends ManagedApplication implements Initializa
             }
         } else {
             switch (this.action) {
-                case "VALIDER", "REGLER":
+                case REGLER, VALIDER:
                     page.LAB_T_AVANCE.setText(Constantes.nbf.format(montantAvance));
                     page.LAB_NET_A_PAYER.setText(Constantes.nbf.format(selectOnglet.getNetAPayer() - montantAvance));
                     if (sourceOfAction.equals("F") && TYPE_FV.equals(selectOnglet.getFacture().getTypeDoc()) && selectOnglet.getNetAPayer() > getMontantAffiche()) {
@@ -255,10 +213,10 @@ public class ClaviersController extends ManagedApplication implements Initializa
                     switch (sourceOfAction) {
                         case "F":
                             //lance la validation dans un thread
-                            var statutMontantPaye = isValideMontantPaye(selectOnglet.getFacture().getTypeDoc(), montantAvance ,selectOnglet.getNetAPayer());
+                            var statutMontantPaye = isValideMontantPaye(selectOnglet.getFacture().getTypeDoc(), montantAvance, selectOnglet.getNetAPayer());
                             if (EtatMontantPayer.OK.equals(statutMontantPaye)) {
                                 //todo: envisager une action si l'enregistrement ne se termine pas.
-                                new Thread(() -> page.confirmValideFacture(selectOnglet, montantAvance, getMontantAffiche(), sourceOfAction)).start();
+                                new Thread(() -> page.confirmValideFacture(selectOnglet, montantAvance, getMontantAffiche())).start();
                                 printTicketFacture(selectOnglet.getFacture(), selectOnglet.getMontantRecu());
                                 page.closeOngletFacture(selectOnglet);
                             } else {
@@ -280,7 +238,7 @@ public class ClaviersController extends ManagedApplication implements Initializa
                             throw new IllegalStateException("Unexpected value: " + sourceOfAction);
                     }
                     break;
-                case "SET_QTE":
+                case SET_QTE:
                     if (this.lineContent != null) {
                         //recupère la valseur affiché.
                         this.lineContent.setQuantite(getMontantAffiche());
@@ -292,17 +250,15 @@ public class ClaviersController extends ManagedApplication implements Initializa
                     }
                     fenetre.close();
                     break;
-                case "SET_PRIX":
-                    if (this.lineContent != null) {
-                        //Modifie le prix seulement si l'article l'autorise
-                        if (lineContent.getConditionnement().getArticle().getChangePrix()) {
-                            //recupère la valseur affiché.
-                            this.lineContent.setPrix(getMontantAffiche());
-                            //Reévalue les prix
-                            lineContent = selectOnglet.evaluePrix(lineContent);
-                            //exécute la méthode de modif de la vue
-                            selectOnglet.addLineContent(lineContent, true);
-                        }
+                case SET_PRIX:
+                    if (this.lineContent != null && (Boolean.TRUE.equals(lineContent.getConditionnement().getArticle().getChangePrix()))) {
+                        //recupère la valseur affiché.
+                        this.lineContent.setPrix(getMontantAffiche());
+                        //Reévalue les prix
+                        lineContent = selectOnglet.evaluePrix(lineContent);
+                        //exécute la méthode de modif de la vue
+                        selectOnglet.addLineContent(lineContent, true);
+
                     }
                     fenetre.close();
                     break;

@@ -9,6 +9,7 @@
 - [ ] La vue Préférence a besoin d'être retouché
 - [ ] La vue d'import peut être visible même si on est pas en mode synchro
 - [ ] Construire un installeur
+- [ ] Afficher des notifications pour les factures non livré
 
 # Approche optimiste de l'enregistrement des factures:
 Il s'agit de lancer l'impression du ticket en parallèle de l'enregistrement de la facture

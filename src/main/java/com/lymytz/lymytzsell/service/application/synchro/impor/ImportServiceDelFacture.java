@@ -154,7 +154,7 @@ public class ImportServiceDelFacture extends Task<Boolean> {
                 re.add(row);
             }
         } catch (Exception ex) {
-            WsSynchro.runningIn = false;
+            WsSynchro.runningIn.set(false);
         }
         return re;
     }
@@ -263,7 +263,7 @@ public class ImportServiceDelFacture extends Task<Boolean> {
                 Rdao.insertIntoDataSynchro(remoteIdListen, remoteIdLocal, UtilsProject.ID_SERVEUR);
             }
         } catch (Exception ex) {
-            WsSynchro.runningIn = false;
+            WsSynchro.runningIn.set(false);
         }
         return true;
     }

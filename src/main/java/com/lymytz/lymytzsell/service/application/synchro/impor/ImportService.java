@@ -104,7 +104,7 @@ public class ImportService extends Task<Boolean> {
                 insertDataIntoLocalDB(table, null, true);
             }
         }
-        WsSynchro.runningIn = false;  // fin d'exécution d'une ligne
+        WsSynchro.runningIn.set(false);  // fin d'exécution d'une ligne
         return true;
     }
 
@@ -163,7 +163,7 @@ public class ImportService extends Task<Boolean> {
                 re.add(row);
             }
         } catch (Exception ex) {
-            WsSynchro.runningIn = false;
+            WsSynchro.runningIn.set(false);
         }
         return re;
     }
@@ -318,7 +318,7 @@ public class ImportService extends Task<Boolean> {
                 }
             }
         } catch (Exception ex) {
-            WsSynchro.runningIn = false;
+            WsSynchro.runningIn.set(false);
         }
         return true;
     }

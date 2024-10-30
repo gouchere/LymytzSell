@@ -6,15 +6,19 @@
 
 package com.lymytz.lymytzsell.service.utils;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
 /**
  *
  * @author LYMYTZ
  */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ConsUtil {
     
-    public static String SOURCE_LOG_FILE_EXCEPTION="exception.log";
-    public static String SOURCE_LOG_FILE_SYNC="synchronisation.log";
-    public static String SOURCE_LOG_FILE_USER="appslog.log";
+    public static final String SOURCE_LOG_FILE_EXCEPTION="exception.log";
+    public static final String SOURCE_LOG_FILE_SYNC="synchronisation.log";
+    public static final String SOURCE_LOG_FILE_USER="appslog.log";
     
     
 }

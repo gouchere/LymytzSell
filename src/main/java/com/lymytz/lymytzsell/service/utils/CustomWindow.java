@@ -6,33 +6,22 @@
 package com.lymytz.lymytzsell.service.utils;
 
 import javafx.stage.Stage;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  *
  * @author LYMYTZ
  */
+@Setter
+@Getter
 public class CustomWindow<T> {
 
     private T controller;
     Stage stage;
 
     public CustomWindow() {
-    }
-
-    public T getController() {
-        return controller;
-    }
-
-    public void setController(T controller) {
-        this.controller = controller;
-    }
-
-    public Stage getStage() {
-        return stage;
-    }
-
-    public void setStage(Stage stage) {
-        this.stage = stage;
+        //do nothing
     }
 
 }

@@ -5,6 +5,8 @@
  */
 package com.lymytz.lymytzsell.view.main;
 
+import com.lymytz.lymytzsell.business.helpers.Helpers;
+import com.lymytz.lymytzsell.business.helpers.KeyBoardAction;
 import com.lymytz.lymytzsell.dao.Options;
 import com.lymytz.lymytzsell.dao.ParamConnection;
 import com.lymytz.lymytzsell.dao.UtilsBean;
@@ -24,7 +26,6 @@ import com.lymytz.lymytzsell.service.ServeurMessage;
 import com.lymytz.lymytzsell.service.application.FactureController;
 import com.lymytz.lymytzsell.service.application.ManagedApplication;
 import com.lymytz.lymytzsell.service.application.MyComptesController;
-import com.lymytz.lymytzsell.service.application.PreferenceController;
 import com.lymytz.lymytzsell.service.application.bean.ContentPanier;
 import com.lymytz.lymytzsell.service.application.composant.ClaviersController;
 import com.lymytz.lymytzsell.service.application.composant.Onglets;
@@ -44,14 +45,14 @@ import com.lymytz.lymytzsell.service.application.synchro.ListenTableController;
 import com.lymytz.lymytzsell.service.application.synchro.SynchronizeDataIn;
 import com.lymytz.lymytzsell.service.application.synchro.SynchronizeDataOut;
 import com.lymytz.lymytzsell.service.application.synchro.SynchronizeDeleteFacture;
-import com.lymytz.lymytzsell.service.application.synchro.export.ExportDataController;
-import com.lymytz.lymytzsell.service.application.synchro.export.UtilExport;
 import com.lymytz.lymytzsell.service.application.synchro.impor.ImportDataController;
 import com.lymytz.lymytzsell.service.application.synchro.impor.ListenRemoteTableController;
 import com.lymytz.lymytzsell.service.start.StartController;
+import com.lymytz.lymytzsell.service.utils.Clock;
 import com.lymytz.lymytzsell.service.utils.ConsUtil;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.CustomWindow;
+import com.lymytz.lymytzsell.service.utils.FonctionalConstants;
 import com.lymytz.lymytzsell.service.utils.LymytzService;
 import com.lymytz.lymytzsell.service.utils.PrintTiket;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
@@ -59,7 +60,6 @@ import com.lymytz.lymytzsell.service.utils.log.LogFiles;
 import com.lymytz.lymytzsell.synchro.ws.WsSynchro;
 import com.lymytz.lymytzsell.view.LocalLoader;
 import com.lymytz.lymytzsell.view.component.CustomComponents;
-import com.lymytz.lymytzsell.view.data.ReadLogController;
 import com.lymytz.lymytzsell.view.main.report.PrintFacture;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
@@ -68,12 +68,11 @@ import javafx.beans.property.LongProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleLongProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -100,7 +99,8 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import org.json.JSONObject;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.print.attribute.standard.Severity;
 import java.io.IOException;
@@ -114,6 +114,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static com.lymytz.lymytzsell.service.utils.Constantes.TYPE_FV;
+import static com.lymytz.lymytzsell.service.utils.FonctionalConstants.ERREUR;
+import static com.lymytz.lymytzsell.service.utils.FonctionalConstants.GENERATION_FACTURE_NON_REUSSI;
 
 /**
  * FXML Controller class
@@ -125,10 +127,12 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
     private BooleanProperty connectRemoteServer;
     ClientMessage clientSocket;
 
-    public SynchronizeDataOut myServiceOut;
-    public SynchronizeDataIn myServiceIn;
-    public SynchronizeDeleteFacture myServiceDel;
-    public Stage stageCreateFacture;
+    private SynchronizeDataOut myServiceOut;
+    private SynchronizeDataIn myServiceIn;
+    @Getter
+    @Setter
+    private Stage stageCreateFacture;
+
     @FXML
     private MenuBar HOMEMENU;
     @FXML
@@ -221,7 +225,7 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
     //
     @FXML
     public TabPane TAB_FACTURES;
-    DoubleProperty EcranWidth, RigthBoxWidth;
+    DoubleProperty RigthBoxWidth;
 
     //Header page vente
     @FXML
@@ -298,8 +302,19 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
     @FXML
     private Label TEXT_SOCIETE;
 
+    private final LongProperty time = new SimpleLongProperty();
+
     public HomeCaisseController() {
         //utile pour l'api javafx
+    }
+
+
+    public Long getTime() {
+        return time.get();
+    }
+
+    public void setTime(Long time) {
+        this.time.set(time);
     }
 
     public Boolean getConnectRemoteServer() {
@@ -322,9 +337,9 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
         initComponent();
         setMainPage(this);
         //Attacher un listener au text find
-        TEXT_FIND.focusedProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
+        TEXT_FIND.focusedProperty().addListener((observable, oldValue, newValue) -> {
             if (Boolean.FALSE.equals(newValue)) {
-                filterArticleFromSearchField();
+                HomeCaisseController.this.filterArticleFromSearchField();
             }
         });
         TEXT_FIND.setOnKeyReleased((KeyEvent event) -> {
@@ -356,7 +371,7 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
 
     public void initComponent() {
         HOMEMENU.setPrefWidth(StartController.SCREENWIDTH);
-        TAB_FACTURES.setPrefHeight(StartController.SCREENHEIGHT - 345);
+        TAB_FACTURES.setPrefHeight(StartController.SCREENHEIGHT - 345d);
         RigthBoxWidth = new SimpleDoubleProperty(RIGHT_BOX.getPrefWidth());
         CustomComponents.custumMenuAndToolBar(this);
         CustomComponents.initEventComponents(this);
@@ -365,25 +380,18 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
         }
         loadCatalogue(" ");
         //Lance l'horloge d'écoulement du temps
-        time.addListener((ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
-            Platform.runLater(() -> {
-                SESS_DUREE.setText(Constantes.HMS.format(new Date(getTime())));
-            });
-        });
-        connectRemoteServer.addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
+        time.addListener((ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> Platform.runLater(() -> SESS_DUREE.setText(Constantes.HMS.format(new Date(getTime())))));
+        connectRemoteServer.addListener((observable, oldValue, newValue) -> {
             //ecrit sur la socket: seul le serveur peut écrire 
-            if (newValue != null) {
-                if (UtilsProject.properties.getProperty(Constantes.KEY_MODE).equals(Constantes.APPS_MODE_BOTH)) {
-                    ServeurMessage.writeMessage(newValue);
-                    LogFiles.addLogInFile(null, Severity.REPORT, ConsUtil.SOURCE_LOG_FILE_EXCEPTION, null);
-                }
+            if (newValue != null && (UtilsProject.properties.getProperty(Constantes.KEY_MODE).equals(Constantes.APPS_MODE_BOTH))) {
+                ServeurMessage.writeMessage(newValue);
+                LogFiles.addLogInFile(null, Severity.REPORT, ConsUtil.SOURCE_LOG_FILE_EXCEPTION, null);
+
             }
         });
-        String name = (UtilsProject.currentUser != null) ? UtilsProject.currentUser.getUsers().getNomUsers() : (UtilsProject.MODE_ADMIN ? "ADMINISTRATEUR" : "---");
+        String name = (UtilsProject.currentUser != null) ? UtilsProject.currentUser.getUsers().getNomUsers() : (UtilsProject.modeAdmin ? "ADMINISTRATEUR" : "---");
         LAB_VEND.setText(name);
-        Thread ttemp = new Thread(new Clock());
-        ttemp.setName("Horloge locale");
-        ttemp.start();
+        startHorloge();
         loadProperties();
         //Code temporaire...
         if (UtilsProject.currentUser != null) {
@@ -395,6 +403,12 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
                 ITEM_PREF.setVisible(false);
             }
         }
+    }
+
+    private void startHorloge() {
+        Thread ttemp = new Thread(new Clock(this::setTime));
+        ttemp.setName("Horloge locale");
+        ttemp.start();
     }
 
     public GridPane displayCatalogue() {
@@ -457,10 +471,9 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
     }
 
     public void resetAllView(YvsComEnteteDocVente head) {
-        if (head != null && UtilsProject.headerDoc != null) {
-            if (UtilsProject.headerDoc.equals(head)) {
-                displayDetailFacture(null);
-            }
+        if (UtilsProject.headerDoc != null && (UtilsProject.headerDoc.equals(head))) {
+            displayDetailFacture(null);
+
         }
     }
 
@@ -502,7 +515,7 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
             CHK_REGLE.setSelected(false);
             LAB_ADRESSSE.setText(null);
             LAB_NAME_CLT.setText(null);
-            BTN_SAVE.setVisible(TAB_FACTURES.getTabs().size() > 0);
+            BTN_SAVE.setVisible(!TAB_FACTURES.getTabs().isEmpty());
             BTN_PRINT.setVisible(false);
             ECRAN.setText("0");
         }
@@ -567,7 +580,7 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
                 Thread t = new Thread(f);
                 t.start();
             } else {
-                LymytzService.openAlertDialog("Génération de a facture non réussi !", "Erreur ", "Aucune entête n'a été trouvé !", Alert.AlertType.ERROR);
+                LymytzService.openAlertDialog(GENERATION_FACTURE_NON_REUSSI, ERREUR, "Aucune entête n'a été trouvé !", Alert.AlertType.ERROR);
             }
         } catch (Exception ex) {
             LogFiles.addLogInFile("", Severity.ERROR, ConsUtil.SOURCE_LOG_FILE_EXCEPTION, ex);
@@ -589,12 +602,9 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
     ButtonType re;
 
     public void giveFocusAtTxtFind() {
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                TEXT_FIND.setText("");
-                TEXT_FIND.requestFocus();
-            }
+        Platform.runLater(() -> {
+            TEXT_FIND.setText("");
+            TEXT_FIND.requestFocus();
         });
     }
 
@@ -627,8 +637,7 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
         return lc;
     }
 
-    public boolean confirmValideFacture(Onglets currentOnglet, double montantPaye, double montantRecu, String source) {
-      //  if (!controleMontantPaye(currentOnglet, montantPaye)) return false;
+    public boolean confirmValideFacture(Onglets currentOnglet, double montantPaye, double montantRecu) {
         List<YvsComContenuDocVente> contenuDuPanier = new ArrayList<>(currentOnglet.getFacture().getContenus());
         currentOnglet.getFacture().getContenus().clear();
         YvsComDocVentes d = saveFacture(currentOnglet.getFacture());
@@ -650,14 +659,11 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
                 currentOnglet.getFacture().getContenus().addAll(temp);
                 Thread tcompta = new Thread(() -> {
                     saveLivraisonAndreglement(new YvsComDocVentes(currentOnglet.getFacture()), montantPaye, montantRecu);
-                    if (!UtilsProject.REPLICATION && currentOnglet.getFacture().getTypeDoc().equals(TYPE_FV)) {
+                    if (Boolean.TRUE.equals(!UtilsProject.REPLICATION) && currentOnglet.getFacture().getTypeDoc().equals(TYPE_FV)) {
                         comptabilise(currentOnglet.getFacture().getId(), currentOnglet.getFacture().getNumDoc());
                     }
                 });
                 tcompta.start();
-                /*if (!source.equals("A")) {
-                    closeOngletFacture(currentOnglet);
-                }*/
             }
         } else {
             return false;
@@ -676,24 +682,6 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
         });
     }
 
-    private boolean controleMontantPaye(Onglets fac, double montantPaye) {
-        //5. contrôle les valeurs de paiement
-        if (TYPE_FV.equals(fac.getFacture().getTypeDoc())) {
-            if (fac.getNetAPayer() != montantPaye) {
-                // erreur paiement insuffisant
-                Platform.runLater(() -> LymytzService.openAlertDialog("Incohérence des montants !", "Erreur", "Le montant payé de la facture est différent du TTC !", Alert.AlertType.ERROR));
-                return false;
-            }
-        } else {
-            // contrôle le montant d'avance
-            if (montantPaye > fac.getNetAPayer()) {
-                Platform.runLater(() -> LymytzService.openAlertDialog("Incohérence des montants !", "Erreur", "Le montant d'avance de la commande est suppérieure au TTC !", Alert.AlertType.ERROR));
-                return false;
-            }
-        }
-        return true;
-    }
-
     private YvsComDocVentes saveFacture(YvsComDocVentes doc) {
         if (UtilsProject.headerDoc != null) {
             if (doc.getId() <= 0) {
@@ -708,14 +696,14 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
                     doc = (YvsComDocVentes) dao.save1(doc);
                     new ServiceCreateFacture(this).saveCurrentCommercial(doc);
                 } else {
-                    Platform.runLater(() -> LymytzService.openAlertDialog("Génération de a facture non réussi !", "Erreur ", "Le numéro de référence n'a pas pu être généré !", Alert.AlertType.ERROR));
+                    Platform.runLater(() -> LymytzService.openAlertDialog(GENERATION_FACTURE_NON_REUSSI, "Erreur ", "Le numéro de référence n'a pas pu être généré !", Alert.AlertType.ERROR));
                     return null;
                 }
             } else {
                 return doc;
             }
         } else {
-            Platform.runLater(() -> LymytzService.openAlertDialog("Génération de a facture non réussi !", "Erreur ", "L'en-tête de la facture n'a pas été trouvé!", Alert.AlertType.ERROR));
+            Platform.runLater(() -> LymytzService.openAlertDialog(GENERATION_FACTURE_NON_REUSSI, "Erreur ", "L'en-tête de la facture n'a pas été trouvé!", Alert.AlertType.ERROR));
             return null;
         }
         return doc;
@@ -751,18 +739,17 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
             long categorie = y.getDocVente().getCategorieComptable().getId();
 
             String nameQueri = "YvsBaseArticleCategorieComptable.findByCategorieArticle";
-            YvsBaseArticleCategorieComptable acc = (YvsBaseArticleCategorieComptable) dao.findOneByNQ(nameQueri, new String[]{"categorie", "article"}, new Object[]{new YvsBaseCategorieComptable(categorie), y.getArticle()});
-            if (acc != null && (acc.getId() != null && acc.getId() > 0)) {
-                if (y.getArticle().getPuvTtc()) {
-                    for (YvsBaseArticleCategorieComptableTaxe t : acc.getTaxes()) {
+            YvsBaseArticleCategorieComptable articleCategorieComptable = (YvsBaseArticleCategorieComptable) dao.findOneByNQ(nameQueri, new String[]{"categorie", "article"}, new Object[]{new YvsBaseCategorieComptable(categorie), y.getArticle()});
+            if (articleCategorieComptable != null && (articleCategorieComptable.getId() != null && articleCategorieComptable.getId() > 0)) {
+                if (Boolean.TRUE.equals(y.getArticle().getPuvTtc())) {
+                    for (YvsBaseArticleCategorieComptableTaxe t : articleCategorieComptable.getTaxes()) {
                         taxe += t.getTaxe().getTaux();
                     }
                     prix = prix / (1 + (taxe / 100));
                 }
                 valeur = qte * prix;
-                for (YvsBaseArticleCategorieComptableTaxe t : acc.getTaxes()) {
-                    taxe = 0;
-                    if (t.getAppRemise()) {
+                for (YvsBaseArticleCategorieComptableTaxe t : articleCategorieComptable.getTaxes()) {
+                    if (Boolean.TRUE.equals(t.getAppRemise())) {
                         taxe = (((valeur - remise) * t.getTaxe().getTaux()) / 100);
                     } else {
                         taxe = ((valeur * t.getTaxe().getTaux()) / 100);
@@ -797,20 +784,17 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
         //2. Enregistrer la pièce de règlement       
         new UtilsBean().setMontantTotalDoc(facture, facture.getContenus());
         ServiceReglement service = new ServiceReglement(this);
-        String etatRegle = service.saveReglementFacture(facture, montantPaye, montantRecu);
+        service.saveReglementFacture(facture, montantPaye, montantRecu);
         //3. Enregistrer le document de livraison. 
         //on enregistre directement que si on n'est pas en mode replication (car si on est en mode replication, le BL sera géré par le serveur d'application dès la validation de la facture)
-        if (!UtilsProject.REPLICATION) {
-            if (!facture.getTypeDoc().equals(Constantes.TYPE_BCV)) {
-                ServiceLivraison serviceL = new ServiceLivraison(this);
-                if (facture.getTrancheLivrer() == null) {
-                    facture.setTrancheLivrer(UtilsProject.headerDoc.getCreneau().getCreneauDepot().getTranche());
-                    dao.update(facture);
-                }
-                serviceL.saveLivraison(facture, false);
-            } else {
-                String etatLivre = Constantes.ETAT_ATTENTE;
+        if (Boolean.FALSE.equals(UtilsProject.REPLICATION) && (!facture.getTypeDoc().equals(Constantes.TYPE_BCV))) {
+            ServiceLivraison serviceL = new ServiceLivraison(this);
+            if (facture.getTrancheLivrer() == null) {
+                facture.setTrancheLivrer(UtilsProject.headerDoc.getCreneau().getCreneauDepot().getTranche());
+                dao.update(facture);
             }
+            serviceL.saveLivraison(facture, false);
+
         }
         dao.findOneObjectBySQLQ("SELECT equilibre_vente_regle(?,?)", new Options[]{new Options(facture.getId(), 1), new Options(true, 2)});
     }
@@ -858,10 +842,10 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
     @FXML
     public void openViewImport(ActionEvent ev) {
         //Ouvre la fenêtre de gestion des imports
-        BorderPane root = null;
-        CustomWindow w = LymytzService.openWindowNew("/main/synchro/import_data.fxml", "Lymytz /Importation", root, 1000.0, 500.0, true);
-        ImportDataController controler = (ImportDataController) w.getController();
-        this.stageCreateFacture = w.getStage();
+        CustomWindow<ImportDataController> windowModal = LymytzService.openWindowNew("/main/synchro/import_data.fxml", "Lymytz /Importation", null, 1000.0, 500.0, true);
+        assert windowModal != null;
+        ImportDataController controler = windowModal.getController();
+        this.stageCreateFacture = windowModal.getStage();
         if (controler != null) {
             controler.initComponents(this);
         }
@@ -886,22 +870,19 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
     public void openViewLog(ActionEvent ev) {
         //Ouvre la fenêtre de gestion des imports
         VBox root = null;
-        ReadLogController controler = LymytzService.openWindow("/data/read_log.fxml", "Log_", root, 630d, 500d);
-//        controler.initPage(this, this.myServiceOut, this.myServiceIn);
+        LymytzService.openWindow("/data/read_log.fxml", "Log_", root, 630d, 500d);
     }
 
     @FXML
     public void openViewPreference(ActionEvent ev) {
         //Ouvre la fenêtre de gestion des imports
-        VBox root = null;
-        PreferenceController controler = LymytzService.openWindow("/pages/main/preference.fxml", "Lymytz /Préférence", root, 550.0, 600.0);
+        LymytzService.openWindow("/pages/main/preference.fxml", "Lymytz /Préférence", null, 550.0, 600.0);
     }
 
     @FXML
     public void openViewCatalogue(ActionEvent ev) {
         //Ouvre la fenêtre de gestion des imports
-        VBox root = null;
-        LymytzService.openWindow("/data/form_catalogue.fxml", "Lymytz /Catalogue", root, 1000.0, 550.0);
+        LymytzService.openWindow("/data/form_catalogue.fxml", "Lymytz /Catalogue", null, 1000.0, 550.0);
     }
 
     @FXML
@@ -937,12 +918,11 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
 
     @FXML
     private void openViewComptes(ActionEvent event) {
-        openViewComptes();
+        openAndLoadFormCompte();
     }
 
-    public void openViewComptes() {
-        VBox root = null;
-        MyComptesController controler = LymytzService.openWindow("/pages/main/form_comptes.fxml", "Lymytz /Mon compte", root, 850.0, 505.0, true);
+    public void openAndLoadFormCompte() {
+        MyComptesController controler = LymytzService.openWindow("/pages/main/form_comptes.fxml", "Lymytz /Mon compte", null, 850.0, 505.0, true);
         controler.setMainController(this);
     }
 
@@ -1048,35 +1028,7 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
         }
     }
 
-   /* @FXML
-    private void generatedBlFromDoc(ActionEvent event) {
-        //1. Controle la caisse et le mode de paiement  
-        Onglets tab = (Onglets) TAB_FACTURES.getSelectionModel().getSelectedItem();
-        if (tab != null) {
-            Thread t = new Thread(() -> {
-                YvsComDocVentes dv = tab.getFacture();
-                JSONObject entityJson = UtilExport.exportDocVente(tab.getFacture(), false, null);
-                if (entityJson != null) {
-                    WsSynchro ws = new WsSynchro();
-                    if (dv.getTypeDoc().equals(TYPE_FV)) {
-                        ws.livraisonDocVente(entityJson, "livrer_facture_vente");
-                    } else if (dv.getTypeDoc().equals(Constantes.TYPE_BCV)) {
-
-                    }
-                }
-            });
-        }
-    }*/
-
-/*    @FXML
-    private void clearDocVenteWithoutContent(ActionEvent event) {
-        //1. Controle la caisse et le mode de paiement  
-        if (UtilsProject.headerDoc != null) {
-            dao.cleanDocWithoutContent(UtilsProject.headerDoc.getId());
-        }
-    }*/
-
-    public void openDlgCalculatrice(Onglets onglet, String source, String action, ContentPanier content) {
+    public void openDlgCalculatrice(Onglets onglet, String source, KeyBoardAction action, ContentPanier content) {
         try {
             if (onglet == null || onglet.getContentFacture().isEmpty()) {
                 LymytzService.openAlertDialog("Votre panier est vide", "erreur contenu", "Erreur !", Alert.AlertType.ERROR);
@@ -1107,7 +1059,7 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
         }
     }
 
-    public void openDlgCalculatrice(Onglets onglet, String source, String action) {
+    public void openDlgCalculatrice(Onglets onglet, String source, KeyBoardAction action) {
         openDlgCalculatrice(onglet, source, action, null);
     }
 
@@ -1146,18 +1098,15 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
         goingOutApplication();
     }
 
-    public boolean goingOutApplication() {
+    public void goingOutApplication() {
         Alert al = new Alert(Alert.AlertType.CONFIRMATION);
         al.setTitle("Fermeture de session!");
         al.setContentText("Souhaitez vous terminer cette session ?");
         Optional<ButtonType> result = al.showAndWait();
-        if (result.get().equals(ButtonType.OK)) {
+        if (result.isPresent() && result.get().equals(ButtonType.OK)) {
             UtilsProject.primaryStage.close();
             System.exit(0);
             LymytzService.openApps(UtilsProject.primaryStage);
-            return true;
-        } else {
-            return false;
         }
     }
 
@@ -1166,7 +1115,7 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
         al.setTitle("Fermeture de session!");
         al.setContentText("Souhaitez vous terminer cette session et Arrêter l'application?");
         Optional<ButtonType> result = al.showAndWait();
-        if (result.get().equals(ButtonType.OK)) {
+        if (result.isPresent() && result.get().equals(ButtonType.OK)) {
             Platform.exit();
             System.exit(0);
             return true;
@@ -1187,7 +1136,7 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
 
     @FXML
     public void testLoadData(ActionEvent ev) {
-        WsSynchro.runningIn = false;
+        WsSynchro.runningIn.set(false);
     }
 
     @FXML
@@ -1210,170 +1159,137 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
             } else {
                 Alert dlg = new Alert(Alert.AlertType.CONFIRMATION, "Confirmez vous la livraison de ce bon de commande ?", new ButtonType("Oui"), new ButtonType("Non"));
                 Optional<ButtonType> resp = dlg.showAndWait();
-                if (resp.get().getText().equals("Oui")) {
-                    if (service.transmisOrder(currentOnglet.getFacture())) {
-                        BTN_LIVRER.setVisible(false);
-                    }
-                } else {
-//                System.err.println(" Livre pas");
+                if (resp.isPresent() && resp.get().getText().equals("Oui") && (service.transmisOrder(currentOnglet.getFacture()))) {
+                    BTN_LIVRER.setVisible(false);
+
                 }
             }
         }
     }
 
-    private LongProperty time = new SimpleLongProperty();
-
-    public Long getTime() {
-        return time.get();
-    }
-
-    public void setTime(Long time) {
-        this.time.set(time);
-    }
-
-    public LongProperty getTimeProperty() {
-        return time;
-    }
-
-    public class Clock extends Task<Long> {
-
-        long time = System.currentTimeMillis();
-        Date d;
-
-        @Override
-        protected Long call() throws Exception {
-            while (true) {
-                long duree = System.currentTimeMillis() - time - 3600000;
-                d = new Date(duree);
-                setTime(duree);
-                Thread.sleep(1000);
-            }
-        }
-    }
 
     public void loadProperties() {
-        if (UtilsProject.properties.containsKey(Constantes.KEY_ENVIRONNEMENT)) {
-            if (UtilsProject.properties.getProperty(Constantes.KEY_ENVIRONNEMENT).equals("PRODUCTION")) {
-                //Lance des ping sur le serveur distant pour savoir s'il est toujours connecté
-                //cette methode est lancé seulement lorsque le serveur est en mode BOTH
-                if (UtilsProject.properties.getProperty(Constantes.KEY_MODE).equals(Constantes.APPS_MODE_BOTH)) {
-                    new ListenServersRemote(10, this).start();
-                } else {
-                    //lance la socket d'écoute client... (si on est en mode replication)
-                    if (UtilsProject.REPLICATION) {
-                        Thread t = new Thread(() -> {
-                            clientSocket = new ClientMessage("", this);
-                            clientSocket.initClient();
-                        });
-                        t.start();
-                        verifySocketIsConnected();
-                    } else {
-
-                    }
+        if (UtilsProject.isProductionEnv()) {
+            //Lance des ping sur le serveur distant pour savoir s'il est toujours connecté
+            //cette methode est lancé seulement lorsque le serveur est en mode BOTH
+            if (UtilsProject.properties.getProperty(Constantes.KEY_MODE).equals(Constantes.APPS_MODE_BOTH)) {
+                new ListenServersRemote(10, this).start();
+            } else {
+                //lance la socket d'écoute client... (si on est en mode replication)
+                if (Boolean.TRUE.equals(UtilsProject.REPLICATION)) {
+                    Thread t = new Thread(() -> {
+                        clientSocket = new ClientMessage("", this);
+                        clientSocket.initClient();
+                    });
+                    t.start();
+                    verifySocketIsConnected();
                 }
-                //Lance des ping sur le serveur local pour savoir s'il est toujours connecté
-                new ListenServersLocal(10, this).start();
             }
+            //Lance des ping sur le serveur local pour savoir s'il est toujours connecté
+            new ListenServersLocal(10, this).start();
+
         }
         ICO_ALERT_EX.setVisible(false);
         ICO_ALERT_IM.setVisible(false);
-        if (UtilsProject.REPLICATION && Constantes.APPS_MODE_BOTH.equals(UtilsProject.properties.getProperty(Constantes.KEY_MODE))) {
-            LAB_TITLE_SYNC_T.setVisible(true);
+        if (UtilsProject.isReplicationMode()) {
             //Notifie sur la vue utilisateur si des opérations de synchronisation s'exécutent ou pas
-            listenSynchro();
-            //Synchronise les données du serveur local vers le serveur distant
-            if (myServiceOut != null ? !myServiceOut.isRunning() : true) {
-                myServiceOut = new SynchronizeDataOut(20, this);
-                myServiceOut.start();
-            }
-            //Synchronise les données du serveur distant vers le serveur local
-            if (myServiceIn != null ? !myServiceIn.isRunning() : true) {
-                myServiceIn = new SynchronizeDataIn(25, this);
-                myServiceIn.start();
-            }
-//            //Synchronise les données de suppresion
-//            if (myServiceDel != null ? !myServiceDel.isRunning() : true) {
-//                myServiceDel = new SynchronizeDeleteFacture(20, this);
-//                myServiceDel.start();
-//            }
+            notifyIfSynchroIsRunning();
+            startSynchronisation();
         } else {
-            ICO_RUN_OFF.setVisible(false);
-            ICO_RUN_ON.setVisible(false);
-            ICO_RUN_OFF_IN.setVisible(false);
-            ICO_RUN_ON_IN.setVisible(false);
-            LAB_TITLE_SYNC_T.setVisible(false);
-            ITEM_IMPORT.setVisible(false);
-            ITEM_EXPORT.setVisible(false);
-            ITEM_SERVICE.setVisible(false);
-            ITEM_PING_R.setVisible(false);
-            MEN_SYNCHRO.setVisible(false);
-            LAB_SYNC_EX.setVisible(false);
-            LAB_SYNC_IM.setVisible(false);
+            hideAllAppMonitoringIcone();
         }
     }
 
-    public void listenSynchro() {
-        Thread t = new Thread(() -> {
-            while (!UtilsProject.STOP_LISTEN) {
-                try {
-                    // si le statut du service est cancelled ou le service n'est pas accéssible;
-                    if (WsSynchro.runningOut && SynchronizeDataOut.running) {
-                        Platform.runLater(() -> {
-                            ICO_RUN_OFF.setVisible(false);
-                            ICO_RUN_ON.setVisible(true);
-                        });
-                    } else {
-                        Platform.runLater(() -> {
-                            ICO_RUN_OFF.setVisible(true);
-                            ICO_RUN_ON.setVisible(false);
-                        });
-                    }
-                    if (WsSynchro.runningIn && SynchronizeDataIn.running) {
-                        Platform.runLater(() -> {
-                            ICO_RUN_OFF_IN.setVisible(false);
-                            ICO_RUN_ON_IN.setVisible(true);
-                        });
-                    } else {
-                        Platform.runLater(() -> {
-                            ICO_RUN_OFF_IN.setVisible(true);
-                            ICO_RUN_ON_IN.setVisible(false);
-                        });
-                    }
-                    Thread.sleep(2000);
+    private void startSynchronisation() {
+        startSynchronisationDataOut();
+        startSynchronisationDataIn();
+    }
 
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(HomeCaisseController.class
-                            .getName()).log(Level.SEVERE, null, ex);
+    private void startSynchronisationDataIn() {
+        if (myServiceIn == null || !myServiceIn.isRunning()) {
+            myServiceIn = new SynchronizeDataIn(25, this);
+            myServiceIn.start();
+        }
+    }
+
+    private void startSynchronisationDataOut() {
+        if (myServiceOut == null || !myServiceOut.isRunning()) {
+            myServiceOut = new SynchronizeDataOut(20, this);
+            myServiceOut.start();
+        }
+    }
+
+    private void hideAllAppMonitoringIcone() {
+        ICO_RUN_OFF.setVisible(false);
+        ICO_RUN_ON.setVisible(false);
+        ICO_RUN_OFF_IN.setVisible(false);
+        ICO_RUN_ON_IN.setVisible(false);
+        LAB_TITLE_SYNC_T.setVisible(false);
+        ITEM_IMPORT.setVisible(false);
+        ITEM_EXPORT.setVisible(false);
+        ITEM_SERVICE.setVisible(false);
+        ITEM_PING_R.setVisible(false);
+        MEN_SYNCHRO.setVisible(false);
+        LAB_SYNC_EX.setVisible(false);
+        LAB_SYNC_IM.setVisible(false);
+    }
+
+    public void notifyIfSynchroIsRunning() {
+        LAB_TITLE_SYNC_T.setVisible(true);
+        Thread t = new Thread(() -> {
+            while (Boolean.FALSE.equals(UtilsProject.STOP_LISTEN)) {
+                if (WsSynchro.runningOut && SynchronizeDataOut.running) {
+                    Platform.runLater(() -> {
+                        ICO_RUN_OFF.setVisible(false);
+                        ICO_RUN_ON.setVisible(true);
+                    });
+                } else {
+                    Platform.runLater(() -> {
+                        ICO_RUN_OFF.setVisible(true);
+                        ICO_RUN_ON.setVisible(false);
+                    });
                 }
+                if (WsSynchro.runningIn.get() && SynchronizeDataIn.running) {
+                    Platform.runLater(() -> {
+                        ICO_RUN_OFF_IN.setVisible(false);
+                        ICO_RUN_ON_IN.setVisible(true);
+                    });
+                } else {
+                    Platform.runLater(() -> {
+                        ICO_RUN_OFF_IN.setVisible(true);
+                        ICO_RUN_ON_IN.setVisible(false);
+                    });
+                }
+                Helpers.sleepFor(2000);
             }
         });
         t.start();
     }
 
-    //méthode qui se rassure que la socket client est toujours connecté au serveur
+    //méthode qui vérifie que la socket client est toujours connecté au serveur
     public void verifySocketIsConnected() {
-        if (UtilsProject.properties.getProperty(Constantes.KEY_MODE).equals(Constantes.APPS_MODE_SINGLE)) {
-            HomeCaisseController p = this;
-            new Thread(() -> {
-                while (true) {
-                    if (clientSocket != null ? clientSocket.socketClient != null : false) {
-                        if (clientSocket.socketClient.isClosed()) {
-                            Thread t = new Thread(() -> {
-                                clientSocket.initClient();
-                            });
-                            t.start();
-                        } else {
-                            p.setConnect(true);
-                        }
-                    }
-                    try {
-                        Thread.sleep(5000);
-                    } catch (InterruptedException ex) {
-                        Logger.getLogger(HomeCaisseController.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
-            }).start();
+        if (Constantes.APPS_MODE_SINGLE.equals(UtilsProject.properties.getProperty(Constantes.KEY_MODE))) {
+            new Thread(this::monitorSocketConnection).start();
         }
+    }
+
+    private void monitorSocketConnection() {
+        while (true) {
+            checkAndMarkConnect();
+            Helpers.sleepFor(5000);
+        }
+    }
+
+    private void checkAndMarkConnect() {
+        if (isSocketClose()) {
+            new Thread(() -> clientSocket.initClient()).start();
+        } else {
+            this.setConnect(true);
+        }
+    }
+
+    private boolean isSocketClose() {
+        return clientSocket != null && clientSocket.getSocketClient() != null && clientSocket.getSocketClient().isClosed();
     }
 
 }

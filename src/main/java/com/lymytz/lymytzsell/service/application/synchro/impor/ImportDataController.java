@@ -382,7 +382,7 @@ public class ImportDataController implements Initializable, Controller {
 
     public void importData() {
         //avant de demarrer l'importation explicite, mettre une pause sur le service d'importation implicite
-        WsSynchro.runningIn = true;
+        WsSynchro.runningIn.set(true);
         //méthode de récupération des données distantes
         ImportService service = new ImportService(listRemoteData, TV_TABLE.getSelectionModel().getSelectedItem().getNameTable(), this, false);
         PROGRESS_LABEL.textProperty().unbind();
@@ -400,7 +400,7 @@ public class ImportDataController implements Initializable, Controller {
                 PROGRESS_LABEL.setText("Importation terminé !");
                 LAB_RUN_IMPORT.setText("");
                 //relance le service  de synchro implicite
-                WsSynchro.runningIn = false;
+                WsSynchro.runningIn.set(false);
                 LymytzEntityClass c = LymytzLoaderEntity.ALLENTITY.get(LymytzLoaderEntity.ALLENTITY.indexOf(new LymytzEntityClass(null, null, TV_TABLE.getSelectionModel().getSelectedItem().getNameTable())));
                 countTable(c);
                 TV_TABLE.refresh();

@@ -94,13 +94,13 @@ public class SynchronizeDataIn extends ScheduledService<Boolean> {
             protected Boolean call() throws Exception {
                 try {
                     if (ListenServersRemote.remoteConnect) {
-                        if (!WsSynchro.runningIn && UtilsProject.RcurrentSociete != null && Constantes.asLong(UtilsProject.ID_SERVEUR)) {
+                        if (!WsSynchro.runningIn.get() && UtilsProject.RcurrentSociete != null && Constantes.asLong(UtilsProject.ID_SERVEUR)) {
                             String query = Constantes.getQueryListenData();
                             String dure_init = UtilsProject.properties.get("DATE_INIT").toString();
                             Date date = getDate(dure_init);
                             List<Object[]> l = Rdao.loadBySQLQuery(query, new Options[]{new Options(UtilsProject.ID_SERVEUR, 1), new Options(UtilsProject.RcurrentSociete.getId(), 2), new Options(date, 3)});
                             if (l != null ? !l.isEmpty() : false) {
-                                WsSynchro.runningIn = true;
+                                WsSynchro.runningIn.set(true);
                                 Long idListenOnRemote = Long.valueOf((String) l.get(0)[0]);
                                 String table = (String) l.get(0)[1];
                                 Long idLocalOnRemote = Long.valueOf((String) l.get(0)[2]);
@@ -121,11 +121,11 @@ public class SynchronizeDataIn extends ScheduledService<Boolean> {
                                         new Thread(service).start();
                                     } catch (Exception ex) {
                                         LogFiles.addLogInFile("", ex);
-                                        WsSynchro.runningIn = false;
+                                        WsSynchro.runningIn.set(false);
                                         Logger.getLogger(SynchronizeDataIn.class.getName()).log(Level.SEVERE, null, ex);
                                     }
                                 } else {
-                                    WsSynchro.runningIn = false;
+                                    WsSynchro.runningIn.set(false);
                                 }
                             }
                             //compte le nombre d'enregistrement qu'il reste à synchroniser depuis le serveur distant

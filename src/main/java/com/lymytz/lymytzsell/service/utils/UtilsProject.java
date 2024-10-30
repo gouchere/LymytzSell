@@ -36,7 +36,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 
-import javax.enterprise.inject.Any;
 import javax.print.attribute.standard.Severity;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -62,7 +61,8 @@ public class UtilsProject {
 
     LocalQueryFactories dao = new LocalQueryFactories();
 
-    public UtilsProject() {
+    private UtilsProject() {
+        // no implementation
     }
 
     public static ServerSocket server;
@@ -81,10 +81,10 @@ public class UtilsProject {
     public static YvsUsersAgence currentUser;
     public static Long remoteAuthor;
     public static Long ID_SERVEUR;
-    public static Boolean REPLICATION = false;
+    public static boolean REPLICATION = false;
     public static Boolean APPLICATION_IHM = true;
     public static Boolean STOP_LISTEN = false;
-    public static Boolean MODE_ADMIN = false;
+    public static boolean modeAdmin = false;
     public static YvsBaseDepots depotLivraison;
     public static YvsGrhTrancheHoraire trancheLivraison;
     public static YvsBaseModeReglement modeReg;// ("ESPECE, CHEQUE, etc.")
@@ -109,16 +109,24 @@ public class UtilsProject {
         return null;
     }
 
+    public static boolean isReplicationMode() {
+        return Boolean.TRUE.equals(UtilsProject.REPLICATION) && Constantes.APPS_MODE_BOTH.equals(UtilsProject.properties.getProperty(Constantes.KEY_MODE));
+    }
+
+    public static boolean isProductionEnv() {
+        return UtilsProject.properties.containsKey(Constantes.KEY_ENVIRONNEMENT) && (UtilsProject.properties.getProperty(Constantes.KEY_ENVIRONNEMENT).equals("PRODUCTION"));
+    }
+
     public static boolean verifyDateVente(Date date) {
         LocalQueryFactories dao = new LocalQueryFactories();
         int ecart = -1;
         int nbFiches = -1;
-        if (date != null ? date.after(new Date()) : true) {
+        if (date == null || date.after(new Date())) {
             LymytzService.openAlertDialog("Vous ne pouvez enregistrer une fiche dans le future !", "Date fiche incorrecte", "Date fiche incorrecte !", Alert.AlertType.ERROR);
             return false;
         }
         List<YvsComParametreVente> lp = dao.loadByNamedQuery("YvsComParametreVente.findByAgence", new String[]{"agence"}, new Object[]{UtilsProject.currentAgence}, 0, 1);
-        if ((lp != null) ? !lp.isEmpty() : false) {
+        if (lp != null && !lp.isEmpty()) {
             ecart = lp.get(0).getJourAnterieur();
             nbFiches = lp.get(0).getNbFicheMax();
         }
@@ -178,9 +186,8 @@ public class UtilsProject {
 
     public static String generatedNumDocCaisse() {
         UtilsBean util = new UtilsBean();
-        if (headerDoc != null ? headerDoc.getCreneau() != null : false) {
-            String reference = util.genererReference(Constantes.TYPE_PT_NAME, headerDoc.getDateEntete(), headerDoc.getCreneau().getCreneauPoint().getPoint().getId(), Constantes.DEPOT, "", currentAgence);
-            return reference;
+        if (headerDoc != null && headerDoc.getCreneau() != null) {
+            return util.genererReference(Constantes.TYPE_PT_NAME, headerDoc.getDateEntete(), headerDoc.getCreneau().getCreneauPoint().getPoint().getId(), Constantes.DEPOT, "", currentAgence);
         } else {
             return null;
         }
@@ -196,10 +203,10 @@ public class UtilsProject {
             }));
         } else {
             //récupère à partir d'une web service
-            Long Rdepot = UtilEntityBase.findIdRemoteData(Constantes.TABLE_DEPOT_CODE, depot);
+            Long remoteDepot = UtilEntityBase.findIdRemoteData(Constantes.TABLE_DEPOT_CODE, depot);
             Long cond = UtilEntityBase.findIdRemoteData(Constantes.TABLE_CONDITIONNEMENT_CODE, c.getId());
             Long art = UtilEntityBase.findIdRemoteData(Constantes.TABLE_ARTICLE_CODE, c.getArticle().getId());
-            re = WsSynchro.getStock(art, cond, Rdepot, Constantes.dfD.format(UtilsProject.headerDoc.getDateEntete()));
+            re = WsSynchro.getStock(art, cond, remoteDepot, Constantes.dfD.format(UtilsProject.headerDoc.getDateEntete()));
         }
         return re != null ? re : 0;
     }
@@ -244,22 +251,22 @@ public class UtilsProject {
                 }
                 paramConnection.setCheminPhotos(getVal(Constantes.KEY_PATH));
                 String s = getVal(Constantes.KEY_CLIENT_DIVERS);
-                paramConnection.setClientDivers(Constantes.asString(s) ? Long.valueOf(s) : 0l);
-                paramConnection.setCodeAgence((Constantes.asString(getVal(Constantes.KEY_LOCAL_AGENCE))) ? Long.valueOf(getVal(Constantes.KEY_LOCAL_AGENCE)) : 0l);
-                paramConnection.setCodeSociete((Constantes.asString(getVal(Constantes.KEY_LOCAL_SOCIETE))) ? Long.valueOf(getVal(Constantes.KEY_LOCAL_SOCIETE)) : 0l);
+                paramConnection.setClientDivers(Constantes.asString(s) ? Long.parseLong(s) : 0L);
+                paramConnection.setCodeAgence((Constantes.asString(getVal(Constantes.KEY_LOCAL_AGENCE))) ? Long.parseLong(Objects.requireNonNull(getVal(Constantes.KEY_LOCAL_AGENCE))) : 0L);
+                paramConnection.setCodeSociete((Constantes.asString(getVal(Constantes.KEY_LOCAL_SOCIETE))) ? Long.parseLong(Objects.requireNonNull(getVal(Constantes.KEY_LOCAL_SOCIETE))) : 0L);
                 paramConnection.setDataBase(getVal(Constantes.KEY_LOCAL_DB_NAME));
                 paramConnection.setDataBaseRemote(getVal(Constantes.KEY_REMOTE_DB_NAME));
                 paramConnection.setHostWeb(getVal(Constantes.KEY_WEB_HOST));
-                paramConnection.setIdRemoteScte((Constantes.asString(getVal(Constantes.KEY_REMOTE_SOCIETE))) ? Long.parseLong(getVal(Constantes.KEY_REMOTE_SOCIETE)) : 0l);
-                paramConnection.setModeReg((Constantes.asString(getVal(Constantes.KEY_MODE_REGLEMENT))) ? Long.valueOf(getVal(Constantes.KEY_MODE_REGLEMENT)) : 0l);
-                paramConnection.setModelReg((Constantes.asString(getVal(Constantes.KEY_MODEL_REGLEMENT))) ? Long.valueOf(getVal(Constantes.KEY_MODEL_REGLEMENT)) : 0l);
-                paramConnection.setP_default((Constantes.asString(getVal(Constantes.KEY_USE_PRINTER))) ? Boolean.valueOf(getVal(Constantes.KEY_USE_PRINTER)) : true);
-                paramConnection.setP_height((Constantes.asString(getVal(Constantes.KEY_PAPER_HEIGHT))) ? Double.valueOf(getVal(Constantes.KEY_PAPER_HEIGHT)) : 0d);
-                paramConnection.setP_width((Constantes.asString(getVal(Constantes.KEY_PAPER_WIDTH))) ? Double.valueOf(getVal(Constantes.KEY_PAPER_WIDTH)) : 0d);
-                paramConnection.setP_mb((Constantes.asString(getVal(Constantes.KEY_PAPER_M_BOTOM))) ? Double.valueOf(getVal(Constantes.KEY_PAPER_M_BOTOM)) : 0d);
-                paramConnection.setP_ml((Constantes.asString(getVal(Constantes.KEY_PAPER_M_LEFT))) ? Double.valueOf(getVal(Constantes.KEY_PAPER_M_LEFT)) : 0d);
-                paramConnection.setP_mr((Constantes.asString(getVal(Constantes.KEY_PAPER_M_RIGHT))) ? Double.valueOf(getVal(Constantes.KEY_PAPER_M_RIGHT)) : 0d);
-                paramConnection.setP_mt((Constantes.asString(getVal(Constantes.KEY_PAPER_M_TOP))) ? Double.valueOf(getVal(Constantes.KEY_PAPER_M_TOP)) : 0d);
+                paramConnection.setIdRemoteScte((Constantes.asString(getVal(Constantes.KEY_REMOTE_SOCIETE))) ? Long.parseLong(Objects.requireNonNull(getVal(Constantes.KEY_REMOTE_SOCIETE))) : 0L);
+                paramConnection.setModeReg((Constantes.asString(getVal(Constantes.KEY_MODE_REGLEMENT))) ? Long.parseLong(Objects.requireNonNull(getVal(Constantes.KEY_MODE_REGLEMENT))) : 0L);
+                paramConnection.setModelReg((Constantes.asString(getVal(Constantes.KEY_MODEL_REGLEMENT))) ? Long.parseLong(Objects.requireNonNull(getVal(Constantes.KEY_MODEL_REGLEMENT))) : 0L);
+                paramConnection.setP_default(!(Constantes.asString(getVal(Constantes.KEY_USE_PRINTER))) || Boolean.parseBoolean(getVal(Constantes.KEY_USE_PRINTER)));
+                paramConnection.setP_height((Constantes.asString(getVal(Constantes.KEY_PAPER_HEIGHT))) ? Double.parseDouble(Objects.requireNonNull(getVal(Constantes.KEY_PAPER_HEIGHT))) : 0d);
+                paramConnection.setP_width((Constantes.asString(getVal(Constantes.KEY_PAPER_WIDTH))) ? Double.parseDouble(Objects.requireNonNull(getVal(Constantes.KEY_PAPER_WIDTH))) : 0d);
+                paramConnection.setP_mb((Constantes.asString(getVal(Constantes.KEY_PAPER_M_BOTOM))) ? Double.parseDouble(Objects.requireNonNull(getVal(Constantes.KEY_PAPER_M_BOTOM))) : 0d);
+                paramConnection.setP_ml((Constantes.asString(getVal(Constantes.KEY_PAPER_M_LEFT))) ? Double.parseDouble(Objects.requireNonNull(getVal(Constantes.KEY_PAPER_M_LEFT))) : 0d);
+                paramConnection.setP_mr((Constantes.asString(getVal(Constantes.KEY_PAPER_M_RIGHT))) ? Double.parseDouble(Objects.requireNonNull(getVal(Constantes.KEY_PAPER_M_RIGHT))) : 0d);
+                paramConnection.setP_mt((Constantes.asString(getVal(Constantes.KEY_PAPER_M_TOP))) ? Double.parseDouble(Objects.requireNonNull(getVal(Constantes.KEY_PAPER_M_TOP))) : 0d);
                 paramConnection.setPassword(getVal(Constantes.KEY_LOCAL_PASSWORD));
                 paramConnection.setPasswordRemote(getVal(Constantes.KEY_REMOTE_PASSWORD));
                 paramConnection.setPort(getVal(Constantes.KEY_LOCAL_PORT));
@@ -330,7 +337,7 @@ public class UtilsProject {
         if (currentAgence != null && Constantes.asLong(currentAgence.getId())) {
             paramVente = (YvsComParametreVente) dao.findOneByNQ("YvsComParametreVente.findByAgence", new String[]{"agence"}, new Object[]{new YvsAgences(currentAgence.getId())});
             if (currentAgence == null) {
-                Platform.runLater(()->LymytzService.openAlertDialog("Impossible de trouver l'agence locale", "Erreur au demarrage", "Aucune Agence n'a été trouvé !", Alert.AlertType.ERROR));
+                Platform.runLater(() -> LymytzService.openAlertDialog("Impossible de trouver l'agence locale", "Erreur au demarrage", "Aucune Agence n'a été trouvé !", Alert.AlertType.ERROR));
             }
         }
         if (Constantes.asLong(paramConnection.getCodeSociete())) {
@@ -372,47 +379,6 @@ public class UtilsProject {
         String dbR = UtilsProject.properties.getProperty(Constantes.KEY_REMOTE_DB_NAME);
         return !host.equals(hostR) || !db.equals(dbR);
     }
-
-    /*public static ParamConnection readProperty() {
-        FileInputStream fis = null;
-        try {
-            //ouvre le fichier initialisé
-            fis = new FileInputStream(new File("conf/servConfig.ltz"));
-            ParamConnection param = new ParamConnection();
-            param.readFile(fis);
-            return param;
-        } catch (FileNotFoundException ex) {
-            LogFiles.addLogInFile("", Severity.ERROR, ConsUtil.SOURCE_LOG_FILE_EXCEPTION, ex);
-            Logger.getLogger(UtilsProject.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            try {
-                fis.close();
-            } catch (IOException ex) {
-                LogFiles.addLogInFile("", Severity.ERROR, ConsUtil.SOURCE_LOG_FILE_EXCEPTION, ex);
-                Logger.getLogger(UtilsProject.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-        return null;
-    }*/
-
-
-/*    private static String getOpenDiv() {
-        StringBuilder sb = new StringBuilder("<div style=")
-                .append("font-size:7pt").append(">");
-        return sb.toString();
-    }
-
-    private static String getOpenDivfoot() {
-        StringBuilder sb = new StringBuilder("<div style=")
-                .append("font-size:5pt; white-space: initial;white-space: nowrap;").append(">");
-        return sb.toString();
-    }
-
-    private static String getSpan(String text) {
-        StringBuilder sb = new StringBuilder("<span style=")
-                .append("font-size:6pt; witdh:110px;display:inline-block; float:left").append(">").append(text).append("</span>");
-        return sb.toString();
-    }*/
 
     public static ImageView buildImageProduit(String path) {
         ImageView img = new ImageView(new Image(Objects.requireNonNull(LocalLoader.class.getResourceAsStream("/icones/" + path))));
@@ -580,7 +546,6 @@ public class UtilsProject {
 
     public static String buildQueryCount(String table, List<EntityColumn> colonnes) {
         String query = "SELECT COUNT(*)";
-        int i = 0;
         boolean hasAgence = false;
         boolean hasSociete = false;
         for (EntityColumn c : colonnes) {
@@ -590,7 +555,6 @@ public class UtilsProject {
             if (c.getColumnName().equals("societe")) {
                 hasSociete = true;
             }
-            i++;
         }
         switch (table) {
             case Constantes.TABLE_USER_AGENCE_CODE:

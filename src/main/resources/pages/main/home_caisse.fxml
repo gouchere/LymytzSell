@@ -32,7 +32,7 @@
                                   text="Nouveau (Ctl+N)"/>
                         <MenuItem fx:id="ITEM_PREF" mnemonicParsing="false" onAction="#openViewPreference"
                                   text="Préférences"/>
-                        <MenuItem fx:id="ITEM_COMPTE" mnemonicParsing="false" onAction="#openViewComptes"
+                        <MenuItem fx:id="ITEM_COMPTE" mnemonicParsing="false" onAction="#openAndLoadFormCompte"
                                   text="Mon compte (Ctl + C)"/>
                         <SeparatorMenuItem mnemonicParsing="false"/>
                         <MenuItem fx:id="ITEM_QUIT" mnemonicParsing="false" text="Quitter (Clt + Q)"/>
@@ -122,7 +122,7 @@
                                 <Button fx:id="BTN_LIST_FAC" layoutX="10.0" layoutY="13.0" mnemonicParsing="false"
                                         onAction="#openViewListFacture" prefHeight="25.0" text="Mes Factures"/>
                                 <Separator orientation="VERTICAL" prefHeight="32.0" prefWidth="0.0"/>
-                                <Button fx:id="BTN_COMPTE" mnemonicParsing="false" onAction="#openViewComptes"
+                                <Button fx:id="BTN_COMPTE" mnemonicParsing="false" onAction="#openAndLoadFormCompte"
                                         prefHeight="25.0" text="Compte"/>
                                 <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0"/>
                                 <VBox prefHeight="39.0" prefWidth="284.0">

@@ -57,6 +57,8 @@ import com.lymytz.lymytzsell.synchro.ws.ResultatAction;
 import com.lymytz.lymytzsell.synchro.ws.WsSynchro;
 import com.lymytz.lymytzsell.view.LocalLoader;
 import com.lymytz.lymytzsell.view.main.HomeCaisseController;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * FXML Controller class
@@ -66,6 +68,8 @@ import com.lymytz.lymytzsell.view.main.HomeCaisseController;
 public class ManagedApplication {
 
     public LocalQueryFactories dao = new LocalQueryFactories();
+    @Getter
+    @Setter
     private HomeCaisseController mainPage;
     public ListenServersRemote serviceListen;
     private List<Long> idDepots;
@@ -75,18 +79,6 @@ public class ManagedApplication {
         categories = new ArrayList<>();
         categories.add(Constantes.CAT_MP);
         categories.add(Constantes.CAT_PSF);
-    }
-
-    public HomeCaisseController getMainPage() {
-        return mainPage;
-    }
-
-    public void setMainPage(HomeCaisseController mainPage) {
-        this.mainPage = mainPage;
-    }
-
-    public List<Long> getIdDepots() {
-        return idDepots;
     }
 
     public void setIdDepots(List<Long> idDepots) {
@@ -123,10 +115,10 @@ public class ManagedApplication {
                         + "FROM yvs_com_creneau_horaire_users c "
                         + "WHERE (e.creneau=c.id AND c.users=? AND e.cloturer=false ) AND e.id!=?";
                 dao.executeSqlQuery(query, new Options[]{new Options(creno.getUsers().getId(), 1),
-                    new Options(new Date(), 2),
-                    new Options(new Date(), 3),
-                    new Options(creno.getUsers().getId(), 4),
-                    new Options(header.getId(), 5)
+                        new Options(new Date(), 2),
+                        new Options(new Date(), 3),
+                        new Options(creno.getUsers().getId(), 4),
+                        new Options(header.getId(), 5)
                 });
             }
             return header;
@@ -152,12 +144,6 @@ public class ManagedApplication {
         return head;
     }
 
-//    public TabPane tabView = new TabPane();
-//    Requete rq = new Requete();
-    KeyCode code;
-
-//    List<YvsComClient> clients;
-//    List<YvsDictionnaire> villes;
     final Tooltip info_quit = new Tooltip("Quitter");
     final Tooltip info_compte = new Tooltip("Voir mon espace");
     final Tooltip info_param = new Tooltip("Paramétrer");
@@ -197,7 +183,7 @@ public class ManagedApplication {
     private Label LAB_VOL;
     @FXML
     private Label LAB_POID;
-//    @FXML
+    //    @FXML
 //    private VBox PAN_COND;
     @FXML
     private Button BTN_PARAM;
@@ -206,12 +192,6 @@ public class ManagedApplication {
     private Label LAB_TOTAL;
     @FXML
     private Label LAB_T_HT;
-//    @FXML
-//    public Button BTN_SAVE;
-//    @FXML
-//    public Button BTN_REGLER;
-//    @FXML
-//    public Button BTN_LIVRER;
 
     @FXML
     private Label L_CURRENT;
@@ -230,45 +210,11 @@ public class ManagedApplication {
 
     public void initialize_() {
         initComponent_();
-        initContent_();
 
         BTN_PARAM.setTooltip(info_param);
         BTN_LOG_OOUT.setTooltip(info_quit);
         BTN_COMPTE.setTooltip(info_compte);
-//        if (UtilsProject.depotLivraison != null) {
-//            if (serviceListen == null) {
-//                serviceListen = new ListenServersRemote(10, UtilsProject.depotLivraison.getId(), this);
-//                serviceListen.start();
-//            } else {
-//                serviceListen.setDepot(UtilsProject.depotLivraison.getId());
-//                serviceListen.restart();
-//            }
-//        }
         LAB_RESULT.setVisible(false);
-//        if (LymytzService.autoriserPage("gescom_paramG")) {
-////        if (LymytzService.autoriserPage(1501L)) {
-//            System.err.println(" Vous êtes autorisé...");
-//        } else {
-//            BTN_PARAM.setVisible(false);
-//        }
-//        SESS_SOCIETE.setText(UtilsProject.currentSociete.getName());
-//        paramConnection = new ParamConnection();
-//        paramConnection.readFile(LymytzSell.getFileInputStream());
-//        time.addListener(new ChangeListener<Number>() {
-//
-//            @Override
-//            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-//                Platform.runLater(new Runnable() {
-//
-//                    @Override
-//                    public void run() {
-//                        SESS_DUREE.setText(Constantes.HMS.format(new Date(getTime())));
-//                    }
-//                });
-//            }
-//        });
-//        Thread t = new Thread(new Clock());
-//        t.start();
     }
 
     private void initComponent_() {
@@ -301,40 +247,11 @@ public class ManagedApplication {
         final ImageView btn_print = new ImageView(new Image(LocalLoader.class.getResourceAsStream("/icones/print.png")));
         final ImageView btn_reg = new ImageView(new Image(LocalLoader.class.getResourceAsStream("/icones/money.png")));
         final ImageView btn_liv = new ImageView(new Image(LocalLoader.class.getResourceAsStream("/icones/cdcopy.png")));
-//        BTN_SAVE.setGraphic(btn_save);
-//        BTN_REGLER.setGraphic(btn_reg);
-//        BTN_LIVRER.setGraphic(btn_liv);
-//        BTN_SAVE.getStyleClass().add("mes_boutons");
-//        BTN_REGLER.getStyleClass().add("mes_boutons");
-//        BTN_LIVRER.getStyleClass().add("mes_boutons");
-//        BTN_LIVRER.setVisible(false);
-//        BTN_REGLER.setVisible(false);
+
     }
 
-    private void initContent_() {
-//        Thread t1 = new Thread(new Runnable() {
-//
-//            @Override
-//            public void run() {
-//                clients = rq.loadNameQueries("YvsComClient.findAll_", new String[]{"societe"}, new Object[]{UtilsProject.currentSociete});
-//                villes = rq.loadNameQueries("YvsDictionnaire.findVilles", new String[]{}, new Object[]{});
-//            }
-//        });
-//        t1.start();
-    }
-
-//    private String getRefFournisseur(YvsBaseArticles art) {
-//        String ref = "";
-//        if (art.getFournisseurs() != null ? !art.getFournisseurs().isEmpty() : false) {
-//            for (YvsBaseArticleFournisseur af : art.getFournisseurs()) {
-//                ref += ", " + af.getDesArtExterne();
-//            }
-//        }
-//        return ref;
-//    }
     @FXML
     private void openViewParam(ActionEvent event) {
-//        ParametresController p = new ParametresController();
         openViewParam(true);
 
     }
@@ -349,33 +266,6 @@ public class ManagedApplication {
             stage.setScene(scene);
             stage.initOwner(UtilsProject.primaryStage);
             stage.centerOnScreen();
-            stage.show();
-            //récupère le contrôleur
-//            ParametresController controller = loader.getController();
-//            controller.displayParametres(establish);
-        } catch (IOException ex) {
-            Logger.getLogger(LymytzSell.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    @FXML
-    private void openViewComptes(ActionEvent event) {
-        try {
-            FXMLLoader load = new FXMLLoader(LocalLoader.class.getResource("/main/form_comptes.fxml"));
-            VBox root = load.load();
-            Screen sc = Screen.getPrimary();
-            Rectangle2D bounds = sc.getVisualBounds();
-            Scene scene = new Scene(root, 1000, 500);
-            Stage stage = new Stage();
-            stage.setScene(scene);
-            stage.setTitle("Lymytz:extended caisse apps");
-            stage.centerOnScreen();
-            stage.setIconified(false);
-            stage.initOwner(UtilsProject.primaryStage);
-            stage.initModality(Modality.WINDOW_MODAL);
-            MyComptesController controler = (MyComptesController) load.getController();
-//            controler.setMainController(this);
-//            displayStatHeader(UtilsProject.headerDoc, controler);
             stage.show();
         } catch (IOException ex) {
             Logger.getLogger(ManagedApplication.class.getName()).log(Level.SEVERE, null, ex);
@@ -397,8 +287,6 @@ public class ManagedApplication {
             stage.setIconified(false);
             stage.initOwner(UtilsProject.primaryStage);
             stage.initModality(Modality.WINDOW_MODAL);
-//            FormListingController controler = (FormListingController) load.getController();
-//            controler.initController(this, UtilsProject.headerDoc);
             stage.show();
         } catch (IOException ex) {
             Logger.getLogger(ManagedApplication.class.getName()).log(Level.SEVERE, null, ex);
@@ -407,7 +295,7 @@ public class ManagedApplication {
 
     @FXML
     private void initContent_(ActionEvent event) {
-        initContent_();
+
     }
 
     public void cleanVente(Long idHeader) {
@@ -421,7 +309,7 @@ public class ManagedApplication {
 //        }
     }
 
-//
+    //
 //    public boolean verifyDateVente(Date date) {
 //        int ecart = -1;
 //        int nbFiches = -1;
@@ -564,24 +452,6 @@ public class ManagedApplication {
     }
 
     @FXML
-    private void openViewCatalogue(ActionEvent event) {
-        try {
-            FXMLLoader load = new FXMLLoader(LocalLoader.class.getResource("/main/form_catalogue.fxml"));
-            BorderPane root = load.load();
-            Scene scene = new Scene(root, 900, 700);
-            Stage stage = new Stage();
-            stage.setScene(scene);
-            stage.setTitle("Lymytz:Catalogue articles");
-            stage.centerOnScreen();
-//            stage.initOwner(UtilsProject.primaryStage);
-            stage.show();
-//            CatalogueController controler = (CatalogueController) load.getController();
-        } catch (IOException ex) {
-            Logger.getLogger(ManagedApplication.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    @FXML
     private void openViewFacture(ActionEvent event) {
         try {
             FXMLLoader load = new FXMLLoader(LocalLoader.class.getResource("/main/form_factures.fxml"));
@@ -602,7 +472,7 @@ public class ManagedApplication {
         }
     }
 
-//    public synchronized Long createFactureVente(YvsComClient client, String typeDoc, YvsDictionnaire adresse, String nameClient, Date dateLiv, String telephone) {
+    //    public synchronized Long createFactureVente(YvsComClient client, String typeDoc, YvsDictionnaire adresse, String nameClient, Date dateLiv, String telephone) {
 //        Facture f = new Facture(client, typeDoc, adresse, nameClient, dateLiv, telephone);
 //        Thread t = new Thread(f);
 //        t.run();
@@ -681,7 +551,7 @@ public class ManagedApplication {
 //    }
 //
 
-//
+    //
     @FXML
     private void findArticleByRef(KeyEvent event) {
 //        //Exécute cette methode seulement si l'option display detail est actif
@@ -893,7 +763,7 @@ public class ManagedApplication {
 ////    }
 //
 
-//    public void openDlgCalculatrice(Onglets onglet, String source) {
+    //    public void openDlgCalculatrice(Onglets onglet, String source) {
 //        try {
 ////            if (onglet != null ? onglet.getContentsFacture().isEmpty() : true) {
 ////                LymytzService.openAlertDialog("Votre panier est vide", "erreur contenu", "Erreur !", Alert.AlertType.ERROR);
@@ -925,7 +795,7 @@ public class ManagedApplication {
         }
     }
 
-////    private boolean saveContentFacture(List<ContentPanier> contents, YvsComDocVentes doc) {
+    ////    private boolean saveContentFacture(List<ContentPanier> contents, YvsComDocVentes doc) {
 //    private YvsComptaAcompteClient saveAcompteClient(YvsComDocVentes facture, double montant, Date date) {
 //        YvsComptaAcompteClient bean = new YvsComptaAcompteClient();
 //        String numDoc = UtilsProject.generatedNumDoc(Constantes.TYPE_PT_AVANCE_VENTE);
@@ -1098,7 +968,7 @@ public class ManagedApplication {
 //        }
 //    }
 
-//
+    //
     private Image[] images;
 
     public void createImageProduit(YvsBaseArticles art) {
@@ -1201,7 +1071,7 @@ public class ManagedApplication {
         navigueInHeader(true);
     }
 
-//    private int current = -1;
+    //    private int current = -1;
 //    private List<YvsComDocVentes> listeFactures;
 //    Onglets tab = null;
 //
@@ -1243,7 +1113,7 @@ public class ManagedApplication {
 //        }
     }
 
-//    public void saveCurrentCommercial(YvsComDocVentes facture) {
+    //    public void saveCurrentCommercial(YvsComDocVentes facture) {
 //        if (UtilsProject.headerDoc != null) {
 //            if (UtilsProject.headerDoc.getCreneau() != null ? (UtilsProject.headerDoc.getCreneau().getId_() != null ? UtilsProject.headerDoc.getCreneau().getId_() > 0 : false) : false) {
 //                char commissionFor = 'C';

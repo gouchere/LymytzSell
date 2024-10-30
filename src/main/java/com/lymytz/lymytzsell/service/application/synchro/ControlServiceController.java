@@ -127,7 +127,7 @@ public class ControlServiceController implements Initializable, Controller {
             LAUNCH_IN.setDisable(true);
             STOP_IN.setDisable(false);
             PAUSE_IN.setDisable(false);
-            WsSynchro.runningIn = false;
+            WsSynchro.runningIn.set(false);
         }
     }
 
@@ -138,7 +138,7 @@ public class ControlServiceController implements Initializable, Controller {
             LAUNCH_IN.setDisable(false);
             STOP_IN.setDisable(true);
             PAUSE_IN.setDisable(true);
-            WsSynchro.runningIn = true;
+            WsSynchro.runningIn.set(true);
         }
     }
 
@@ -149,7 +149,7 @@ public class ControlServiceController implements Initializable, Controller {
             LAUNCH_IN.setDisable(false);
             STOP_IN.setDisable(true);
             PAUSE_IN.setDisable(true);
-            WsSynchro.runningIn = true;
+            WsSynchro.runningIn.set(true);
         }
     }
 

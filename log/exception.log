@@ -4534,3 +4534,104 @@ Caused by: java.lang.IllegalAccessException: class org.jboss.weld.util.bytecode.
 	... 15 more
 29-10-2024 12:08 | [ERREUR]
 FV/271024/0003, non comptabilisé: Le service de comptabilisation est introuvable
+29-10-2024 17:49 | [INFO]Ouverture de l'application...
+29-10-2024 17:58 | [INFO]Ouverture de l'application...
+29-10-2024 17:59 | [ERREUR]
+
+java.lang.reflect.InaccessibleObjectException: Unable to make protected final java.lang.Class java.lang.ClassLoader.defineClass(java.lang.String,byte[],int,int) throws java.lang.ClassFormatError accessible: module java.base does not "opens java.lang" to unnamed module @2d12228b
+	at java.base/java.lang.reflect.AccessibleObject.checkCanSetAccessible(AccessibleObject.java:354)
+	at java.base/java.lang.reflect.AccessibleObject.checkCanSetAccessible(AccessibleObject.java:297)
+	at java.base/java.lang.reflect.Method.checkCanSetAccessible(Method.java:199)
+	at java.base/java.lang.reflect.Method.setAccessible(Method.java:193)
+	at org.jboss.weld.util.bytecode.ClassFileUtils$1.run(ClassFileUtils.java:67)
+	at java.base/java.security.AccessController.doPrivileged(AccessController.java:748)
+	at org.jboss.weld.util.bytecode.ClassFileUtils.makeClassLoaderMethodsAccessible(ClassFileUtils.java:60)
+	at org.jboss.weld.bootstrap.WeldStartup.startContainer(WeldStartup.java:220)
+	at org.jboss.weld.bootstrap.WeldBootstrap.startContainer(WeldBootstrap.java:72)
+	at org.jboss.weld.environment.se.Weld.initialize(Weld.java:797)
+	at org.jboss.weld.environment.se.Weld.initialize(Weld.java:176)
+	at org.glassfish.jersey.inject.cdi.se.CdiSeInjectionManager.completeRegistration(CdiSeInjectionManager.java:253)
+	at org.glassfish.jersey.client.ClientConfig$State.initRuntime(ClientConfig.java:468)
+	at org.glassfish.jersey.internal.util.collection.Values$LazyValueImpl.get(Values.java:341)
+	at org.glassfish.jersey.client.ClientConfig.getRuntime(ClientConfig.java:826)
+	at org.glassfish.jersey.client.ClientRequest.getConfiguration(ClientRequest.java:285)
+	at org.glassfish.jersey.client.JerseyInvocation.validateHttpMethodAndEntity(JerseyInvocation.java:143)
+	at org.glassfish.jersey.client.JerseyInvocation.<init>(JerseyInvocation.java:112)
+	at org.glassfish.jersey.client.JerseyInvocation.<init>(JerseyInvocation.java:108)
+	at org.glassfish.jersey.client.JerseyInvocation.<init>(JerseyInvocation.java:99)
+	at org.glassfish.jersey.client.JerseyInvocation$Builder.method(JerseyInvocation.java:445)
+	at org.glassfish.jersey.client.JerseyInvocation$Builder.post(JerseyInvocation.java:351)
+	at com.lymytz.lymytzsell.synchro.ws.WsSynchro.livraisonDocVente(WsSynchro.java:240)
+	at com.lymytz.lymytzsell.service.application.service.ServiceLivraison.saveLivraison(ServiceLivraison.java:53)
+	at com.lymytz.lymytzsell.view.main.HomeCaisseController.saveLivraisonAndreglement(HomeCaisseController.java:807)
+	at com.lymytz.lymytzsell.view.main.HomeCaisseController.lambda$confirmValideFacture$8(HomeCaisseController.java:649)
+	at java.base/java.lang.Thread.run(Thread.java:857)
+29-10-2024 17:59 | [ERREUR]
+FV/291024/0001, non comptabilisé: Le service de comptabilisation est introuvable
+29-10-2024 17:59 | [ERREUR]
+
+org.jboss.weld.exceptions.WeldException: WELD-001524: Unable to load proxy class for bean Implicit Bean [javax.enterprise.event.Event] with qualifiers [@Default] with class interface javax.enterprise.event.Event
+	at java.base/jdk.internal.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
+	at java.base/jdk.internal.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:45)
+	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:499)
+	at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:480)
+	at java.base/java.util.concurrent.ForkJoinTask.getThrowableException(ForkJoinTask.java:562)
+	at java.base/java.util.concurrent.ForkJoinTask.reportExecutionException(ForkJoinTask.java:604)
+	at java.base/java.util.concurrent.ForkJoinTask.get(ForkJoinTask.java:981)
+	at org.jboss.weld.executor.AbstractExecutorServices.checkForExceptions(AbstractExecutorServices.java:73)
+	at org.jboss.weld.executor.AbstractExecutorServices.invokeAllAndCheckForExceptions(AbstractExecutorServices.java:59)
+	at org.jboss.weld.executor.AbstractExecutorServices.invokeAllAndCheckForExceptions(AbstractExecutorServices.java:67)
+	at org.jboss.weld.bootstrap.ConcurrentBeanDeployer.doAfterBeanDiscovery(ConcurrentBeanDeployer.java:88)
+	at org.jboss.weld.bootstrap.BeanDeployment.afterBeanDiscovery(BeanDeployment.java:268)
+	at org.jboss.weld.bootstrap.WeldStartup.deployBeans(WeldStartup.java:482)
+	at org.jboss.weld.bootstrap.WeldBootstrap.deployBeans(WeldBootstrap.java:86)
+	at org.jboss.weld.environment.se.Weld.initialize(Weld.java:803)
+	at org.jboss.weld.environment.se.Weld.initialize(Weld.java:176)
+	at org.glassfish.jersey.inject.cdi.se.CdiSeInjectionManager.completeRegistration(CdiSeInjectionManager.java:253)
+	at org.glassfish.jersey.client.ClientConfig$State.initRuntime(ClientConfig.java:468)
+	at org.glassfish.jersey.internal.util.collection.Values$LazyValueImpl.get(Values.java:341)
+	at org.glassfish.jersey.client.ClientConfig.getRuntime(ClientConfig.java:826)
+	at org.glassfish.jersey.client.ClientRequest.getConfiguration(ClientRequest.java:285)
+	at org.glassfish.jersey.client.JerseyInvocation.validateHttpMethodAndEntity(JerseyInvocation.java:143)
+	at org.glassfish.jersey.client.JerseyInvocation.<init>(JerseyInvocation.java:112)
+	at org.glassfish.jersey.client.JerseyInvocation.<init>(JerseyInvocation.java:108)
+	at org.glassfish.jersey.client.JerseyInvocation.<init>(JerseyInvocation.java:99)
+	at org.glassfish.jersey.client.JerseyInvocation$Builder.method(JerseyInvocation.java:445)
+	at org.glassfish.jersey.client.JerseyInvocation$Builder.post(JerseyInvocation.java:351)
+	at com.lymytz.lymytzsell.synchro.ws.WsSynchro.livraisonDocVente(WsSynchro.java:240)
+	at com.lymytz.lymytzsell.service.application.service.ServiceLivraison.saveLivraison(ServiceLivraison.java:53)
+	at com.lymytz.lymytzsell.view.main.HomeCaisseController.saveLivraisonAndreglement(HomeCaisseController.java:807)
+	at com.lymytz.lymytzsell.view.main.HomeCaisseController.lambda$confirmValideFacture$8(HomeCaisseController.java:649)
+	at java.base/java.lang.Thread.run(Thread.java:857)
+Caused by: org.jboss.weld.exceptions.WeldException: WELD-001524: Unable to load proxy class for bean Implicit Bean [javax.enterprise.event.Event] with qualifiers [@Default] with class interface javax.enterprise.event.Event
+	at org.jboss.weld.bean.proxy.ProxyFactory.getProxyClass(ProxyFactory.java:378)
+	at org.jboss.weld.bean.builtin.AbstractFacadeBean.initializeAfterBeanDiscovery(AbstractFacadeBean.java:61)
+	at org.jboss.weld.bootstrap.ConcurrentBeanDeployer$AfterBeanDiscoveryInitializerFactory.doWork(ConcurrentBeanDeployer.java:111)
+	at org.jboss.weld.bootstrap.ConcurrentBeanDeployer$AfterBeanDiscoveryInitializerFactory.doWork(ConcurrentBeanDeployer.java:102)
+	at org.jboss.weld.executor.IterativeWorkerTaskFactory$1.call(IterativeWorkerTaskFactory.java:62)
+	at org.jboss.weld.executor.IterativeWorkerTaskFactory$1.call(IterativeWorkerTaskFactory.java:55)
+	at org.jboss.weld.executor.CommonForkJoinPoolExecutorServices.lambda$wrap$0(CommonForkJoinPoolExecutorServices.java:70)
+	at java.base/java.util.concurrent.ForkJoinTask$AdaptedInterruptibleCallable.exec(ForkJoinTask.java:1461)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec$$$capture(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+Caused by: java.lang.RuntimeException: java.lang.IllegalAccessException: class org.jboss.weld.util.bytecode.ClassFileUtils cannot access a member of class java.lang.ClassLoader (in module java.base) with modifiers "protected final"
+	at org.jboss.weld.util.bytecode.ClassFileUtils.toClass(ClassFileUtils.java:118)
+	at org.jboss.weld.bean.proxy.ProxyFactory.createProxyClass(ProxyFactory.java:481)
+	at org.jboss.weld.bean.proxy.ProxyFactory.getProxyClass(ProxyFactory.java:370)
+	... 13 more
+Caused by: java.lang.IllegalAccessException: class org.jboss.weld.util.bytecode.ClassFileUtils cannot access a member of class java.lang.ClassLoader (in module java.base) with modifiers "protected final"
+	at java.base/jdk.internal.reflect.Reflection.newIllegalAccessException(Reflection.java:392)
+	at java.base/java.lang.reflect.AccessibleObject.checkAccess(AccessibleObject.java:674)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:560)
+	at org.jboss.weld.util.bytecode.ClassFileUtils.toClass2(ClassFileUtils.java:143)
+	at org.jboss.weld.util.bytecode.ClassFileUtils.toClass(ClassFileUtils.java:112)
+	... 15 more
+29-10-2024 17:59 | [ERREUR]
+FV/291024/0002, non comptabilisé: Le service de comptabilisation est introuvable
+30-10-2024 06:05 | [INFO]Ouverture de l'application...
+30-10-2024 06:16 | [INFO]Ouverture de l'application...

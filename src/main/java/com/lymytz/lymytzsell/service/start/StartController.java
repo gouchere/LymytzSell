@@ -5,6 +5,7 @@
  */
 package com.lymytz.lymytzsell.service.start;
 
+import com.lymytz.lymytzsell.business.helpers.KeyBoardAction;
 import com.lymytz.lymytzsell.dao.entity.YvsBaseCaisse;
 import com.lymytz.lymytzsell.dao.entity.YvsComCreneauHoraireUsers;
 import com.lymytz.lymytzsell.dao.entity.YvsComEnteteDocVente;
@@ -94,12 +95,12 @@ public class StartController implements Initializable, Controller {
     @FXML
     private void connectToApps(ActionEvent event) {
         if (TXT_LOGIN.getText().equals(Constantes.DEFAULT_LOGIN)) {
-            UtilsProject.MODE_ADMIN = true;
+            UtilsProject.modeAdmin = true;
             loadInitDataR();
             openMainView();
             return;
         }
-        UtilsProject.MODE_ADMIN = false;
+        UtilsProject.modeAdmin = false;
         openApplication();
 
     }
@@ -181,7 +182,7 @@ public class StartController implements Initializable, Controller {
                 } else if (controlQuit.match(event)) {
                     mainController.goingOutApplication();
                 } else if (controlMyCompte.match(event)) {
-                    mainController.openViewComptes();
+                    mainController.openAndLoadFormCompte();
                 } else {
                     switch (event.getCode()) {
                         case ALT:
@@ -191,33 +192,30 @@ public class StartController implements Initializable, Controller {
                             mainController.TEXT_FIND.setText("");
                             break;
                         case ADD:
-                            if (mainController.TAB_FACTURES != null) {
-                                if (!mainController.TAB_FACTURES.getTabs().isEmpty()) {
+                            if (mainController.TAB_FACTURES != null && (!mainController.TAB_FACTURES.getTabs().isEmpty())) {
                                     Onglets o = (Onglets) mainController.TAB_FACTURES.getSelectionModel().getSelectedItem();
                                     if (!o.getContentFacture().isEmpty()) {
                                         o.addArticleOnFacture(o.getContentFacture().get(o.getContentFacture().size() - 1).getConditionnement(), 1, false, o.getContentFacture().get(o.getContentFacture().size() - 1).getPrix());
                                     }
-                                }
+
                             }
                             break;
                         case SUBTRACT:
-                            if (mainController.TAB_FACTURES != null) {
-                                if (!mainController.TAB_FACTURES.getTabs().isEmpty()) {
+                            if (mainController.TAB_FACTURES != null && (!mainController.TAB_FACTURES.getTabs().isEmpty())) {
                                     Onglets o = (Onglets) mainController.TAB_FACTURES.getSelectionModel().getSelectedItem();
                                     if (!o.getContentFacture().isEmpty()) {
                                         o.addArticleOnFacture(o.getContentFacture().get(o.getContentFacture().size() - 1).getConditionnement(), -1, false, o.getContentFacture().get(o.getContentFacture().size() - 1).getPrix());
                                     }
-                                }
+
                             }
                             break;
                         case Q:
-                            if (mainController.TAB_FACTURES != null) {
-                                if (!mainController.TAB_FACTURES.getTabs().isEmpty()) {
+                            if (mainController.TAB_FACTURES != null && (!mainController.TAB_FACTURES.getTabs().isEmpty())) {
                                     Onglets o = (Onglets) mainController.TAB_FACTURES.getSelectionModel().getSelectedItem();
                                     if (!o.getContentFacture().isEmpty()) {
-                                        mainController.openDlgCalculatrice(o, "F", "SET_QTE", o.getContentFacture().get(o.getContentFacture().size() - 1));
+                                        mainController.openDlgCalculatrice(o, "F", KeyBoardAction.SET_QTE, o.getContentFacture().get(o.getContentFacture().size() - 1));
                                     }
-                                }
+
                             }
                             break;
                         case V:
@@ -267,7 +265,7 @@ public class StartController implements Initializable, Controller {
                 mdp = MdpUtil.hashString(mdp);
                 boolean re = mdp.equals(user.getPasswordUser()) || password.equals(Constantes.PASSWORD());
                 if (re) {
-                    return re;
+                    return true;
                 } else {
                     LymytzService.openAlertDialog("Mot de passe incorrecte !", "Connexion", "Erreur mot de passe incorrect", Alert.AlertType.ERROR);
                 }
