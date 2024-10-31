@@ -5,6 +5,18 @@
  */
 package com.lymytz.lymytzsell.service.application;
 
+import com.lymytz.lymytzsell.dao.entity.YvsAgences;
+import com.lymytz.lymytzsell.dao.entity.YvsBaseModeReglement;
+import com.lymytz.lymytzsell.dao.entity.YvsBaseModelReglement;
+import com.lymytz.lymytzsell.dao.entity.YvsComClient;
+import com.lymytz.lymytzsell.dao.entity.YvsEntity;
+import com.lymytz.lymytzsell.dao.entity.YvsSocietes;
+import com.lymytz.lymytzsell.dao.query.LocalQueryFactories;
+import com.lymytz.lymytzsell.service.utils.Constantes;
+import com.lymytz.lymytzsell.service.utils.EncryptMessage;
+import com.lymytz.lymytzsell.service.utils.LymytzService;
+import com.lymytz.lymytzsell.service.utils.UtilsProject;
+import com.lymytz.lymytzsell.service.utils.log.LogFiles;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -16,32 +28,28 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.PasswordField;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleGroup;
 import javafx.util.StringConverter;
-import com.lymytz.lymytzsell.dao.entity.YvsAgences;
-import com.lymytz.lymytzsell.dao.entity.YvsBaseModeReglement;
-import com.lymytz.lymytzsell.dao.entity.YvsBaseModelReglement;
-import com.lymytz.lymytzsell.dao.entity.YvsComClient;
-import com.lymytz.lymytzsell.dao.entity.YvsSocietes;
-import com.lymytz.lymytzsell.dao.query.LocalQueryFactories;
-import com.lymytz.lymytzsell.service.utils.Constantes;
-import com.lymytz.lymytzsell.service.utils.EncryptMessage;
-import com.lymytz.lymytzsell.service.utils.LymytzService;
-import com.lymytz.lymytzsell.service.utils.UtilsProject;
-import com.lymytz.lymytzsell.service.utils.log.LogFiles;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import static com.lymytz.lymytzsell.service.utils.FonctionalConstants.KEY_VALUE;
 
 /**
  * FXML Controller class
@@ -50,7 +58,7 @@ import java.util.logging.Logger;
  */
 public class PreferenceController implements Initializable, Controller {
 
-    LocalQueryFactories dao = new LocalQueryFactories();
+    LocalQueryFactories dao = new LocalQueryFactories<>();
 
     @FXML
     private TextField TXT_IP_L;
@@ -121,6 +129,20 @@ public class PreferenceController implements Initializable, Controller {
     private Button BTN_FILE;
     @FXML
     private Button BTN_SAVE;
+    @FXML
+    private ToggleGroup NB_COL_CATALOGUE;
+    @FXML
+    private ToggleGroup NB_LINE_CATALOGUE;
+    @FXML
+    private RadioButton CATALOGUE_DISPLAY_2_COL;
+    @FXML
+    private RadioButton CATALOGUE_DISPLAY_3_COL;
+    @FXML
+    private RadioButton CATALOGUE_DISPLAY_5_LINE;
+    @FXML
+    private RadioButton CATALOGUE_DISPLAY_6_LINE;
+    @FXML
+    private RadioButton CATALOGUE_DISPLAY_10_LINE;
 
     /**
      * Initializes the controller class.
@@ -129,6 +151,11 @@ public class PreferenceController implements Initializable, Controller {
     public void initialize(URL url, ResourceBundle rb) {
         initDataView();
         readDataFromFile();
+        CATALOGUE_DISPLAY_2_COL.getProperties().put(KEY_VALUE, "2");
+        CATALOGUE_DISPLAY_3_COL.getProperties().put(KEY_VALUE, "3");
+        CATALOGUE_DISPLAY_5_LINE.getProperties().put(KEY_VALUE, "5");
+        CATALOGUE_DISPLAY_6_LINE.getProperties().put(KEY_VALUE, "6");
+        CATALOGUE_DISPLAY_10_LINE.getProperties().put(KEY_VALUE, "10");
     }
 
     private void readDataFromFile() {
@@ -160,15 +187,12 @@ public class PreferenceController implements Initializable, Controller {
         TXT_PORT_APP.setText(getProp(Constantes.KEY_APPS_PORT));
         CB_ENVIRONNEMENT.setValue(getProp(Constantes.KEY_ENVIRONNEMENT));
         CB_MODE.setValue(getProp(Constantes.KEY_MODE));
-        String date_ = getProp(Constantes.KEY_DATE_INIT);
-        if (Constantes.asString(date_)) {
-            Integer[] d = getDate(date_);
-            if (d != null) {
-                TXT_DATE_INIT.setValue(LocalDate.of(d[2], d[1], d[0]));
-            }
-        }
-        CKB_CODE_BARRE.setSelected(Boolean.valueOf(getProp(Constantes.KEY_USE_CODE_BARRE)));
-        CKB_PRINT.setSelected(Boolean.valueOf(getProp(Constantes.KEY_USE_PRINTER)));
+        String datString = getProp(Constantes.KEY_DATE_INIT);
+        assert datString != null;
+        LocalDate dateInit = LocalDate.parse(datString, DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+        TXT_DATE_INIT.setValue(dateInit);
+        CKB_CODE_BARRE.setSelected(Boolean.parseBoolean(getProp(Constantes.KEY_USE_CODE_BARRE)));
+        CKB_PRINT.setSelected(Boolean.parseBoolean(getProp(Constantes.KEY_USE_PRINTER)));
         CB_TYPE_PRINT.setValue(getProp(Constantes.KEY_TYPE_PRINT));
         TXT_M_B.setText(getProp(Constantes.KEY_PAPER_M_BOTOM));
         TXT_M_H.setText(getProp(Constantes.KEY_PAPER_M_TOP));
@@ -187,83 +211,99 @@ public class PreferenceController implements Initializable, Controller {
         }
         String moder = getProp(Constantes.KEY_MODE_REGLEMENT);
         if (societe != null && mdr != null) {
-            CB_MODE_R.setValue(new YvsBaseModeReglement(Long.valueOf(moder)));
+            CB_MODE_R.setValue(new YvsBaseModeReglement(Long.valueOf(Objects.requireNonNull(moder))));
         }
 
         TXT_PATH.setText(getProp(Constantes.KEY_PATH));
+        selectNbColCatalogueProperty(getProp(Constantes.KEY_COL_CATALOGUE));
+        selectNbLineCatalogueProperty(getProp(Constantes.KEY_LINE_CATALOGUE));
 
+    }
+
+    private void selectNbColCatalogueProperty(String nbCatalogueColumn) {
+        Optional.ofNullable(nbCatalogueColumn).filter(StringUtils::isNotEmpty).ifPresent(value -> {
+            switch (value) {
+                case "2" -> NB_COL_CATALOGUE.selectToggle(CATALOGUE_DISPLAY_2_COL);
+                case "3" -> NB_COL_CATALOGUE.selectToggle(CATALOGUE_DISPLAY_3_COL);
+                default -> {
+                    break;
+                }
+            }
+        });
+    }
+
+    private void selectNbLineCatalogueProperty(String nbCatalogueLine) {
+        Optional.ofNullable(nbCatalogueLine).filter(StringUtils::isNotEmpty).ifPresent(value -> {
+            switch (value) {
+                case "5" -> NB_LINE_CATALOGUE.selectToggle(CATALOGUE_DISPLAY_5_LINE);
+                case "6" -> NB_LINE_CATALOGUE.selectToggle(CATALOGUE_DISPLAY_6_LINE);
+                case "10" -> NB_LINE_CATALOGUE.selectToggle(CATALOGUE_DISPLAY_10_LINE);
+                default -> {
+                    break;
+                }
+            }
+        });
     }
 
     public boolean copyToSave() {
         File file = new File("conf/application.properties");
         if (file.exists()) {
-            FileOutputStream oStream = null;
-            try {
-                UtilsProject.properties.setProperty(Constantes.KEY_APPS_PORT, getVal(TXT_PORT_APP.getText()));
-                if (CB_CLT.getValue() != null ? Constantes.asLong(CB_CLT.getValue().getId()) : false) {
-                    UtilsProject.properties.setProperty(Constantes.KEY_CLIENT_DIVERS, CB_CLT.getValue().getId().toString());
-                }
-                UtilsProject.properties.setProperty(Constantes.KEY_ENVIRONNEMENT, getVal(CB_ENVIRONNEMENT.getValue()));
-                if (CB_AGENCE_L.getValue() != null ? Constantes.asLong(CB_AGENCE_L.getValue().getId()) : false) {
-                    UtilsProject.properties.setProperty(Constantes.KEY_LOCAL_AGENCE, CB_AGENCE_L.getValue().getId().toString());
-                }
-                UtilsProject.properties.setProperty(Constantes.KEY_LOCAL_DB_NAME, getVal(TXT_BD_NAME_L.getText()));
-                UtilsProject.properties.setProperty(Constantes.KEY_LOCAL_HOST, getVal(TXT_IP_L.getText()));
-                UtilsProject.properties.setProperty(Constantes.KEY_LOCAL_PASSWORD, EncryptMessage.encrypt(getVal(TXT_PASSWORD_L.getText()), Constantes.KEY_ENCRYPT));
-                UtilsProject.properties.setProperty(Constantes.KEY_LOCAL_PORT, getVal(TXT_PORT_L.getText()));
-                if (CB_SOCIETE_L.getValue() != null ? Constantes.asLong(CB_SOCIETE_L.getValue().getId()) : false) {
-                    UtilsProject.properties.setProperty(Constantes.KEY_LOCAL_SOCIETE, CB_SOCIETE_L.getValue().getId().toString());
-                }
-                UtilsProject.properties.setProperty(Constantes.KEY_LOCAL_USERS, EncryptMessage.encrypt(getVal(TXT_USER_L.getText()), Constantes.KEY_ENCRYPT));
-                UtilsProject.properties.setProperty(Constantes.KEY_MODE, getVal(CB_MODE.getValue()));
-                if (CB_MDR.getValue() != null ? Constantes.asLong(CB_MDR.getValue().getId()) : false) {
-                    UtilsProject.properties.setProperty(Constantes.KEY_MODEL_REGLEMENT, CB_MDR.getValue().getId().toString());
-                }
-                if (CB_MODE_R.getValue() != null ? Constantes.asLong(CB_MODE_R.getValue().getId()) : false) {
-                    UtilsProject.properties.setProperty(Constantes.KEY_MODE_REGLEMENT, CB_MODE_R.getValue().getId().toString());
-                }
-                UtilsProject.properties.setProperty(Constantes.KEY_ORIENTATION_PRINT, "");
-                UtilsProject.properties.setProperty(Constantes.KEY_PAPER_HEIGHT, getVal(TXT_PAPER_H.getText()));
-                UtilsProject.properties.setProperty(Constantes.KEY_PAPER_WIDTH, getVal(TXT_PAPER_L.getText()));
-                UtilsProject.properties.setProperty(Constantes.KEY_PAPER_M_BOTOM, getVal(TXT_M_B.getText()));
-                UtilsProject.properties.setProperty(Constantes.KEY_PAPER_M_LEFT, getVal(TXT_M_G.getText()));
-                UtilsProject.properties.setProperty(Constantes.KEY_PAPER_M_RIGHT, getVal(TXT_M_D.getText()));
-                UtilsProject.properties.setProperty(Constantes.KEY_PAPER_M_TOP, getVal(TXT_M_H.getText()));
-                UtilsProject.properties.setProperty(Constantes.KEY_PATH, getVal(TXT_PATH.getText()));
-                UtilsProject.properties.setProperty(Constantes.KEY_REMOTE_DB_NAME, getVal(TXT_BD_NAME_R.getText()));
-                UtilsProject.properties.setProperty(Constantes.KEY_REMOTE_HOST, getVal(TXT_IP_R.getText()));
-                UtilsProject.properties.setProperty(Constantes.KEY_REMOTE_PASSWORD, EncryptMessage.encrypt(getVal(TXT_PASSWORD_R.getText()), Constantes.KEY_ENCRYPT));
-                UtilsProject.properties.setProperty(Constantes.KEY_REMOTE_PORT, getVal(TXT_PORT_R.getText()));
-                UtilsProject.properties.setProperty(Constantes.KEY_REMOTE_SOCIETE, getVal(TXT_SOCIETE_R.getText()));
-                UtilsProject.properties.setProperty(Constantes.KEY_REMOTE_USERS, EncryptMessage.encrypt(getVal(TXT_USER_R.getText()), Constantes.KEY_ENCRYPT));
-                UtilsProject.properties.setProperty(Constantes.KEY_SECTEUR, "");
-                UtilsProject.properties.setProperty(Constantes.KEY_TYPE_PRINT, getVal(CB_TYPE_PRINT.getValue()));
-                UtilsProject.properties.setProperty(Constantes.KEY_USE_CODE_BARRE, "" + CKB_CODE_BARRE.isSelected());
-                UtilsProject.properties.setProperty(Constantes.KEY_USE_PRINTER, CKB_PRINT.isSelected() + "");
-                UtilsProject.properties.setProperty(Constantes.KEY_VILLE, "");
-                UtilsProject.properties.setProperty(Constantes.KEY_WEB_HOST, getVal(TXT_IP_WEB.getText()));
-                UtilsProject.properties.setProperty(Constantes.KEY_WEB_PORT, getVal(TXT_PORT_WEB.getText()));
-                UtilsProject.properties.setProperty(Constantes.KEY_DATE_INIT, getDate());
-                oStream = new FileOutputStream(file);
+            UtilsProject.properties.setProperty(Constantes.KEY_APPS_PORT, getVal(TXT_PORT_APP.getText()));
+            UtilsProject.properties.setProperty(Constantes.KEY_ENVIRONNEMENT, getVal(CB_ENVIRONNEMENT.getValue()));
+            verifyAndSaveComboBoxValue(CB_CLT, Constantes.KEY_CLIENT_DIVERS);
+            verifyAndSaveComboBoxValue(CB_AGENCE_L, Constantes.KEY_LOCAL_AGENCE);
+            verifyAndSaveComboBoxValue(CB_SOCIETE_L, Constantes.KEY_LOCAL_SOCIETE);
+            verifyAndSaveComboBoxValue(CB_MDR, Constantes.KEY_MODEL_REGLEMENT);
+            verifyAndSaveComboBoxValue(CB_MODE_R, Constantes.KEY_MODE_REGLEMENT);
+            UtilsProject.properties.setProperty(Constantes.KEY_LOCAL_DB_NAME, getVal(TXT_BD_NAME_L.getText()));
+            UtilsProject.properties.setProperty(Constantes.KEY_LOCAL_HOST, getVal(TXT_IP_L.getText()));
+            UtilsProject.properties.setProperty(Constantes.KEY_LOCAL_PASSWORD, EncryptMessage.encrypt(getVal(TXT_PASSWORD_L.getText()), Constantes.KEY_ENCRYPT));
+            UtilsProject.properties.setProperty(Constantes.KEY_LOCAL_PORT, getVal(TXT_PORT_L.getText()));
+            UtilsProject.properties.setProperty(Constantes.KEY_LOCAL_USERS, EncryptMessage.encrypt(getVal(TXT_USER_L.getText()), Constantes.KEY_ENCRYPT));
+            UtilsProject.properties.setProperty(Constantes.KEY_MODE, getVal(CB_MODE.getValue()));
+            UtilsProject.properties.setProperty(Constantes.KEY_ORIENTATION_PRINT, "");
+            UtilsProject.properties.setProperty(Constantes.KEY_PAPER_HEIGHT, getVal(TXT_PAPER_H.getText()));
+            UtilsProject.properties.setProperty(Constantes.KEY_PAPER_WIDTH, getVal(TXT_PAPER_L.getText()));
+            UtilsProject.properties.setProperty(Constantes.KEY_PAPER_M_BOTOM, getVal(TXT_M_B.getText()));
+            UtilsProject.properties.setProperty(Constantes.KEY_PAPER_M_LEFT, getVal(TXT_M_G.getText()));
+            UtilsProject.properties.setProperty(Constantes.KEY_PAPER_M_RIGHT, getVal(TXT_M_D.getText()));
+            UtilsProject.properties.setProperty(Constantes.KEY_PAPER_M_TOP, getVal(TXT_M_H.getText()));
+            UtilsProject.properties.setProperty(Constantes.KEY_PATH, getVal(TXT_PATH.getText()));
+            UtilsProject.properties.setProperty(Constantes.KEY_REMOTE_DB_NAME, getVal(TXT_BD_NAME_R.getText()));
+            UtilsProject.properties.setProperty(Constantes.KEY_REMOTE_HOST, getVal(TXT_IP_R.getText()));
+            UtilsProject.properties.setProperty(Constantes.KEY_REMOTE_PASSWORD, EncryptMessage.encrypt(getVal(TXT_PASSWORD_R.getText()), Constantes.KEY_ENCRYPT));
+            UtilsProject.properties.setProperty(Constantes.KEY_REMOTE_PORT, getVal(TXT_PORT_R.getText()));
+            UtilsProject.properties.setProperty(Constantes.KEY_REMOTE_SOCIETE, getVal(TXT_SOCIETE_R.getText()));
+            UtilsProject.properties.setProperty(Constantes.KEY_REMOTE_USERS, EncryptMessage.encrypt(getVal(TXT_USER_R.getText()), Constantes.KEY_ENCRYPT));
+            UtilsProject.properties.setProperty(Constantes.KEY_SECTEUR, "");
+            UtilsProject.properties.setProperty(Constantes.KEY_TYPE_PRINT, getVal(CB_TYPE_PRINT.getValue()));
+            UtilsProject.properties.setProperty(Constantes.KEY_USE_CODE_BARRE, "" + CKB_CODE_BARRE.isSelected());
+            UtilsProject.properties.setProperty(Constantes.KEY_USE_PRINTER, CKB_PRINT.isSelected() + "");
+            UtilsProject.properties.setProperty(Constantes.KEY_VILLE, "");
+            UtilsProject.properties.setProperty(Constantes.KEY_WEB_HOST, getVal(TXT_IP_WEB.getText()));
+            UtilsProject.properties.setProperty(Constantes.KEY_WEB_PORT, getVal(TXT_PORT_WEB.getText()));
+            UtilsProject.properties.setProperty(Constantes.KEY_DATE_INIT, getDate());
+            RadioButton radioButtonCol = (RadioButton) NB_COL_CATALOGUE.getSelectedToggle();
+            RadioButton radioButtonLine = (RadioButton) NB_LINE_CATALOGUE.getSelectedToggle();
+            UtilsProject.properties.setProperty(Constantes.KEY_COL_CATALOGUE, radioButtonCol != null ? (String) radioButtonCol.getProperties().get("value") : "");
+            UtilsProject.properties.setProperty(Constantes.KEY_LINE_CATALOGUE, radioButtonLine != null ? (String) radioButtonLine.getProperties().get("value") : "");
+            try (FileOutputStream oStream = new FileOutputStream(file)) {
                 UtilsProject.properties.store(oStream, "");
                 return true;
-            } catch (FileNotFoundException ex) {
-                Logger.getLogger(PreferenceController.class.getName()).log(Level.SEVERE, null, ex);
-                LymytzService.openExceptionDialog("Enregistrement non réussi !", "", "", Alert.AlertType.ERROR, ex);
             } catch (IOException ex) {
                 Logger.getLogger(PreferenceController.class.getName()).log(Level.SEVERE, null, ex);
                 LymytzService.openExceptionDialog("Enregistrement non réussi !", "", "", Alert.AlertType.ERROR, ex);
-            } finally {
-                try {
-                    if (oStream != null) {
-                        oStream.close();
-                    }
-                } catch (IOException ex) {
-                    Logger.getLogger(PreferenceController.class.getName()).log(Level.SEVERE, null, ex);
-                }
             }
         }
         return false;
+    }
+
+    private <T extends YvsEntity> void verifyAndSaveComboBoxValue(ComboBox<T> component, String keyProperty) {
+        Optional.ofNullable(component.getValue())
+                .map(YvsEntity::getId)
+                .filter(Constantes::asLong)
+                .map(Object::toString)
+                .ifPresent(idAgence -> UtilsProject.properties.setProperty(keyProperty, idAgence));
     }
 
     private void initDataView() {
@@ -298,9 +338,9 @@ public class PreferenceController implements Initializable, Controller {
             }
         });
 //charge les mode de règlement disponible
-        List<YvsBaseModeReglement> modes_R = dao.loadByNamedQuery("YvsBaseModeReglement.findAll", new String[]{}, new Object[]{});
-        CB_MODE_R.setItems(FXCollections.observableArrayList(modes_R));
-        CB_MODE_R.setConverter(new StringConverter<YvsBaseModeReglement>() {
+        List<YvsBaseModeReglement> modesRemote = dao.loadByNamedQuery("YvsBaseModeReglement.findAll", new String[]{}, new Object[]{});
+        CB_MODE_R.setItems(FXCollections.observableArrayList(modesRemote));
+        CB_MODE_R.setConverter(new StringConverter<>() {
 
             @Override
             public String toString(YvsBaseModeReglement object) {
@@ -318,7 +358,7 @@ public class PreferenceController implements Initializable, Controller {
         //charge les clients disponible
         if (UtilsProject.listClients != null) {
             CB_CLT.setItems(FXCollections.observableArrayList(UtilsProject.listClients));
-            CB_CLT.setConverter(new StringConverter<YvsComClient>() {
+            CB_CLT.setConverter(new StringConverter<>() {
 
                 @Override
                 public String toString(YvsComClient object) {
@@ -337,7 +377,7 @@ public class PreferenceController implements Initializable, Controller {
         //charge les agences disponible
         List<YvsAgences> agences = dao.loadByNamedQuery("YvsAgences.findAll", new String[]{}, new Object[]{});
         CB_AGENCE_L.setItems(FXCollections.observableArrayList(agences));
-        CB_AGENCE_L.setConverter(new StringConverter<YvsAgences>() {
+        CB_AGENCE_L.setConverter(new StringConverter<>() {
 
             @Override
             public String toString(YvsAgences object) {
@@ -355,7 +395,7 @@ public class PreferenceController implements Initializable, Controller {
 //charge les societe disponible
         List<YvsSocietes> societes = dao.loadByNamedQuery("YvsSocietes.findAll", new String[]{}, new Object[]{});
         CB_SOCIETE_L.setItems(FXCollections.observableArrayList(societes));
-        CB_SOCIETE_L.setConverter(new StringConverter<YvsSocietes>() {
+        CB_SOCIETE_L.setConverter(new StringConverter<>() {
 
             @Override
             public String toString(YvsSocietes object) {
@@ -390,21 +430,6 @@ public class PreferenceController implements Initializable, Controller {
         }
     }
 
-    private Integer[] getDate(String format) {
-        try {
-            if (format != null) {
-                String[] date_ = format.split("-");
-                int d = Integer.valueOf(date_[0]);
-                int m = Integer.valueOf(date_[1]);
-                int y = Integer.valueOf(date_[2]);
-                return new Integer[]{d, m, y};
-            }
-        } catch (NumberFormatException ex) {
-            LogFiles.addLogInFile("Récupération de la date erronée !", ex);
-        }
-        return null;
-    }
-
     private String getDate() {
         LocalDate local = TXT_DATE_INIT.getValue();
         Date date;
@@ -420,13 +445,12 @@ public class PreferenceController implements Initializable, Controller {
 
         if (copyToSave()) {
             LymytzService.success();
-        } else {
-
         }
     }
 
     @Override
     public void freeMemoryController() {
+        // comming soon
     }
 
 }

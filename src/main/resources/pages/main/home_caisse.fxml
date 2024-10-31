@@ -40,7 +40,7 @@
                         <MenuItem fx:id="ITEM_RELOAD_PPTE" mnemonicParsing="false"
                                   onAction="#reloadPropertieFile" text="Recharger .properties"/>
                     </Menu>
-                    <Menu mnemonicParsing="false" text="Affichage">
+                    <Menu mnemonicParsing="false" text="Données">
                         <items>
                             <MenuItem fx:id="ITEM_FACTURE" mnemonicParsing="false" onAction="#openViewListFacture"
                                       text="Factures">
@@ -76,11 +76,9 @@
                         </items>
                     </Menu>
                     <Menu mnemonicParsing="false" text="Statistiques">
-                        <items>
-                            <MenuItem mnemonicParsing="false" onAction="#openViewListingVente" text="Listing"/>
-                            <MenuItem mnemonicParsing="false" onAction="#openViewListingVenteCumule"
-                                      text="Listing cumulé"/>
-                        </items>
+                        <MenuItem mnemonicParsing="false" onAction="#openViewListingVente" text="Listing"/>
+                        <MenuItem mnemonicParsing="false" onAction="#openViewListingVenteCumule"
+                                  text="Listing cumulé"/>
                     </Menu>
                     <Menu fx:id="MEN_SYNCHRO" mnemonicParsing="false" text="Synchro">
                         <items>

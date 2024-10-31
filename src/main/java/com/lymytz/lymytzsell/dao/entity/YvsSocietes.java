@@ -58,7 +58,7 @@ import java.util.Date;
 @Setter
 @EqualsAndHashCode(of = {"id"})
 @NoArgsConstructor
-public class YvsSocietes implements Serializable {
+public class YvsSocietes extends YvsEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -118,8 +118,12 @@ public class YvsSocietes implements Serializable {
     }
 
     @Override
+    public YvsUsersAgence getAuthor() {
+        return null;
+    }
+
+    @Override
     public String toString() {
         return "lymytz.dao.entity.YvsSocietes[ id=" + id + " ]";
     }
-
 }

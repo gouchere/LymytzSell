@@ -124,7 +124,9 @@ import static com.lymytz.lymytzsell.service.utils.FonctionalConstants.GENERATION
  */
 public class HomeCaisseController extends ManagedApplication implements Initializable {
 
-    private BooleanProperty connectRemoteServer;
+    private final BooleanProperty connectRemoteServer=new SimpleBooleanProperty();
+    private final LongProperty time = new SimpleLongProperty();
+
     ClientMessage clientSocket;
 
     private SynchronizeDataOut myServiceOut;
@@ -301,9 +303,6 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
     //Footer
     @FXML
     private Label TEXT_SOCIETE;
-
-    private final LongProperty time = new SimpleLongProperty();
-
     public HomeCaisseController() {
         //utile pour l'api javafx
     }
@@ -333,7 +332,6 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        connectRemoteServer = new SimpleBooleanProperty();
         initComponent();
         setMainPage(this);
         //Attacher un listener au text find
@@ -882,7 +880,7 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
     @FXML
     public void openViewCatalogue(ActionEvent ev) {
         //Ouvre la fenêtre de gestion des imports
-        LymytzService.openWindow("/data/form_catalogue.fxml", "Lymytz /Catalogue", null, 1000.0, 550.0);
+        LymytzService.openWindow("/pages/data/form_catalogue.fxml", "Lymytz /Catalogue", null, 1000.0, 550.0);
     }
 
     @FXML
@@ -922,7 +920,7 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
     }
 
     public void openAndLoadFormCompte() {
-        MyComptesController controler = LymytzService.openWindow("/pages/main/form_comptes.fxml", "Lymytz /Mon compte", null, 850.0, 505.0, true);
+        MyComptesController controler = LymytzService.openWindow("/pages/main/form_comptes.fxml", "Lymytz /Mon compte", null, 1000.0, 605.0, true);
         controler.setMainController(this);
     }
 
@@ -1021,6 +1019,15 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
     @FXML
     private void saveOrGeneratedPaiement(ActionEvent event) {
         //1. Controle la caisse et le mode de paiement  
+        Onglets tab = (Onglets) TAB_FACTURES.getSelectionModel().getSelectedItem();
+        if (tab != null) {
+            ServiceCreateFacture service = new ServiceCreateFacture(this);
+            service.saveOrGeneratedPaiement_(tab);
+        }
+    }
+    @FXML
+    private void showDisplayCatalogueOptions(ActionEvent event) {
+        //1. Controle la caisse et le mode de paiement
         Onglets tab = (Onglets) TAB_FACTURES.getSelectionModel().getSelectedItem();
         if (tab != null) {
             ServiceCreateFacture service = new ServiceCreateFacture(this);

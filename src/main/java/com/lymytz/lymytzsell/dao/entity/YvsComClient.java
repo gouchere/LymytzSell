@@ -49,7 +49,7 @@ import java.util.Date;
 @Setter
 @EqualsAndHashCode(of = {"id"})
 @NoArgsConstructor
-public class YvsComClient implements Serializable {
+public class YvsComClient extends YvsEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -123,6 +123,11 @@ public class YvsComClient implements Serializable {
         return nom_prenom;
     }
 
+    @Override
+    public YvsUsersAgence getAuthor() {
+        return null;
+    }
+
     public String getTextClient() {
         return getNom_prenom().concat("->".concat(getCodeClient()));
     }
@@ -131,5 +136,4 @@ public class YvsComClient implements Serializable {
     public String toString() {
         return "lymytz.dao.entity.YvsComClient_1[ id=" + id + " ]";
     }
-
 }

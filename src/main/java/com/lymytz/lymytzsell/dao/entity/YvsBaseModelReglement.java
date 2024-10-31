@@ -43,9 +43,9 @@ import java.util.Date;
         @NamedQuery(name = "YvsBaseModelReglement.findByDateSave", query = "SELECT y FROM YvsBaseModelReglement y WHERE y.dateSave = :dateSave")})
 @Getter
 @Setter
-@EqualsAndHashCode(of = {"id"})
+@EqualsAndHashCode(of = {"id"}, callSuper = false)
 @NoArgsConstructor
-public class YvsBaseModelReglement implements Serializable {
+public class YvsBaseModelReglement extends YvsEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id

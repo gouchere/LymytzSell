@@ -45,7 +45,7 @@ import javax.persistence.TemporalType;
 @NamedQuery(name = "YvsAgences.findByDateUpdate", query = "SELECT y FROM YvsAgences y WHERE y.dateUpdate = :dateUpdate")
 @Getter
 @Setter
-public class YvsAgences implements Serializable {
+public class YvsAgences extends YvsEntity implements Serializable {
 
 
     private static final long serialVersionUID = 1L;
@@ -91,6 +91,10 @@ public class YvsAgences implements Serializable {
         this.id = id;
     }
 
+    @Override
+    public YvsUsersAgence getAuthor() {
+        return null;
+    }
 
     @Override
     public int hashCode() {

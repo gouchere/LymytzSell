@@ -12,6 +12,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import com.lymytz.lymytzsell.business.helpers.KeyBoardAction;
+import com.lymytz.lymytzsell.service.utils.FonctionalConstants;
 import javafx.event.Event;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -43,6 +44,9 @@ import com.lymytz.lymytzsell.view.component.CustomComponents;
 import com.lymytz.lymytzsell.view.main.HomeCaisseController;
 import lombok.Getter;
 import lombok.Setter;
+
+import static com.lymytz.lymytzsell.service.utils.FonctionalConstants.ERREUR;
+import static com.lymytz.lymytzsell.service.utils.FonctionalConstants.MODIFICATION_FACTURE_IMPOSSIBLE;
 
 /**
  * @author LENOVO
@@ -256,7 +260,7 @@ public final class Onglets extends Tab {
         if (art != null) {
             addArticleOnFacture(art, 1, false, 0);
         } else {
-            LymytzService.openAlertDialog("Modification de la facture impossible !", "Erreur ", "Aucun conditionnement trouvé pour cet article !", Alert.AlertType.ERROR);
+            LymytzService.openAlertDialog(MODIFICATION_FACTURE_IMPOSSIBLE, ERREUR, "Aucun conditionnement trouvé pour cet article !", Alert.AlertType.ERROR);
         }
     }
 
@@ -281,7 +285,7 @@ public final class Onglets extends Tab {
                 ContentPanier cp = evaluePrix(line);
                 if (!Boolean.TRUE.equals(UtilsProject.paramVente.getSellLowerPr()) && cp.getPr() >= cp.getPrix()) {
                     //On ne vend pas en dessa du pr
-                    LymytzService.openAlertDialog("Impossible d'ajouter cet article !", "Erreur ", "Vous ne pouvez vendre en dessous du prix de revient du produit", Alert.AlertType.ERROR);
+                    LymytzService.openAlertDialog("Impossible d'ajouter cet article !", ERREUR, "Vous ne pouvez vendre en dessous du prix de revient du produit", Alert.AlertType.ERROR);
                     return false;
                 } else {
                     tab.addLineContent(cp, true);
@@ -352,14 +356,16 @@ public final class Onglets extends Tab {
 
     public void displayMontantsBean() {
         double net = 0;
-        double taxe = 0, remise = 0, ttc = 0, tht = 0, ristourne = 0;
+        double taxe = 0;
+        double remise = 0;
+        double ttc = 0;
+        double ristourne = 0;
         for (ContentPanier c : getContentFacture()) {
             net += (c.getMontantTotal());
             taxe += (c.getTaxe());
             remise += (c.getRemise());
             ttc += (c.getMontantTotalTTC());
             ristourne += (c.getRistourne());
-            tht += (c.getMontantTotalHT());
         }
         if (getFacture() != null) {
 
@@ -425,8 +431,6 @@ public final class Onglets extends Tab {
         label.setOnMouseClicked(event -> {
             //si on click avec le bouton gauche de la souris
             if (event.getButton().equals(MouseButton.PRIMARY)) {
-                //si double click
-                //ouvre la calculatrice
                 if (event.getClickCount() > 1 && !qte) {
                     if (Boolean.TRUE.equals(content.getConditionnement().getArticle().getChangePrix())) {
                         page.openDlgCalculatrice(onglet, "F", KeyBoardAction.SET_PRIX, content);

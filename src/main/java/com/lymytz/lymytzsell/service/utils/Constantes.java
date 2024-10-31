@@ -15,10 +15,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+
 import com.lymytz.lymytzsell.service.application.synchro.TableList;
 
 /**
- *
  * @author Admin
  */
 public class Constantes {
@@ -294,6 +294,8 @@ public class Constantes {
     public static final String KEY_PAPER_M_TOP = "PAPER_M_TOP";
     public static final String KEY_PAPER_M_BOTOM = "PAPER_M_BOTOM";
     public static final String KEY_DATE_INIT = "DATE_INIT";
+    public static final String KEY_LINE_CATALOGUE = "LINE_CATALOGUE";
+    public static final String KEY_COL_CATALOGUE = "COL_CATALOGUE";
 
     public static final String KEY_ENCRYPT = "1023";
 
@@ -301,7 +303,7 @@ public class Constantes {
     public static final String CMP2 = "CMPII";
     public static final String CMPU1 = "Cout Moyen Pondere 1";
     public static final String CMPU2 = "Cout Moyen Pondere 2";
-    
+
     public Constantes() {
         LISTEN_TABLE = new ArrayList<>();
         ALLENTITY_BASE.add(new TableList(TABLE_CAISSE_USERS_NAME, TABLE_CAISSE_USERS_CODE));
@@ -436,21 +438,15 @@ public class Constantes {
         if (date != null) {
             cal.setTime(date);
         }
-        switch (param) {
-            case 'Y':
-                return cal.get(Calendar.YEAR);
-            case 'M':
-                return cal.get(Calendar.MONTH) + 1;
-            case 'D':
-                return cal.get(Calendar.DAY_OF_MONTH);
-            case 'h':
-                return cal.get(Calendar.HOUR_OF_DAY);
-            case 'm':
-                return cal.get(Calendar.MINUTE);
-            case 's':
-                return cal.get(Calendar.SECOND);
-        }
-        return 0;
+        return switch (param) {
+            case 'Y' -> cal.get(Calendar.YEAR);
+            case 'M' -> cal.get(Calendar.MONTH) + 1;
+            case 'D' -> cal.get(Calendar.DAY_OF_MONTH);
+            case 'h' -> cal.get(Calendar.HOUR_OF_DAY);
+            case 'm' -> cal.get(Calendar.MINUTE);
+            case 's' -> cal.get(Calendar.SECOND);
+            default -> 0;
+        };
     }
 
     public static boolean isNumbrePair(int nombre) {
@@ -459,18 +455,15 @@ public class Constantes {
 
     public static String getEntityFolder() {
         String source = new File("").getAbsolutePath();
-        return new StringBuilder(source).append(SEPARATOR).append("src").append(SEPARATOR).append("lymytz").append(SEPARATOR).append("dao").append(SEPARATOR).append("entity").toString();
+        return source + SEPARATOR + "src" + SEPARATOR + "lymytz" + SEPARATOR + "dao" + SEPARATOR + "entity";
     }
 
     public static boolean asString(String valeur) {
-        return valeur != null ? valeur.trim().length() > 0 : false;
+        return valeur != null && !valeur.trim().isEmpty();
     }
 
     public static boolean asLong(Long valeur) {
-        if (valeur != null ? valeur > 0 : false) {
-            return true;
-        }
-        return false;
+        return valeur != null && valeur > 0;
     }
 
     public static String getQueryListenData() {

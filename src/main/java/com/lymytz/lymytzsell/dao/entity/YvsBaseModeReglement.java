@@ -47,9 +47,9 @@ import java.util.Date;
         @NamedQuery(name = "YvsBaseModeReglement.findByCodePaiement", query = "SELECT y FROM YvsBaseModeReglement y WHERE y.codePaiement = :codePaiement")})
 @Getter
 @Setter
-@EqualsAndHashCode(of = {"id"})
+@EqualsAndHashCode(of = {"id"}, callSuper = true)
 @NoArgsConstructor
-public class YvsBaseModeReglement implements Serializable {
+public class YvsBaseModeReglement extends YvsEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id

@@ -2,3 +2,4 @@
 /build/
 /dist/
 /log/
+/conf/application.properties
