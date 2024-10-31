@@ -24,567 +24,533 @@
     </fx:define>
     <top>
         <VBox>
-            <children>
-                <MenuBar fx:id="HOMEMENU" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT"
-                         prefHeight="25.0" prefWidth="343.0" BorderPane.alignment="CENTER">
-                    <Menu mnemonicParsing="false" text="Fichier">
-                        <MenuItem fx:id="ITEM_NEW" mnemonicParsing="false" onAction="#openTocreateNewFacture"
-                                  text="Nouveau (Ctl+N)"/>
-                        <MenuItem fx:id="ITEM_PREF" mnemonicParsing="false" onAction="#openViewPreference"
-                                  text="Préférences"/>
-                        <MenuItem fx:id="ITEM_COMPTE" mnemonicParsing="false" onAction="#openAndLoadFormCompte"
-                                  text="Mon compte (Ctl + C)"/>
-                        <SeparatorMenuItem mnemonicParsing="false"/>
-                        <MenuItem fx:id="ITEM_QUIT" mnemonicParsing="false" text="Quitter (Clt + Q)"/>
-                        <SeparatorMenuItem mnemonicParsing="false"/>
-                        <MenuItem fx:id="ITEM_RELOAD_PPTE" mnemonicParsing="false"
-                                  onAction="#reloadPropertieFile" text="Recharger .properties"/>
-                    </Menu>
-                    <Menu mnemonicParsing="false" text="Données">
-                        <items>
-                            <MenuItem fx:id="ITEM_FACTURE" mnemonicParsing="false" onAction="#openViewListFacture"
-                                      text="Factures">
-                                <accelerator>
-                                    <KeyCodeCombination alt="UP" code="L" control="DOWN" meta="UP" shift="UP"
-                                                        shortcut="UP"/>
-                                </accelerator>
-                            </MenuItem>
-                            <MenuItem fx:id="ITEM_COMANDE" mnemonicParsing="false" onAction="#openViewListCommandes"
-                                      text="Commandes">
-                                <accelerator>
-                                    <KeyCodeCombination alt="UP" code="A" control="DOWN" meta="UP" shift="UP"
-                                                        shortcut="UP"/>
-                                </accelerator>
-                            </MenuItem>
-                            <MenuItem fx:id="ITEM_CATALOG" mnemonicParsing="false" onAction="#openViewCatalogue"
-                                      text="Catalogue">
-                                <accelerator>
-                                    <KeyCodeCombination alt="UP" code="U" control="DOWN" meta="UP" shift="UP"
-                                                        shortcut="UP"/>
-                                </accelerator>
-                            </MenuItem>
-                            <SeparatorMenuItem mnemonicParsing="false"/>
-                            <CheckMenuItem fx:id="ITEM_DISPLAY_TOOLS" mnemonicParsing="false"
-                                           text="Barre d'outils"/>
-                            <MenuItem fx:id="ITEM_VIEW_LOG" mnemonicParsing="false" onAction="#openViewLog"
-                                      text="Voir les logs">
-                                <accelerator>
-                                    <KeyCodeCombination alt="UP" code="U" control="DOWN" meta="UP" shift="UP"
-                                                        shortcut="UP"/>
-                                </accelerator>
-                            </MenuItem>
-                        </items>
-                    </Menu>
-                    <Menu mnemonicParsing="false" text="Statistiques">
-                        <MenuItem mnemonicParsing="false" onAction="#openViewListingVente" text="Listing"/>
-                        <MenuItem mnemonicParsing="false" onAction="#openViewListingVenteCumule"
-                                  text="Listing cumulé"/>
-                    </Menu>
-                    <Menu fx:id="MEN_SYNCHRO" mnemonicParsing="false" text="Synchro">
-                        <items>
-                            <MenuItem fx:id="ITEM_IMPORT" mnemonicParsing="false" onAction="#openViewImport"
-                                      text="Importation"/>
-                            <MenuItem fx:id="ITEM_EXPORT" mnemonicParsing="false" onAction="#openViewExport"
-                                      text="Exportation"/>
-                            <SeparatorMenuItem mnemonicParsing="false"/>
-                            <MenuItem fx:id="ITEM_SERVICE" mnemonicParsing="false"
-                                      onAction="#openViewControlService" text="Services"/>
-                            <MenuItem mnemonicParsing="false" onAction="#openDlgStatusSync"
-                                      text="Status Exportation"/>
-                            <MenuItem mnemonicParsing="false" onAction="#openDlgStatusSyncImp"
-                                      text="Status Importation"/>
-                        </items>
-                    </Menu>
-                    <Menu mnemonicParsing="false" text="Aide">
-                        <items>
-                            <MenuItem fx:id="ITEM_ABOUT" mnemonicParsing="false" onAction="#openViewAbout"
-                                      text="A propos"/>
-                            <MenuItem fx:id="ITEM_DOC" mnemonicParsing="false" text="Guide d'utilisation"/>
-                            <MenuItem fx:id="ITEM_RC" mnemonicParsing="false" onAction="#openViewRaccorcis"
-                                      text="Raccourcis clavier"/>
-                            <MenuItem fx:id="ITEM_PING_L" mnemonicParsing="false" onAction="#testLocalConnect"
-                                      text="Ping serveur local"/>
-                            <MenuItem fx:id="ITEM_PING_R" mnemonicParsing="false" onAction="#testRemoteConnect"
-                                      text="Ping serveur distant"/>
-                        </items>
-                    </Menu>
-                </MenuBar>
-                <HBox layoutY="25.0" styleClass="tool_bar">
-                    <children>
-                        <ToolBar fx:id="TOOLBAR" layoutX="-15.0" layoutY="25.0" minWidth="1000.0" prefHeight="43.0"
-                                 prefWidth="1500.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="25.0">
-                            <items>
-                                <Button fx:id="BTN_NEW_CMDE" mnemonicParsing="false" onAction="#openTocreateNewFacture"
-                                        prefHeight="25.0" text="Nouveau" textOverrun="CENTER_ELLIPSIS"/>
-                                <Separator orientation="VERTICAL" prefHeight="36.0" prefWidth="0.0"/>
-                                <Button fx:id="BTN_LIST_FAC" layoutX="10.0" layoutY="13.0" mnemonicParsing="false"
-                                        onAction="#openViewListFacture" prefHeight="25.0" text="Mes Factures"/>
-                                <Separator orientation="VERTICAL" prefHeight="32.0" prefWidth="0.0"/>
-                                <Button fx:id="BTN_COMPTE" mnemonicParsing="false" onAction="#openAndLoadFormCompte"
-                                        prefHeight="25.0" text="Compte"/>
-                                <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0"/>
-                                <VBox prefHeight="39.0" prefWidth="284.0">
-                                    <children>
-                                        <HBox prefHeight="14.0" prefWidth="317.0">
-                                            <children>
-                                                <Label text="Point de vente:">
-                                                    <HBox.margin>
-                                                        <Insets right="10.0"/>
-                                                    </HBox.margin>
-                                                </Label>
-                                                <Label fx:id="LAB_PV" text=" --.-- " textFill="#030a39" wrapText="true">
-                                                    <font>
-                                                        <Font name="System Bold" size="12.0"/>
-                                                    </font>
-                                                </Label>
-                                            </children>
-                                            <VBox.margin>
-                                                <Insets bottom="5.0"/>
-                                            </VBox.margin>
-                                        </HBox>
-                                        <HBox layoutX="10.0" layoutY="10.0" prefHeight="14.0" prefWidth="317.0">
-                                            <children>
-                                                <Label prefHeight="17.0" prefWidth="83.0" text="Vendeur">
-                                                    <HBox.margin>
-                                                        <Insets right="10.0"/>
-                                                    </HBox.margin>
-                                                </Label>
-                                                <Label fx:id="LAB_VEND" text=" --.-- " textFill="#3c0101"/>
-                                            </children>
-                                        </HBox>
-                                    </children>
-                                </VBox>
-                                <VBox prefHeight="39.0" prefWidth="176.0">
-                                    <HBox alignment="CENTER_LEFT" prefHeight="39.0" prefWidth="346.0">
-                                        <Label prefHeight="17.0" prefWidth="71.0" text="Date:"
-                                               textOverrun="CENTER_ELLIPSIS">
-                                            <HBox.margin>
-                                                <Insets/>
-                                            </HBox.margin>
-                                        </Label>
-                                        <Label fx:id="LAB_DATE" prefHeight="17.0" prefWidth="91.0"
-                                               text=" --.-- " textFill="#4d0303"/>
-                                    </HBox>
-                                    <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0" prefHeight="39.0"
-                                          prefWidth="346.0">
-                                        <children>
-                                            <Label layoutX="10.0" layoutY="21.0" prefHeight="17.0" prefWidth="67.0"
-                                                   text="Tranche:" textOverrun="CENTER_ELLIPSIS"/>
-                                            <Label fx:id="LAB_TRANCHE" layoutX="48.0" layoutY="21.0" text=" -- .-- "
-                                                   textFill="#400202"/>
-                                        </children>
-                                    </HBox>
-                                </VBox>
-                                <Pane disable="true" HBox.hgrow="ALWAYS"/>
-                                <Button fx:id="BTN_QUIT" mnemonicParsing="false" onAction="#goingOut" prefHeight="35.0"
-                                        text="Quitter" textAlignment="RIGHT"/>
-                            </items>
-                        </ToolBar>
-                    </children>
-                </HBox>
-                <HBox prefHeight="30.0" prefWidth="1567.0" style="-fx-background-color: #fff;">
-                    <children>
-                        <VBox prefHeight="38.0" prefWidth="137.0">
-                            <HBox prefHeight="5.0">
-                                <Label prefHeight="16.0" text="Etat Serveur Local:"
-                                       underline="true" wrapText="true">
-                                    <font>
-                                        <Font size="10.0"/>
-                                    </font>
-                                    <HBox.margin>
-                                        <Insets left="10.0" right="14.0"/>
-                                    </HBox.margin>
-                                </Label>
-                                <ImageView fx:id="IMG_ETAT_SERVEUR_L" fitHeight="16.0" fitWidth="16.0"
-                                           pickOnBounds="true" preserveRatio="true">
-                                    <HBox.margin>
-                                        <Insets/>
-                                    </HBox.margin>
-                                    <Image url="/icones/i_juste.png"/>
-                                </ImageView>
-                            </HBox>
-                            <HBox prefHeight="16.0">
-                                <Label prefHeight="16.0" text="Etat Serveur distant:"
-                                       underline="true" wrapText="true">
-                                    <font>
-                                        <Font size="10.0"/>
-                                    </font>
-                                    <HBox.margin>
-                                        <Insets left="10.0"/>
-                                    </HBox.margin>
-                                </Label>
-                                <ImageView fx:id="IMG_ETAT_SERVEUR_R" fitHeight="16.0" fitWidth="16.0"
-                                           pickOnBounds="true" preserveRatio="true">
-                                    <HBox.margin>
-                                        <Insets />
-                                    </HBox.margin>
-                                    <Image url="/icones/i_juste.png"/>
-                                </ImageView>
-                            </HBox>
-                        </VBox>
-                        <Label fx:id="LAB_TITLE_SYNC_T" prefHeight="49.0" prefWidth="78.0" text="Status Syncro">
+            <MenuBar fx:id="HOMEMENU" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT"
+                     prefHeight="25.0" prefWidth="343.0" BorderPane.alignment="CENTER">
+                <Menu mnemonicParsing="false" text="Fichier">
+                    <MenuItem fx:id="ITEM_NEW" mnemonicParsing="false" onAction="#openTocreateNewFacture"
+                              text="Nouveau (Ctl+N)"/>
+                    <MenuItem fx:id="ITEM_PREF" mnemonicParsing="false" onAction="#openViewPreference"
+                              text="Préférences"/>
+                    <MenuItem fx:id="ITEM_COMPTE" mnemonicParsing="false" onAction="#openAndLoadFormCompte"
+                              text="Mon compte (Ctl + C)"/>
+                    <SeparatorMenuItem mnemonicParsing="false"/>
+                    <MenuItem fx:id="ITEM_QUIT" mnemonicParsing="false" text="Quitter (Clt + Q)"/>
+                    <SeparatorMenuItem mnemonicParsing="false"/>
+                    <MenuItem fx:id="ITEM_RELOAD_PPTE" mnemonicParsing="false"
+                              onAction="#reloadPropertieFile" text="Recharger .properties"/>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Données">
+                    <MenuItem fx:id="ITEM_FACTURE" mnemonicParsing="false" onAction="#openViewListFacture"
+                              text="Factures">
+                        <accelerator>
+                            <KeyCodeCombination alt="UP" code="L" control="DOWN" meta="UP" shift="UP"
+                                                shortcut="UP"/>
+                        </accelerator>
+                    </MenuItem>
+                    <MenuItem fx:id="ITEM_COMANDE" mnemonicParsing="false" onAction="#openViewListCommandes"
+                              text="Commandes">
+                        <accelerator>
+                            <KeyCodeCombination alt="UP" code="A" control="DOWN" meta="UP" shift="UP"
+                                                shortcut="UP"/>
+                        </accelerator>
+                    </MenuItem>
+                    <MenuItem fx:id="ITEM_CATALOG" mnemonicParsing="false" onAction="#openViewCatalogue"
+                              text="Catalogue">
+                        <accelerator>
+                            <KeyCodeCombination alt="UP" code="U" control="DOWN" meta="UP" shift="UP"
+                                                shortcut="UP"/>
+                        </accelerator>
+                    </MenuItem>
+                    <SeparatorMenuItem mnemonicParsing="false"/>
+                    <CheckMenuItem fx:id="ITEM_DISPLAY_TOOLS" mnemonicParsing="false"
+                                   text="Barre d'outils"/>
+                    <MenuItem fx:id="ITEM_VIEW_LOG" mnemonicParsing="false" onAction="#openViewLog"
+                              text="Voir les logs">
+                        <accelerator>
+                            <KeyCodeCombination alt="UP" code="U" control="DOWN" meta="UP" shift="UP"
+                                                shortcut="UP"/>
+                        </accelerator>
+                    </MenuItem>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Statistiques">
+                    <MenuItem mnemonicParsing="false" onAction="#openViewListingVente" text="Listing"/>
+                    <MenuItem mnemonicParsing="false" onAction="#openViewListingVenteCumule"
+                              text="Listing cumulé"/>
+                </Menu>
+                <Menu fx:id="MEN_SYNCHRO" mnemonicParsing="false" text="Synchro">
+                    <MenuItem fx:id="ITEM_IMPORT" mnemonicParsing="false" onAction="#openViewImport"
+                              text="Importation"/>
+                    <MenuItem fx:id="ITEM_EXPORT" mnemonicParsing="false" onAction="#openViewExport"
+                              text="Exportation"/>
+                    <SeparatorMenuItem mnemonicParsing="false"/>
+                    <MenuItem fx:id="ITEM_SERVICE" mnemonicParsing="false"
+                              onAction="#openViewControlService" text="Services"/>
+                    <MenuItem mnemonicParsing="false" onAction="#openDlgStatusSync"
+                              text="Status Exportation"/>
+                    <MenuItem mnemonicParsing="false" onAction="#openDlgStatusSyncImp"
+                              text="Status Importation"/>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Aide">
+                    <MenuItem fx:id="ITEM_ABOUT" mnemonicParsing="false" onAction="#openViewAbout"
+                              text="A propos"/>
+                    <MenuItem fx:id="ITEM_DOC" mnemonicParsing="false" text="Guide d'utilisation"/>
+                    <MenuItem fx:id="ITEM_RC" mnemonicParsing="false" onAction="#openViewRaccorcis"
+                              text="Raccourcis clavier"/>
+                    <MenuItem fx:id="ITEM_PING_L" mnemonicParsing="false" onAction="#testLocalConnect"
+                              text="Ping serveur local"/>
+                    <MenuItem fx:id="ITEM_PING_R" mnemonicParsing="false" onAction="#testRemoteConnect"
+                              text="Ping serveur distant"/>
+                </Menu>
+            </MenuBar>
+            <HBox layoutY="25.0" styleClass="tool_bar">
+                <ToolBar fx:id="TOOLBAR" layoutX="-15.0" layoutY="25.0" minWidth="1000.0" prefHeight="43.0"
+                         prefWidth="${(screen.visualBounds.width)}" AnchorPane.leftAnchor="0.0"
+                         AnchorPane.topAnchor="25.0" HBox.hgrow="ALWAYS">
+                    <Button fx:id="BTN_NEW_CMDE" mnemonicParsing="false" onAction="#openTocreateNewFacture"
+                            prefHeight="25.0" text="Nouveau" textOverrun="CENTER_ELLIPSIS"/>
+                    <Separator orientation="VERTICAL" prefHeight="36.0" prefWidth="0.0"/>
+                    <Button fx:id="BTN_LIST_FAC" layoutX="10.0" layoutY="13.0" mnemonicParsing="false"
+                            onAction="#openViewListFacture" prefHeight="25.0" text="Mes Factures"/>
+                    <Separator orientation="VERTICAL" prefHeight="32.0" prefWidth="0.0"/>
+                    <Button fx:id="BTN_COMPTE" mnemonicParsing="false" onAction="#openAndLoadFormCompte"
+                            prefHeight="25.0" text="Compte"/>
+                    <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0"/>
+                    <VBox prefHeight="39.0" prefWidth="284.0">
+                        <HBox prefHeight="14.0" prefWidth="317.0">
+                            <VBox.margin>
+                                <Insets bottom="5.0"/>
+                            </VBox.margin>
+                            <Label text="Point de vente:">
+                                <HBox.margin>
+                                    <Insets right="10.0"/>
+                                </HBox.margin>
+                            </Label>
+                            <Label fx:id="LAB_PV" text=" --.-- " textFill="#030a39" wrapText="true">
+                                <font>
+                                    <Font name="System Bold" size="12.0"/>
+                                </font>
+                            </Label>
+                        </HBox>
+                        <HBox layoutX="10.0" layoutY="10.0" prefHeight="14.0" prefWidth="317.0">
+                            <Label prefHeight="17.0" prefWidth="83.0" text="Vendeur">
+                                <HBox.margin>
+                                    <Insets right="10.0"/>
+                                </HBox.margin>
+                            </Label>
+                            <Label fx:id="LAB_VEND" text=" --.-- " textFill="#3c0101"/>
+                        </HBox>
+                    </VBox>
+                    <VBox prefHeight="39.0" prefWidth="176.0">
+                        <HBox alignment="CENTER_LEFT" prefHeight="39.0" prefWidth="346.0">
+                            <Label prefHeight="17.0" prefWidth="71.0" text="Date:"
+                                   textOverrun="CENTER_ELLIPSIS">
+                                <HBox.margin>
+                                    <Insets/>
+                                </HBox.margin>
+                            </Label>
+                            <Label fx:id="LAB_DATE" prefHeight="17.0" prefWidth="91.0"
+                                   text=" --.-- " textFill="#4d0303"/>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0" prefHeight="39.0"
+                              prefWidth="346.0">
+                            <children>
+                                <Label layoutX="10.0" layoutY="21.0" prefHeight="17.0" prefWidth="67.0"
+                                       text="Tranche:" textOverrun="CENTER_ELLIPSIS"/>
+                                <Label fx:id="LAB_TRANCHE" layoutX="48.0" layoutY="21.0" text=" -- .-- "
+                                       textFill="#400202"/>
+                            </children>
+                        </HBox>
+                    </VBox>
+                    <Pane disable="true" HBox.hgrow="ALWAYS"/>
+                    <Button fx:id="BTN_QUIT" mnemonicParsing="false" onAction="#goingOut" prefHeight="35.0"
+                            text="Quitter" textAlignment="RIGHT"/>
+                </ToolBar>
+            </HBox>
+            <HBox prefHeight="30.0" prefWidth="1567.0" style="-fx-background-color: #fff;">
+                <VBox prefHeight="38.0" prefWidth="137.0">
+                    <HBox prefHeight="5.0">
+                        <Label prefHeight="16.0" text="Etat Serveur Local:"
+                               underline="true" wrapText="true">
+                            <font>
+                                <Font size="10.0"/>
+                            </font>
+                            <HBox.margin>
+                                <Insets left="10.0" right="14.0"/>
+                            </HBox.margin>
+                        </Label>
+                        <ImageView fx:id="IMG_ETAT_SERVEUR_L" fitHeight="16.0" fitWidth="16.0"
+                                   pickOnBounds="true" preserveRatio="true">
+                            <HBox.margin>
+                                <Insets/>
+                            </HBox.margin>
+                            <Image url="/icones/i_juste.png"/>
+                        </ImageView>
+                    </HBox>
+                    <HBox prefHeight="16.0">
+                        <Label prefHeight="16.0" text="Etat Serveur distant:"
+                               underline="true" wrapText="true">
+                            <font>
+                                <Font size="10.0"/>
+                            </font>
                             <HBox.margin>
                                 <Insets left="10.0"/>
                             </HBox.margin>
                         </Label>
-                        <VBox prefHeight="38.0" prefWidth="160.0">
-                            <HBox prefHeight="19.0" prefWidth="160.0">
-                                <ImageView fx:id="ICO_ALERT_EX" fitHeight="12.0" fitWidth="40.0" layoutX="58.0"
-                                           layoutY="10.0" pickOnBounds="true" preserveRatio="true">
-                                    <HBox.margin>
-                                        <Insets top="3.0"/>
-                                    </HBox.margin>
-                                    <Image url="/icones/alerte.png"/>
-                                </ImageView>
-                                <Label fx:id="LAB_SYNC_EX" prefHeight="17.0" prefWidth="40.0" text="Export:"/>
-                                <ImageView fx:id="ICO_RUN_OFF" fitHeight="19.0" fitWidth="80.0"
-                                           pickOnBounds="true" preserveRatio="true">
-                                    <HBox.margin>
-                                        <Insets left="3.0"/>
-                                    </HBox.margin>
-                                    <Image url="/icones/running_png.png"/>
-                                </ImageView>
-                                <ImageView fx:id="ICO_RUN_ON" fitHeight="19.0" fitWidth="80.0"
-                                           pickOnBounds="true" preserveRatio="true" visible="false">
-                                    <HBox.margin>
-                                        <Insets left="3.0"/>
-                                    </HBox.margin>
-                                    <Image url="/icones/running1.gif"/>
-                                </ImageView>
-                            </HBox>
-                            <HBox layoutX="10.0" layoutY="10.0" prefHeight="13.0" prefWidth="160.0">
-                                <ImageView fx:id="ICO_ALERT_IM" fitHeight="12.0" fitWidth="40.0"
-                                           pickOnBounds="true" preserveRatio="true">
-                                    <HBox.margin>
-                                        <Insets top="3.0"/>
-                                    </HBox.margin>
-                                    <Image url="/icones/alerte.png"/>
-                                </ImageView>
-                                <Label fx:id="LAB_SYNC_IM" prefHeight="17.0" prefWidth="40.0" text="Import:"/>
-                                <ImageView fx:id="ICO_RUN_OFF_IN" fitHeight="19.0" fitWidth="80.0"
-                                           pickOnBounds="true" preserveRatio="true">
-                                    <HBox.margin>
-                                        <Insets left="3.0"/>
-                                    </HBox.margin>
-                                    <Image url="/icones/running_png.png"/>
-                                </ImageView>
-                                <ImageView fx:id="ICO_RUN_ON_IN" fitHeight="19.0" fitWidth="80.0"
-                                           pickOnBounds="true" preserveRatio="true" visible="false">
-                                    <HBox.margin>
-                                        <Insets left="3.0"/>
-                                    </HBox.margin>
-                                    <Image url="/icones/running1.gif"/>
-                                </ImageView>
-                            </HBox>
-                        </VBox>
-                        <HBox prefHeight="31.0">
-                            <children>
-                                <Label fx:id="LAB_SYNC_MSG" prefHeight="31.0" textFill="#e10404">
-                                    <font>
-                                        <Font name="System Italic" size="10.0"/>
-                                    </font>
-                                </Label>
-                            </children>
-                        </HBox>
+                        <ImageView fx:id="IMG_ETAT_SERVEUR_R" fitHeight="16.0" fitWidth="16.0"
+                                   pickOnBounds="true" preserveRatio="true">
+                            <HBox.margin>
+                                <Insets/>
+                            </HBox.margin>
+                            <Image url="/icones/i_juste.png"/>
+                        </ImageView>
+                    </HBox>
+                </VBox>
+                <Label fx:id="LAB_TITLE_SYNC_T" prefHeight="49.0" prefWidth="78.0" text="Status Syncro">
+                    <HBox.margin>
+                        <Insets left="10.0"/>
+                    </HBox.margin>
+                </Label>
+                <VBox prefHeight="38.0" prefWidth="160.0">
+                    <HBox prefHeight="19.0" prefWidth="160.0">
+                        <ImageView fx:id="ICO_ALERT_EX" fitHeight="12.0" fitWidth="40.0" layoutX="58.0"
+                                   layoutY="10.0" pickOnBounds="true" preserveRatio="true">
+                            <HBox.margin>
+                                <Insets top="3.0"/>
+                            </HBox.margin>
+                            <Image url="/icones/alerte.png"/>
+                        </ImageView>
+                        <Label fx:id="LAB_SYNC_EX" prefHeight="17.0" prefWidth="40.0" text="Export:"/>
+                        <ImageView fx:id="ICO_RUN_OFF" fitHeight="19.0" fitWidth="80.0"
+                                   pickOnBounds="true" preserveRatio="true">
+                            <HBox.margin>
+                                <Insets left="3.0"/>
+                            </HBox.margin>
+                            <Image url="/icones/running_png.png"/>
+                        </ImageView>
+                        <ImageView fx:id="ICO_RUN_ON" fitHeight="19.0" fitWidth="80.0"
+                                   pickOnBounds="true" preserveRatio="true" visible="false">
+                            <HBox.margin>
+                                <Insets left="3.0"/>
+                            </HBox.margin>
+                            <Image url="/icones/running1.gif"/>
+                        </ImageView>
+                    </HBox>
+                    <HBox layoutX="10.0" layoutY="10.0" prefHeight="13.0" prefWidth="160.0">
+                        <ImageView fx:id="ICO_ALERT_IM" fitHeight="12.0" fitWidth="40.0"
+                                   pickOnBounds="true" preserveRatio="true">
+                            <HBox.margin>
+                                <Insets top="3.0"/>
+                            </HBox.margin>
+                            <Image url="/icones/alerte.png"/>
+                        </ImageView>
+                        <Label fx:id="LAB_SYNC_IM" prefHeight="17.0" prefWidth="40.0" text="Import:"/>
+                        <ImageView fx:id="ICO_RUN_OFF_IN" fitHeight="19.0" fitWidth="80.0"
+                                   pickOnBounds="true" preserveRatio="true">
+                            <HBox.margin>
+                                <Insets left="3.0"/>
+                            </HBox.margin>
+                            <Image url="/icones/running_png.png"/>
+                        </ImageView>
+                        <ImageView fx:id="ICO_RUN_ON_IN" fitHeight="19.0" fitWidth="80.0"
+                                   pickOnBounds="true" preserveRatio="true" visible="false">
+                            <HBox.margin>
+                                <Insets left="3.0"/>
+                            </HBox.margin>
+                            <Image url="/icones/running1.gif"/>
+                        </ImageView>
+                    </HBox>
+                </VBox>
+                <HBox prefHeight="31.0">
+                    <children>
+                        <Label fx:id="LAB_SYNC_MSG" prefHeight="31.0" textFill="#e10404">
+                            <font>
+                                <Font name="System Italic" size="10.0"/>
+                            </font>
+                        </Label>
                     </children>
                 </HBox>
-            </children>
+            </HBox>
         </VBox>
     </top>
     <center>
-        <VBox layoutY="76.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+        <VBox layoutY="76.0" maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity"
               minWidth="-Infinity" prefWidth="${screen.visualBounds.width}" style="-fx-background-color: red;"
-              BorderPane.alignment="CENTER">
-            <children>
-                <SplitPane dividerPositions="0.90" orientation="VERTICAL">
-                    <items>
-                        <HBox style="-fx-background-color: yellow;">
-                            <children>
-                                <SplitPane fx:id="SPLIT_CENTER" dividerPositions="0.19, 0.80"
-                                           prefWidth="${screen.visualBounds.width}">
-                                    <items>
-                                        <VBox>
-                                            <HBox style="-fx-background-color: #bbb;">
-                                                <Label prefHeight="22.0" prefWidth="124.0"
-                                                       style="-fx-background-color: #bbb;" text="INFOS FACTURE"
-                                                       textFill="#ee1d06"/>
-                                                <Label fx:id="LAB_REF_FACTURE" prefHeight="22.0" prefWidth="238.0"
-                                                       text="FV/000000000" wrapText="true">
-                                                    <HBox.margin>
-                                                        <Insets left="10.0"/>
-                                                    </HBox.margin>
-                                                    <styleClass>
-                                                        <String fx:value="bold"/>
-                                                        <String fx:value="color_blue"/>
-                                                    </styleClass>
-                                                    <font>
-                                                        <Font size="13.0"/>
-                                                    </font>
-                                                </Label>
-                                            </HBox>
-                                            <VBox prefHeight="200.0" prefWidth="100.0">
-                                                <VBox>
-                                                    <Label prefHeight="22.0" prefWidth="51.0" text="Client"
-                                                           underline="true"/>
-                                                    <HBox prefHeight="29.0">
-                                                        <Label prefHeight="40.0" text="Code client:">
-                                                            <HBox.margin>
-                                                                <Insets right="20.0"/>
-                                                            </HBox.margin>
-                                                        </Label>
-                                                        <Label fx:id="LAB_CLIENT" prefHeight="40.0"
-                                                               styleClass="bold"
-                                                               text="DIV001" wrapText="true">
-                                                            <HBox.margin>
-                                                                <Insets/>
-                                                            </HBox.margin>
-                                                        </Label>
-                                                    </HBox>
-                                                    <Label fx:id="LAB_NAME_CLT" prefHeight="28.0"
-                                                           prefWidth="266.0" styleClass="bold"
-                                                           text="Client Divers" wrapText="true">
-                                                        <HBox.margin>
-                                                            <Insets/>
-                                                        </HBox.margin>
-                                                    </Label>
-                                                    <HBox layoutX="10.0" layoutY="61.0" prefHeight="29.0"
-                                                          prefWidth="330.0">
-                                                        <Label prefHeight="28.0" text="Adresse:">
-                                                            <HBox.margin>
-                                                                <Insets right="5.0"/>
-                                                            </HBox.margin>
-                                                        </Label>
-                                                        <Label fx:id="LAB_ADRESSSE" prefHeight="28.0"
-                                                               prefWidth="261.0" styleClass="bold"
-                                                               text="XXXX" wrapText="true">
-                                                            <HBox.margin>
-                                                                <Insets/>
-                                                            </HBox.margin>
-                                                        </Label>
-                                                    </HBox>
-                                                </VBox>
-                                                <HBox layoutX="10.0" layoutY="39.0" prefHeight="29.0"
-                                                      prefWidth="386.0">
-                                                    <Label prefHeight="30.0" prefWidth="60.0" text="Statut:"/>
-                                                    <CheckBox fx:id="CHK_LIVRE" mnemonicParsing="false"
-                                                              prefHeight="32.0" prefWidth="73.0" text="Livré"/>
-                                                    <CheckBox fx:id="CHK_REGLE" layoutX="70.0" layoutY="10.0"
-                                                              mnemonicParsing="false" prefHeight="32.0"
-                                                              prefWidth="73.0" text="Réglé"/>
-                                                </HBox>
-                                                <Separator prefWidth="200.0"/>
-                                                <HBox prefHeight="29.0">
-                                                    <Label prefHeight="29.0"
-                                                           text="Ristourne :"/>
-                                                    <Label fx:id="LAB_T_RIST" alignment="CENTER_RIGHT"
-                                                           prefHeight="29.0" prefWidth="80.0" styleClass="bold"
-                                                           text="0">
-                                                        <HBox.margin>
-                                                            <Insets left="10.0"/>
-                                                        </HBox.margin>
-                                                        <padding>
-                                                            <Insets right="10.0"/>
-                                                        </padding>
-                                                    </Label>
-                                                    <Label layoutX="77.0" layoutY="10.0" prefHeight="23.0"
-                                                           prefWidth="66.0" text="Remise :">
-                                                        <HBox.margin>
-                                                            <Insets left="30.0"/>
-                                                        </HBox.margin>
-                                                    </Label>
-                                                    <Label fx:id="LAB_T_REM" alignment="CENTER_RIGHT"
-                                                           layoutX="212.0" layoutY="10.0" prefHeight="26.0"
-                                                           prefWidth="86.0" styleClass="bold" text="0">
-                                                        <padding>
-                                                            <Insets right="10.0"/>
-                                                        </padding>
-                                                    </Label>
-                                                </HBox>
-                                                <HBox layoutX="10.0" layoutY="100.0" prefHeight="29.0">
-                                                    <Label prefHeight="29.0"
-                                                           text="Total TTC:"/>
-                                                    <Label fx:id="LAB_TTC" alignment="CENTER_RIGHT"
-                                                           prefHeight="29.0" prefWidth="80.0" styleClass="bold"
-                                                           text="0">
-                                                        <HBox.margin>
-                                                            <Insets left="10.0"/>
-                                                        </HBox.margin>
-                                                        <padding>
-                                                            <Insets right="10.0"/>
-                                                        </padding>
-                                                    </Label>
-                                                </HBox>
-                                                <HBox layoutX="10.0" layoutY="129.0" prefHeight="29.0">
-                                                    <Label prefHeight="29.0" text="Avance :"/>
-                                                    <Label fx:id="LAB_T_AVANCE" alignment="CENTER_RIGHT"
-                                                           prefHeight="24.0" prefWidth="80.0" styleClass="bold"
-                                                           text="0">
-                                                        <padding>
-                                                            <Insets right="10.0"/>
-                                                        </padding>
-                                                        <HBox.margin>
-                                                            <Insets left="10.0"/>
-                                                        </HBox.margin>
-                                                    </Label>
-                                                    <Label layoutX="77.0" layoutY="10.0" prefHeight="29.0"
-                                                           text="Net à payer :">
-                                                        <HBox.margin>
-                                                            <Insets left="10.0"/>
-                                                        </HBox.margin>
-                                                    </Label>
-                                                    <Label fx:id="LAB_NET_A_PAYER" alignment="CENTER_RIGHT"
-                                                           layoutX="212.0" layoutY="10.0" prefHeight="25.0"
-                                                           styleClass="bold" text="0">
-                                                        <padding>
-                                                            <Insets right="10.0"/>
-                                                        </padding>
-                                                    </Label>
-                                                </HBox>
-                                            </VBox>
-                                            <Separator prefWidth="200.0"/>
-                                            <HBox prefHeight="27.0" prefWidth="386.0">
-                                                <Label fx:id="L_TOTAL" prefHeight="27.0" text="0">
-                                                    <HBox.margin>
-                                                        <Insets left="10.0"/>
-                                                    </HBox.margin>
-                                                </Label>
-                                                <Label prefHeight="27.0"
-                                                       text="Factures enregistrée(s)  pour cette session"
-                                                       textFill="#6f6d6d">
-                                                    <HBox.margin>
-                                                        <Insets left="5.0"/>
-                                                    </HBox.margin>
-                                                    <font>
-                                                        <Font name="System Italic" size="12.0"/>
-                                                    </font>
-                                                </Label>
-                                            </HBox>
-                                            <Separator prefWidth="200.0"/>
-                                            <VBox fx:id="ZONE_IMG" alignment="CENTER" prefHeight="200.0">
-                                                <ImageView fitHeight="250" fitWidth="224.0" pickOnBounds="true"
-                                                           preserveRatio="true">
-                                                    <Image url="/icones/coffee.png"/>
-                                                </ImageView>
-                                            </VBox>
-                                            <VBox prefHeight="43.0" prefWidth="386.0">
-                                                <Label fx:id="LAB_REF" text="REF. ART"/>
-                                                <Label fx:id="LAB_DES" text="DESIGNATION"/>
-                                                <HBox>
-                                                    <Label prefHeight="31.0"
-                                                           text="Quantité facturée(s) durant la session:"
-                                                           textFill="#233679"/>
-                                                    <Label fx:id="QTE_FACTURE" text="0" textFill="#051065">
-                                                        <font>
-                                                            <Font name="System Bold" size="16.0"/>
-                                                        </font>
-                                                    </Label>
-                                                </HBox>
-                                            </VBox>
-                                            <VBox fx:id="PAN_STOCK"/>
-                                        </VBox>
-                                        <VBox prefWidth="${screen.visualBounds.width*0.6}" spacing="10.0">
-                                            <HBox><!--todo: construire dynamquement la progressbar, pour qu'elle ne soit pas en permanence visible-->
-                                                <Label fx:id="PROGRESS_LABEL" alignment="CENTER"
-                                                       contentDisplay="CENTER" prefHeight="17.0" prefWidth="80"
-                                                       text="0/0" textAlignment="CENTER" wrapText="true"/>
-                                                <ProgressBar fx:id="PROGRESS" prefHeight="18.0"
-                                                             prefWidth="${(screen.visualBounds.width*0.6)-80}"
-                                                             progress="0.0"/>
-                                            </HBox>
-                                            <ScrollPane hbarPolicy="NEVER" pannable="true">
-                                                <VBox fx:id="BOX_ARTICLES"
-                                                      prefWidth="${(screen.visualBounds.width*0.6)-80}"
-                                                      prefHeight="${screen.visualBounds.height-300}" spacing="10.0">
-                                                    <padding>
-                                                        <Insets bottom="8.0"/>
-                                                    </padding>
-                                                </VBox>
-                                            </ScrollPane>
-                                        </VBox>
-                                        <VBox fx:id="RIGHT_BOX" style="-fx-background-color: #FFF;">
-                                            <HBox prefHeight="57.0" prefWidth="350.0">
-                                                <Label fx:id="ECRAN" alignment="CENTER" prefHeight="61.0"
-                                                       prefWidth="437.0" style="-fx-text-fill: #066B20;"
-                                                       styleClass="background_" text="0" textFill="#05610b"
-                                                       wrapText="true">
-                                                    <font>
-                                                        <Font name="Times New Roman" size="40.0"/>
-                                                    </font>
-                                                </Label>
-                                            </HBox>
-                                            <Label fx:id="LAB_TITLE_PANIER" prefHeight="17.0" prefWidth="450.0"
-                                                   style="-fx-background-color: #bbb;" text="PANIER"
-                                                   textFill="#ee1d06"/>
-                                            <TabPane fx:id="TAB_FACTURES" prefWidth="430.0" side="BOTTOM">
-
-                                            </TabPane>
-                                        </VBox>
-                                    </items>
-                                </SplitPane>
-                            </children>
-                        </HBox>
-                        <VBox prefHeight="100.0">
-                            <HBox fillHeight="false" prefHeight="40.0" prefWidth="1598.0" spacing="5.0"
-                                  style="-fx-background-color: #bbb;">
-                                <CheckBox fx:id="CHK_DISPLAY" mnemonicParsing="false" prefHeight="41.0"
-                                          prefWidth="94.0" selected="true" text="Saisie manuel"/>
-                                <TextField fx:id="TEXT_FIND" prefHeight="35.0" prefWidth="240.0"
-                                           promptText="Article ou code barre"
-                                           style="-fx-background-color: #bffcd0; -fx-text-fill: #333;">
+              >
+            <SplitPane dividerPositions="0.90" orientation="VERTICAL" VBox.vgrow="ALWAYS">
+                <HBox style="-fx-background-color: yellow;">
+                    <SplitPane fx:id="SPLIT_CENTER" dividerPositions="0.19, 0.80"
+                               prefWidth="${screen.visualBounds.width}" HBox.hgrow="ALWAYS">
+                        <VBox>
+                            <HBox style="-fx-background-color: #bbb;">
+                                <Label prefHeight="22.0" prefWidth="124.0"
+                                       style="-fx-background-color: #bbb;" text="INFOS FACTURE"
+                                       textFill="#ee1d06"/>
+                                <Label fx:id="LAB_REF_FACTURE" prefHeight="22.0" prefWidth="238.0"
+                                       text="FV/000000000" wrapText="true">
                                     <HBox.margin>
-                                        <Insets bottom="2.0" right="480.0" top="2.0"/>
+                                        <Insets left="10.0"/>
                                     </HBox.margin>
-                                </TextField>
-                                <Button fx:id="BTN_SAVE" layoutX="473.0" layoutY="10.0" mnemonicParsing="false"
-                                        onAction="#valideFacture" text="VALIDER"/>
-                                <Button fx:id="BTN_LIVRER" mnemonicParsing="false" onAction="#livrerFacture"
-                                        prefWidth="100.0" text="LIVRER"/>
-                                <Button fx:id="BTN_REGLER" layoutX="421.0" layoutY="10.0"
-                                        mnemonicParsing="false" onAction="#saveOrGeneratedPaiement"
-                                        text="REGLER"/>
-                                <Button fx:id="BTN_PRINT" layoutX="1150.0" layoutY="10.0"
-                                        mnemonicParsing="false" onAction="#printFacture" prefWidth="130.0"
-                                        text="IMPRIMER"/>
+                                    <styleClass>
+                                        <String fx:value="bold"/>
+                                        <String fx:value="color_blue"/>
+                                    </styleClass>
+                                    <font>
+                                        <Font size="13.0"/>
+                                    </font>
+                                </Label>
                             </HBox>
-                            <HBox prefHeight="32.0" prefWidth="1596.0" spacing="5.0">
-                                <Label alignment="CENTER" prefHeight="36.0" text="Société :"/>
-                                <Label fx:id="TEXT_SOCIETE" alignment="CENTER" prefHeight="30.0"
-                                       prefWidth="241.0" text="Lymytz Retail"/>
+                            <VBox prefHeight="200.0" prefWidth="100.0">
                                 <VBox>
-                                    <Label fx:id="LAB_NB_DATA_IN" prefWidth="500.0">
-                                        <font>
-                                            <Font size="10.0"/>
-                                        </font>
+                                    <Label prefHeight="22.0" prefWidth="51.0" text="Client"
+                                           underline="true"/>
+                                    <HBox prefHeight="29.0">
+                                        <Label prefHeight="40.0" text="Code client:">
+                                            <HBox.margin>
+                                                <Insets right="20.0"/>
+                                            </HBox.margin>
+                                        </Label>
+                                        <Label fx:id="LAB_CLIENT" prefHeight="40.0"
+                                               styleClass="bold"
+                                               text="DIV001" wrapText="true">
+                                            <HBox.margin>
+                                                <Insets/>
+                                            </HBox.margin>
+                                        </Label>
+                                    </HBox>
+                                    <Label fx:id="LAB_NAME_CLT" prefHeight="28.0"
+                                           prefWidth="266.0" styleClass="bold"
+                                           text="Client Divers" wrapText="true">
+                                        <HBox.margin>
+                                            <Insets/>
+                                        </HBox.margin>
                                     </Label>
-                                    <Label fx:id="LAB_NB_DATA_OUT" layoutX="10.0" layoutY="10.0"
-                                           prefWidth="500.0">
-                                        <font>
-                                            <Font size="10.0"/>
-                                        </font>
-                                    </Label>
+                                    <HBox layoutX="10.0" layoutY="61.0" prefHeight="29.0"
+                                          prefWidth="330.0">
+                                        <Label prefHeight="28.0" text="Adresse:">
+                                            <HBox.margin>
+                                                <Insets right="5.0"/>
+                                            </HBox.margin>
+                                        </Label>
+                                        <Label fx:id="LAB_ADRESSSE" prefHeight="28.0"
+                                               prefWidth="261.0" styleClass="bold"
+                                               text="XXXX" wrapText="true">
+                                            <HBox.margin>
+                                                <Insets/>
+                                            </HBox.margin>
+                                        </Label>
+                                    </HBox>
                                 </VBox>
-                                <HBox alignment="CENTER_RIGHT" prefHeight="29.0" spacing="20.0">
-                                    <VBox>
-                                        <Label fx:id="SESS_DUREE" alignment="BOTTOM_RIGHT"
-                                               contentDisplay="RIGHT" prefWidth="850.0">
-                                            <font>
-                                                <Font size="9.0"/>
-                                            </font>
-                                        </Label>
-                                        <Label alignment="BOTTOM_RIGHT" contentDisplay="RIGHT"
-                                               layoutX="10.0" layoutY="10.0" prefWidth="850.0"
-                                               text="Copyright(c) Lymytz 2020">
-                                            <font>
-                                                <Font size="9.0"/>
-                                            </font>
-                                        </Label>
-                                    </VBox>
+                                <HBox layoutX="10.0" layoutY="39.0" prefHeight="29.0"
+                                      prefWidth="386.0">
+                                    <Label prefHeight="30.0" prefWidth="60.0" text="Statut:"/>
+                                    <CheckBox fx:id="CHK_LIVRE" mnemonicParsing="false"
+                                              prefHeight="32.0" prefWidth="73.0" text="Livré"/>
+                                    <CheckBox fx:id="CHK_REGLE" layoutX="70.0" layoutY="10.0"
+                                              mnemonicParsing="false" prefHeight="32.0"
+                                              prefWidth="73.0" text="Réglé"/>
                                 </HBox>
+                                <Separator prefWidth="200.0"/>
+                                <HBox prefHeight="29.0">
+                                    <Label prefHeight="29.0"
+                                           text="Ristourne :"/>
+                                    <Label fx:id="LAB_T_RIST" alignment="CENTER_RIGHT"
+                                           prefHeight="29.0" prefWidth="80.0" styleClass="bold"
+                                           text="0">
+                                        <HBox.margin>
+                                            <Insets left="10.0"/>
+                                        </HBox.margin>
+                                        <padding>
+                                            <Insets right="10.0"/>
+                                        </padding>
+                                    </Label>
+                                    <Label layoutX="77.0" layoutY="10.0" prefHeight="23.0"
+                                           prefWidth="66.0" text="Remise :">
+                                        <HBox.margin>
+                                            <Insets left="30.0"/>
+                                        </HBox.margin>
+                                    </Label>
+                                    <Label fx:id="LAB_T_REM" alignment="CENTER_RIGHT"
+                                           layoutX="212.0" layoutY="10.0" prefHeight="26.0"
+                                           prefWidth="86.0" styleClass="bold" text="0">
+                                        <padding>
+                                            <Insets right="10.0"/>
+                                        </padding>
+                                    </Label>
+                                </HBox>
+                                <HBox layoutX="10.0" layoutY="100.0" prefHeight="29.0">
+                                    <Label prefHeight="29.0"
+                                           text="Total TTC:"/>
+                                    <Label fx:id="LAB_TTC" alignment="CENTER_RIGHT"
+                                           prefHeight="29.0" prefWidth="80.0" styleClass="bold"
+                                           text="0">
+                                        <HBox.margin>
+                                            <Insets left="10.0"/>
+                                        </HBox.margin>
+                                        <padding>
+                                            <Insets right="10.0"/>
+                                        </padding>
+                                    </Label>
+                                </HBox>
+                                <HBox layoutX="10.0" layoutY="129.0" prefHeight="29.0">
+                                    <Label prefHeight="29.0" text="Avance :"/>
+                                    <Label fx:id="LAB_T_AVANCE" alignment="CENTER_RIGHT"
+                                           prefHeight="24.0" prefWidth="80.0" styleClass="bold"
+                                           text="0">
+                                        <padding>
+                                            <Insets right="10.0"/>
+                                        </padding>
+                                        <HBox.margin>
+                                            <Insets left="10.0"/>
+                                        </HBox.margin>
+                                    </Label>
+                                    <Label layoutX="77.0" layoutY="10.0" prefHeight="29.0"
+                                           text="Net à payer :">
+                                        <HBox.margin>
+                                            <Insets left="10.0"/>
+                                        </HBox.margin>
+                                    </Label>
+                                    <Label fx:id="LAB_NET_A_PAYER" alignment="CENTER_RIGHT"
+                                           layoutX="212.0" layoutY="10.0" prefHeight="25.0"
+                                           styleClass="bold" text="0">
+                                        <padding>
+                                            <Insets right="10.0"/>
+                                        </padding>
+                                    </Label>
+                                </HBox>
+                            </VBox>
+                            <Separator prefWidth="200.0"/>
+                            <HBox prefHeight="27.0" prefWidth="386.0">
+                                <Label fx:id="L_TOTAL" prefHeight="27.0" text="0">
+                                    <HBox.margin>
+                                        <Insets left="10.0"/>
+                                    </HBox.margin>
+                                </Label>
+                                <Label prefHeight="27.0"
+                                       text="Factures enregistrée(s)  pour cette session"
+                                       textFill="#6f6d6d">
+                                    <HBox.margin>
+                                        <Insets left="5.0"/>
+                                    </HBox.margin>
+                                    <font>
+                                        <Font name="System Italic" size="12.0"/>
+                                    </font>
+                                </Label>
                             </HBox>
+                            <Separator prefWidth="200.0"/>
+                            <VBox fx:id="ZONE_IMG" alignment="CENTER" prefHeight="200.0">
+                                <ImageView fitHeight="250" fitWidth="224.0" pickOnBounds="true"
+                                           preserveRatio="true">
+                                    <Image url="/icones/coffee.png"/>
+                                </ImageView>
+                            </VBox>
+                            <VBox prefHeight="43.0" prefWidth="386.0">
+                                <Label fx:id="LAB_REF" text="REF. ART"/>
+                                <Label fx:id="LAB_DES" text="DESIGNATION"/>
+                                <HBox>
+                                    <Label prefHeight="31.0"
+                                           text="Quantité facturée(s) durant la session:"
+                                           textFill="#233679"/>
+                                    <Label fx:id="QTE_FACTURE" text="0" textFill="#051065">
+                                        <font>
+                                            <Font name="System Bold" size="16.0"/>
+                                        </font>
+                                    </Label>
+                                </HBox>
+                            </VBox>
+                            <VBox fx:id="PAN_STOCK"/>
                         </VBox>
-                    </items>
-                </SplitPane>
-            </children>
+                        <VBox prefWidth="${screen.visualBounds.width*0.6}" spacing="10.0"
+                              fx:id="MAIN_ARTICLE_CONTAINER">
+                            <ScrollPane hbarPolicy="NEVER" pannable="true">
+                                <VBox fx:id="BOX_ARTICLES"
+                                      prefWidth="${(screen.visualBounds.width*0.6)-80}"
+                                      prefHeight="${screen.visualBounds.height-280}" spacing="10.0">
+                                    <padding>
+                                        <Insets bottom="8.0"/>
+                                    </padding>
+                                </VBox>
+                            </ScrollPane>
+                        </VBox>
+                        <VBox fx:id="RIGHT_BOX" style="-fx-background-color: #FFF;">
+                            <HBox prefHeight="57.0" prefWidth="350.0">
+                                <Label fx:id="ECRAN" alignment="CENTER" prefHeight="61.0"
+                                       prefWidth="437.0" style="-fx-text-fill: #066B20;"
+                                       styleClass="background_" text="0" textFill="#05610b"
+                                       wrapText="true">
+                                    <font>
+                                        <Font name="Times New Roman" size="40.0"/>
+                                    </font>
+                                </Label>
+                            </HBox>
+                            <Label fx:id="LAB_TITLE_PANIER" prefHeight="17.0" prefWidth="450.0"
+                                   style="-fx-background-color: #bbb;" text="PANIER"
+                                   textFill="#ee1d06"/>
+                            <TabPane fx:id="TAB_FACTURES" prefWidth="430.0" side="BOTTOM">
+
+                            </TabPane>
+                        </VBox>
+                    </SplitPane>
+                </HBox>
+                <VBox prefHeight="100.0">
+                    <HBox fillHeight="false" prefHeight="40.0" prefWidth="1598.0" spacing="5.0"
+                          style="-fx-background-color: #bbb;">
+                        <CheckBox fx:id="CHK_DISPLAY" mnemonicParsing="false" prefHeight="41.0"
+                                  prefWidth="94.0" selected="true" text="Saisie manuel"/>
+                        <TextField fx:id="TEXT_FIND" prefHeight="35.0" prefWidth="240.0"
+                                   promptText="Article ou code barre"
+                                   style="-fx-background-color: #bffcd0; -fx-text-fill: #333;">
+                            <HBox.margin>
+                                <Insets bottom="2.0" right="480.0" top="2.0"/>
+                            </HBox.margin>
+                        </TextField>
+                        <Button fx:id="BTN_SAVE" layoutX="473.0" layoutY="10.0" mnemonicParsing="false"
+                                onAction="#valideFacture" text="VALIDER"/>
+                        <Button fx:id="BTN_LIVRER" mnemonicParsing="false" onAction="#livrerFacture"
+                                prefWidth="100.0" text="LIVRER"/>
+                        <Button fx:id="BTN_REGLER" layoutX="421.0" layoutY="10.0"
+                                mnemonicParsing="false" onAction="#saveOrGeneratedPaiement"
+                                text="REGLER"/>
+                        <Button fx:id="BTN_PRINT" layoutX="1150.0" layoutY="10.0"
+                                mnemonicParsing="false" onAction="#printFacture" prefWidth="130.0"
+                                text="IMPRIMER"/>
+                    </HBox>
+                    <HBox prefHeight="32.0" prefWidth="1596.0" spacing="5.0">
+                        <Label alignment="CENTER" prefHeight="36.0" text="Société :"/>
+                        <Label fx:id="TEXT_SOCIETE" alignment="CENTER" prefHeight="30.0"
+                               prefWidth="241.0" text="Lymytz Retail"/>
+                        <VBox>
+                            <Label fx:id="LAB_NB_DATA_IN" prefWidth="500.0">
+                                <font>
+                                    <Font size="10.0"/>
+                                </font>
+                            </Label>
+                            <Label fx:id="LAB_NB_DATA_OUT" layoutX="10.0" layoutY="10.0"
+                                   prefWidth="500.0">
+                                <font>
+                                    <Font size="10.0"/>
+                                </font>
+                            </Label>
+                        </VBox>
+                        <HBox alignment="CENTER_RIGHT" prefHeight="29.0" spacing="20.0">
+                            <VBox>
+                                <Label fx:id="SESS_DUREE" alignment="BOTTOM_RIGHT"
+                                       contentDisplay="RIGHT" prefWidth="850.0">
+                                    <font>
+                                        <Font size="9.0"/>
+                                    </font>
+                                </Label>
+                                <Label alignment="BOTTOM_RIGHT" contentDisplay="RIGHT"
+                                       layoutX="10.0" layoutY="10.0" prefWidth="850.0"
+                                       text="Copyright(c) Lymytz 2020">
+                                    <font>
+                                        <Font size="9.0"/>
+                                    </font>
+                                </Label>
+                            </VBox>
+                        </HBox>
+                    </HBox>
+                </VBox>
+            </SplitPane>
         </VBox>
     </center>
 </BorderPane>

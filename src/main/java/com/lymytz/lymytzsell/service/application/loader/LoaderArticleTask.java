@@ -7,9 +7,11 @@ package com.lymytz.lymytzsell.service.application.loader;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.lymytz.lymytzsell.business.helpers.Helpers;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
@@ -26,18 +28,19 @@ import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
 import com.lymytz.lymytzsell.view.component.CustomComponents;
 import com.lymytz.lymytzsell.view.main.HomeCaisseController;
+import javafx.scene.layout.VBox;
 
 /**
  * @author LYMYTZ
  */
-public class LoaderConditionnement extends Task<ObservableList<GridPane>> {
+public class LoaderArticleTask extends Task<ObservableList<GridPane>> {
 
     LocalQueryFactories localQueryFactories = new LocalQueryFactories<>();
     HomeCaisseController page;
     String reference;
     List<String> categories;
 
-    public LoaderConditionnement(HomeCaisseController page, String reference) {
+    public LoaderArticleTask(HomeCaisseController page, String reference) {
         this.page = page;
         this.reference = reference;
         categories = new ArrayList<>();
@@ -61,30 +64,40 @@ public class LoaderConditionnement extends Task<ObservableList<GridPane>> {
         ObservableList<GridPane> result = FXCollections.observableArrayList();
         try {
             List<Object[]> articles = filterDoublon(filterArticlesInDb());
-            YvsBaseConditionnement y1 = null, y2 = null;
-            int j = 0;
-            int total = (!pair(articles.size())) ? (articles.size() + 1) / 2 : (articles.size() / 2);
-            for (int i = 0; i < total; i++) {
-                if (j < articles.size()) {
-                    y1 = buildConditionnement(articles.get(j));
-                    j++;
-                }
-                if (j < articles.size()) {
-                    y2 = buildConditionnement(articles.get(j));
-                }
-                result.add(CustomComponents.displayCatalogue(y1, y2, page));
-                j++;
-                this.updateProgress(j, articles.size() / 2);
-                this.updateMessage(j + " sur " + articles.size());
+            GridPane container = CustomComponents.getBasicGridPane();
+            var total = articles.size();
+            int columns = getNbColumns();
+            int rowIndex = 0;
+            int colIndex = 0;
+            for (Object[] article : articles) {
+                VBox itemBox = CustomComponents.displayCatalogue(buildConditionnement(article), page);
+                container.add(itemBox, colIndex, rowIndex);
 
+                colIndex++;
+                if (colIndex == columns) {
+                    colIndex = 0;
+                    rowIndex++;
+                }
+                this.updateProgress(rowIndex, articles.size() / columns);
+                this.updateMessage(rowIndex + " sur " + articles.size());
             }
+            result.add(container);
             if (total == 0) {
                 this.updateProgress(0, 0);
             }
         } catch (Exception ex) {
-            Logger.getLogger(LoaderConditionnement.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(LoaderArticleTask.class.getName()).log(Level.SEVERE, null, ex);
         }
         return result;
+    }
+
+    private int getNbColumns() {
+        try {
+            var propertyValue = UtilsProject.getVal(Constantes.KEY_COL_CATALOGUE);
+            return Optional.ofNullable(propertyValue).map(Integer::parseInt).orElse(3);
+        } catch (NumberFormatException ex) {
+            return 3;
+        }
     }
 
     private List<Object[]> filterDoublon(List<Object[]> articles) {
@@ -169,7 +182,8 @@ public class LoaderConditionnement extends Task<ObservableList<GridPane>> {
         Double prixMin;
         prix = (Double) (row[21] != null ? row[21] : 0d);
         prixMin = (Double) (row[22] != null ? row[22] : 0d);
-        re.setId((Long) (row[10] != null ? row[10] : -1));
+        assert (row[10] != null ? row[10] : -1) instanceof Long;
+        re.setId((Long) row[10]);
         if (prix > 0) {
             re.setPrix(prix);
         } else {
@@ -184,7 +198,8 @@ public class LoaderConditionnement extends Task<ObservableList<GridPane>> {
         re.setMargeMin((Double) (row[20] != null ? row[20] : 0d));
         re.setArticle(buildEntityArt(row));
         YvsBaseUniteMesure u = new YvsBaseUniteMesure();
-        u.setId((Long) (row[7] != null ? row[7] : -1));
+        assert (row[7] != null ? row[7] : -1) instanceof Long;
+        u.setId((Long) row[7]);
         u.setReference((String) (row[8] != null ? row[8] : null));
         u.setLibelle((String) (row[9] != null ? row[9] : null));
         re.setUnite(u);

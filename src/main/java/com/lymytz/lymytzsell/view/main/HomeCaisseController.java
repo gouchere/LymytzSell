@@ -29,7 +29,7 @@ import com.lymytz.lymytzsell.service.application.MyComptesController;
 import com.lymytz.lymytzsell.service.application.bean.ContentPanier;
 import com.lymytz.lymytzsell.service.application.composant.ClaviersController;
 import com.lymytz.lymytzsell.service.application.composant.Onglets;
-import com.lymytz.lymytzsell.service.application.loader.LoaderConditionnement;
+import com.lymytz.lymytzsell.service.application.loader.LoaderArticleTask;
 import com.lymytz.lymytzsell.service.application.loader.LoaderStock;
 import com.lymytz.lymytzsell.service.application.service.ListenServersLocal;
 import com.lymytz.lymytzsell.service.application.service.ListenServersRemote;
@@ -44,7 +44,6 @@ import com.lymytz.lymytzsell.service.application.synchro.ControlServiceControlle
 import com.lymytz.lymytzsell.service.application.synchro.ListenTableController;
 import com.lymytz.lymytzsell.service.application.synchro.SynchronizeDataIn;
 import com.lymytz.lymytzsell.service.application.synchro.SynchronizeDataOut;
-import com.lymytz.lymytzsell.service.application.synchro.SynchronizeDeleteFacture;
 import com.lymytz.lymytzsell.service.application.synchro.impor.ImportDataController;
 import com.lymytz.lymytzsell.service.application.synchro.impor.ListenRemoteTableController;
 import com.lymytz.lymytzsell.service.start.StartController;
@@ -52,7 +51,6 @@ import com.lymytz.lymytzsell.service.utils.Clock;
 import com.lymytz.lymytzsell.service.utils.ConsUtil;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.CustomWindow;
-import com.lymytz.lymytzsell.service.utils.FonctionalConstants;
 import com.lymytz.lymytzsell.service.utils.LymytzService;
 import com.lymytz.lymytzsell.service.utils.PrintTiket;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
@@ -68,7 +66,6 @@ import javafx.beans.property.LongProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleLongProperty;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.concurrent.WorkerStateEvent;
@@ -96,6 +93,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -124,7 +122,7 @@ import static com.lymytz.lymytzsell.service.utils.FonctionalConstants.GENERATION
  */
 public class HomeCaisseController extends ManagedApplication implements Initializable {
 
-    private final BooleanProperty connectRemoteServer=new SimpleBooleanProperty();
+    private final BooleanProperty connectRemoteServer = new SimpleBooleanProperty();
     private final LongProperty time = new SimpleLongProperty();
 
     ClientMessage clientSocket;
@@ -219,11 +217,9 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
     public CheckBox CHK_DISPLAY;
 
     @FXML
+    public VBox MAIN_ARTICLE_CONTAINER;
+    @FXML
     public VBox BOX_ARTICLES;
-    @FXML
-    public ProgressBar PROGRESS;
-    @FXML
-    public Label PROGRESS_LABEL;
     //
     @FXML
     public TabPane TAB_FACTURES;
@@ -303,6 +299,10 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
     //Footer
     @FXML
     private Label TEXT_SOCIETE;
+
+    private final ProgressBar PROGRESS = new ProgressBar(0.0);
+    private final Label PROGRESS_LABEL = new Label();
+
     public HomeCaisseController() {
         //utile pour l'api javafx
     }
@@ -355,7 +355,7 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
     private void filterArticleFromSearchField() {
         Onglets tab = (Onglets) TAB_FACTURES.getSelectionModel().getSelectedItem();
         if (tab != null && Constantes.asString(TEXT_FIND.getText())) {
-            LoaderConditionnement tache1 = new LoaderConditionnement(HomeCaisseController.this, TEXT_FIND.getText());
+            LoaderArticleTask tache1 = new LoaderArticleTask(HomeCaisseController.this, TEXT_FIND.getText());
             YvsBaseConditionnement art = tache1.findOneArticle();
             if (art != null) {
                 if (tab.addArticleOnFacture(art, 1, false, art.getPrix())) {
@@ -368,9 +368,11 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
     }
 
     public void initComponent() {
-        HOMEMENU.setPrefWidth(StartController.SCREENWIDTH);
+        //HOMEMENU.setPrefWidth(StartController.SCREENWIDTH);
         TAB_FACTURES.setPrefHeight(StartController.SCREENHEIGHT - 345d);
         RigthBoxWidth = new SimpleDoubleProperty(RIGHT_BOX.getPrefWidth());
+        PROGRESS.setPrefHeight(18.0);
+        PROGRESS.setPrefWidth(StartController.SCREENHEIGHT);
         CustomComponents.custumMenuAndToolBar(this);
         CustomComponents.initEventComponents(this);
         if (UtilsProject.currentAgence != null && UtilsProject.currentSociete != null) {
@@ -419,30 +421,31 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
         return gp;
     }
 
-    LoaderConditionnement tache;
-
     private void loadCatalogue(String ref) {
-        tache = new LoaderConditionnement(this, ref);
+        var loaderArticleTask = new LoaderArticleTask(this, ref);
+        var hboxProgress = new HBox(PROGRESS_LABEL, PROGRESS);
+        MAIN_ARTICLE_CONTAINER.getChildren().add(0, hboxProgress);
         try {
             if (UtilsProject.depotLivraison != null && ref != null) {
                 BOX_ARTICLES.getChildren().clear();
                 PROGRESS.progressProperty().unbind();
                 PROGRESS_LABEL.textProperty().unbind();
-                PROGRESS.progressProperty().bind(tache.progressProperty());
-                PROGRESS_LABEL.textProperty().bind(tache.messageProperty());
-                tache.addEventHandler(WorkerStateEvent.WORKER_STATE_SUCCEEDED, event -> {
-                    ObservableList<GridPane> value = tache.getValue();
+                PROGRESS.progressProperty().bind(loaderArticleTask.progressProperty());
+                PROGRESS_LABEL.textProperty().bind(loaderArticleTask.messageProperty());
+                loaderArticleTask.addEventHandler(WorkerStateEvent.WORKER_STATE_SUCCEEDED, event -> {
+                    ObservableList<GridPane> value = loaderArticleTask.getValue();
                     if (value != null) {
                         BOX_ARTICLES.getChildren().addAll(value);
                         PROGRESS_LABEL.textProperty().unbind();
                     }
                     if (value != null && !value.isEmpty()) {
                         PROGRESS_LABEL.setText("terminé !");
+                        MAIN_ARTICLE_CONTAINER.getChildren().remove(0);
                     } else {
                         PROGRESS_LABEL.setText("Aucun résultat trouvé !");
                     }
                 });
-                new Thread(tache).start();
+                new Thread(loaderArticleTask).start();
             }
         } catch (Exception ex) {
             Logger.getLogger(HomeCaisseController.class.getName()).log(Level.SEVERE, null, ex);
@@ -1025,6 +1028,7 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
             service.saveOrGeneratedPaiement_(tab);
         }
     }
+
     @FXML
     private void showDisplayCatalogueOptions(ActionEvent event) {
         //1. Controle la caisse et le mode de paiement

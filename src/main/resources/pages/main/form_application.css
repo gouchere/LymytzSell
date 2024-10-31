@@ -25,14 +25,14 @@
     //-fx-background-color: derive(red,10%);
 }
 .tool_bar{
-    TOP-COLOR: ladder(
+/*    TOP-COLOR: ladder(
         -fx-base,
         derive(-fx-base,0%) 0%,
         derive(-fx-base,46%) 100%
         );
-/*    -fx-background-color:
+!*    -fx-background-color:
         linear-gradient(to bottom, derive(TOP-COLOR,25%) 0%, -fx-outer-border 90%),
-        linear-gradient(to bottom, TOP-COLOR 2%, derive(-fx-base,-2.1%) 95%);*/
+        linear-gradient(to bottom, TOP-COLOR 2%, derive(-fx-base,-2.1%) 95%);*!*/
 }
 .line_bar{
     -fx-background-color: #3c7fb1, linear-gradient(#fafdfe, #e8f5fc),
@@ -131,7 +131,7 @@
     -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 3, 0.0 , 0 , 1 );
     -fx-padding: 8px;
 }
-.background_art::focused {
+.background_art:focused {
     -fx-background-color: red;
     -fx-background-insets: -1.4, 0, 1;
     -fx-background-radius: 1.4, 0, 0;
@@ -208,7 +208,6 @@
     -fx-background-color: #FFF;
 }
 
-// eliminar borde de celdas en las filas vacias
 .table-row-cell:empty .table-cell {
     -fx-border-width: 0px;
 }
@@ -233,3 +232,45 @@
     -fx-border-bottom-width: 1px;
     -fx-border-radius: 0px;
 }
+/* Style pour chaque case du catalogue */
+.catalogue-item {
+    -fx-padding: 10px;
+    -fx-background-color: #f0f0f0;
+    -fx-border-color: #cccccc;
+    -fx-border-width: 1px;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 5, 0, 2, 2);
+    -fx-scale-x: 1;
+    -fx-scale-y: 1;
+    -fx-transition: all 0.3s ease;
+}
+
+.catalogue-item:hover {
+    -fx-background-color: #e6e6e6;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 7, 0, 3, 3);
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+}
+
+/* Style pour le texte ou titre dans chaque case */
+.catalogue-item-label {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #333333;
+    -fx-padding: 5px 0;
+}
+
+/* Style pour une image si présente dans chaque case */
+.catalogue-item-image {
+    -fx-background-color: #ffffff;
+    -fx-padding: 5px;
+    -fx-border-color: #cccccc;
+    -fx-border-width: 1px;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+    -fx-max-width: 100px; /* Ajustez selon la taille souhaitée */
+    -fx-max-height: 100px;
+}
+

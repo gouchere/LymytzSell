@@ -14,6 +14,7 @@ import com.lymytz.lymytzsell.view.main.HomeCaisseController;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.Tooltip;
@@ -153,7 +154,7 @@ public class CustomComponents {
         home.ITEM_EXPORT.setGraphic(imv_data_2);
 
         //dimensionne le header
-        home.TOOLBAR.setPrefWidth(StartController.SCREENWIDTH);
+        //home.TOOLBAR.setPrefWidth(StartController.SCREENWIDTH);
 
     }
 
@@ -170,10 +171,22 @@ public class CustomComponents {
         return gp;
     }
 
+    public static GridPane getBasicGridPane(){
+        GridPane gp = new GridPane();
+        gp.setHgap(10);
+        gp.setVgap(10);
+        gp.setPadding(new Insets(10, 10, 10, 10));
+        gp.setAlignment(Pos.CENTER);
+        return gp;
+    }
+
     public static VBox displayCatalogue(YvsBaseConditionnement y1, HomeCaisseController home) {
         ButtonArticles vbox1 = new ButtonArticles(y1, home);
-        vbox1.getChildren().add(new Label(y1.getArticle().getDesignation()));
-        vbox1.setPrefWidth(320);
+        vbox1.getStyleClass().add("catalogue-item");
+        var labelDesignation=new Label(y1.getArticle().getDesignation());
+        labelDesignation.getStyleClass().add("catalogue-item-label");
+        labelDesignation.setWrapText(true);
+        vbox1.getChildren().add(labelDesignation);
         vbox1.setPadding(new Insets(1, 0, 0, 4));
         HBox hbox1 = new HBox();
         ProgressIndicator pi = new ProgressIndicator(0d);
