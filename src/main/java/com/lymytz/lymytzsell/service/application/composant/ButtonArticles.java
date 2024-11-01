@@ -36,7 +36,6 @@ public class ButtonArticles extends VBox {
             if (event.getButton().equals(MouseButton.PRIMARY)) {
                 Onglets tab = (Onglets) page.TAB_FACTURES.getSelectionModel().getSelectedItem();
                 if (tab != null) {
-                    current.getStylesheets().add("");
                     tab.addArticleOnFacture(conditionnement, 1, false, conditionnement.getPrix());
                 } else {
                     LymytzService.openAlertDialog("Aucune facture n'a été trouvé !", "Erreur", "Vous devez enregistrer la facture !", Alert.AlertType.ERROR);

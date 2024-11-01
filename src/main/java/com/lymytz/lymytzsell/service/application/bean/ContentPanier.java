@@ -166,10 +166,7 @@
                 return false;
             }
             final ContentPanier other = (ContentPanier) obj;
-            if (!Objects.equals(this.conditionnement, other.conditionnement)) {
-                return false;
-            }
-            return true;
+            return Objects.equals(this.conditionnement, other.conditionnement);
         }
 
     }

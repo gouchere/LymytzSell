@@ -529,7 +529,7 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
             ZONE_IMG.getChildren().clear();
             createImageProduit(art.getArticle());
             ZONE_IMG.getChildren().add(pagination);
-            List<YvsBaseDepots> depots = null;
+            List<YvsBaseDepots> depots;
             if (displayAllProperties) {
                 depots = dao.loadByNamedQuery("YvsBaseArticleDepot.findDepotActifByArt", new String[]{"article"}, new Object[]{art.getArticle()});
                 depots.remove(UtilsProject.depotLivraison);
@@ -553,7 +553,7 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
         } else {
             QTE_FACTURE.setText(Constantes.nbf.format(0));
         }
-        if (Boolean.TRUE.equals(!UtilsProject.REPLICATION) && UtilsProject.depotLivraison != null) {
+        if (Boolean.FALSE.equals(UtilsProject.REPLICATION) && UtilsProject.depotLivraison != null) {
             //si on est pas en mode replication, calcul immédiatement le stock
             double stock = UtilsProject.getStocks(art, UtilsProject.depotLivraison.getId());
             art.setStock(stock);

@@ -1,7 +1,7 @@
 # Liste d'améliorations
 
-- [ ] **Examiner le code de l'application pour tenter de reproduire le problème de duplication de contenu**
-- [ ] plutôt que d'avoir une modal qui dis aucune facture n'a été trouvé au moment de l'ajout d'un article au panier,
+- [x] **Examiner le code de l'application pour tenter de reproduire le problème de duplication de contenu**
+- [ ] plutôt que d'avoir une modal qui dit aucune facture n'a été trouvé au moment de l'ajout d'un article au panier,
   proposer un enregistrement implicite
 - [ ] Pour la société ACROPOL, Ne pas faire effectuer de contôrole de stock
 - [x] Revoir l'affichage de la liste des article selon les modes choisi
@@ -14,6 +14,7 @@
 - [ ] Afficher des notifications pour les factures non livré
 - [x] Cacher le loader après le chargement des articles
 - [ ] Revoir le temps d'enregistrement d'un article dans le panier
+- [ ] Modifier le logger pour utiliser le RollingFile fourni par apache logging
 
 # Approche optimiste de l'enregistrement des factures:
 

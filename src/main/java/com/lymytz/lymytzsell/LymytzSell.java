@@ -5,6 +5,7 @@ package com.lymytz.lymytzsell;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+
 import com.sun.javafx.application.LauncherImpl;
 
 import java.awt.*;
@@ -19,8 +20,10 @@ import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+
 import javax.imageio.ImageIO;
 import javax.print.attribute.standard.Severity;
+
 import com.lymytz.lymytzsell.service.ServeurMessage;
 import com.lymytz.lymytzsell.service.application.ManagedApplication;
 import com.lymytz.lymytzsell.service.utils.Constantes;
@@ -30,40 +33,30 @@ import com.lymytz.lymytzsell.service.utils.log.ListenFolder;
 import com.lymytz.lymytzsell.service.utils.log.LogFiles;
 import com.lymytz.lymytzsell.view.LocalLoader;
 import com.lymytz.lymytzsell.view.start.LaunchApps;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
  * @author LENOVO
  */
+@Slf4j
 public class LymytzSell extends Application {
 
+    @Setter
+    @Getter
     private Stage primaryStage;
-    private boolean openDlgConnect = false;
+    @Setter
+    @Getter
     private boolean connecte = false;
-    private boolean openDlgParam = false;
     Exception exception;
-    private static final Logger logger= LoggerFactory.getLogger(LymytzSell.class);
+    private static final Logger logger = LoggerFactory.getLogger(LymytzSell.class);
 
 
     public LymytzSell() {
-    }
-
-    public Stage getPrimaryStage() {
-        return primaryStage;
-    }
-
-    public void setPrimaryStage(Stage primaryStage) {
-        this.primaryStage = primaryStage;
-    }
-
-    public boolean isConnecte() {
-        return connecte;
-    }
-
-    public void setConnecte(boolean connecte) {
-        this.connecte = connecte;
+        // not necessary to implement
     }
 
     @Override
@@ -100,11 +93,7 @@ public class LymytzSell extends Application {
     public void initApps(boolean first) {
         try {
             setConnecte(false);
-            openDlgConnect = true;
-            openDlgParam = false;
         } catch (Exception ex) {
-            openDlgConnect = false;
-            openDlgParam = true;
             this.exception = ex;
         } finally {
             if (!first) {
@@ -120,7 +109,7 @@ public class LymytzSell extends Application {
             setUserAgentStylesheet(STYLESHEET_CASPIAN);
             LymytzService.openApps(primaryStage);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            logger.error(ex.getMessage());
             LogFiles.createLogfile();
         }
     }
@@ -169,7 +158,7 @@ public class LymytzSell extends Application {
 
     public void initiatePort() {
         UtilsProject.loadFilePropertie();
-        Integer port = Integer.valueOf(UtilsProject.properties.getProperty(Constantes.KEY_APPS_PORT));
+        int port = Integer.parseInt(UtilsProject.properties.getProperty(Constantes.KEY_APPS_PORT));
         UtilsProject.ENVIRONNEMENT = UtilsProject.properties.getProperty(Constantes.KEY_ENVIRONNEMENT);
         try {
             UtilsProject.server = new ServerSocket(port);
@@ -178,9 +167,7 @@ public class LymytzSell extends Application {
             logger.error("Unable to init system tray", e);
             System.exit(0);
         }
-        Thread t=new Thread(LymytzSell.this::initialiserLaSynchronisation);
-        t.start();
-       
+        new Thread(LymytzSell.this::initialiserLaSynchronisation).start();
     }
 
     private void initialiserLaSynchronisation() {

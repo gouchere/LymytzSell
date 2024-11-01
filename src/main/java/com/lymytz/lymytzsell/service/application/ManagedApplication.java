@@ -981,13 +981,7 @@ public class ManagedApplication {
             images[idx] = displayPhotos(str);
             idx++;
         }
-        pagination.setPageFactory(new Callback<Integer, Node>() {
-
-            @Override
-            public Node call(Integer param) {
-                return displayPagesArticles(param);
-            }
-        });
+        pagination.setPageFactory(this::displayPagesArticles);
     }
 
     private VBox displayPagesArticles(int pageIndex) {

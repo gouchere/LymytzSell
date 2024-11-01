@@ -10,10 +10,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.IntStream;
 
 import com.lymytz.lymytzsell.business.helpers.KeyBoardAction;
-import com.lymytz.lymytzsell.service.utils.FonctionalConstants;
 import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -25,6 +26,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import com.lymytz.lymytzsell.dao.Options;
@@ -129,12 +131,11 @@ public final class Onglets extends Tab {
         deviseLabel.setPrefHeight(90);
         Label prixLabel = CustomComponents.getLabelN(Constantes.nbf.format(line.getPrix()));
         eventForLabelQte(prixLabel, false, this, line);
-        boxInfosArt.getChildren().addAll(CustomComponents.getLabelBold(line.getConditionnement().getArticle().getRefArt()), new Label(line.getConditionnement().getArticle().getDesignation()));
-        boxInfosArt.getChildren().addAll(CustomComponents.getLabelBold(line.getConditionnement().getUnite().getReference()));
-        boxInfosArt.getChildren().add(new HBox(10, new Label("P.U : "), prixLabel,
-                new Label("Remise : "), CustomComponents.getLabelN(Constantes.nbf.format(line.getRemise()))
-        ));
-        boxInfosArt.getChildren().add(new HBox(10, new Label("Rist. :"), CustomComponents.getLabelN(Constantes.nbf.format(line.getRistourne())), new Label(""), new Label("Rabais. : "), CustomComponents.getLabelN(Constantes.nbf.format(line.getRabais()))));
+        boxInfosArt.getChildren().addAll(CustomComponents.getLabelBold(line.getConditionnement().getArticle().getRefArt() + " (en " + line.getConditionnement().getUnite().getReference() + ")"), new Label(line.getConditionnement().getArticle().getDesignation()));
+        HBox hBox = new HBox(10, new Label("P.U :"), prixLabel);
+        hBox.setAlignment(Pos.CENTER_LEFT);
+        boxInfosArt.getChildren().add(hBox);
+        boxInfosArt.getChildren().add(new HBox(10, new Label("Rist. :"), CustomComponents.getLabelN(Constantes.nbf.format(line.getRistourne())), new Label(""), new Label("Remise/Rabais : "), CustomComponents.getLabelN(Constantes.nbf.format(line.getRemise() + line.getRabais()))));
         boxTop.getChildren().addAll(UtilsProject.buildImageProduit("coffee.png"), boxInfosArt, new Label("      "), totalLabel, deviseLabel);
         resultBox.getChildren().addAll(boxTop, boxBottom);
         resultBox.getStyleClass().add("border_bottom");
@@ -167,7 +168,7 @@ public final class Onglets extends Tab {
         return imv;
     }
 
-    public ContentPanier factorieContent(YvsBaseConditionnement cond) {
+    public ContentPanier buildLineContentanier(YvsBaseConditionnement cond) {
         ContentPanier contentPanier = new ContentPanier();
         contentPanier.setComission(0d);
         contentPanier.setConditionnement(cond);
@@ -240,8 +241,8 @@ public final class Onglets extends Tab {
             PrixArticles prix = getPrixArticle(line.getConditionnement(), line.getQuantite(), getFacture(), line.getPrix());
             if (Boolean.TRUE.equals(!UtilsProject.REPLICATION) && UtilsProject.depotLivraison != null) {
                 //si on est pas en mode replication, calcul immédiatement le stock
-                var pr = UtilsProject.getPr(line.getConditionnement(), UtilsProject.depotLivraison.getId());
-                line.setPr(pr);
+                /*var pr = UtilsProject.getPr(line.getConditionnement(), UtilsProject.depotLivraison.getId());
+                line.setPr(pr);*/
             }
             line.setPrix(prix.getPrixUnite());
             line.setRemise(prix.getRemise());
@@ -266,39 +267,21 @@ public final class Onglets extends Tab {
 
     ButtonType re;
 
-    public boolean addArticleOnFacture(YvsBaseConditionnement cond, double q, boolean resetQte, double prixV) {
+    public boolean addArticleOnFacture(YvsBaseConditionnement cond, double qteLine, boolean resetQte, double prixV) {
         Onglets tab = (Onglets) page.TAB_FACTURES.getSelectionModel().getSelectedItem();
-        if (tab != null && Constantes.ETAT_EDITABLE.equals(tab.getFacture().getStatut())) {
+        if (isEditableCurrentFacture()) {
             page.displayPropertyArticle(cond, false);
-            ContentPanier line = tab.factorieContent(cond);
+            ContentPanier line = tab.buildLineContentanier(cond);
             //contrôle de stock
-            if (Boolean.FALSE.equals(UtilsProject.REPLICATION) && Constantes.TYPE_FV.equals(tab.getFacture().getTypeDoc()) && cond.getStock() - q < 0 && (valideStock(cond, tab, line))) {
-                return false;
-            }
-            line = tab.getContentFacture().stream().filter(line::equals).findFirst().orElse(line);
-            double qte = (resetQte) ? q : line.getQuantite() + q;
-            if (qte <= 0) {
-                tab.moveLineContent(line);
+            if (isStockEnable(cond, qteLine, tab, line)) {
+                line = tab.getContentFacture().stream().filter(line::equals).findFirst().orElse(line);
+                final var qte = (resetQte) ? qteLine : line.getQuantite() + qteLine;
+                addOrRemoveLineInCard(line, qte, prixV);
+                IntStream.range(0, tab.getContentFacture().size())
+                        .forEach(index -> tab.getContentFacture().get(index).setIdContent(-index));
+                readyForNew();
             } else {
-                line.setPrix(prixV);
-                line.setQuantite(qte);
-                ContentPanier cp = evaluePrix(line);
-                if (!Boolean.TRUE.equals(UtilsProject.paramVente.getSellLowerPr()) && cp.getPr() >= cp.getPrix()) {
-                    //On ne vend pas en dessa du pr
-                    LymytzService.openAlertDialog("Impossible d'ajouter cet article !", ERREUR, "Vous ne pouvez vendre en dessous du prix de revient du produit", Alert.AlertType.ERROR);
-                    return false;
-                } else {
-                    tab.addLineContent(cp, true);
-                }
-            }
-            int i = 1;
-            for (ContentPanier c : tab.getContentFacture()) {
-                c.setIdContent(-i);
-                i++;
-            }
-            //Redonne le curseur si on est en mode saisie automatique (saisie par code barre)
-            if (!page.CHK_DISPLAY.isSelected()) {
-                page.giveFocusAtTxtFind();
+                return false;
             }
         } else {
             LymytzService.openAlertDialog("Modification de la facture impossible !", "Erreur ", tab == null ? "Aucune facture n'a été initié!" : "Cette facture n'est plus éditable", Alert.AlertType.ERROR);
@@ -306,22 +289,61 @@ public final class Onglets extends Tab {
         return true;
     }
 
-    private boolean valideStock(YvsBaseConditionnement cond, Onglets tab, ContentPanier line) {
+    private void addOrRemoveLineInCard(ContentPanier line, double quantite, double prixArticle) {
+        Onglets currentOnget = (Onglets) page.TAB_FACTURES.getSelectionModel().getSelectedItem();
+        if (quantite <= 0) {
+            Optional.ofNullable(currentOnget).ifPresent(tab -> tab.moveLineContent(line));
+        } else {
+            line.setPrix(prixArticle);
+            line.setQuantite(quantite);
+            ContentPanier cp = evaluePrix(line);
+            if (!Boolean.TRUE.equals(UtilsProject.paramVente.getSellLowerPr()) && cp.getPr() >= cp.getPrix()) {
+                //On ne vend pas en dessous du pr
+                LymytzService.openAlertDialog("Impossible d'ajouter cet article !", ERREUR, "Vous ne pouvez vendre en dessous du prix de revient du produit", Alert.AlertType.ERROR);
+            } else {
+                Optional.ofNullable(currentOnget).ifPresent(tab -> tab.addLineContent(cp, true));
+            }
+        }
+    }
+
+    private void readyForNew() {
+        //Redonne le curseur si on est en mode saisie automatique (saisie par code barre)
+        if (!page.CHK_DISPLAY.isSelected()) {
+            page.giveFocusAtTxtFind();
+        }
+    }
+
+    private boolean isStockEnable(YvsBaseConditionnement cond, double qteLine, Onglets tab, ContentPanier line) {
+        return Boolean.FALSE.equals(UtilsProject.REPLICATION) &&
+                Constantes.TYPE_FV.equals(tab.getFacture().getTypeDoc()) &&
+                (cond.getStock() - qteLine > 0 ||
+                        canSaveWithoutStock(cond, tab, line));
+    }
+
+    private boolean isEditableCurrentFacture() {
+        Onglets currentOnget = (Onglets) page.TAB_FACTURES.getSelectionModel().getSelectedItem();
+        return Optional.ofNullable(currentOnget)
+                .map(Onglets::getFacture)
+                .filter(currentFacture -> Constantes.ETAT_EDITABLE.equals(currentFacture.getStatut()))
+                .isPresent();
+    }
+
+    private boolean canSaveWithoutStock(YvsBaseConditionnement cond, Onglets tab, ContentPanier line) {
         Boolean sellWithoutStock = (Boolean) dao.findOneObjectByNQ("YvsBaseArticleDepot.findIfSellWithOutStock", new String[]{"article", "depot"}, new Object[]{cond.getArticle(), UtilsProject.depotLivraison});
         sellWithoutStock = sellWithoutStock == null || sellWithoutStock;
         if (!sellWithoutStock) {
             LymytzService.openAlertDialog("Insertion impossible!", "Erreur ", "Le stock de cet article est insuffisant dans le dépôt planifié", Alert.AlertType.ERROR);
-            return true;
+            return false;
         } else {
             if (!memoireDlg.isSelected()) {
                 re = LymytzService.openCustumAlertDialogChoice("Stock insuffisant voulez-vous continuer?", "Stock insuffisant", "L'article vendu est insuffisant en stock", Alert.AlertType.CONFIRMATION, memoireDlg);
             }
             if (re != null && !re.equals(ButtonType.OK)) {
                 tab.getContentFacture().remove(line);
-                return true;
+                return false;
             }
         }
-        return false;
+        return true;
     }
 
     public void loadContentOnView(YvsComDocVentes doc) {
@@ -428,20 +450,18 @@ public final class Onglets extends Tab {
     }
 
     private void eventForLabelQte(Label label, boolean qte, Onglets onglet, ContentPanier content) {
-        label.setOnMouseClicked(event -> {
-            //si on click avec le bouton gauche de la souris
-            if (event.getButton().equals(MouseButton.PRIMARY)) {
-                if (event.getClickCount() > 1 && !qte) {
-                    if (Boolean.TRUE.equals(content.getConditionnement().getArticle().getChangePrix())) {
-                        page.openDlgCalculatrice(onglet, "F", KeyBoardAction.SET_PRIX, content);
-                    } else {
-                        LymytzService.openAlertDialog("Vous ne pouvez modifier le prix de cet article", "Modification du prix Impossible", "Impossible de modifier le prix de cet article", Alert.AlertType.ERROR);
-                    }
+        label.getStyleClass().add("catalogue-item-editable-label");
+        label.setOnMouseClicked(event -> Optional.of(event).map(MouseEvent::getButton).filter(MouseButton.PRIMARY::equals).ifPresent(btn -> {
+            if (event.getClickCount() > 1 && !qte) {
+                if (Boolean.TRUE.equals(content.getConditionnement().getArticle().getChangePrix())) {
+                    page.openDlgCalculatrice(onglet, "F", KeyBoardAction.SET_PRIX, content);
                 } else {
-                    page.openDlgCalculatrice(onglet, "F", (qte ? KeyBoardAction.SET_QTE : KeyBoardAction.SET_PRIX), content);
+                    LymytzService.openAlertDialog("Vous ne pouvez modifier le prix de cet article", "Modification du prix Impossible", "Impossible de modifier le prix de cet article", Alert.AlertType.ERROR);
                 }
+            } else {
+                page.openDlgCalculatrice(onglet, "F", (qte ? KeyBoardAction.SET_QTE : KeyBoardAction.SET_PRIX), content);
             }
-        });
+        }));
     }
 
     private Double getRabais(YvsBaseConditionnement c, YvsBasePointVente p, Date date) {

@@ -7,7 +7,6 @@ package com.lymytz.lymytzsell.view.component;
 
 import com.lymytz.lymytzsell.dao.entity.YvsBaseConditionnement;
 import com.lymytz.lymytzsell.service.application.composant.ButtonArticles;
-import com.lymytz.lymytzsell.service.start.StartController;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.view.LocalLoader;
 import com.lymytz.lymytzsell.view.main.HomeCaisseController;
@@ -51,30 +50,30 @@ public class CustomComponents {
     }
 
     public static void custumMenuAndToolBar(HomeCaisseController home) {
-        final ImageView btn_save = new ImageView(new Image(Objects.requireNonNull(CustomComponents.class.getResourceAsStream("/icones/save.png"))));
-        final ImageView btn_print = new ImageView(new Image(Objects.requireNonNull(LocalLoader.class.getResourceAsStream("/icones/print.png"))));
-        final ImageView btn_reg = new ImageView(new Image(Objects.requireNonNull(LocalLoader.class.getResourceAsStream("/icones/money.png"))));
-        final ImageView btn_liv = new ImageView(new Image(Objects.requireNonNull(LocalLoader.class.getResourceAsStream("/icones/cdcopy.png"))));
+        final ImageView btnSave = new ImageView(new Image(Objects.requireNonNull(CustomComponents.class.getResourceAsStream("/icones/save.png"))));
+        final ImageView btnPrint = new ImageView(new Image(Objects.requireNonNull(LocalLoader.class.getResourceAsStream("/icones/print.png"))));
+        final ImageView btnReg = new ImageView(new Image(Objects.requireNonNull(LocalLoader.class.getResourceAsStream("/icones/money.png"))));
+        final ImageView btnLiv = new ImageView(new Image(Objects.requireNonNull(LocalLoader.class.getResourceAsStream("/icones/cdcopy.png"))));
 
-        home.BTN_SAVE.setGraphic(btn_save);
-        home.BTN_SAVE.getStylesheets().add("mes_boutons");
-        home.BTN_PRINT.setGraphic(btn_print);
-        home.BTN_REGLER.setGraphic(btn_reg);
-        home.BTN_LIVRER.setGraphic(btn_liv);
+        home.BTN_SAVE.setGraphic(btnSave);
+        home.BTN_SAVE.getStyleClass().add("mes_boutons");
+        home.BTN_PRINT.setGraphic(btnPrint);
+        home.BTN_REGLER.setGraphic(btnReg);
+        home.BTN_LIVRER.setGraphic(btnLiv);
 
         ImageView imv1 = new ImageView(new Image(Objects.requireNonNull(LocalLoader.class.getResourceAsStream("/icones/12346.png"))));
         ImageView imv2 = new ImageView(new Image(Objects.requireNonNull(LocalLoader.class.getResourceAsStream("/icones/details.png"))));
         ImageView imv3 = new ImageView(new Image(Objects.requireNonNull(LocalLoader.class.getResourceAsStream("/icones/log_out.png"))));
         ImageView imv4 = new ImageView(new Image(Objects.requireNonNull(LocalLoader.class.getResourceAsStream("/icones/compte.png"))));
-        ImageView imv_quit_M = new ImageView(new Image(Objects.requireNonNull(LocalLoader.class.getResourceAsStream("/icones/log_out.png"))));
-        ImageView imv_new_M = new ImageView(new Image(Objects.requireNonNull(LocalLoader.class.getResourceAsStream("/icones/12346.png"))));
-        ImageView imv_compte_M = new ImageView(new Image(Objects.requireNonNull(LocalLoader.class.getResourceAsStream("/icones/compte.png"))));
-        ImageView imv_pref_M = new ImageView(new Image(Objects.requireNonNull(LocalLoader.class.getResourceAsStream("/icones/connect.png"))));
+        ImageView imageViewQuit = new ImageView(new Image(Objects.requireNonNull(LocalLoader.class.getResourceAsStream("/icones/log_out.png"))));
+        ImageView imageViewNew = new ImageView(new Image(Objects.requireNonNull(LocalLoader.class.getResourceAsStream("/icones/12346.png"))));
+        ImageView imageViewCompte = new ImageView(new Image(Objects.requireNonNull(LocalLoader.class.getResourceAsStream("/icones/compte.png"))));
+        ImageView imageViewPreference = new ImageView(new Image(Objects.requireNonNull(LocalLoader.class.getResourceAsStream("/icones/connect.png"))));
 
-        ImageView imv_help_4 = new ImageView(new Image(Objects.requireNonNull(LocalLoader.class.getResourceAsStream("/icones/ico_server.png"))));
-        ImageView imv_help_3 = new ImageView(new Image(Objects.requireNonNull(LocalLoader.class.getResourceAsStream("/icones/ico_server.png"))));
-        ImageView imv_help_1 = new ImageView(new Image(Objects.requireNonNull(LocalLoader.class.getResourceAsStream("/icones/about.png"))));
-        ImageView imv_help_2 = new ImageView(new Image(Objects.requireNonNull(LocalLoader.class.getResourceAsStream("/icones/manual.png"))));
+        ImageView imvHelp4 = new ImageView(new Image(Objects.requireNonNull(LocalLoader.class.getResourceAsStream("/icones/ico_server.png"))));
+        ImageView imvHelp3 = new ImageView(new Image(Objects.requireNonNull(LocalLoader.class.getResourceAsStream("/icones/ico_server.png"))));
+        ImageView imvHelp1 = new ImageView(new Image(Objects.requireNonNull(LocalLoader.class.getResourceAsStream("/icones/about.png"))));
+        ImageView imvHelp2 = new ImageView(new Image(Objects.requireNonNull(LocalLoader.class.getResourceAsStream("/icones/manual.png"))));
         //        
         imv1.setFitHeight(Constantes.HEIGHT_ICON_TOOL_BAR);
         imv1.setFitWidth(Constantes.WIDTH_ICON_TOOL_BAR);
@@ -86,41 +85,41 @@ public class CustomComponents {
         imv4.setFitWidth(Constantes.WIDTH_ICON_TOOL_BAR);
 
         //
-        imv_quit_M.setFitHeight(Constantes.HEIGHT_ICON_MENU_BAR);
-        imv_quit_M.setFitWidth(Constantes.WIDTH_ICON_MENU_BAR);
-        imv_new_M.setFitHeight(Constantes.HEIGHT_ICON_MENU_BAR);
-        imv_new_M.setFitWidth(Constantes.WIDTH_ICON_MENU_BAR);
-        imv_compte_M.setFitHeight(Constantes.HEIGHT_ICON_MENU_BAR);
-        imv_compte_M.setFitWidth(Constantes.WIDTH_ICON_MENU_BAR);
-        imv_pref_M.setFitHeight(Constantes.HEIGHT_ICON_MENU_BAR);
-        imv_pref_M.setFitWidth(Constantes.WIDTH_ICON_MENU_BAR);
+        imageViewQuit.setFitHeight(Constantes.HEIGHT_ICON_MENU_BAR);
+        imageViewQuit.setFitWidth(Constantes.WIDTH_ICON_MENU_BAR);
+        imageViewNew.setFitHeight(Constantes.HEIGHT_ICON_MENU_BAR);
+        imageViewNew.setFitWidth(Constantes.WIDTH_ICON_MENU_BAR);
+        imageViewCompte.setFitHeight(Constantes.HEIGHT_ICON_MENU_BAR);
+        imageViewCompte.setFitWidth(Constantes.WIDTH_ICON_MENU_BAR);
+        imageViewPreference.setFitHeight(Constantes.HEIGHT_ICON_MENU_BAR);
+        imageViewPreference.setFitWidth(Constantes.WIDTH_ICON_MENU_BAR);
         //
-        imv_help_1.setFitHeight(Constantes.HEIGHT_ICON_MENU_BAR);
-        imv_help_1.setFitWidth(Constantes.WIDTH_ICON_MENU_BAR);
-        imv_help_2.setFitHeight(Constantes.HEIGHT_ICON_MENU_BAR);
-        imv_help_2.setFitWidth(Constantes.WIDTH_ICON_MENU_BAR);
-        imv_help_3.setFitHeight(Constantes.HEIGHT_ICON_MENU_BAR);
-        imv_help_3.setFitWidth(Constantes.WIDTH_ICON_MENU_BAR);
-        imv_help_4.setFitHeight(Constantes.HEIGHT_ICON_MENU_BAR);
-        imv_help_4.setFitWidth(Constantes.WIDTH_ICON_MENU_BAR);
+        imvHelp1.setFitHeight(Constantes.HEIGHT_ICON_MENU_BAR);
+        imvHelp1.setFitWidth(Constantes.WIDTH_ICON_MENU_BAR);
+        imvHelp2.setFitHeight(Constantes.HEIGHT_ICON_MENU_BAR);
+        imvHelp2.setFitWidth(Constantes.WIDTH_ICON_MENU_BAR);
+        imvHelp3.setFitHeight(Constantes.HEIGHT_ICON_MENU_BAR);
+        imvHelp3.setFitWidth(Constantes.WIDTH_ICON_MENU_BAR);
+        imvHelp4.setFitHeight(Constantes.HEIGHT_ICON_MENU_BAR);
+        imvHelp4.setFitWidth(Constantes.WIDTH_ICON_MENU_BAR);
         //
-        ImageView imv_fich_1 = new ImageView(new Image(Objects.requireNonNull(LocalLoader.class.getResourceAsStream("/icones/list.png"))));
-        ImageView imv_fich_2 = new ImageView(new Image(Objects.requireNonNull(LocalLoader.class.getResourceAsStream("/icones/list.png"))));
-        ImageView imv_fich_3 = new ImageView(new Image(Objects.requireNonNull(LocalLoader.class.getResourceAsStream("/icones/catalogue1.png"))));
+        ImageView imvFich1 = new ImageView(new Image(Objects.requireNonNull(LocalLoader.class.getResourceAsStream("/icones/list.png"))));
+        ImageView imvFich2 = new ImageView(new Image(Objects.requireNonNull(LocalLoader.class.getResourceAsStream("/icones/list.png"))));
+        ImageView imvFich3 = new ImageView(new Image(Objects.requireNonNull(LocalLoader.class.getResourceAsStream("/icones/catalogue1.png"))));
 
-        ImageView imv_data_1 = new ImageView(new Image(Objects.requireNonNull(LocalLoader.class.getResourceAsStream("/icones/import_data.png"))));
-        ImageView imv_data_2 = new ImageView(new Image(Objects.requireNonNull(LocalLoader.class.getResourceAsStream("/icones/export_data.png"))));
+        ImageView imageViewImportData = new ImageView(new Image(Objects.requireNonNull(LocalLoader.class.getResourceAsStream("/icones/import_data.png"))));
+        ImageView imageViewExportData = new ImageView(new Image(Objects.requireNonNull(LocalLoader.class.getResourceAsStream("/icones/export_data.png"))));
 
-        imv_fich_1.setFitHeight(Constantes.HEIGHT_ICON_MENU_BAR);
-        imv_fich_1.setFitWidth(Constantes.WIDTH_ICON_MENU_BAR);
-        imv_fich_2.setFitHeight(Constantes.HEIGHT_ICON_MENU_BAR);
-        imv_fich_2.setFitWidth(Constantes.WIDTH_ICON_MENU_BAR);
-        imv_fich_3.setFitHeight(Constantes.HEIGHT_ICON_MENU_BAR);
-        imv_fich_3.setFitWidth(Constantes.WIDTH_ICON_MENU_BAR);
-        imv_data_1.setFitHeight(Constantes.HEIGHT_ICON_MENU_BAR);
-        imv_data_1.setFitWidth(Constantes.WIDTH_ICON_MENU_BAR);
-        imv_data_2.setFitHeight(Constantes.HEIGHT_ICON_MENU_BAR);
-        imv_data_2.setFitWidth(Constantes.WIDTH_ICON_MENU_BAR);
+        imvFich1.setFitHeight(Constantes.HEIGHT_ICON_MENU_BAR);
+        imvFich1.setFitWidth(Constantes.WIDTH_ICON_MENU_BAR);
+        imvFich2.setFitHeight(Constantes.HEIGHT_ICON_MENU_BAR);
+        imvFich2.setFitWidth(Constantes.WIDTH_ICON_MENU_BAR);
+        imvFich3.setFitHeight(Constantes.HEIGHT_ICON_MENU_BAR);
+        imvFich3.setFitWidth(Constantes.WIDTH_ICON_MENU_BAR);
+        imageViewImportData.setFitHeight(Constantes.HEIGHT_ICON_MENU_BAR);
+        imageViewImportData.setFitWidth(Constantes.WIDTH_ICON_MENU_BAR);
+        imageViewExportData.setFitHeight(Constantes.HEIGHT_ICON_MENU_BAR);
+        imageViewExportData.setFitWidth(Constantes.WIDTH_ICON_MENU_BAR);
 
         home.BTN_NEW_CMDE.setGraphic(imv1);
         home.BTN_LIST_FAC.setGraphic(imv2);
@@ -137,24 +136,21 @@ public class CustomComponents {
         home.BTN_REGLER.setTooltip(new Tooltip("Enregistrer un règlement pour la facture en cours"));
         home.BTN_LIVRER.setTooltip(new Tooltip("Livrer la facture en cours"));
 
-        home.ITEM_COMPTE.setGraphic(imv_compte_M);
-        home.ITEM_NEW.setGraphic(imv_new_M);
-        home.ITEM_PREF.setGraphic(imv_pref_M);
-        home.ITEM_QUIT.setGraphic(imv_quit_M);
+        home.ITEM_COMPTE.setGraphic(imageViewCompte);
+        home.ITEM_NEW.setGraphic(imageViewNew);
+        home.ITEM_PREF.setGraphic(imageViewPreference);
+        home.ITEM_QUIT.setGraphic(imageViewQuit);
 
-        home.ITEM_ABOUT.setGraphic(imv_help_1);
-        home.ITEM_DOC.setGraphic(imv_help_2);
-        home.ITEM_PING_L.setGraphic(imv_help_3);
-        home.ITEM_PING_R.setGraphic(imv_help_4);
+        home.ITEM_ABOUT.setGraphic(imvHelp1);
+        home.ITEM_DOC.setGraphic(imvHelp2);
+        home.ITEM_PING_L.setGraphic(imvHelp3);
+        home.ITEM_PING_R.setGraphic(imvHelp4);
         //
-        home.ITEM_FACTURE.setGraphic(imv_fich_1);
-        home.ITEM_COMANDE.setGraphic(imv_fich_2);
-        home.ITEM_CATALOG.setGraphic(imv_fich_3);
-        home.ITEM_IMPORT.setGraphic(imv_data_1);
-        home.ITEM_EXPORT.setGraphic(imv_data_2);
-
-        //dimensionne le header
-        //home.TOOLBAR.setPrefWidth(StartController.SCREENWIDTH);
+        home.ITEM_FACTURE.setGraphic(imvFich1);
+        home.ITEM_COMANDE.setGraphic(imvFich2);
+        home.ITEM_CATALOG.setGraphic(imvFich3);
+        home.ITEM_IMPORT.setGraphic(imageViewImportData);
+        home.ITEM_EXPORT.setGraphic(imageViewExportData);
 
     }
 
