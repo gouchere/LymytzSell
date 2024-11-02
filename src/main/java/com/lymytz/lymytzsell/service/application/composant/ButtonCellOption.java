@@ -16,7 +16,9 @@ import com.lymytz.lymytzsell.service.application.bean.ContentPanier;
 import com.lymytz.lymytzsell.view.LocalLoader;
 import com.lymytz.lymytzsell.view.main.HomeCaisseController;
 
-/**
+import java.util.Objects;
+
+    /**
  *
  * @author LENOVO
  */
@@ -29,8 +31,8 @@ public class ButtonCellOption extends TableCell<ContentPanier, Integer> {
 
     public ButtonCellOption(HomeCaisseController appc) {
         this.mainContoler = appc;
-        ImageView im = new ImageView(new Image(LocalLoader.class.getResourceAsStream("/icones/plus.png")));
-        ImageView im1 = new ImageView(new Image(LocalLoader.class.getResourceAsStream("/icones/moins.png")));
+        ImageView im = new ImageView(new Image(Objects.requireNonNull(LocalLoader.class.getResourceAsStream("/icones/plus.png"))));
+        ImageView im1 = new ImageView(new Image(Objects.requireNonNull(LocalLoader.class.getResourceAsStream("/icones/moins.png"))));
         im.setFitHeight(15);
         im.setFitWidth(15);
         im1.setFitHeight(15);
@@ -39,23 +41,8 @@ public class ButtonCellOption extends TableCell<ContentPanier, Integer> {
         moins.setGraphic(im1);
         plus.getStyleClass().add("noStyle");
         moins.getStyleClass().add("noStyle");
-        plus.setOnAction(new EventHandler<ActionEvent>() {
-
-            @Override
-            public void handle(ActionEvent event) {
-//                final ContentPanier item = (ContentPanier) getTableRow().getItem();
-                final int numRow = getTableRow().getIndex();
-                mainContoler.incrementLinePanier(numRow, 1);
-            }
-        });
-        moins.setOnAction(new EventHandler<ActionEvent>() {
-
-            @Override
-            public void handle(ActionEvent event) {
-//                final ContentPanier item = (ContentPanier) getTableRow().getItem();
-                final int numRow = getTableRow().getIndex();
-                mainContoler.incrementLinePanier(numRow, -1);
-            }
+        plus.setOnAction(event -> {
+            getTableRow().getIndex();
         });
         box = new HBox(plus, moins);
     }
@@ -64,23 +51,8 @@ public class ButtonCellOption extends TableCell<ContentPanier, Integer> {
     protected void updateItem(Integer item, boolean empty) {
         super.updateItem(item, empty);
         if (getTableRow() != null) {
-            final int numRow = getTableRow().getIndex();
-            Onglets tab = (Onglets) mainContoler.TAB_FACTURES.getSelectionModel().getSelectedItem(); 
-//            if (!empty && numRow < tab.getContentsFacture().size()) {
-//                setGraphic(box);
-//                box.setVisible(true);
-//            } else {
-//                box.setVisible(false);
-//            }
-        }
-    }
-
-    private boolean indexExist(Onglets tab, int idx) {
-        try {
-//            tab.getContentsFacture().get(idx);
-            return true;
-        } catch (IndexOutOfBoundsException ex) {
-            return false;
+            getTableRow().getIndex();
+            mainContoler.TAB_FACTURES.getSelectionModel().getSelectedItem();
         }
     }
 }

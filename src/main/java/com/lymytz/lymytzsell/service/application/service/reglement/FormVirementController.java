@@ -51,9 +51,7 @@ import java.util.ResourceBundle;
  * @author LENOVO
  */
 public class FormVirementController implements Initializable, Controller {
-
     LocalQueryFactories rq = new LocalQueryFactories();
-
     HomeCaisseController page;
     Stage fenDialogue;
     private Long idRemoteHeader;
@@ -91,7 +89,7 @@ public class FormVirementController implements Initializable, Controller {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
+        // nécessaire pour le composant
     }
 
     public void initFormVirement(long idHeader, YvsBaseCaisse caisseSource, HomeCaisseController page, Stage stage) {
@@ -102,9 +100,7 @@ public class FormVirementController implements Initializable, Controller {
         idRemoteHeader = (UtilsProject.REPLICATION) ? UtilEntityBase.findIdRemoteData(Constantes.TABLE_HEADER_DOC_CODE, idHeader) : idHeader;
         if (caisseSource != null && Constantes.asLong(this.idRemoteHeader)) {
             caisseSource.setCaissesLiees(rq.loadByNamedQuery("YvsBaseLiaisonCaisse.findBySource", new String[]{"source"}, new Object[]{caisseSource}));
-            caisseSource.getCaissesLiees().stream().forEach((lc) -> {
-                items.add(lc.getCaisseCible());
-            });
+            caisseSource.getCaissesLiees().forEach(lc -> items.add(lc.getCaisseCible()));
             CB_CAISS_CIBLE.setItems(items);
             CB_CAISS_CIBLE.setConverter(new StringConverter<YvsBaseCaisse>() {
 
@@ -130,7 +126,7 @@ public class FormVirementController implements Initializable, Controller {
             }
             avanceCmde = avanceCmde != null ? avanceCmde : 0;
             //Accompte perçu
-            LAB_COMMANDE.setText(Constantes.nbf.format(avanceCmde != null ? avanceCmde : 0));
+            LAB_COMMANDE.setText(Constantes.nbf.format(avanceCmde));
             LAB_VERSE.setText(Constantes.nbf.format(avanceCmde + totalFacture));
             PROGRESS_CLOSE.setVisible(false);
             loadVersementFiche();
@@ -144,14 +140,14 @@ public class FormVirementController implements Initializable, Controller {
         //effectue un virement de caisse du montant saisie
         Double montant = 0d;
         try {
-            montant = Double.valueOf(TXT_MONTANT.getText().trim().replaceAll("[^\\d-\\+]", ""));
+            montant = Double.valueOf(TXT_MONTANT.getText().trim().replaceAll("[^\\d-+]", ""));
         } catch (NumberFormatException ex) {
             montant = 0D;
         }
         try {
             YvsComEnteteDocVente header = (YvsComEnteteDocVente) rq.findOneByNQ("YvsComEnteteDocVente.findById", new String[]{"id"}, new Object[]{idHeader});
             if (montant > 0) {
-                if (header != null ? !header.getCloturer() : false) {
+                if (header != null && !header.getCloturer()) {
                     PROGRESS_CLOSE.setVisible(true);
                     if (CB_CAISS_CIBLE.getValue() != null) {
                         try {
@@ -196,11 +192,8 @@ public class FormVirementController implements Initializable, Controller {
                     }
                 }
             }
-            if (header != null ? !header.getCloturer() : false) {
-                // Nettoie et clôture la fiche
-                if (CHK_CLOTURE.isSelected()) {
-                    page.cleanVente(header.getId());
-                    if (!header.getCloturer()) {
+            if (header != null && !header.getCloturer()) {
+                    if (Boolean.FALSE.equals(header.getCloturer())) {
                         // Vérifier s'il y a  des factures non réglés et/ou non encore entièrement livré et demander une confirmation
                         Long nb = (Long) rq.findOneObjectByNQ("YvsComDocVentes.countFactureNonLivreOrNonPayeByHeader", new String[]{"statut", "statutLivre", "statutRegle", "header", "typeDoc"},
                                 new Object[]{Constantes.ETAT_VALIDE, Constantes.ETAT_LIVRE, Constantes.ETAT_REGLE, header, Constantes.TYPE_FV});
@@ -232,7 +225,7 @@ public class FormVirementController implements Initializable, Controller {
                     } else {
                         LymytzService.openAlertDialog("Ce journal est déjà clôturée", "Journal clôturé", "Erreur", Alert.AlertType.WARNING);
                     }
-                }
+
             }
 
         } catch (NumberFormatException ex) {
@@ -245,7 +238,7 @@ public class FormVirementController implements Initializable, Controller {
         if (UtilsProject.headerDoc != null && UtilsProject.caisse != null) {
             Thread t = new Thread(() -> {
                 Long idHead = (UtilsProject.REPLICATION) ? idRemoteHeader : UtilsProject.headerDoc.getId();
-                RQueryFactories dao = new RQueryFactories();
+                RQueryFactories dao = new RQueryFactories<>();
                 //charge les versements de la fiche
                 if (RQueryFactories.pingServer()) {
                     YvsComEnteteDocVente header = (YvsComEnteteDocVente) rq.findOneByNQ("YvsComEnteteDocVente.findById", new String[]{"id"}, new Object[]{idHeader});
@@ -257,15 +250,13 @@ public class FormVirementController implements Initializable, Controller {
                         LIST_VER.getItems().clear();
                         Double soe = 0d;
                         for (Object[] l : re) {
-                            LIST_VER.getItems().add((String) l[0] + "   --*--   " + ((l[1] != null) ? Constantes.nbf.format(Double.valueOf((String) l[1])) : "0"));
-                            soe = soe + ((l[1] != null) ? Double.valueOf((String) l[1]) : 0d);
+                            LIST_VER.getItems().add(l[0] + "   --*--   " + ((l[1] != null) ? Constantes.nbf.format(Double.valueOf((String) l[1])) : "0"));
+                            soe = soe + ((l[1] != null) ? Double.parseDouble((String) l[1]) : 0d);
                         }
                         MESSAGE.setText("");
                     });
                 } else {
-                    Platform.runLater(() -> {
-                        MESSAGE.setText("Impossible de se connecter au serveur distant");
-                    });
+                    Platform.runLater(() -> MESSAGE.setText("Impossible de se connecter au serveur distant"));
                 }
             });
             t.start();
@@ -274,5 +265,6 @@ public class FormVirementController implements Initializable, Controller {
 
     @Override
     public void freeMemoryController() {
+        //no
     }
 }
