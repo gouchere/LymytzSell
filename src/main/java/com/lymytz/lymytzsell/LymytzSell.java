@@ -6,24 +6,6 @@ package com.lymytz.lymytzsell;
  * and open the template in the editor.
  */
 
-import com.sun.javafx.application.LauncherImpl;
-
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.URL;
-import java.util.Objects;
-
-import javafx.application.Application;
-import javafx.application.Platform;
-import javafx.scene.control.Alert;
-import javafx.scene.image.Image;
-import javafx.stage.Stage;
-
-import javax.imageio.ImageIO;
-import javax.print.attribute.standard.Severity;
-
 import com.lymytz.lymytzsell.service.ServeurMessage;
 import com.lymytz.lymytzsell.service.application.ManagedApplication;
 import com.lymytz.lymytzsell.service.utils.Constantes;
@@ -33,16 +15,30 @@ import com.lymytz.lymytzsell.service.utils.log.ListenFolder;
 import com.lymytz.lymytzsell.service.utils.log.LogFiles;
 import com.lymytz.lymytzsell.view.LocalLoader;
 import com.lymytz.lymytzsell.view.start.LaunchApps;
+import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.scene.control.Alert;
+import javafx.scene.image.Image;
+import javafx.stage.Stage;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.imageio.ImageIO;
+import javax.print.attribute.standard.Severity;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.URL;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 
 /**
  * @author LENOVO
  */
-@Slf4j
 public class LymytzSell extends Application {
 
     @Setter
@@ -61,6 +57,7 @@ public class LymytzSell extends Application {
 
     @Override
     public void init() {
+        logger.info("Ouverture de l'application à {}", DateTimeFormatter.ISO_DATE_TIME.format(LocalDateTime.now()));
         initApps(true);
         //créer un fichier de log
         LogFiles.createLogfile();
@@ -75,7 +72,7 @@ public class LymytzSell extends Application {
         t.start();
         Platform.setImplicitExit(true);
         javax.swing.SwingUtilities.invokeLater(this::addAppToTray);
-        initiatePort();
+        initializePort();
         startApps();
     }
 
@@ -83,8 +80,8 @@ public class LymytzSell extends Application {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        LauncherImpl.launchApplication(LymytzSell.class, LaunchApps.class, args);
-        logger.debug("Démarrage de l'application de caisse...");
+        launch(LymytzSell.class, "--preloader", LaunchApps.class.getName(), args.toString());
+        logger.info("Démarrage de l'application de caisse...");
         //Lance ensuite la méthode init() et ensuite la méthode start
         //Créer et lancer le thred d'écoute du fichier de log       
 
@@ -156,7 +153,7 @@ public class LymytzSell extends Application {
         }
     }
 
-    public void initiatePort() {
+    public void initializePort() {
         UtilsProject.loadFilePropertie();
         int port = Integer.parseInt(UtilsProject.properties.getProperty(Constantes.KEY_APPS_PORT));
         UtilsProject.ENVIRONNEMENT = UtilsProject.properties.getProperty(Constantes.KEY_ENVIRONNEMENT);

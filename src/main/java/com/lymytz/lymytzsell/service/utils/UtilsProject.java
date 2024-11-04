@@ -58,8 +58,7 @@ import java.util.logging.Logger;
  * l'application. Les actions sollicités par les autres classes
  */
 public class UtilsProject {
-
-    LocalQueryFactories dao = new LocalQueryFactories();
+    private static final Logger LOGGER = Logger.getLogger(UtilsProject.class.getName());
 
     private UtilsProject() {
         // no implementation
@@ -242,6 +241,7 @@ public class UtilsProject {
     public static void loadFilePropertie() {
         try {
             if (UtilsProject.properties == null) {
+                LOGGER.log(Level.CONFIG, "initialisation des propriétés de l'application");
                 UtilsProject.properties = new Properties();
             }
             try (FileInputStream fis = LymytzService.getPropertiesFileInputStream()) {
@@ -296,11 +296,14 @@ public class UtilsProject {
                     RcurrentSociete = new YvsSocietes(Long.valueOf(properties.getProperty(Constantes.KEY_REMOTE_SOCIETE)));
                 }
                 REPLICATION = getReplication();
+                LOGGER.info("Le mode réplication " + (REPLICATION ? "est activé" : "n'est pas activé"));
             }
-            ID_SERVEUR = RQueryFactories.getIdServer();
-            if (ID_SERVEUR == null || ID_SERVEUR <= 0) {
-                //save adresse ip serveur
-                ID_SERVEUR = RQueryFactories.insertInfoServeur();
+            if (REPLICATION) {
+                ID_SERVEUR = RQueryFactories.getIdServer();
+                if (ID_SERVEUR == null || ID_SERVEUR <= 0) {
+                    //save adresse ip serveur
+                    ID_SERVEUR = RQueryFactories.insertInfoServeur();
+                }
             }
         } catch (NumberFormatException ex) {
             Logger.getLogger(UtilsProject.class.getName()).log(Level.SEVERE, null, ex);

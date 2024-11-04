@@ -15,6 +15,7 @@
 - [x] Cacher le loader après le chargement des articles
 - [ ] Revoir le temps d'enregistrement d'un article dans le panier
 - [ ] Modifier le logger pour utiliser le RollingFile fourni par apache logging
+- [ ] Vire du code l'utilisation des package com.sun, pour régler le pb d'introspection
 
 # Approche optimiste de l'enregistrement des factures:
 

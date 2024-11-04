@@ -12,14 +12,9 @@ import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 
 /**
- *
  * @author LYMYTZ
  */
 public class EncryptMessage {
-
-    private String message;
-    private String key;
-
     public EncryptMessage() {
     }
 
@@ -29,7 +24,7 @@ public class EncryptMessage {
                 Key clef = new SecretKeySpec(key.getBytes("ISO-8859-2"), "Blowfish");
                 Cipher cipher = Cipher.getInstance("Blowfish");
                 cipher.init(Cipher.ENCRYPT_MODE, clef);
-                return new String(cipher.doFinal(texte.getBytes("ISO-8859-2")),"ISO-8859-2");
+                return new String(cipher.doFinal(texte.getBytes("ISO-8859-2")), "ISO-8859-2");
             } catch (Exception ex) {
                 Logger.getLogger(EncryptMessage.class.getName()).log(Level.SEVERE, "", ex);
             }
@@ -38,12 +33,13 @@ public class EncryptMessage {
     }
 
     public static String decrypt(String texte, String key) {
+        Logger.getLogger(EncryptMessage.class.getName()).log(Level.INFO, "texte à décrypter {}", texte);
         if (Constantes.asString(texte)) {
             try {
                 Key clef = new SecretKeySpec(key.getBytes("ISO-8859-2"), "Blowfish");
                 Cipher cipher = Cipher.getInstance("Blowfish");
                 cipher.init(Cipher.DECRYPT_MODE, clef);
-                return new String(cipher.doFinal(texte.getBytes("ISO-8859-2")),"ISO-8859-2");
+                return new String(cipher.doFinal(texte.getBytes("ISO-8859-2")), "ISO-8859-2");
             } catch (Exception ex) {
                 Logger.getLogger(EncryptMessage.class.getName()).log(Level.SEVERE, "", ex);
             }

@@ -371,7 +371,7 @@ public class ParametresController implements Initializable, Controller {
         List<YvsComClient> clients = dao.loadByNamedQuery("YvsComClient.findAll", new String[]{"societe"}, new Object[]{UtilsProject.currentSociete});
         dataClients = FXCollections.observableArrayList(clients);
         CB_CLIENT.setItems(dataClients);
-        CB_CLIENT.setConverter(new StringConverter<YvsComClient>() {
+        CB_CLIENT.setConverter(new StringConverter<>() {
 
             @Override
             public String toString(YvsComClient object) {

@@ -5,7 +5,6 @@
  */
 package com.lymytz.lymytzsell.service.utils;
 
-import com.lymytz.lymytzsell.LymytzSell;
 import com.lymytz.lymytzsell.service.application.ManagedApplication;
 import com.lymytz.lymytzsell.service.start.StartController;
 import com.lymytz.lymytzsell.service.utils.log.LogFiles;
@@ -15,11 +14,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -33,11 +28,7 @@ import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
 
 import javax.print.attribute.standard.Severity;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.InetAddress;
@@ -56,6 +47,7 @@ import java.util.logging.Logger;
 public class LymytzService {
 
     public static boolean stopThread = false;
+    private static final Logger LOGGER = Logger.getLogger(LymytzService.class.getName());
 
     private LymytzService() {
     }
@@ -97,7 +89,7 @@ public class LymytzService {
         box.getChildren().add(control);
         dlg.getDialogPane().setContent(box);
         Optional<ButtonType> re = dlg.showAndWait();
-        return re.get();
+        return re.orElse(null);
     }
 
     public static void success() {
@@ -235,14 +227,14 @@ public class LymytzService {
             try {
                 file.createNewFile();
             } catch (IOException ex) {
-//                Logger.getLogger(LymytzSell.class.getName()).log(Level.SEVERE, null, ex);
+//                LOGGER.log(Level.SEVERE, null, ex);
                 LymytzService.openExceptionDialog("Ereur 1", "Erreur fichier ", "Erreur Fatal A!", Alert.AlertType.ERROR, ex);
             }
         }
         try {
             return new FileInputStream(file);
         } catch (FileNotFoundException ex) {
-//            Logger.getLogger(LymytzSell.class.getName()).log(Level.SEVERE, null, ex);
+//            LOGGER.log(Level.SEVERE, null, ex);
             LymytzService.openExceptionDialog("Ereur", "Erreur file 2", "Erreur Fatal B!", Alert.AlertType.ERROR, ex);
         }
         return null;
@@ -251,7 +243,9 @@ public class LymytzService {
     public static FileInputStream getPropertiesFileInputStream() {
         File file = new File("conf/application.properties");
         if (!file.exists()) {
+            LOGGER.log(Level.WARNING, "Le fichier de configuration 'conf/application.properties'n'existe pas");
             try {
+                LOGGER.log(Level.INFO, "Création du fichier de configuration 'conf/application.properties'");
                 //create file
                 file.createNewFile();
                 //ajoute y des entrée
@@ -261,10 +255,10 @@ public class LymytzService {
                 UtilsProject.properties.setProperty(Constantes.KEY_LOCAL_AGENCE, "");
                 UtilsProject.properties.setProperty(Constantes.KEY_LOCAL_DB_NAME, "lymytz_sell_extension");
                 UtilsProject.properties.setProperty(Constantes.KEY_LOCAL_HOST, "localhost");
-                UtilsProject.properties.setProperty(Constantes.KEY_LOCAL_PASSWORD, "yves1910/");
+                UtilsProject.properties.setProperty(Constantes.KEY_LOCAL_PASSWORD, EncryptMessage.encrypt("yves1910/", Constantes.KEY_ENCRYPT));
                 UtilsProject.properties.setProperty(Constantes.KEY_LOCAL_PORT, "5432");
                 UtilsProject.properties.setProperty(Constantes.KEY_LOCAL_SOCIETE, "");
-                UtilsProject.properties.setProperty(Constantes.KEY_LOCAL_USERS, "postgres");
+                UtilsProject.properties.setProperty(Constantes.KEY_LOCAL_USERS, EncryptMessage.encrypt("postgres", Constantes.KEY_ENCRYPT));
                 UtilsProject.properties.setProperty(Constantes.KEY_MODE, "BOTH");
                 UtilsProject.properties.setProperty(Constantes.KEY_MODEL_REGLEMENT, "");
                 UtilsProject.properties.setProperty(Constantes.KEY_MODE_REGLEMENT, "");
@@ -278,10 +272,10 @@ public class LymytzService {
                 UtilsProject.properties.setProperty(Constantes.KEY_PATH, "");
                 UtilsProject.properties.setProperty(Constantes.KEY_REMOTE_DB_NAME, "lymytz_demo_0");
                 UtilsProject.properties.setProperty(Constantes.KEY_REMOTE_HOST, "");
-                UtilsProject.properties.setProperty(Constantes.KEY_REMOTE_PASSWORD, "yves1910/");
+                UtilsProject.properties.setProperty(Constantes.KEY_REMOTE_PASSWORD, EncryptMessage.encrypt("yves1910/", Constantes.KEY_ENCRYPT));
                 UtilsProject.properties.setProperty(Constantes.KEY_REMOTE_PORT, "5432");
                 UtilsProject.properties.setProperty(Constantes.KEY_REMOTE_SOCIETE, "");
-                UtilsProject.properties.setProperty(Constantes.KEY_REMOTE_USERS, "postgres");
+                UtilsProject.properties.setProperty(Constantes.KEY_REMOTE_USERS, EncryptMessage.encrypt("postgres", Constantes.KEY_ENCRYPT));
                 UtilsProject.properties.setProperty(Constantes.KEY_SECTEUR, "");
                 UtilsProject.properties.setProperty(Constantes.KEY_TYPE_PRINT, "TICKET");
                 UtilsProject.properties.setProperty(Constantes.KEY_USE_CODE_BARRE, "TRUE");
@@ -295,14 +289,17 @@ public class LymytzService {
                 return new FileInputStream(file);
             } catch (IOException ex) {
                 LogFiles.addLogInFile("", Severity.ERROR, ConsUtil.SOURCE_LOG_FILE_EXCEPTION, ex);
-                Logger.getLogger(LymytzService.class.getName()).log(Level.SEVERE, null, ex);
+                LOGGER.log(Level.SEVERE, "Le fichier de configuration n'a pas pu être initialisé");
+                LOGGER.log(Level.SEVERE, null, ex);
             }
         } else {
             try {
+                LOGGER.log(Level.INFO, "Récupération du fichier 'conf/application.properties'");
                 return new FileInputStream(file);
             } catch (FileNotFoundException ex) {
                 LogFiles.addLogInFile("", Severity.ERROR, ConsUtil.SOURCE_LOG_FILE_EXCEPTION, ex);
-                Logger.getLogger(LymytzSell.class.getName()).log(Level.SEVERE, null, ex);
+                LOGGER.log(Level.SEVERE, "Le fichier de configuration n'a pas pu être récupéré");
+                LOGGER.log(Level.SEVERE, null, ex);
             }
         }
         return null;
@@ -319,13 +316,13 @@ public class LymytzService {
             try {
                 file.createNewFile();
             } catch (IOException ex) {
-                Logger.getLogger(LymytzSell.class.getName()).log(Level.SEVERE, null, ex);
+                LOGGER.log(Level.SEVERE, null, ex);
             }
         }
         try {
             return new FileOutputStream(file);
         } catch (FileNotFoundException ex) {
-            Logger.getLogger(LymytzSell.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, null, ex);
         }
         return null;
     }
@@ -417,7 +414,7 @@ public class LymytzService {
             }
 
         } catch (IOException ex) {
-            Logger.getLogger(LymytzSell.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, null, ex);
         }
     }
 }

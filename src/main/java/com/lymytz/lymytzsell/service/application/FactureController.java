@@ -16,25 +16,16 @@ import com.lymytz.lymytzsell.service.utils.LymytzService;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
 import com.lymytz.lymytzsell.view.component.DateTimePickerController;
 import com.lymytz.lymytzsell.view.main.HomeCaisseController;
-import impl.org.controlsfx.skin.AutoCompletePopup;
-import impl.org.controlsfx.skin.AutoCompletePopupSkin;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.TextField;
-import javafx.scene.control.Toggle;
-import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.util.StringConverter;
+import org.controlsfx.control.textfield.AutoCompletionBinding;
 import org.controlsfx.control.textfield.TextFields;
 
 import java.net.URL;
@@ -95,19 +86,10 @@ public class FactureController implements Initializable, Controller {
         } else {
             datePickerController.setDateTime(LocalDateTime.of(LocalDate.now(), LocalTime.of(12, 0)));
         }
-        TYPE_DOC.selectedToggleProperty().addListener((ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) -> {
-//            RadioButton r = (RadioButton) TYPE_DOC.getSelectedToggle();
-//                Calendar cal = Calendar.getInstance();
-//                cal.setTime(UtilsProject.headerDoc.getDateEntete());
-//                DT_DATE = new DateTimePicker(LocalDateTime.of(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH), cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE)));
-        });
         initVilles();
-        AutoCompletePopup<YvsComClient> popUpClients = TextFields.bindAutoCompletion(TF_CLIENT, c -> {
-            return UtilsProject.listClients.stream().filter(elt -> {
-                return (elt.getNom_prenom().toLowerCase().contains(c.getUserText().toLowerCase())
-                        || elt.getCodeClient().toLowerCase().contains(c.getUserText().toLowerCase()));
-            }).collect(Collectors.toList());
-        }, new StringConverter<YvsComClient>() {
+        initializeClient();
+        /*AutoCompletePopup<YvsComClient> popUpClients = TextFields.bindAutoCompletion(TF_CLIENT, c -> UtilsProject.listClients.stream().filter(elt -> (elt.getNom_prenom().toLowerCase().contains(c.getUserText().toLowerCase())
+                || elt.getCodeClient().toLowerCase().contains(c.getUserText().toLowerCase()))).collect(Collectors.toList()), new StringConverter<>() {
 
             @Override
             public String toString(YvsComClient object) {
@@ -122,7 +104,7 @@ public class FactureController implements Initializable, Controller {
                 return null;
             }
         }).getAutoCompletionPopup();
-        popUpClients.setSkin(new AutoCompletePopupSkin<>(popUpClients, param -> new ListCell<YvsComClient>() {
+        popUpClients.setSkin(new AutoCompletePopupSkin<>(popUpClients, param -> new ListCell<>() {
             @Override
             public void updateItem(YvsComClient item, boolean empty) {
                 super.updateItem(item, empty);
@@ -134,11 +116,51 @@ public class FactureController implements Initializable, Controller {
                     setText(item.getTextClient());
                 }
             }
-        }));
+        }));*/
         TF_CLIENT.focusedProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
             getClientWithText();
         });
         TF_CLIENT.setPromptText(TF_CLIENT.getText());
+    }
+
+    private void initializeClient() {
+        List<YvsComClient> listClients = UtilsProject.listClients;
+        AutoCompletionBinding<YvsComClient> binding = TextFields.bindAutoCompletion(
+                TF_CLIENT,
+                c -> listClients.stream()
+                        .filter(elt -> (elt.getNom_prenom().toLowerCase().contains(c.getUserText().toLowerCase())
+                                || elt.getCodeClient().toLowerCase().contains(c.getUserText().toLowerCase())))
+                        .collect(Collectors.toList()),
+                new StringConverter<>() {
+                    @Override
+                    public String toString(YvsComClient object) {
+                        return object != null ? object.getTextClient() : "";
+                    }
+
+                    @Override
+                    public YvsComClient fromString(String string) {
+                        return null;
+                    }
+                }
+        );
+
+        // Personnalisation des cellules de la liste de suggestions
+        binding.setOnAutoCompleted(event -> {
+            // Logique à appliquer après la sélection
+        });
+        /*binding.getAutoCompletionPopup().setCellFactory(param -> new ListCell<YvsComClient>() {
+            @Override
+            protected void updateItem(YvsComClient item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                    setGraphic(null);
+                } else {
+                    setGraphic(new javafx.scene.shape.Rectangle(32, 32, javafx.scene.paint.Color.BEIGE));
+                    setText(item.getTextClient());
+                }
+            }
+        });*/
     }
 
     public void initDataForm(HomeCaisseController main) {
@@ -171,7 +193,7 @@ public class FactureController implements Initializable, Controller {
             CB_VILLE.setValue(UtilsProject.defaultAdresse.getParent());
             CB_SECTEUR.setValue(UtilsProject.defaultAdresse);
         }
-        CB_VILLE.setConverter(new StringConverter<YvsDictionnaire>() {
+        CB_VILLE.setConverter(new StringConverter<>() {
 
             @Override
             public String toString(YvsDictionnaire object) {
@@ -186,7 +208,7 @@ public class FactureController implements Initializable, Controller {
                 return null;
             }
         });
-        CB_SECTEUR.setConverter(new StringConverter<YvsDictionnaire>() {
+        CB_SECTEUR.setConverter(new StringConverter<>() {
 
             @Override
             public String toString(YvsDictionnaire object) {
