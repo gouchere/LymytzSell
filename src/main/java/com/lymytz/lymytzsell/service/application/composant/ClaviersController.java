@@ -6,10 +6,17 @@
 package com.lymytz.lymytzsell.service.application.composant;
 
 import com.lymytz.lymytzsell.business.helpers.EtatMontantPayer;
-import com.lymytz.lymytzsell.business.helpers.HelperFactureVente;
 import com.lymytz.lymytzsell.business.helpers.KeyBoardAction;
+import com.lymytz.lymytzsell.dao.entity.YvsComDocVentes;
 import com.lymytz.lymytzsell.service.application.Controller;
 import com.lymytz.lymytzsell.service.application.ManagedApplication;
+import com.lymytz.lymytzsell.service.application.bean.ContentPanier;
+import com.lymytz.lymytzsell.service.utils.Constantes;
+import com.lymytz.lymytzsell.service.utils.LymytzService;
+import com.lymytz.lymytzsell.service.utils.PrintTiket;
+import com.lymytz.lymytzsell.service.utils.UtilsProject;
+import com.lymytz.lymytzsell.view.main.HomeCaisseController;
+import com.lymytz.lymytzsell.view.main.report.PrintFacture;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -23,20 +30,14 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import com.lymytz.lymytzsell.dao.entity.YvsComDocVentes;
-import com.lymytz.lymytzsell.service.application.bean.ContentPanier;
-import com.lymytz.lymytzsell.service.utils.Constantes;
-import com.lymytz.lymytzsell.service.utils.LymytzService;
-import com.lymytz.lymytzsell.service.utils.PrintTiket;
-import com.lymytz.lymytzsell.service.utils.UtilsProject;
-import com.lymytz.lymytzsell.view.main.HomeCaisseController;
-import com.lymytz.lymytzsell.view.main.report.PrintFacture;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 
 import static com.lymytz.lymytzsell.business.helpers.HelperFactureVente.isValideMontantPaye;
 import static com.lymytz.lymytzsell.service.utils.Constantes.TYPE_FV;
+import static com.lymytz.lymytzsell.service.utils.UtilsProject.TYPE_RAPPORT_A4;
+import static com.lymytz.lymytzsell.service.utils.UtilsProject.TYPE_RAPPORT_TICKET;
 
 /**
  * FXML Controller class
@@ -269,7 +270,7 @@ public class ClaviersController extends ManagedApplication implements Initializa
     }
 
     private void printTicketFacture(YvsComDocVentes facture, double montantRecu) {
-        if (Boolean.TRUE.equals(UtilsProject.paramConnection.getUsePrinter()) && TYPE_FV.equals(UtilsProject.paramConnection.getTypeRapport())) {
+        if (Boolean.TRUE.equals(UtilsProject.paramConnection.getUsePrinter()) && TYPE_RAPPORT_TICKET.equals(UtilsProject.paramConnection.getTypeRapport())) {
             Platform.runLater(() -> {
                 PrintTiket pt = new PrintTiket(montantAvance, "XX");
                 pt.setFacture(new YvsComDocVentes(facture));
@@ -279,7 +280,7 @@ public class ClaviersController extends ManagedApplication implements Initializa
                 pt.setNetAPayer(facture.getMontantTotal());
                 new Thread(pt).start();
             });
-        } else if (Boolean.TRUE.equals(UtilsProject.paramConnection.getUsePrinter())) {
+        } else if (Boolean.TRUE.equals(UtilsProject.paramConnection.getUsePrinter()) && TYPE_RAPPORT_A4.equals(UtilsProject.paramConnection.getTypeRapport())) {
             Platform.runLater(() -> {
                 PrintFacture preview = new PrintFacture();
                 preview.loadFactureToPrint(facture);

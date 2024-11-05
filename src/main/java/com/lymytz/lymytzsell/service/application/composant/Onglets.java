@@ -14,7 +14,6 @@ import java.util.stream.IntStream;
 
 import com.lymytz.lymytzsell.business.helpers.KeyBoardAction;
 import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -47,8 +46,8 @@ import com.lymytz.lymytzsell.view.main.HomeCaisseController;
 import lombok.Getter;
 import lombok.Setter;
 
-import static com.lymytz.lymytzsell.service.utils.FonctionalConstants.ERREUR;
-import static com.lymytz.lymytzsell.service.utils.FonctionalConstants.MODIFICATION_FACTURE_IMPOSSIBLE;
+import static com.lymytz.lymytzsell.service.utils.MessagesConstants.ERREUR;
+import static com.lymytz.lymytzsell.service.utils.MessagesConstants.MODIFICATION_FACTURE_IMPOSSIBLE;
 
 /**
  * @author LENOVO

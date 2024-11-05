@@ -5,6 +5,7 @@
  */
 package com.lymytz.lymytzsell.service.utils;
 
+import com.lymytz.lymytzsell.business.helpers.Helpers;
 import com.lymytz.lymytzsell.service.application.ManagedApplication;
 import com.lymytz.lymytzsell.service.start.StartController;
 import com.lymytz.lymytzsell.service.utils.log.LogFiles;
@@ -40,6 +41,10 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import static com.lymytz.lymytzsell.service.utils.Constantes.PROPERTIE_FILE_NAME;
+import static com.lymytz.lymytzsell.service.utils.MessagesConstants.FICHIER_PROPERTIE_MAL_CONFIGURE;
+import static com.lymytz.lymytzsell.service.utils.MessagesConstants.IMPOSSIBE_DE_DEMARRER_L_APPLICATION;
 
 /**
  * @author LENOVO
@@ -241,13 +246,9 @@ public class LymytzService {
     }
 
     public static FileInputStream getPropertiesFileInputStream() {
-        File file = new File("conf/application.properties");
+        File file = Helpers.getPropertiesFile(PROPERTIE_FILE_NAME);
         if (!file.exists()) {
-            LOGGER.log(Level.WARNING, "Le fichier de configuration 'conf/application.properties'n'existe pas");
             try {
-                LOGGER.log(Level.INFO, "Création du fichier de configuration 'conf/application.properties'");
-                //create file
-                file.createNewFile();
                 //ajoute y des entrée
                 UtilsProject.properties.setProperty(Constantes.KEY_APPS_PORT, "1025");
                 UtilsProject.properties.setProperty(Constantes.KEY_CLIENT_DIVERS, "");
@@ -294,7 +295,7 @@ public class LymytzService {
             }
         } else {
             try {
-                LOGGER.log(Level.INFO, "Récupération du fichier 'conf/application.properties'");
+                LOGGER.log(Level.INFO, "Chargement des propriétés de l'application");
                 return new FileInputStream(file);
             } catch (FileNotFoundException ex) {
                 LogFiles.addLogInFile("", Severity.ERROR, ConsUtil.SOURCE_LOG_FILE_EXCEPTION, ex);
@@ -365,28 +366,28 @@ public class LymytzService {
         if (UtilsProject.properties != null) {
             val = (String) UtilsProject.properties.get(Constantes.KEY_APPS_PORT);
             if (!Constantes.asString(val)) {
-                openAlertDialog("Impossible de demarrer l'application", "Le fichier application.properties est mal configurer", "Vous devez initialiser la propriété " + Constantes.KEY_APPS_PORT, Alert.AlertType.ERROR);
+                openAlertDialog(IMPOSSIBE_DE_DEMARRER_L_APPLICATION, FICHIER_PROPERTIE_MAL_CONFIGURE, "Vous devez initialiser la propriété " + Constantes.KEY_APPS_PORT, Alert.AlertType.ERROR);
                 return false;
             }
             val = (String) UtilsProject.properties.get(Constantes.KEY_ENVIRONNEMENT);
             if (!Constantes.asString(val)) {
-                openAlertDialog("Impossible de demarrer l'application", "Le fichier application.properties est mal configurer", "Vous devez initialiser la propriété " + Constantes.KEY_ENVIRONNEMENT, Alert.AlertType.ERROR);
+                openAlertDialog(IMPOSSIBE_DE_DEMARRER_L_APPLICATION, FICHIER_PROPERTIE_MAL_CONFIGURE, "Vous devez initialiser la propriété " + Constantes.KEY_ENVIRONNEMENT, Alert.AlertType.ERROR);
                 return false;
             }
             val = (String) UtilsProject.properties.get(Constantes.KEY_LOCAL_AGENCE);
             if (!Constantes.asString(val)) {
-                openAlertDialog("Impossible de demarrer l'application", "Le fichier application.properties est mal configurer",
+                openAlertDialog(IMPOSSIBE_DE_DEMARRER_L_APPLICATION, FICHIER_PROPERTIE_MAL_CONFIGURE,
                         "Vous devez initialiser la propriété " + Constantes.KEY_LOCAL_AGENCE, Alert.AlertType.ERROR);
                 return false;
             }
             val = (String) UtilsProject.properties.get(Constantes.KEY_LOCAL_SOCIETE);
             if (!Constantes.asString(val)) {
-                openAlertDialog("Impossible de demarrer l'application", "Le fichier application.properties est mal configurer",
+                openAlertDialog(IMPOSSIBE_DE_DEMARRER_L_APPLICATION, FICHIER_PROPERTIE_MAL_CONFIGURE,
                         "Vous devez initialiser la propriété " + Constantes.KEY_LOCAL_SOCIETE, Alert.AlertType.ERROR);
                 return false;
             }
         } else {
-            openAlertDialog("Impossible de demarrer l'application", "Le fichier application.properties n'a pas été trouvé", "Vous devez initialiser le fichier de propriété", Alert.AlertType.ERROR);
+            openAlertDialog(IMPOSSIBE_DE_DEMARRER_L_APPLICATION, "Le fichier application.properties n'a pas été trouvé", "Vous devez initialiser le fichier de propriété", Alert.AlertType.ERROR);
             return false;
         }
         return true;

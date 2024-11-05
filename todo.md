@@ -15,7 +15,10 @@
 - [x] Cacher le loader après le chargement des articles
 - [ ] Revoir le temps d'enregistrement d'un article dans le panier
 - [ ] Modifier le logger pour utiliser le RollingFile fourni par apache logging
-- [ ] Vire du code l'utilisation des package com.sun, pour régler le pb d'introspection
+- [ ] Virer du code l'utilisation des package com.sun, pour régler le pb d'introspection
+- [ ] Gérer la caisse de manière autonome sans dépendre de l'ERP, sauf pour la récupération des données de bases
+- [ ] Configurer les logs dans un fichier
+- [ ] A l'initialisation, filtrer les sociétés et les agences en foncion d'un identifiant fourni.
 
 # Approche optimiste de l'enregistrement des factures:
 

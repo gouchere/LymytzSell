@@ -1,7 +1,6 @@
 # LymytzSell
 Application de gestion de caisse associé à Lymytz ERP
 ## Technologie:
-- OpenJdk Eclipse Adoptium 17.0.13.11
   ![JDK](https://img.shields.io/badge/LymytzSell-2.0.1-orange)
   ![JDK](https://img.shields.io/badge/Jdk_Eclipse_Adoptium-17.0.13-orange)
   ![JDK](https://img.shields.io/badge/JavaFx_SDK-17.0.13-orange)
@@ -29,8 +28,10 @@ jpackage --input ./LymytzSell/target/
 --app-version 2.0.1
 --java-options "--add-opens=java.base/java.lang=ALL-UNNAMED --add-opens javafx.controls/com.sun.javafx.scene.control.skin.resources=ALL-UNNAMED --add-exports=javafx.base/com.sun.javafx.event=ALL-UNNAMED --add-exports=javafx.controls/com.sun.javafx.scene.control.behavior=ALL-UNNAMED --add-exports=javafx.controls/com.sun.javafx.scene.control=ALL-UNNAMED"                                                                                                           
 ```
-#Version
-V3
+## Lancer l'application en ligne de commande avec le runtime
+```bash
+./runtimejdk17/bin/java -jar --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens javafx.controls/com.sun.javafx.scene.control.skin.resources=ALL-UNNAMED --add-exports=javafx.base/com.sun.javafx.event=ALL-UNNAMED --add-exports=javafx.controls/com.sun.javafx.scene.control.behavior=ALL-UNNAMED --add-exports=javafx.controls/com.sun.javafx.scene.control=ALL-UNNAMED ./LymytzSell/target/original-lymytzSell-1.0-SNAPSHOT.jar
+```
 #Version description
 Version avec modèle de sychronisation sur un serveur distinct
 #Librairies

@@ -685,7 +685,7 @@ public class UtilsProject {
         return sb.toString();
     }
 
-  /*  public static Long getValKey(EntityColumn[] row) {
+    public static Long getValKey(EntityColumn[] row) {
         if (row != null) {
             for (EntityColumn e : row) {
                 if (e.getColumnName().equals("id")) {
@@ -694,7 +694,7 @@ public class UtilsProject {
             }
         }
         return null;
-    }*/
+    }
 
     private static String getParam(EntityColumn c) {
         if (c.getTypeDatabase() != null) {

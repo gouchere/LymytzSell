@@ -259,6 +259,7 @@ public class Constantes {
     /**
      * CLES DES ENTREES DU FICHIER .properties*
      */
+    public static final String PROPERTIE_FILE_NAME = "application.properties";
     public static final String KEY_REMOTE_DB_NAME = "dbname_r";
     public static final String KEY_LOCAL_DB_NAME = "dbname";
     public static final String KEY_LOCAL_PORT = "port";

@@ -112,8 +112,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static com.lymytz.lymytzsell.service.utils.Constantes.TYPE_FV;
-import static com.lymytz.lymytzsell.service.utils.FonctionalConstants.ERREUR;
-import static com.lymytz.lymytzsell.service.utils.FonctionalConstants.GENERATION_FACTURE_NON_REUSSI;
+import static com.lymytz.lymytzsell.service.utils.MessagesConstants.ERREUR;
+import static com.lymytz.lymytzsell.service.utils.MessagesConstants.GENERATION_FACTURE_NON_REUSSI;
 
 /**
  * FXML Controller class

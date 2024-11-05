@@ -5,6 +5,7 @@
  */
 package com.lymytz.lymytzsell.service.application;
 
+import com.lymytz.lymytzsell.business.helpers.Helpers;
 import com.lymytz.lymytzsell.dao.entity.YvsAgences;
 import com.lymytz.lymytzsell.dao.entity.YvsBaseModeReglement;
 import com.lymytz.lymytzsell.dao.entity.YvsBaseModelReglement;
@@ -49,7 +50,8 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static com.lymytz.lymytzsell.service.utils.FonctionalConstants.KEY_VALUE;
+import static com.lymytz.lymytzsell.service.utils.Constantes.PROPERTIE_FILE_NAME;
+import static com.lymytz.lymytzsell.service.utils.MessagesConstants.KEY_VALUE;
 
 /**
  * FXML Controller class
@@ -246,7 +248,7 @@ public class PreferenceController implements Initializable, Controller {
     }
 
     public boolean copyToSave() {
-        File file = new File("conf/application.properties");
+        File file = Helpers.getPropertiesFile(PROPERTIE_FILE_NAME);
         if (file.exists()) {
             UtilsProject.properties.setProperty(Constantes.KEY_APPS_PORT, getVal(TXT_PORT_APP.getText()));
             UtilsProject.properties.setProperty(Constantes.KEY_ENVIRONNEMENT, getVal(CB_ENVIRONNEMENT.getValue()));
@@ -322,7 +324,7 @@ public class PreferenceController implements Initializable, Controller {
         //charge les mdr disponible
         List<YvsBaseModelReglement> models = dao.loadByNamedQuery("YvsBaseModelReglement.findAll", new String[]{}, new Object[]{});
         CB_MDR.setItems(FXCollections.observableArrayList(models));
-        CB_MDR.setConverter(new StringConverter<YvsBaseModelReglement>() {
+        CB_MDR.setConverter(new StringConverter<>() {
 
             @Override
             public String toString(YvsBaseModelReglement object) {
@@ -394,9 +396,9 @@ public class PreferenceController implements Initializable, Controller {
         });
 //charge les societe disponible
         List<YvsSocietes> societes = dao.loadByNamedQuery("YvsSocietes.findAll", new String[]{}, new Object[]{});
+        societes.add(0,null);
         CB_SOCIETE_L.setItems(FXCollections.observableArrayList(societes));
         CB_SOCIETE_L.setConverter(new StringConverter<>() {
-
             @Override
             public String toString(YvsSocietes object) {
                 if (object != null) {
