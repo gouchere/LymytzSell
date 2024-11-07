@@ -56,9 +56,9 @@ public class FormVirementController implements Initializable, Controller {
     Stage fenDialogue;
     private Long idRemoteHeader;
     private Long idHeader;
-    private YvsBaseCaisse caisse;
     private ObservableList items = FXCollections.observableArrayList();
-    Double soldeCaisse, avanceCmde, totalFacture;
+    Double avanceCmde;
+    Double totalFacture;
 
     @FXML
     private ListView<String> LIST_VER;
@@ -178,7 +178,7 @@ public class FormVirementController implements Initializable, Controller {
                             PROGRESS_CLOSE.setVisible(false);
                         } catch (Exception ex) {
                             LogFiles.addLogInFile("", Severity.ERROR, ConsUtil.SOURCE_LOG_FILE_EXCEPTION, ex);
-                            LymytzService.openExceptionDialog(ex.getMessage(), "Le virement n'a pas pus se réaliser ", "Erreur lors de la clôture ! Le service de virement ne s'est pas exécuté correctemment", Alert.AlertType.ERROR, ex);
+                            LymytzService.openExceptionDialog("Erreur lors de la clôture ! Le service de virement ne s'est pas exécuté correctemment", Alert.AlertType.ERROR, ex);
                             PROGRESS_CLOSE.setVisible(false);
                         }
                     } else {
@@ -193,44 +193,44 @@ public class FormVirementController implements Initializable, Controller {
                 }
             }
             if (header != null && !header.getCloturer()) {
-                    if (Boolean.FALSE.equals(header.getCloturer())) {
-                        // Vérifier s'il y a  des factures non réglés et/ou non encore entièrement livré et demander une confirmation
-                        Long nb = (Long) rq.findOneObjectByNQ("YvsComDocVentes.countFactureNonLivreOrNonPayeByHeader", new String[]{"statut", "statutLivre", "statutRegle", "header", "typeDoc"},
-                                new Object[]{Constantes.ETAT_VALIDE, Constantes.ETAT_LIVRE, Constantes.ETAT_REGLE, header, Constantes.TYPE_FV});
-                        nb = (nb != null) ? nb : 0;
-                        if (nb <= 0) {
+                if (Boolean.FALSE.equals(header.getCloturer())) {
+                    // Vérifier s'il y a  des factures non réglés et/ou non encore entièrement livré et demander une confirmation
+                    Long nb = (Long) rq.findOneObjectByNQ("YvsComDocVentes.countFactureNonLivreOrNonPayeByHeader", new String[]{"statut", "statutLivre", "statutRegle", "header", "typeDoc"},
+                            new Object[]{Constantes.ETAT_VALIDE, Constantes.ETAT_LIVRE, Constantes.ETAT_REGLE, header, Constantes.TYPE_FV});
+                    nb = (nb != null) ? nb : 0;
+                    if (nb <= 0) {
 
-                            header.setCloturer(Boolean.TRUE);
-                            header.setCloturerBy(UtilsProject.currentUser.getUsers());
-                            header.setDateCloturer(new Date());
-                            header.setDateValider(new Date());
-                            header.setValiderBy(UtilsProject.currentUser.getUsers());
-                            header.setDateUpdate(new Date());
-                            rq.update(header);
-                            //Initialiser la vue
-                            page.resetAllView(header);
-                            // Désactiver le planning
-                            if (!header.getCreneau().getPermanent()) {
-                                header.getCreneau().setActif(false);
-                                header.getCreneau().setDateUpdate(new Date());
-                                rq.update(header.getCreneau());
-                            }
-
-                            // Initialiser la fiche
-                            fenDialogue.close();
-                        } else {
-                            LymytzService.openAlertDialog(nb + " Facture(s) non encore livrée(s) et/ou validée(s) pour ce journal de vente", "Impossible de clôturer", "Impossible de clôturer", Alert.AlertType.ERROR);
+                        header.setCloturer(Boolean.TRUE);
+                        header.setCloturerBy(UtilsProject.currentUser.getUsers());
+                        header.setDateCloturer(new Date());
+                        header.setDateValider(new Date());
+                        header.setValiderBy(UtilsProject.currentUser.getUsers());
+                        header.setDateUpdate(new Date());
+                        rq.update(header);
+                        //Initialiser la vue
+                        page.resetAllView(header);
+                        // Désactiver le planning
+                        if (!header.getCreneau().getPermanent()) {
+                            header.getCreneau().setActif(false);
+                            header.getCreneau().setDateUpdate(new Date());
+                            rq.update(header.getCreneau());
                         }
 
+                        // Initialiser la fiche
+                        fenDialogue.close();
                     } else {
-                        LymytzService.openAlertDialog("Ce journal est déjà clôturée", "Journal clôturé", "Erreur", Alert.AlertType.WARNING);
+                        LymytzService.openAlertDialog(nb + " Facture(s) non encore livrée(s) et/ou validée(s) pour ce journal de vente", "Impossible de clôturer", "Impossible de clôturer", Alert.AlertType.ERROR);
                     }
+
+                } else {
+                    LymytzService.openAlertDialog("Ce journal est déjà clôturée", "Journal clôturé", "Erreur", Alert.AlertType.WARNING);
+                }
 
             }
 
         } catch (NumberFormatException ex) {
             LogFiles.addLogInFile("", Severity.ERROR, ConsUtil.SOURCE_LOG_FILE_EXCEPTION, ex);
-            LymytzService.openExceptionDialog(ex.getMessage(), "Exception", "Erreur lors de la clôture !", Alert.AlertType.ERROR, ex);
+            LymytzService.openExceptionDialog("Erreur lors de la clôture !", Alert.AlertType.ERROR, ex);
         }
     }
 
@@ -245,7 +245,7 @@ public class FormVirementController implements Initializable, Controller {
                     String query = "SELECT y.numero_piece, y.montant FROM yvs_compta_caisse_piece_virement y LEFT JOIN yvs_compta_notif_versement_vente h ON h.piece=y.id "
                             + " WHERE (h.id=? OR y.date_piece=?::date) AND y.source=?";
                     List<Object[]> re = dao.loadBySQLQuery(query, new Options[]{new Options(idHead, 1),
-                        new Options(header.getDateEntete(), 2), new Options(UtilsProject.caisse.getId(), 3)});
+                            new Options(header.getDateEntete(), 2), new Options(UtilsProject.caisse.getId(), 3)});
                     Platform.runLater(() -> {
                         LIST_VER.getItems().clear();
                         Double soe = 0d;

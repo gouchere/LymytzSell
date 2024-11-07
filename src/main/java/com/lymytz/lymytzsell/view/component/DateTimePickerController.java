@@ -10,8 +10,8 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.net.URL;
 import java.time.DateTimeException;
@@ -21,7 +21,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
 
 public class DateTimePickerController implements Initializable {
-    private static final Logger logger = LoggerFactory.getLogger(DateTimePickerController.class);
+    private static final Logger logger = LogManager.getLogger(DateTimePickerController.class);
     @FXML
     private DatePicker FX_DATE;
     @FXML

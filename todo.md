@@ -14,7 +14,7 @@
 - [ ] Afficher des notifications pour les factures non livré
 - [x] Cacher le loader après le chargement des articles
 - [ ] Revoir le temps d'enregistrement d'un article dans le panier
-- [ ] Modifier le logger pour utiliser le RollingFile fourni par apache logging
+- [ ] Modifier le logger pour utiliser le RollingFile four    ni par apache logging
 - [ ] Virer du code l'utilisation des package com.sun, pour régler le pb d'introspection
 - [ ] Gérer la caisse de manière autonome sans dépendre de l'ERP, sauf pour la récupération des données de bases
 - [ ] Configurer les logs dans un fichier

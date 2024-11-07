@@ -6,16 +6,18 @@
 package com.lymytz.lymytzsell.service.utils;
 
 import com.lymytz.lymytzsell.business.helpers.Helpers;
-import com.lymytz.lymytzsell.service.application.ManagedApplication;
 import com.lymytz.lymytzsell.service.start.StartController;
-import com.lymytz.lymytzsell.service.utils.log.LogFiles;
 import com.lymytz.lymytzsell.view.LocalLoader;
 import com.lymytz.lymytzsell.view.main.HomeCaisseController;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -27,24 +29,29 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-import javax.print.attribute.standard.Severity;
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.nio.file.Files;
 import java.util.Date;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import static com.lymytz.lymytzsell.service.utils.Constantes.PROPERTIE_FILE_NAME;
 import static com.lymytz.lymytzsell.service.utils.MessagesConstants.FICHIER_PROPERTIE_MAL_CONFIGURE;
 import static com.lymytz.lymytzsell.service.utils.MessagesConstants.IMPOSSIBE_DE_DEMARRER_L_APPLICATION;
+import static com.lymytz.lymytzsell.service.utils.MessagesConstants.VOUS_DEVEZ_INITIALISER_LA_PROPRIETE;
 
 /**
  * @author LENOVO
@@ -52,7 +59,7 @@ import static com.lymytz.lymytzsell.service.utils.MessagesConstants.IMPOSSIBE_DE
 public class LymytzService {
 
     public static boolean stopThread = false;
-    private static final Logger LOGGER = Logger.getLogger(LymytzService.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(LymytzService.class);
 
     private LymytzService() {
     }
@@ -106,7 +113,7 @@ public class LymytzService {
         dlg.showAndWait();
     }
 
-    public static void openExceptionDialog(String message, String title, String headersg, Alert.AlertType type, Exception ex) {
+    public static void openExceptionDialog(String title, Alert.AlertType type, Exception ex) {
         Alert dlg = new Alert(type);
         dlg.setTitle(title);
         dlg.setHeaderText(null);
@@ -136,8 +143,6 @@ public class LymytzService {
             T controller;
             FXMLLoader load = new FXMLLoader(LocalLoader.class.getResource(page));
             layout = load.load();
-            Screen sc = Screen.getPrimary();
-            Rectangle2D bounds = sc.getVisualBounds();
             Scene scene = new Scene(layout, width, height);
             Stage stage = new Stage();
             stage.setScene(scene);
@@ -159,7 +164,7 @@ public class LymytzService {
                     m.invoke(controller);
                 } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException |
                          InvocationTargetException ex) {
-                    Logger.getLogger(LymytzService.class.getName()).log(Level.SEVERE, null, ex);
+                    LOGGER.error(ex);
                 }
                 stage.close();
             });
@@ -169,7 +174,7 @@ public class LymytzService {
             return load.getController();
 
         } catch (IOException ex) {
-            Logger.getLogger(ManagedApplication.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.error(ex);
         }
         return null;
     }
@@ -201,14 +206,14 @@ public class LymytzService {
                     m.invoke(customWindow.getController());
                 } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException |
                          InvocationTargetException ex) {
-                    Logger.getLogger(LymytzService.class.getName()).log(Level.SEVERE, null, ex);
+                    LOGGER.error(ex);
                 }
                 stage.close();
             });
             return customWindow;
 
         } catch (IOException ex) {
-            Logger.getLogger(LymytzService.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.error(ex);
         }
         return null;
     }
@@ -232,75 +237,72 @@ public class LymytzService {
             try {
                 file.createNewFile();
             } catch (IOException ex) {
-//                LOGGER.log(Level.SEVERE, null, ex);
-                LymytzService.openExceptionDialog("Ereur 1", "Erreur fichier ", "Erreur Fatal A!", Alert.AlertType.ERROR, ex);
+                LOGGER.error(ex);
+                LymytzService.openExceptionDialog("Erreur fichier ", Alert.AlertType.ERROR, ex);
             }
         }
         try {
             return new FileInputStream(file);
         } catch (FileNotFoundException ex) {
-//            LOGGER.log(Level.SEVERE, null, ex);
-            LymytzService.openExceptionDialog("Ereur", "Erreur file 2", "Erreur Fatal B!", Alert.AlertType.ERROR, ex);
+            LOGGER.error(ex);
+            LymytzService.openExceptionDialog("Erreur file 2", Alert.AlertType.ERROR, ex);
         }
         return null;
     }
 
-    public static FileInputStream getPropertiesFileInputStream() {
+    public static FileInputStream getPropertiesFileInputStream() throws IOException {
         File file = Helpers.getPropertiesFile(PROPERTIE_FILE_NAME);
-        if (!file.exists()) {
-            try {
-                //ajoute y des entrée
-                UtilsProject.properties.setProperty(Constantes.KEY_APPS_PORT, "1025");
-                UtilsProject.properties.setProperty(Constantes.KEY_CLIENT_DIVERS, "");
-                UtilsProject.properties.setProperty(Constantes.KEY_ENVIRONNEMENT, "PRODUCTION");
-                UtilsProject.properties.setProperty(Constantes.KEY_LOCAL_AGENCE, "");
-                UtilsProject.properties.setProperty(Constantes.KEY_LOCAL_DB_NAME, "lymytz_sell_extension");
-                UtilsProject.properties.setProperty(Constantes.KEY_LOCAL_HOST, "localhost");
-                UtilsProject.properties.setProperty(Constantes.KEY_LOCAL_PASSWORD, EncryptMessage.encrypt("yves1910/", Constantes.KEY_ENCRYPT));
-                UtilsProject.properties.setProperty(Constantes.KEY_LOCAL_PORT, "5432");
-                UtilsProject.properties.setProperty(Constantes.KEY_LOCAL_SOCIETE, "");
-                UtilsProject.properties.setProperty(Constantes.KEY_LOCAL_USERS, EncryptMessage.encrypt("postgres", Constantes.KEY_ENCRYPT));
-                UtilsProject.properties.setProperty(Constantes.KEY_MODE, "BOTH");
-                UtilsProject.properties.setProperty(Constantes.KEY_MODEL_REGLEMENT, "");
-                UtilsProject.properties.setProperty(Constantes.KEY_MODE_REGLEMENT, "");
-                UtilsProject.properties.setProperty(Constantes.KEY_ORIENTATION_PRINT, "");
-                UtilsProject.properties.setProperty(Constantes.KEY_PAPER_HEIGHT, "0");
-                UtilsProject.properties.setProperty(Constantes.KEY_PAPER_WIDTH, "0");
-                UtilsProject.properties.setProperty(Constantes.KEY_PAPER_M_BOTOM, "0");
-                UtilsProject.properties.setProperty(Constantes.KEY_PAPER_M_LEFT, "0");
-                UtilsProject.properties.setProperty(Constantes.KEY_PAPER_M_RIGHT, "0");
-                UtilsProject.properties.setProperty(Constantes.KEY_PAPER_M_TOP, "0");
-                UtilsProject.properties.setProperty(Constantes.KEY_PATH, "");
-                UtilsProject.properties.setProperty(Constantes.KEY_REMOTE_DB_NAME, "lymytz_demo_0");
-                UtilsProject.properties.setProperty(Constantes.KEY_REMOTE_HOST, "");
-                UtilsProject.properties.setProperty(Constantes.KEY_REMOTE_PASSWORD, EncryptMessage.encrypt("yves1910/", Constantes.KEY_ENCRYPT));
-                UtilsProject.properties.setProperty(Constantes.KEY_REMOTE_PORT, "5432");
-                UtilsProject.properties.setProperty(Constantes.KEY_REMOTE_SOCIETE, "");
-                UtilsProject.properties.setProperty(Constantes.KEY_REMOTE_USERS, EncryptMessage.encrypt("postgres", Constantes.KEY_ENCRYPT));
-                UtilsProject.properties.setProperty(Constantes.KEY_SECTEUR, "");
-                UtilsProject.properties.setProperty(Constantes.KEY_TYPE_PRINT, "TICKET");
-                UtilsProject.properties.setProperty(Constantes.KEY_USE_CODE_BARRE, "TRUE");
-                UtilsProject.properties.setProperty(Constantes.KEY_USE_PRINTER, "TRUE");
-                UtilsProject.properties.setProperty(Constantes.KEY_VILLE, "");
-                UtilsProject.properties.setProperty(Constantes.KEY_WEB_HOST, "");
-                UtilsProject.properties.setProperty(Constantes.KEY_WEB_PORT, "8080");
-                UtilsProject.properties.setProperty(Constantes.KEY_DATE_INIT, Constantes.dfD.format(new Date()));
-                FileOutputStream oStream = new FileOutputStream(file);
+        assert file != null;
+        var lines = Files.readAllLines(file.toPath());
+        if (!file.exists() || lines.isEmpty()) {
+            //ajoute y des entrée
+            UtilsProject.properties.setProperty(Constantes.KEY_APPS_PORT, "1025");
+            UtilsProject.properties.setProperty(Constantes.KEY_CLIENT_DIVERS, "");
+            UtilsProject.properties.setProperty(Constantes.KEY_ENVIRONNEMENT, "PRODUCTION");
+            UtilsProject.properties.setProperty(Constantes.KEY_LOCAL_AGENCE, "");
+            UtilsProject.properties.setProperty(Constantes.KEY_LOCAL_DB_NAME, "lymytz_sell_extension");
+            UtilsProject.properties.setProperty(Constantes.KEY_LOCAL_HOST, "localhost");
+            UtilsProject.properties.setProperty(Constantes.KEY_LOCAL_PASSWORD, EncryptMessage.encrypt("yves1910/", Constantes.KEY_ENCRYPT));
+            UtilsProject.properties.setProperty(Constantes.KEY_LOCAL_PORT, "5432");
+            UtilsProject.properties.setProperty(Constantes.KEY_LOCAL_SOCIETE, "");
+            UtilsProject.properties.setProperty(Constantes.KEY_LOCAL_USERS, EncryptMessage.encrypt("postgres", Constantes.KEY_ENCRYPT));
+            UtilsProject.properties.setProperty(Constantes.KEY_MODE, "BOTH");
+            UtilsProject.properties.setProperty(Constantes.KEY_MODEL_REGLEMENT, "");
+            UtilsProject.properties.setProperty(Constantes.KEY_MODE_REGLEMENT, "");
+            UtilsProject.properties.setProperty(Constantes.KEY_ORIENTATION_PRINT, "");
+            UtilsProject.properties.setProperty(Constantes.KEY_PAPER_HEIGHT, "0");
+            UtilsProject.properties.setProperty(Constantes.KEY_PAPER_WIDTH, "0");
+            UtilsProject.properties.setProperty(Constantes.KEY_PAPER_M_BOTOM, "0");
+            UtilsProject.properties.setProperty(Constantes.KEY_PAPER_M_LEFT, "0");
+            UtilsProject.properties.setProperty(Constantes.KEY_PAPER_M_RIGHT, "0");
+            UtilsProject.properties.setProperty(Constantes.KEY_PAPER_M_TOP, "0");
+            UtilsProject.properties.setProperty(Constantes.KEY_PATH, "");
+            UtilsProject.properties.setProperty(Constantes.KEY_REMOTE_DB_NAME, "lymytz_demo_0");
+            UtilsProject.properties.setProperty(Constantes.KEY_REMOTE_HOST, "");
+            UtilsProject.properties.setProperty(Constantes.KEY_REMOTE_PASSWORD, EncryptMessage.encrypt("yves1910/", Constantes.KEY_ENCRYPT));
+            UtilsProject.properties.setProperty(Constantes.KEY_REMOTE_PORT, "5432");
+            UtilsProject.properties.setProperty(Constantes.KEY_REMOTE_SOCIETE, "");
+            UtilsProject.properties.setProperty(Constantes.KEY_REMOTE_USERS, EncryptMessage.encrypt("postgres", Constantes.KEY_ENCRYPT));
+            UtilsProject.properties.setProperty(Constantes.KEY_SECTEUR, "");
+            UtilsProject.properties.setProperty(Constantes.KEY_TYPE_PRINT, "TICKET");
+            UtilsProject.properties.setProperty(Constantes.KEY_USE_CODE_BARRE, "TRUE");
+            UtilsProject.properties.setProperty(Constantes.KEY_USE_PRINTER, "TRUE");
+            UtilsProject.properties.setProperty(Constantes.KEY_VILLE, "");
+            UtilsProject.properties.setProperty(Constantes.KEY_WEB_HOST, "");
+            UtilsProject.properties.setProperty(Constantes.KEY_WEB_PORT, "8080");
+            UtilsProject.properties.setProperty(Constantes.KEY_DATE_INIT, Constantes.dfD.format(new Date()));
+            try (FileOutputStream oStream = new FileOutputStream(file)) {
                 UtilsProject.properties.store(oStream, "test");
                 return new FileInputStream(file);
             } catch (IOException ex) {
-                LogFiles.addLogInFile("", Severity.ERROR, ConsUtil.SOURCE_LOG_FILE_EXCEPTION, ex);
-                LOGGER.log(Level.SEVERE, "Le fichier de configuration n'a pas pu être initialisé");
-                LOGGER.log(Level.SEVERE, null, ex);
+                LOGGER.error("Le fichier de configuration n'a pas pu être initialisé", ex);
             }
         } else {
             try {
-                LOGGER.log(Level.INFO, "Chargement des propriétés de l'application");
+                LOGGER.info("Chargement des propriétés de l'application");
                 return new FileInputStream(file);
             } catch (FileNotFoundException ex) {
-                LogFiles.addLogInFile("", Severity.ERROR, ConsUtil.SOURCE_LOG_FILE_EXCEPTION, ex);
-                LOGGER.log(Level.SEVERE, "Le fichier de configuration n'a pas pu être récupéré");
-                LOGGER.log(Level.SEVERE, null, ex);
+                LOGGER.error("Le fichier de configuration n'a pas pu être récupéré", ex);
             }
         }
         return null;
@@ -317,13 +319,13 @@ public class LymytzService {
             try {
                 file.createNewFile();
             } catch (IOException ex) {
-                LOGGER.log(Level.SEVERE, null, ex);
+                LOGGER.error(ex);
             }
         }
         try {
             return new FileOutputStream(file);
         } catch (FileNotFoundException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.error(ex);
         }
         return null;
     }
@@ -340,7 +342,7 @@ public class LymytzService {
             }
             return sb.toString();
         } catch (SocketException | UnknownHostException e) {
-            e.printStackTrace();
+            LOGGER.error(e);
         }
         return null;
     }
@@ -351,7 +353,7 @@ public class LymytzService {
             ip = InetAddress.getLocalHost();
             return ip.getHostName();
         } catch (UnknownHostException e) {
-            e.printStackTrace();
+            LOGGER.error(e);
         }
         return null;
     }
@@ -366,24 +368,24 @@ public class LymytzService {
         if (UtilsProject.properties != null) {
             val = (String) UtilsProject.properties.get(Constantes.KEY_APPS_PORT);
             if (!Constantes.asString(val)) {
-                openAlertDialog(IMPOSSIBE_DE_DEMARRER_L_APPLICATION, FICHIER_PROPERTIE_MAL_CONFIGURE, "Vous devez initialiser la propriété " + Constantes.KEY_APPS_PORT, Alert.AlertType.ERROR);
+                openAlertDialog(IMPOSSIBE_DE_DEMARRER_L_APPLICATION, FICHIER_PROPERTIE_MAL_CONFIGURE, VOUS_DEVEZ_INITIALISER_LA_PROPRIETE + Constantes.KEY_APPS_PORT, Alert.AlertType.ERROR);
                 return false;
             }
             val = (String) UtilsProject.properties.get(Constantes.KEY_ENVIRONNEMENT);
             if (!Constantes.asString(val)) {
-                openAlertDialog(IMPOSSIBE_DE_DEMARRER_L_APPLICATION, FICHIER_PROPERTIE_MAL_CONFIGURE, "Vous devez initialiser la propriété " + Constantes.KEY_ENVIRONNEMENT, Alert.AlertType.ERROR);
+                openAlertDialog(IMPOSSIBE_DE_DEMARRER_L_APPLICATION, FICHIER_PROPERTIE_MAL_CONFIGURE, VOUS_DEVEZ_INITIALISER_LA_PROPRIETE + Constantes.KEY_ENVIRONNEMENT, Alert.AlertType.ERROR);
                 return false;
             }
             val = (String) UtilsProject.properties.get(Constantes.KEY_LOCAL_AGENCE);
             if (!Constantes.asString(val)) {
                 openAlertDialog(IMPOSSIBE_DE_DEMARRER_L_APPLICATION, FICHIER_PROPERTIE_MAL_CONFIGURE,
-                        "Vous devez initialiser la propriété " + Constantes.KEY_LOCAL_AGENCE, Alert.AlertType.ERROR);
+                        VOUS_DEVEZ_INITIALISER_LA_PROPRIETE + Constantes.KEY_LOCAL_AGENCE, Alert.AlertType.ERROR);
                 return false;
             }
             val = (String) UtilsProject.properties.get(Constantes.KEY_LOCAL_SOCIETE);
             if (!Constantes.asString(val)) {
                 openAlertDialog(IMPOSSIBE_DE_DEMARRER_L_APPLICATION, FICHIER_PROPERTIE_MAL_CONFIGURE,
-                        "Vous devez initialiser la propriété " + Constantes.KEY_LOCAL_SOCIETE, Alert.AlertType.ERROR);
+                        VOUS_DEVEZ_INITIALISER_LA_PROPRIETE + Constantes.KEY_LOCAL_SOCIETE, Alert.AlertType.ERROR);
                 return false;
             }
         } else {
@@ -415,7 +417,7 @@ public class LymytzService {
             }
 
         } catch (IOException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.error(ex);
         }
     }
 }
