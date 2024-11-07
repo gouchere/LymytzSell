@@ -294,7 +294,7 @@ public class PreferenceController implements Initializable, Controller {
                 return true;
             } catch (IOException ex) {
                 Logger.getLogger(PreferenceController.class.getName()).log(Level.SEVERE, null, ex);
-                LymytzService.openExceptionDialog("Enregistrement non réussi !", "", "", Alert.AlertType.ERROR, ex);
+                LymytzService.openExceptionDialog("", Alert.AlertType.ERROR, ex);
             }
         }
         return false;

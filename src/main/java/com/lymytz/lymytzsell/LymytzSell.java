@@ -22,8 +22,7 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import lombok.Getter;
 import lombok.Setter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
 
 import javax.imageio.ImageIO;
 import javax.print.attribute.standard.Severity;
@@ -34,7 +33,11 @@ import java.net.ServerSocket;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.Objects;
+
+import static java.time.format.DateTimeFormatter.ISO_DATE_TIME;
+import static org.apache.logging.log4j.LogManager.getLogger;
 
 /**
  * @author LENOVO
@@ -48,7 +51,7 @@ public class LymytzSell extends Application {
     @Getter
     private boolean connecte = false;
     Exception exception;
-    private static final Logger logger = LoggerFactory.getLogger(LymytzSell.class);
+    private static final Logger LOGGER = getLogger(LymytzSell.class.getName());
 
 
     public LymytzSell() {
@@ -57,11 +60,14 @@ public class LymytzSell extends Application {
 
     @Override
     public void init() {
-        logger.info("Ouverture de l'application à {}", DateTimeFormatter.ISO_DATE_TIME.format(LocalDateTime.now()));
+        if (LOGGER.isInfoEnabled()) {
+            LOGGER.info("Ouverture de l'application à {}", ISO_DATE_TIME.format(LocalDateTime.now()));
+        }
         initApps(true);
+        Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> getLogger("UncaughtExceptionLogger").error("Uncaught exception in thread {}", thread.getName(), throwable));
         //créer un fichier de log
         LogFiles.createLogfile();
-        LogFiles.addLogInFile("Ouverture de l'application...", Severity.REPORT);
+
     }
 
     @Override
@@ -80,8 +86,8 @@ public class LymytzSell extends Application {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        launch(LymytzSell.class, "--preloader", LaunchApps.class.getName(), args.toString());
-        logger.info("Démarrage de l'application de caisse...");
+        launch(LymytzSell.class, "--preloader", LaunchApps.class.getName(), Arrays.toString(args));
+        LOGGER.info("Démarrage de l'application de caisse...");
         //Lance ensuite la méthode init() et ensuite la méthode start
         //Créer et lancer le thred d'écoute du fichier de log       
 
@@ -106,7 +112,7 @@ public class LymytzSell extends Application {
             setUserAgentStylesheet(STYLESHEET_CASPIAN);
             LymytzService.openApps(primaryStage);
         } catch (Exception ex) {
-            logger.error(ex.getMessage());
+            LOGGER.error(ex.getMessage());
             LogFiles.createLogfile();
         }
     }
@@ -149,7 +155,7 @@ public class LymytzSell extends Application {
             trayIcon.setPopupMenu(popup);
             tray.add(trayIcon);
         } catch (java.awt.AWTException | IOException e) {
-            logger.error("Unable to init system tray", e);
+            LOGGER.error("Unable to init system tray", e);
         }
     }
 
@@ -161,7 +167,7 @@ public class LymytzSell extends Application {
             UtilsProject.server = new ServerSocket(port);
         } catch (IOException e) {
             LymytzService.openAlertDialog("Arrêt du demarrage", "Erreur !", "Une instance de l'application est déjà en cours: Vérifié dans votre zone de notification", Alert.AlertType.ERROR);
-            logger.error("Unable to init system tray", e);
+            LOGGER.error("Unable to init system tray", e);
             System.exit(0);
         }
         new Thread(LymytzSell.this::initialiserLaSynchronisation).start();

@@ -1,21 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="WARN">
+<Configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               xmlns="https://logging.apache.org/xml/ns"
+               xsi:schemaLocation="
+                       https://logging.apache.org/xml/ns
+                       https://logging.apache.org/xml/ns/log4j-config-2.xsd">
+
     <Appenders>
-        <!-- Console Appender -->
-        <Console name="Console" target="SYSTEM_OUT">
-            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} [%t] %-5level %logger{36} - %msg%n"/>
+        <Console name="CONSOLE">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} [%t] %-5p %T %c - %m %n%throwable"/>
         </Console>
+        <RollingFile name="FILE"
+                     fileName="${sys:user.home}/lymytz-sell/logs/app.log"
+                     filePattern="${sys:user.home}/lymytz-sell/logs/app.%d{yyyy-MM-dd}_%i.log.gz">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} [%t] %-5p %T %c - %m %n%throwable"/>
+            <DefaultRolloverStrategy max="15" /> <!--o ne conserve pas plus de 15 fichiers-->
+            <Policies>
+                <SizeBasedTriggeringPolicy size="1M"/>
+            </Policies>
+        </RollingFile>
     </Appenders>
 
     <Loggers>
-        <!-- Root logger -->
-        <Root level="info">
-            <AppenderRef ref="Console"/>
-        </Root>
-
-        <!-- Logger for your specific class or package -->
-        <Logger name="com.example" level="debug" additivity="false">
-            <AppenderRef ref="Console"/>
+        <Logger name="com.lymytz.lymytzsell" level="INFO">
+            <Root level="WARN">
+                <AppenderRef ref="CONSOLE"/>
+                <AppenderRef ref="FILE"/>
+            </Root>
         </Logger>
+        <Root level="error">
+            <AppenderRef ref="CONSOLE"/>
+            <AppenderRef ref="FILE"/>
+        </Root>
     </Loggers>
+
 </Configuration>

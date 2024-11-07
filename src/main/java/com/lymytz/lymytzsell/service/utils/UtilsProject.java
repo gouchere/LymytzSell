@@ -35,6 +35,8 @@ import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.print.attribute.standard.Severity;
 import java.io.FileInputStream;
@@ -49,16 +51,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-//import static com.lymytz.lymytzsell.service.utils.Uti
 
 /**
  * @author LENOVO Regroupe les fonctionnalité statiques partagé de
  * l'application. Les actions sollicités par les autres classes
  */
 public class UtilsProject {
-    private static final Logger LOGGER = Logger.getLogger(UtilsProject.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(UtilsProject.class);
 
     private UtilsProject() {
         // no implementation
@@ -117,7 +116,7 @@ public class UtilsProject {
     }
 
     public static boolean verifyDateVente(Date date) {
-        LocalQueryFactories dao = new LocalQueryFactories();
+        LocalQueryFactories dao = new LocalQueryFactories<>();
         int ecart = -1;
         int nbFiches = -1;
         if (date == null || date.after(new Date())) {
@@ -241,7 +240,7 @@ public class UtilsProject {
     public static void loadFilePropertie() {
         try {
             if (UtilsProject.properties == null) {
-                LOGGER.log(Level.CONFIG, "initialisation des propriétés de l'application");
+                LOGGER.info("initialisation des propriétés de l'application");
                 UtilsProject.properties = new Properties();
             }
             try (FileInputStream fis = LymytzService.getPropertiesFileInputStream()) {
@@ -281,9 +280,7 @@ public class UtilsProject {
                 paramConnection.setUsersRemote(getVal(Constantes.KEY_REMOTE_USERS));
             }
         } catch (IOException ex) {
-            Logger.getLogger(UtilsProject.class.getName()).log(Level.SEVERE, null, ex);
-            LogFiles.addLogInFile("Fichier d'Environnement non trouvé !", Severity.ERROR, ConsUtil.SOURCE_LOG_FILE_EXCEPTION, ex);
-
+            LOGGER.error("Fichier d'Environnement non trouvé !", ex);
         }
     }
 
@@ -296,7 +293,7 @@ public class UtilsProject {
                     RcurrentSociete = new YvsSocietes(Long.valueOf(properties.getProperty(Constantes.KEY_REMOTE_SOCIETE)));
                 }
                 REPLICATION = getReplication();
-                LOGGER.info("Le mode réplication " + (REPLICATION ? "est activé" : "n'est pas activé"));
+                LOGGER.info("Le mode réplication {}", (REPLICATION ? "est activé" : "n'est pas activé"));
             }
             if (REPLICATION) {
                 ID_SERVEUR = RQueryFactories.getIdServer();
@@ -306,8 +303,7 @@ public class UtilsProject {
                 }
             }
         } catch (NumberFormatException ex) {
-            Logger.getLogger(UtilsProject.class.getName()).log(Level.SEVERE, null, ex);
-            LogFiles.addLogInFile("Fichier d'Environnement non trouvé !", Severity.ERROR, ConsUtil.SOURCE_LOG_FILE_EXCEPTION, ex);
+            LOGGER.error("Fichier d'Environnement non trouvé !", ex);
         }
     }
 
@@ -394,27 +390,18 @@ public class UtilsProject {
         String re = null;
         try {
             if (type != null) {
-                switch (type.toLowerCase()) {
-                    case "bigint":
-                    case "integer":
-                    case "bigserial":
-                        re = ((rs.getObject(colIndex) != null) ? String.valueOf(rs.getLong(colIndex)) : "");
-                        break;
-                    case "double precision":
-                        re = ((rs.getObject(colIndex) != null) ? String.valueOf(rs.getDouble(colIndex)) : "");
-                        break;
-                    case "character varying":
-                    case "timestamp":
-                        re = ((rs.getObject(colIndex) != null) ? String.valueOf(rs.getString(colIndex)) : "");
-                        break;
-                    default:
-                        re = ((rs.getObject(colIndex) != null) ? String.valueOf(rs.getObject(colIndex)) : "");
-                        break;
-
-                }
+                re = switch (type.toLowerCase()) {
+                    case "bigint", "integer", "bigserial" ->
+                            ((rs.getObject(colIndex) != null) ? String.valueOf(rs.getLong(colIndex)) : "");
+                    case "double precision" ->
+                            ((rs.getObject(colIndex) != null) ? String.valueOf(rs.getDouble(colIndex)) : "");
+                    case "character varying", "timestamp" ->
+                            ((rs.getObject(colIndex) != null) ? String.valueOf(rs.getString(colIndex)) : "");
+                    default -> ((rs.getObject(colIndex) != null) ? String.valueOf(rs.getObject(colIndex)) : "");
+                };
             }
         } catch (SQLException ex) {
-            Logger.getLogger(UtilsProject.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.error(ex);
         }
         return re;
     }
@@ -775,7 +762,7 @@ public class UtilsProject {
                 }
             }
         } catch (SQLException ex) {
-            Logger.getLogger(UtilsProject.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.error(ex);
         }
         return re;
     }
@@ -797,7 +784,7 @@ public class UtilsProject {
                 }
                 indice++;
             } catch (SQLException ex) {
-                Logger.getLogger(UtilsProject.class.getName()).log(Level.SEVERE, null, ex);
+                LOGGER.error(ex);
             }
         }
         return st;
