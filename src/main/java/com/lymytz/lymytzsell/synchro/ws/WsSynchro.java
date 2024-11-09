@@ -223,7 +223,6 @@ public class WsSynchro<T extends Serializable> {
             invocation.header("depot_", depot);
             invocation.header("article_", article);
             invocation.header("unite_", cond);
-            //invocation.header("date", date);
             Response rep = invocation.get();
             return rep.readEntity(Double.class);
         } catch (Exception ex) {

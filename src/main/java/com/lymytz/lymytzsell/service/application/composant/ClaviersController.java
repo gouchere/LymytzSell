@@ -149,6 +149,7 @@ public class ClaviersController extends ManagedApplication implements Initializa
 
     @FXML
     private void printOnly(ActionEvent event) {
+        // view more
     }
 
     @FXML
@@ -247,7 +248,6 @@ public class ClaviersController extends ManagedApplication implements Initializa
                         lineContent = selectOnglet.evaluePrix(lineContent);
                         //exécute la méthode de modif de la vue
                         selectOnglet.addLineContent(lineContent, true);
-
                     }
                     fenetre.close();
                     break;
@@ -290,6 +290,7 @@ public class ClaviersController extends ManagedApplication implements Initializa
 
     @Override
     public void freeMemoryController() {
+        //comming soon
     }
 
 }

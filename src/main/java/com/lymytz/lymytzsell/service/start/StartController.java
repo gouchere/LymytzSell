@@ -37,7 +37,6 @@ import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
@@ -112,9 +111,7 @@ public class StartController implements Initializable, Controller {
     }
 
     private void openApplication() {
-        if (controlePassword(controleConnection(TXT_LOGIN.getText()), TXT_PWD.getText())) {
-            //controle la conformité des informations du fichier .properties
-            if (LymytzService.controleFileProperties()) {
+        if (controlePassword(controleConnection(TXT_LOGIN.getText()), TXT_PWD.getText()) && (LymytzService.controleFileProperties())) {
                 if (controleParamPlannification()) {
                     // Sauvegarde la relation UserAgence                
                     loadInitData();
@@ -124,7 +121,7 @@ public class StartController implements Initializable, Controller {
                     var etats = List.of(Constantes.ETAT_CLOTURE,Constantes.ETAT_ATTENTE,Constantes.ETAT_SUSPENDU);
                     Date ier = Constantes.givePrevOrNextDate(new Date(), -2);
                     List<YvsComEnteteDocVente> l = dao.loadByNamedQuery("YvsComEnteteDocVente.findEncourByUsers_", new String[]{"users", "etats", "date"}, new Object[]{UtilsProject.currentUser.getUsers(), etats, ier});
-                    if (l != null ? l.isEmpty() : true) {
+                    if (l == null || l.isEmpty()) {
                         UtilsProject.currentsHeaderDoc = new ArrayList<>();
                     } else {
                         UtilsProject.currentsHeaderDoc = l;
@@ -135,7 +132,7 @@ public class StartController implements Initializable, Controller {
                 } else {
                     LymytzService.openAlertDialog("Impossible de vous connecter !", "Connexion", "Aucune informations de plannification n'a été trouvé !", Alert.AlertType.ERROR);
                 }
-            }
+
         }
 
     }
@@ -147,8 +144,6 @@ public class StartController implements Initializable, Controller {
             SCREENHEIGHT = gd.getDisplayMode().getHeight();
             FXMLLoader load = new FXMLLoader(LymytzService.class.getResource("/pages/main/home_caisse.fxml"));
             BorderPane root = load.load();
-            Screen sc = Screen.getPrimary();
-            //Rectangle2D bounds = sc.getVisualBounds();
             Scene scene = new Scene(root, SCREENWIDTH, SCREENHEIGHT - 80);
             Stage stage = UtilsProject.primaryStage;
             stage.setScene(scene);
@@ -174,7 +169,7 @@ public class StartController implements Initializable, Controller {
             KeyCombination controlQuit = new KeyCodeCombination(KeyCode.Q, KeyCodeCombination.CONTROL_DOWN);
             scene.setOnKeyPressed((KeyEvent event) -> {
                 if (control.match(event)) {
-                    mainController.createFactureDivers();
+                    mainController.initFactureVenteClientDivers();
                 } else if (controlCmde.match(event)) {
                     mainController.BTN_NEW_CMDE.fire();
                 } else if (controlPrint.match(event)) {
@@ -185,8 +180,7 @@ public class StartController implements Initializable, Controller {
                     mainController.openAndLoadFormCompte();
                 } else {
                     switch (event.getCode()) {
-                        case ALT:
-                        case ALT_GRAPH:
+                        case ALT,ALT_GRAPH:
                             mainController.TEXT_FIND.selectAll();
                             mainController.TEXT_FIND.requestFocus();
                             mainController.TEXT_FIND.setText("");

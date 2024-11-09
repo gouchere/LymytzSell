@@ -51,6 +51,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * @author LENOVO Regroupe les fonctionnalité statiques partagé de
@@ -62,7 +63,7 @@ public class UtilsProject {
     private UtilsProject() {
         // no implementation
     }
-
+    public static final AtomicLong localId = new AtomicLong(-9999);
     public static ServerSocket server;
     public static HomeCaisseController currentPage;
     public static ParamConnection paramConnection;

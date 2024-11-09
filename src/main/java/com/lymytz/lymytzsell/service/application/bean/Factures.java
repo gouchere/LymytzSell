@@ -40,7 +40,7 @@ public class Factures {
     private String statutReglement;
 
     public Factures() {
-        numLine = new Integer(0);
+        numLine = 0;
         id = new SimpleLongProperty();
         numDoc = new SimpleStringProperty();
         numPiece = new SimpleStringProperty();

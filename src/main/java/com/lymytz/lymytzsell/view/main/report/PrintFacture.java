@@ -37,11 +37,11 @@ public class PrintFacture extends JFrame {
         String chemin = "src/lymytz/view/reports/icones/";
         String cheminr = "src/lymytz/view/reports/";
         File file = new File("src/lymytz/view/reports/facture_vente.jasper");
-        JasperPrint j = new JasperPrint();
+        JasperPrint jasperPrint;
         Map<String, Object> params = new HashMap<>();
         params.put("ID", doc.getId().intValue());
-        params.put("IMG_PAYE", chemin + "/" + ((doc.getStatutRegle().equals(Constantes.ETAT_REGLE) ? "solde.png" : "empty.png")));
-        params.put("IMG_LIVRE", chemin + "/" + ((doc.getStatutLivre().equals(Constantes.ETAT_LIVRE) ? "livre.png" : "empty.png")));
+        params.put("IMG_PAYE", chemin + "/" + (doc.getStatutRegle().equals(Constantes.ETAT_REGLE) ? "solde.png" : "empty.png"));
+        params.put("IMG_LIVRE", chemin + "/" + (doc.getStatutLivre().equals(Constantes.ETAT_LIVRE) ? "livre.png" : "empty.png"));
         params.put("MONTANT", "");
         params.put("AUTEUR", UtilsProject.currentUser.getUsers().getNomUsers());
         params.put("TAXE", doc.getMontantTaxe());
@@ -49,8 +49,8 @@ public class PrintFacture extends JFrame {
         params.put("LOGO", "");
         try {
             try {
-                j = JasperFillManager.fillReport(new FileInputStream(file), params, LocalSqlDao.getInstance().getConnection());
-                JRViewer viewer = new JRViewer(j);
+                jasperPrint = JasperFillManager.fillReport(new FileInputStream(file), params, LocalSqlDao.getInstance().getConnection());
+                JRViewer viewer = new JRViewer(jasperPrint);
                 viewer.setOpaque(true); 
                 viewer.setVisible(true);
                 this.add(viewer);

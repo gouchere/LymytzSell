@@ -8,16 +8,6 @@ package com.lymytz.lymytzsell.service.application.service;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.lymytz.lymytzsell.business.helpers.KeyBoardAction;
-import com.lymytz.lymytzsell.service.application.composant.Onglets;
-import com.lymytz.lymytzsell.service.application.synchro.UtilEntityBase;
-import com.lymytz.lymytzsell.service.application.synchro.export.UtilExport;
-import javafx.application.Platform;
-import javafx.concurrent.Task;
-import javafx.concurrent.WorkerStateEvent;
-import javafx.event.Event;
-import javafx.event.EventHandler;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
 import com.lymytz.lymytzsell.dao.Options;
 import com.lymytz.lymytzsell.dao.entity.YvsBaseCaisse;
 import com.lymytz.lymytzsell.dao.entity.YvsBaseModeReglement;
@@ -28,18 +18,27 @@ import com.lymytz.lymytzsell.dao.entity.YvsComCommercialPoint;
 import com.lymytz.lymytzsell.dao.entity.YvsComCommercialVente;
 import com.lymytz.lymytzsell.dao.entity.YvsComCreneauPoint;
 import com.lymytz.lymytzsell.dao.entity.YvsComDocVentes;
-import com.lymytz.lymytzsell.dao.entity.YvsDictionnaire;
 import com.lymytz.lymytzsell.dao.query.LocalQueryFactories;
+import com.lymytz.lymytzsell.service.application.composant.Onglets;
+import com.lymytz.lymytzsell.service.application.synchro.UtilEntityBase;
+import com.lymytz.lymytzsell.service.application.synchro.export.UtilExport;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.LymytzService;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
 import com.lymytz.lymytzsell.synchro.ws.ResultatAction;
 import com.lymytz.lymytzsell.synchro.ws.WsSynchro;
 import com.lymytz.lymytzsell.view.main.HomeCaisseController;
+import javafx.concurrent.Task;
+import javafx.concurrent.WorkerStateEvent;
+import javafx.event.Event;
+import javafx.event.EventHandler;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import lombok.Getter;
+import lombok.Setter;
 import org.json.JSONObject;
 
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -47,169 +46,19 @@ import java.util.logging.Logger;
 /**
  * @author LYMYTZ
  */
-public class ServiceCreateFacture implements Runnable {
+public class ServiceCreateFacture {
 
     LocalQueryFactories dao = new LocalQueryFactories();
-    YvsComClient client;
-    String typeDoc;
-    YvsDictionnaire adresse;
-    String nameClient;
-    Date dateLiv;
-    String telephone;
+    @Setter
+    @Getter
     private Long result;
+    @Setter
+    @Getter
     private YvsComDocVentes facture;
     HomeCaisseController page;
 
     public ServiceCreateFacture(HomeCaisseController page) {
         this.page = page;
-    }
-
-    public ServiceCreateFacture(YvsComClient client, String typeDoc, YvsDictionnaire adresse, String nameClient, Date dateLiv, String telephone, HomeCaisseController page) {
-        this.client = client;
-        this.typeDoc = typeDoc;
-        this.adresse = adresse;
-        this.nameClient = nameClient;
-        this.dateLiv = dateLiv;
-        this.telephone = telephone;
-        this.page = page;
-    }
-
-    public Long getResult() {
-        return result;
-    }
-
-    public void setResult(Long result) {
-        this.result = result;
-    }
-
-    public YvsComDocVentes getFacture() {
-        return facture;
-    }
-
-    public void setFacture(YvsComDocVentes facture) {
-        this.facture = facture;
-    }
-
-    @Override
-    public void run() {
-        if (UtilsProject.headerDoc != null) {
-            if (!UtilsProject.headerDoc.getCloturer()) {
-                if (!UtilsProject.headerDoc.getDateEntete().after(new Date())) {
-                    String numDoc = typeDoc;
-                    if (client != null && Constantes.asString(numDoc)) {
-                        final YvsComDocVentes bean = new YvsComDocVentes();
-                        bean.setNumDoc(numDoc);
-                        bean.setLivraisonAuto(true);
-                        bean.setAdresse(adresse);
-                        bean.setAuthor(UtilsProject.currentUser);
-                        bean.setCategorieComptable(client.getCategorieComptable());
-                        bean.setClient(client);
-                        bean.setCloturer(Boolean.FALSE);
-                        bean.setCommision(0d);
-                        bean.setDateSave(new Date());
-                        bean.setDateUpdate(new Date());
-                        bean.setDateSolder(new Date());
-                        bean.setDepotLivrer(UtilsProject.depotLivraison);
-                        bean.setTrancheLivrer(UtilsProject.headerDoc.getCreneau().getCreneauDepot().getTranche());
-                        bean.setEnteteDoc(UtilsProject.headerDoc);
-                        bean.setEtapeTotal(1);
-                        bean.setHeureDoc(new Date());
-                        bean.setModelReglement(UtilsProject.modelReg);
-                        bean.setMouvStock(Boolean.TRUE);
-                        bean.setNomClient(nameClient);
-                        bean.setStatut(Constantes.ETAT_EDITABLE);
-                        bean.setStatutLivre(Constantes.ETAT_ATTENTE);
-                        bean.setStatutRegle(Constantes.ETAT_ATTENTE);
-                        bean.setTypeDoc(typeDoc);
-                        bean.setDateLivraisonPrevu(dateLiv);
-                        bean.setTelephone(telephone);
-                        bean.setOperateur(UtilsProject.currentUser.getUsers());
-                        bean.setNature(Constantes.NATURE_DOC_VENTE_VENTE);
-                        if (client.getSuiviComptable()) {
-                            bean.setTiers(client);
-                        }
-                        if (bean.getTiers() == null) {
-                            //ne pas enregistrer
-                            Platform.runLater(() -> {
-                                LymytzService.openAlertDialog("Le tiers rattaché à ce client n'existe pas !", "Action abandonné !", "Erreur ", Alert.AlertType.ERROR);
-                            });
-                            result = -1L;
-                        }
-                        bean.setId(Constantes.localId++);
-                        setFacture(bean);
-                        Platform.runLater(() -> {
-                            page.BTN_REGLER.setVisible(bean.getStatutRegle().equals(Constantes.ETAT_REGLE));
-                            page.BTN_LIVRER.setVisible(bean.getStatutLivre().equals(Constantes.ETAT_LIVRE));
-                            page.LAB_REF_FACTURE.setText(numDoc + ":" + client.getCodeClient() + "--" + bean.getId());
-                        });
-                        result = bean.getId();
-                    } else {
-                        if (client == null) {
-                            result = -2L;
-                        } else {
-                            result = -3L;
-                        }
-                    }
-                } else {
-                    result = -6L;
-                }
-            } else {
-                result = -4L;
-            }
-        } else {
-            result = -5L;
-        }
-        //display result
-        switch (result.intValue()) {
-            case -1:
-                Platform.runLater(() -> {
-                    LymytzService.openAlertDialog("Le tiers rattaché à ce client n'existe pas !", "Action abandonné !", "Erreur ", Alert.AlertType.ERROR);
-                });
-                break;
-            case -2:
-                Platform.runLater(() -> {
-                    LymytzService.openAlertDialog("Génération de la facture non réussi !", "Erreur ", "Action abandonné !", Alert.AlertType.ERROR);
-                });
-                break;
-            case -3:
-                Platform.runLater(() -> {
-                    LymytzService.openAlertDialog("Génération de a facture non réussi !", "Erreur ", "Le numéro de référence n'a pas pu être généré !", Alert.AlertType.ERROR);
-                });
-                break;
-            case -4:
-                Platform.runLater(() -> {
-                    LymytzService.openAlertDialog("Génération de a facture non réussi !", "Erreur ", "Votre fiche de vente est déjà clôturé !", Alert.AlertType.ERROR);
-                });
-                break;
-            case -5:
-                Platform.runLater(() -> {
-                    LymytzService.openAlertDialog("Génération de a facture non réussi !", "Erreur ", "Aucune entête n'a été trouvé !", Alert.AlertType.ERROR);
-                });
-                break;
-            case -6:
-                Platform.runLater(() -> {
-                    LymytzService.openAlertDialog("Génération de a facture non réussi !", "Erreur ", "Vérifier la date de votre fiche !", Alert.AlertType.ERROR);
-                });
-                break;
-            default:
-                Platform.runLater(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        page.displayDetailFacture(facture);
-                        page.initTabPane(facture);
-                        page.TEXT_FIND.setText("");
-                        page.BTN_REGLER.setVisible(getFacture().getStatutRegle().equals(Constantes.ETAT_REGLE));
-                        page.BTN_LIVRER.setVisible(getFacture().getStatutLivre().equals(Constantes.ETAT_LIVRE));
-                        page.afterCreateFacture();
-                        page.TEXT_FIND.requestFocus();
-                        if (page.getStageCreateFacture() != null) {
-                            page.getStageCreateFacture().close();
-                        }
-                    }
-                });
-                break;
-        }
     }
 
     public void saveCurrentCommercial(YvsComDocVentes facture) {
@@ -380,8 +229,7 @@ public class ServiceCreateFacture implements Runnable {
     /*Cette methode vérifie que les élément de la commande ont tous été synchronisé avant*/
 
     private boolean verifieSynchroCommande(YvsComDocVentes commande) {
-        List<Long> ids;
-        Long re = null;
+        Long re;
         try {
             //doc vente
             String queryIds1 = "SELECT DISTINCT d.id FROM yvs_compta_notif_reglement_vente n INNER JOIN yvs_compta_caisse_piece_vente c ON c.id=n.piece_vente "
@@ -403,7 +251,7 @@ public class ServiceCreateFacture implements Runnable {
                     + "WHERE t.id_source IN (" + queryIds1 + ") AND s.id IS NULL";
             //doc vente
             re = (Long) dao.findOneObjectBySQLQ(queryControl, new Options[]{new Options("yvs_com_doc_ventes", 1), new Options(commande.getId(), 2)});
-            if ((re != null) ? re > 0 : false) {
+            if (re != null && re > 0) {
                 return false;
             }
             //contenu doc vente
@@ -411,7 +259,7 @@ public class ServiceCreateFacture implements Runnable {
                     + "LEFT JOIN yvs_synchro_data_synchro s ON s.id_listen=t.id "
                     + "WHERE t.id_source IN (" + queryIds5 + ") AND s.id IS NULL";
             re = (Long) dao.findOneObjectBySQLQ(queryControl, new Options[]{new Options("yvs_com_contenu_doc_vente", 1), new Options(commande.getId(), 2)});
-            if ((re != null) ? re > 0 : false) {
+            if (re != null && re > 0) {
                 return false;
             }
             //acompte
@@ -419,7 +267,7 @@ public class ServiceCreateFacture implements Runnable {
                     + "LEFT JOIN yvs_synchro_data_synchro s ON s.id_listen=t.id "
                     + "WHERE t.id_source IN (" + queryIds2 + ") AND s.id IS NULL";
             re = (Long) dao.findOneObjectBySQLQ(queryControl, new Options[]{new Options("yvs_compta_acompte_client", 1), new Options(commande.getId(), 2)});
-            if ((re != null) ? re > 0 : false) {
+            if (re != null && re > 0) {
                 return false;
             }
             //piece reg
@@ -427,7 +275,7 @@ public class ServiceCreateFacture implements Runnable {
                     + "LEFT JOIN yvs_synchro_data_synchro s ON s.id_listen=t.id "
                     + "WHERE t.id_source IN (" + queryIds3 + ") AND s.id IS NULL";
             re = (Long) dao.findOneObjectBySQLQ(queryControl, new Options[]{new Options("yvs_compta_caisse_piece_vente", 1), new Options(commande.getId(), 2)});
-            if ((re != null) ? re > 0 : false) {
+            if (re != null && re > 0) {
                 return false;
             }
             //Notif reg.
@@ -435,7 +283,7 @@ public class ServiceCreateFacture implements Runnable {
                     + "LEFT JOIN yvs_synchro_data_synchro s ON s.id_listen=t.id "
                     + "WHERE t.id_source IN (" + queryIds4 + ") AND s.id IS NULL";
             re = (Long) dao.findOneObjectBySQLQ(queryControl, new Options[]{new Options("yvs_compta_notif_reglement_vente", 1), new Options(commande.getId(), 2)});
-            if ((re != null) ? re > 0 : false) {
+            if (re != null && re > 0) {
                 return false;
             }
         } catch (Exception ex) {
@@ -459,21 +307,20 @@ public class ServiceCreateFacture implements Runnable {
             //construction de l'objet
             JSONObject entityJson = UtilExport.exportDocVente(commande, false, null);
             ResultatAction<YvsComDocVentes> result = service.livraisonDocVente(entityJson, "valide_doc_commande");
-            if (result != null) {
-                if (result.isResult()) {
-                    YvsComDocVentes entity = null;
-                    if (result.getData() != null) {
-                        Gson gson = UtilEntityBase.createGson();
-                        JsonObject jo = gson.toJsonTree(result.getData()).getAsJsonObject();
-                        entity = gson.fromJson(jo.toString(), YvsComDocVentes.class);
-                        //met à jour le statut livré de la commande
-                        String query = "UPDATE yvs_com_doc_ventes SET statut=?, statut_livre=? WHERE id=? ";
-                        dao.executeSqlQuery(query, new Options[]{new Options(entity.getStatut(), 1), new Options(entity.getStatutLivre(), 2), new Options(commande.getId(), 3)});
-                    }
+            if (result != null && (result.isResult())) {
+                YvsComDocVentes entity;
+                if (result.getData() != null) {
+                    Gson gson = UtilEntityBase.createGson();
+                    JsonObject jo = gson.toJsonTree(result.getData()).getAsJsonObject();
+                    entity = gson.fromJson(jo.toString(), YvsComDocVentes.class);
+                    //met à jour le statut livré de la commande
+                    String query = "UPDATE yvs_com_doc_ventes SET statut=?, statut_livre=? WHERE id=? ";
+                    dao.executeSqlQuery(query, new Options[]{new Options(entity.getStatut(), 1), new Options(entity.getStatutLivre(), 2), new Options(commande.getId(), 3)});
                 }
+
             }
             return true;
         }
-
     }
+
 }

@@ -401,11 +401,7 @@ public class YvsComDocVentes extends YvsEntity implements Serializable {
 
     @XmlTransient
     public double getMontantResteAPlanifier() {
-        double re = getMontantTotal();
-//        for (YvsComptaCaissePieceVente p : reglements) {
-//            re -= p.getMontant();
-//        }
-        return re;
+        return getMontantTotal();
     }
 
     @XmlTransient
@@ -452,6 +448,10 @@ public class YvsComDocVentes extends YvsEntity implements Serializable {
     @Override
     public String toString() {
         return "YvsComDocVentes{" + "id=" + id + ", numPiece=" + numPiece + ", typeDoc=" + typeDoc + ", statut=" + statut + ", nomClient=" + nomClient + ", numDoc=" + numDoc + ", heureDoc=" + heureDoc + ", montantAvance=" + montantAvance + ", dateSave=" + dateSave + ", mouvStock=" + mouvStock + ", impression=" + impression + ", dateSolder=" + dateSolder + ", dateLivraison=" + dateLivraison + ", cloturer=" + cloturer + ", dateCloturer=" + dateCloturer + ", dateValider=" + dateValider + ", dateAnnuler=" + dateAnnuler + ", description=" + description + ", statutLivre=" + statutLivre + ", statutRegle=" + statutRegle + ", dateLivraisonPrevu=" + dateLivraisonPrevu + ", livraisonAuto=" + livraisonAuto + ", dateUpdate=" + dateUpdate + ", commision=" + commision + ", etapeTotal=" + etapeTotal + ", etapeValide=" + etapeValide + ", numeroExterne=" + numeroExterne + ", telephone=" + telephone + ", comptabilise=" + comptabilise + ", nature=" + nature + ", notes=" + notes + ", categorieComptable=" + categorieComptable + ", depotLivrer=" + depotLivrer + ", annulerBy=" + annulerBy + ", modelReglement=" + modelReglement + ", tiers=" + tiers + ", client=" + client + ", validerBy=" + validerBy + ", documentLie=" + documentLie + ", enteteDoc=" + enteteDoc + ", author=" + author + ", adresse=" + adresse + ", trancheLivrer=" + trancheLivrer + ", operateur=" + operateur + ", livreur=" + livreur + ", cloturerBy=" + cloturerBy + ", contenus=" + contenus + ", reglements=" + reglements + ", commerciaux=" + commerciaux + ", synchroniser=" + synchroniser + ", montantHT=" + montantHT + ", montantTaxe=" + montantTaxe + ", montantTTC=" + montantTTC + ", montantRemise=" + montantRemise + ", montantRemises=" + montantRemises + ", montantTotal=" + montantTotal + ", montantRistourne=" + montantRistourne + ", montantCommission=" + montantCommission + ", montantCS=" + montantCS + ", montantResteApayer=" + montantResteApayer + ", montantTaxeR=" + montantTaxeR + ", montantPlanifier=" + montantPlanifier + ", montantNetAPayer=" + montantNetAPayer + ", montantAvoir=" + montantAvoir + ", montantAvanceAvoir=" + montantAvanceAvoir + ", livrer=" + livrer + ", nom_client=" + nom_client + '}';
+    }
+
+    public static YvsComDocVentes builder(){
+        return new YvsComDocVentes();
     }
 
 }

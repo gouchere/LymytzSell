@@ -5,12 +5,12 @@
  */
 package com.lymytz.lymytzsell.service.application;
 
+import com.lymytz.lymytzsell.business.ManagedFactureVente;
 import com.lymytz.lymytzsell.dao.entity.YvsComClient;
 import com.lymytz.lymytzsell.dao.entity.YvsComCreneauHoraireUsers;
 import com.lymytz.lymytzsell.dao.entity.YvsComEnteteDocVente;
 import com.lymytz.lymytzsell.dao.entity.YvsDictionnaire;
 import com.lymytz.lymytzsell.dao.query.LocalQueryFactories;
-import com.lymytz.lymytzsell.service.application.service.ServiceCreateFacture;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.LymytzService;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
@@ -22,7 +22,11 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
 import javafx.util.StringConverter;
 import org.controlsfx.control.textfield.AutoCompletionBinding;
@@ -37,6 +41,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
+
+import static com.lymytz.lymytzsell.service.utils.Constantes.TYPE_FV;
 
 /**
  * FXML Controller class
@@ -117,9 +123,7 @@ public class FactureController implements Initializable, Controller {
                 }
             }
         }));*/
-        TF_CLIENT.focusedProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
-            getClientWithText();
-        });
+        TF_CLIENT.focusedProperty().addListener((observable, oldValue, newValue) -> getClientWithText());
         TF_CLIENT.setPromptText(TF_CLIENT.getText());
     }
 
@@ -169,18 +173,13 @@ public class FactureController implements Initializable, Controller {
     }
 
     private void initClients() {
-        if (UtilsProject.listClients != null ? !UtilsProject.listClients.isEmpty() : false) {
-//            Récupère le client par défaut
-            if (UtilsProject.listClients != null) {
-                if (UtilsProject.clientDivers != null) {
-                    TF_CLIENT.setText(UtilsProject.clientDivers.getTextClient());
-                    getClientWithText();
-                } else {
-                    if (UtilsProject.listClients.size() > 0) {
-                        TF_CLIENT.setText(UtilsProject.listClients.get(0).getTextClient());
-                        getClientWithText();
-                    }
-                }
+        if (UtilsProject.listClients != null && !UtilsProject.listClients.isEmpty()) {
+            if (UtilsProject.clientDivers != null) {
+                TF_CLIENT.setText(UtilsProject.clientDivers.getTextClient());
+                getClientWithText();
+            } else {
+                TF_CLIENT.setText(UtilsProject.listClients.get(0).getTextClient());
+                getClientWithText();
             }
         } else {
             LymytzService.openAlertDialog("Impossible de trouver la liste des clients", "Liste clients non chargé", "Aucun client trouvé!", Alert.AlertType.ERROR);
@@ -245,39 +244,31 @@ public class FactureController implements Initializable, Controller {
             getClientWithText();
         }
         RadioButton type = (RadioButton) TYPE_DOC.getSelectedToggle();
-        String ty = (type.getText().equals("Commande")) ? Constantes.TYPE_BCV : Constantes.TYPE_FV;
+        String typeDoc = (type.getText().equals("Commande")) ? Constantes.TYPE_BCV : Constantes.TYPE_FV;
         LocalDateTime local = datePickerController.getDateTime();
+        YvsDictionnaire adresse = (CB_SECTEUR.getValue() != null) ? CB_SECTEUR.getValue() : CB_VILLE.getValue();
         Date date = new Date();
         if (local != null) {
             date = Date.from(local.atZone(ZoneId.systemDefault()).toInstant());
         }
-        createFactureVente(selectClient, ty, (CB_SECTEUR.getValue() != null) ? CB_SECTEUR.getValue() : CB_VILLE.getValue(), TXT_NAME_CLIENT.getText(), date, TXT_TEL.getText());
+        ManagedFactureVente managedFacture = new ManagedFactureVente(UtilsProject.headerDoc, adresse, selectClient, TXT_NAME_CLIENT.getText(), typeDoc, date, TXT_TEL.getText());
+        var response = managedFacture.createNonPersistFacture(TYPE_FV);
+        mainController.processResponseCreateFacture(response);
     }
 
     private void listenSelectClient(YvsComClient clt) {
         if (clt != null) {
             TXT_NAME_CLIENT.setText(clt.getNom_prenom());
             if (clt.getTiers() != null) {
-                if (clt.getTiers().getTel() != null) {
-                    TXT_TEL.setText(clt.getTiers().getTel());
-                } else {
-                    TXT_TEL.setText(clt.getTiers().getTel());
-                }
+                TXT_TEL.setText(clt.getTiers().getTel());
                 CB_VILLE.setValue(clt.getTiers().getVille());
-                if (clt.getTiers() != null ? clt.getTiers().getSecteur() != null : false) {
+                if (clt.getTiers() != null && clt.getTiers().getSecteur() != null) {
                     CB_SECTEUR.setValue(clt.getTiers().getSecteur());
                 } else {
                     CB_SECTEUR.setValue(UtilsProject.defaultAdresse);
                 }
             }
         }
-    }
-
-    public synchronized Long createFactureVente(YvsComClient client, String typeDoc, YvsDictionnaire adresse, String nameClient, Date dateLiv, String telephone) {
-        ServiceCreateFacture f = new ServiceCreateFacture(client, typeDoc, adresse, nameClient, dateLiv, telephone, mainController);
-        Thread t = new Thread(f);
-        t.start();
-        return f.getResult();
     }
 
     public YvsComEnteteDocVente createNewFicheFromCreneaux(long idCreno, Date date) {
@@ -302,7 +293,6 @@ public class FactureController implements Initializable, Controller {
                 header = createHeder(creno, ((date != null) ? date : creno.getDateTravail()));
                 UtilsProject.headerDoc = header;
             }
-//            displayPropertiesFiche(header);
             return header;
         } else {
             LymytzService.openAlertDialog("Aucun créno actif n'a été trouvé !", "Objet non trouvé", "Erreur", Alert.AlertType.ERROR);
@@ -340,10 +330,10 @@ public class FactureController implements Initializable, Controller {
     public void getClientWithText() {
         String[] values = TF_CLIENT.getText().split("->");
         if (values.length > 1) {
-            UtilsProject.listClients.stream().filter((c) -> (c.getCodeClient().equals(values[1]))).map((c) -> {
+            UtilsProject.listClients.stream().filter(c -> (c.getCodeClient().equals(values[1]))).map(c -> {
                 selectClient = c;
                 return c;
-            }).forEach((c) -> {
+            }).forEach(c -> {
                 TXT_NAME_CLIENT.setText(c.getNom_prenom());
                 listenSelectClient(c);
             });
