@@ -116,7 +116,6 @@ public class StartController implements Initializable, Controller {
                     // Sauvegarde la relation UserAgence                
                     loadInitData();
                     openMainView();
-                    //Trouve les fiches de ventes non clôturés de ce vendeur
                     // trouve le planning à la date
                     var etats = List.of(Constantes.ETAT_CLOTURE,Constantes.ETAT_ATTENTE,Constantes.ETAT_SUSPENDU);
                     Date ier = Constantes.givePrevOrNextDate(new Date(), -2);

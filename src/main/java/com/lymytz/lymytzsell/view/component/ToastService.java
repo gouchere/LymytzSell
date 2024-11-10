@@ -12,17 +12,22 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ToastService {
+    public enum ToastType {
+        INFO, ERROR
+    }
 
-    public static void show(Stage stage, String message, int durationMillis) {
+    public static void show(Stage stage, String message, int durationMillis, ToastType type) {
         if (stage == null) throw new AssertionError();
-        double x = stage.getX() + stage.getWidth()/2-50;
+        double x = stage.getX() + stage.getWidth() / 2 - 50;
         double y = stage.getY() + stage.getHeight() - 35;
         Popup popup = new Popup();
         popup.setAutoHide(true);
-
         Label label = new Label(message);
-        label.setStyle("-fx-background-color: #333; -fx-text-fill: white; -fx-padding: 10px;");
-
+        String style = switch (type) {
+            case INFO -> "-fx-background-color: #2e7d32; -fx-text-fill: white; -fx-padding: 10px; -fx-font-size: 14px;";
+            case ERROR -> "-fx-background-color: #c62828; -fx-text-fill: white; -fx-padding: 10px; -fx-font-size: 14px;";
+        };
+        label.setStyle(style);
         StackPane pane = new StackPane(label);
         pane.setStyle("-fx-background-radius: 5px;");
         pane.setOpacity(0);

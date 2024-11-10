@@ -6,6 +6,7 @@
 package com.lymytz.lymytzsell.service.application.service;
 
 import com.lymytz.lymytzsell.service.application.synchro.export.UtilExport;
+import com.lymytz.lymytzsell.view.component.ToastService;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import com.lymytz.lymytzsell.dao.Options;
@@ -21,22 +22,23 @@ import com.lymytz.lymytzsell.service.utils.log.LogFiles;
 import com.lymytz.lymytzsell.synchro.ws.ResultatAction;
 import com.lymytz.lymytzsell.synchro.ws.WsSynchro;
 import com.lymytz.lymytzsell.view.main.HomeCaisseController;
+import org.apache.logging.log4j.LogManager;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.apache.logging.log4j.Logger;
 
 import static com.lymytz.lymytzsell.service.utils.UtilsProject.getStocks;
 
 /**
- *
  * @author LENOVO
  */
 public class ServiceLivraison {
 
+    private final Logger LOGGER = LogManager.getLogger(ServiceLivraison.class.getName());
     HomeCaisseController mainPage;
 
     public ServiceLivraison() {
@@ -46,22 +48,21 @@ public class ServiceLivraison {
         this.mainPage = mainPage;
     }
 
-    public boolean saveLivraison(YvsComDocVentes facture, boolean message) {
+    public void saveLivraison(YvsComDocVentes facture, boolean message) {
         WsSynchro ws = new WsSynchro();
         //Construction de l'objet avec ses liaisons sur le serveur distant
         JSONObject entityJson = UtilExport.exportDocVente(facture, false, 0L);
         ResultatAction<YvsComDocVentes> result = ws.livraisonDocVente(entityJson, "livrer_facture_vente_caisse");
         if (result != null && result.isResult()) {
-            //met à jour le statut livré de la facture
             String query = "UPDATE yvs_com_doc_ventes SET statut_livre='L' WHERE id=? ";
             mainPage.dao.executeSqlQuery(query, new Options[]{new Options(facture.getId(), 1)});
             if (message) {
                 Platform.runLater(LymytzService::success);
             }
         } else {
-            Platform.runLater(() -> LymytzService.openAlertDialog("", "", (result != null ? result.getMessage() : ""), Alert.AlertType.ERROR));
+            ToastService.show(mainPage.getMainStage(), String.format("La livraison de la facture %s ne s'est pas terminé correctement", facture.getNumDoc()), 2500, ToastService.ToastType.ERROR);
+            LOGGER.error("La livraison de la facture {} ne s'est pas terminé correctement", facture.getNumDoc());
         }
-        return result != null && result.isResult();
     }
 
     public boolean transmisOrder(YvsComDocVentes commande) {
@@ -81,60 +82,9 @@ public class ServiceLivraison {
                     if (num == null || num.trim().isEmpty()) {
                         return false;
                     }
-                    YvsComDocVentes y = new YvsComDocVentes(facture);
-                    if (y.getClient() == null) {
-                        y.setClient(commande.getClient());
-                    }
-                    if (y.getCategorieComptable() == null) {
-                        y.setCategorieComptable(commande.getCategorieComptable());
-                    }
-                    y.setContenus(new ArrayList<>());
-                    y.setReglements(new ArrayList<>());
-                    y.setDateSave(new Date());
-                    y.setAuthor(UtilsProject.currentUser);
-                    y.setTypeDoc(Constantes.TYPE_BLV);
-                    y.setNumDoc(num);
-                    y.setNumPiece("BLV N° " + facture.getNumDoc());
-                    y.setLivreur(UtilsProject.currentUser.getUsers());
-                    y.setDateLivraison(UtilsProject.headerDoc.getDateEntete());
-                    y.setMouvStock(true);
-                    y.setDocumentLie(new YvsComDocVentes(facture.getId()));
-                    y.setHeureDoc(new Date());
-                    y.setStatut(Constantes.ETAT_VALIDE);
-                    y.setStatutLivre(Constantes.ETAT_LIVRE);
-                    y.setStatutRegle(Constantes.ETAT_ATTENTE);
-                    y.setAnnulerBy(null);
-                    y.setCloturerBy(null);
-                    y.setDateAnnuler(null);
-                    y.setDateCloturer(null);
-                    y.setValiderBy(UtilsProject.currentUser.getUsers());
-                    y.setDateValider(new Date());
-                    y.setEtapeTotal(0);
-                    y.setDescription("Livraison Facture N° " + facture.getNumDoc() + " le " + Constantes.dfN1.format(UtilsProject.headerDoc.getDateEntete()) + " à " + Constantes.dfH.format(y.getHeureDoc()));
-                    y.setOperateur(UtilsProject.currentUser.getUsers());
-                    y.setId(null);
-                    y = (YvsComDocVentes) mainPage.dao.save1(y);
-                    if (y != null && y.getId() > 0) {
-                        YvsComContenuDocVente c;
-                        for (int i = 0; i < commande.getContenus().size(); i++) {
-                            c = new YvsComContenuDocVente(commande.getContenus().get(i));
-                            c.setDocVente(y);
-                            c.setStatut(Constantes.ETAT_VALIDE);
-                            c.setAuthor(UtilsProject.currentUser);
-                            c.setId(null);
-                            c = (YvsComContenuDocVente) mainPage.dao.save1(c);
-                            y.getContenus().add(0, c);
-                        }
-                        if (facture.getReglements() == null || facture.getReglements().isEmpty()) {
-                            YvsComptaCaissePieceVente p;
-                            for (int i = 0; i < commande.getReglements().size(); i++) {
-                                p = commande.getReglements().get(i);
-                                p.setVente(facture);
-                                mainPage.dao.update(p);
-                            }
-                        }
-                        continu = true;
-                    }
+                    YvsComDocVentes y = buildEntityDocVente(commande, facture, num);
+                    y = mainPage.dao.save1(y);
+                    continu = saveContentAndContinue(commande, y, facture, continu);
                     if (continu) {
                         commande.setStatutLivre(Constantes.ETAT_LIVRE);
                         commande.setDateLivraison(UtilsProject.headerDoc.getDateEntete());
@@ -148,10 +98,70 @@ public class ServiceLivraison {
                 LymytzService.openAlertDialog("La facture n'a pas pu être généré !", "Erreur lors de la génération de la facture", "Erreur !", Alert.AlertType.ERROR);
             }
         } catch (Exception ex) {
-            LogFiles.addLogInFile("", ex);
-            Logger.getLogger(ServiceLivraison.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.error(ex);
         }
         return false;
+    }
+
+    private boolean saveContentAndContinue(YvsComDocVentes commande, YvsComDocVentes y, YvsComDocVentes facture, boolean continu) {
+        if (y != null && y.getId() > 0) {
+            YvsComContenuDocVente c;
+            for (int i = 0; i < commande.getContenus().size(); i++) {
+                c = new YvsComContenuDocVente(commande.getContenus().get(i));
+                c.setDocVente(y);
+                c.setStatut(Constantes.ETAT_VALIDE);
+                c.setAuthor(UtilsProject.currentUser);
+                c.setId(null);
+                c = mainPage.dao.save1(c);
+                y.getContenus().add(0, c);
+            }
+            if (facture.getReglements() == null || facture.getReglements().isEmpty()) {
+                YvsComptaCaissePieceVente p;
+                for (int i = 0; i < commande.getReglements().size(); i++) {
+                    p = commande.getReglements().get(i);
+                    p.setVente(facture);
+                    mainPage.dao.update(p);
+                }
+            }
+            continu = true;
+        }
+        return continu;
+    }
+
+    private static YvsComDocVentes buildEntityDocVente(YvsComDocVentes commande, YvsComDocVentes facture, String num) {
+        YvsComDocVentes y = new YvsComDocVentes(facture);
+        if (y.getClient() == null) {
+            y.setClient(commande.getClient());
+        }
+        if (y.getCategorieComptable() == null) {
+            y.setCategorieComptable(commande.getCategorieComptable());
+        }
+        y.setContenus(new ArrayList<>());
+        y.setReglements(new ArrayList<>());
+        y.setDateSave(new Date());
+        y.setAuthor(UtilsProject.currentUser);
+        y.setTypeDoc(Constantes.TYPE_BLV);
+        y.setNumDoc(num);
+        y.setNumPiece("BLV N° " + facture.getNumDoc());
+        y.setLivreur(UtilsProject.currentUser.getUsers());
+        y.setDateLivraison(UtilsProject.headerDoc.getDateEntete());
+        y.setMouvStock(true);
+        y.setDocumentLie(new YvsComDocVentes(facture.getId()));
+        y.setHeureDoc(new Date());
+        y.setStatut(Constantes.ETAT_VALIDE);
+        y.setStatutLivre(Constantes.ETAT_LIVRE);
+        y.setStatutRegle(Constantes.ETAT_ATTENTE);
+        y.setAnnulerBy(null);
+        y.setCloturerBy(null);
+        y.setDateAnnuler(null);
+        y.setDateCloturer(null);
+        y.setValiderBy(UtilsProject.currentUser.getUsers());
+        y.setDateValider(new Date());
+        y.setEtapeTotal(0);
+        y.setDescription("Livraison Facture N° " + facture.getNumDoc() + " le " + Constantes.dfN1.format(UtilsProject.headerDoc.getDateEntete()) + " à " + Constantes.dfH.format(y.getHeureDoc()));
+        y.setOperateur(UtilsProject.currentUser.getUsers());
+        y.setId(null);
+        return y;
     }
 
     private boolean controleLivraison(YvsComDocVentes facture, boolean silence) {
@@ -272,60 +282,59 @@ public class ServiceLivraison {
                     return d;
                 }
             }
-            if (commande.getContenus() != null && !commande.getContenus().isEmpty()) {
-                if (commande.getEnteteDoc() != null) {
-                    String num = UtilsProject.generatedNumDoc(Constantes.TYPE_FV_NAME);
-                    if (num == null || num.trim().isEmpty()) {
-                        return null;
-                    }
-                    y = new YvsComDocVentes(commande);
-                    y.setContenus(new ArrayList<>());
-                    y.setReglements(new ArrayList<>());
-                    y.setEnteteDoc(UtilsProject.headerDoc);
-                    y.setDateSave(new Date());
-                    y.setDateUpdate(new Date());
-                    y.setAuthor(UtilsProject.currentUser);
-                    y.setTypeDoc(Constantes.TYPE_FV);
-                    y.setNumDoc(num);
-                    y.setNumPiece("FV N° " + commande.getNumDoc());
-                    y.setDepotLivrer(UtilsProject.depotLivraison);
-                    y.setTrancheLivrer(UtilsProject.headerDoc.getCreneau().getCreneauDepot().getTranche());
-                    y.setLivreur(UtilsProject.currentUser.getUsers());
-                    y.setDateLivraison(commande.getDateLivraisonPrevu());
-                    y.setDocumentLie(new YvsComDocVentes(commande));
-                    y.getDocumentLie().getContenus().clear();
-                    y.setHeureDoc(new Date());
-                    y.setStatut(Constantes.ETAT_VALIDE);
-                    y.setStatutLivre(Constantes.ETAT_ATTENTE);
-                    y.setStatutRegle(Constantes.ETAT_ATTENTE);
-                    y.setValiderBy(UtilsProject.currentUser.getUsers());
-                    y.setDateValider(UtilsProject.headerDoc.getDateEntete());
-                    y.setDescription("Facturation de la commande N° " + commande.getNumDoc() + " le " + Constantes.dfN1.format(new Date()) + " à " + Constantes.dfH.format(y.getHeureDoc()));
-                    y.setOperateur(UtilsProject.currentUser.getUsers());
-                    y.setId(null);
-                    y = (YvsComDocVentes) mainPage.dao.save1(y);
-                    if (y != null && y.getId() > 0) {
-                        YvsComContenuDocVente c;
-                        for (int i = 0; i < commande.getContenus().size(); i++) {
-                            c = new YvsComContenuDocVente(commande.getContenus().get(i));
-                            c.setDocVente(y);
-                            c.setStatut(Constantes.ETAT_VALIDE);
-                            c.setAuthor(UtilsProject.currentUser);
-                            c.setId(null);
-                            mainPage.dao.save1(c);
-                            y.getContenus().add(c);
-                        }
-                        YvsComptaCaissePieceVente p;
-                        for (int i = 0; i < commande.getReglements().size(); i++) {
-                            p = commande.getReglements().get(i);
-                            p.setVente(y);
-                            mainPage.dao.update(p);
-                            y.getReglements().add(p);
-                        }
-                        commande.getDocuments().add(y);
-                        continu = true;
-                    }
+            if (commande.getContenus() != null && !commande.getContenus().isEmpty() && (commande.getEnteteDoc() != null)) {
+                String num = UtilsProject.generatedNumDoc(Constantes.TYPE_FV_NAME);
+                if (num == null || num.trim().isEmpty()) {
+                    return null;
                 }
+                y = new YvsComDocVentes(commande);
+                y.setContenus(new ArrayList<>());
+                y.setReglements(new ArrayList<>());
+                y.setEnteteDoc(UtilsProject.headerDoc);
+                y.setDateSave(new Date());
+                y.setDateUpdate(new Date());
+                y.setAuthor(UtilsProject.currentUser);
+                y.setTypeDoc(Constantes.TYPE_FV);
+                y.setNumDoc(num);
+                y.setNumPiece("FV N° " + commande.getNumDoc());
+                y.setDepotLivrer(UtilsProject.depotLivraison);
+                y.setTrancheLivrer(UtilsProject.headerDoc.getCreneau().getCreneauDepot().getTranche());
+                y.setLivreur(UtilsProject.currentUser.getUsers());
+                y.setDateLivraison(commande.getDateLivraisonPrevu());
+                y.setDocumentLie(new YvsComDocVentes(commande));
+                y.getDocumentLie().getContenus().clear();
+                y.setHeureDoc(new Date());
+                y.setStatut(Constantes.ETAT_VALIDE);
+                y.setStatutLivre(Constantes.ETAT_ATTENTE);
+                y.setStatutRegle(Constantes.ETAT_ATTENTE);
+                y.setValiderBy(UtilsProject.currentUser.getUsers());
+                y.setDateValider(UtilsProject.headerDoc.getDateEntete());
+                y.setDescription("Facturation de la commande N° " + commande.getNumDoc() + " le " + Constantes.dfN1.format(new Date()) + " à " + Constantes.dfH.format(y.getHeureDoc()));
+                y.setOperateur(UtilsProject.currentUser.getUsers());
+                y.setId(null);
+                y = mainPage.dao.save1(y);
+                if (y != null && y.getId() > 0) {
+                    YvsComContenuDocVente c;
+                    for (int i = 0; i < commande.getContenus().size(); i++) {
+                        c = new YvsComContenuDocVente(commande.getContenus().get(i));
+                        c.setDocVente(y);
+                        c.setStatut(Constantes.ETAT_VALIDE);
+                        c.setAuthor(UtilsProject.currentUser);
+                        c.setId(null);
+                        mainPage.dao.save1(c);
+                        y.getContenus().add(c);
+                    }
+                    YvsComptaCaissePieceVente p;
+                    for (int i = 0; i < commande.getReglements().size(); i++) {
+                        p = commande.getReglements().get(i);
+                        p.setVente(y);
+                        mainPage.dao.update(p);
+                        y.getReglements().add(p);
+                    }
+                    commande.getDocuments().add(y);
+                    continu = true;
+                }
+
             }
             if (continu && changeStatut_(Constantes.ETAT_VALIDE, y)) {
                 commande.setCloturer(false);
@@ -345,8 +354,7 @@ public class ServiceLivraison {
                 commande.setContenus(ltemp);
             }
         } catch (Exception ex) {
-            LogFiles.addLogInFile("", ex);
-            Logger.getLogger(ServiceLivraison.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.error(ex);
         }
         return y;
     }

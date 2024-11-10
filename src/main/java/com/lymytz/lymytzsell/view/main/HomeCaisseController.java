@@ -122,6 +122,8 @@ import static com.lymytz.lymytzsell.service.utils.Constantes.TYPE_FV;
 import static com.lymytz.lymytzsell.service.utils.MessagesConstants.ERREUR;
 import static com.lymytz.lymytzsell.service.utils.MessagesConstants.GENERATION_DE_LA_FACTURE_NON_REUSSI;
 import static com.lymytz.lymytzsell.service.utils.MessagesConstants.GENERATION_FACTURE_NON_REUSSI;
+import static com.lymytz.lymytzsell.view.component.ToastService.ToastType.ERROR;
+import static com.lymytz.lymytzsell.view.component.ToastService.ToastType.INFO;
 
 /**
  * FXML Controller class
@@ -621,7 +623,7 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
                 if (getStageCreateFacture() != null) {
                     getStageCreateFacture().close();
                 }
-                ToastService.show(getMainStage(), "Facture initiée avec succès", 2000);
+                ToastService.show(getMainStage(), "Facture initiée avec succès", 2000, INFO);
             });
         }
     }
@@ -676,7 +678,7 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
         return lc;
     }
 
-    public boolean confirmValideFacture(Onglets currentOnglet, double montantPaye, double montantRecu) {
+    public void confirmValideFacture(Onglets currentOnglet, final double montantPaye, final double montantRecu) {
         List<YvsComContenuDocVente> contenuDuPanier = new ArrayList<>(currentOnglet.getFacture().getContenus());
         currentOnglet.getFacture().getContenus().clear();
         YvsComDocVentes d = saveFacture(currentOnglet.getFacture());
@@ -684,30 +686,34 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
             currentOnglet.setFacture(d);
             currentOnglet.getFacture().setContenus(contenuDuPanier);
             if (saveContentFacture(currentOnglet.getFacture().getContenus(), currentOnglet.getFacture())) {
-                currentOnglet.getFacture().setStatut(ETAT_VALIDE);
-                currentOnglet.getFacture().setEtapeValide(1);
-                currentOnglet.getFacture().setStatutLivre(Constantes.ETAT_ATTENTE);
-                currentOnglet.getFacture().setStatutRegle(Constantes.ETAT_ATTENTE);
-                currentOnglet.getFacture().setMontantAvance(montantPaye);
-                List<YvsComContenuDocVente> temp = new ArrayList<>(currentOnglet.getFacture().getContenus());
-                currentOnglet.getFacture().getContenus().clear();
-                if (currentOnglet.getFacture().getTypeDoc().equals(Constantes.TYPE_BCV)) {
-                    currentOnglet.getFacture().setLivraisonAuto(Boolean.FALSE);
-                }
-                dao.update(currentOnglet.getFacture());
-                currentOnglet.getFacture().getContenus().addAll(temp);
-                Thread tcompta = new Thread(() -> {
-                    saveLivraisonAndreglement(new YvsComDocVentes(currentOnglet.getFacture()), montantPaye, montantRecu);
-                    if (Boolean.TRUE.equals(!UtilsProject.REPLICATION) && currentOnglet.getFacture().getTypeDoc().equals(TYPE_FV)) {
-                        comptabilise(currentOnglet.getFacture().getId(), currentOnglet.getFacture().getNumDoc());
-                    }
-                });
-                tcompta.start();
+                livrerEtReglerFactureValide(currentOnglet, montantPaye, montantRecu);
             }
         } else {
-            return false;
+            ToastService.show(getMainStage(), "Votre facture n'a pas été enregistré", 3000, ERROR);
+            //todo enregistrer dans une zone tempon
         }
-        return true;
+    }
+
+    private void livrerEtReglerFactureValide(Onglets currentOnglet, double montantPaye, double montantRecu) {
+        currentOnglet.getFacture().setStatut(ETAT_VALIDE);
+        currentOnglet.getFacture().setEtapeValide(1);
+        currentOnglet.getFacture().setStatutLivre(Constantes.ETAT_ATTENTE);
+        currentOnglet.getFacture().setStatutRegle(Constantes.ETAT_ATTENTE);
+        currentOnglet.getFacture().setMontantAvance(montantPaye);
+        List<YvsComContenuDocVente> temp = new ArrayList<>(currentOnglet.getFacture().getContenus());
+        currentOnglet.getFacture().getContenus().clear();
+        if (currentOnglet.getFacture().getTypeDoc().equals(Constantes.TYPE_BCV)) {
+            currentOnglet.getFacture().setLivraisonAuto(Boolean.FALSE);
+        }
+        dao.update(currentOnglet.getFacture());
+        currentOnglet.getFacture().getContenus().addAll(temp);
+        Thread tcompta = new Thread(() -> {
+            saveLivraisonAndreglement(new YvsComDocVentes(currentOnglet.getFacture()), montantPaye, montantRecu);
+            if (Boolean.TRUE.equals(!UtilsProject.REPLICATION) && currentOnglet.getFacture().getTypeDoc().equals(TYPE_FV)) {
+                comptabilise(currentOnglet.getFacture().getId(), currentOnglet.getFacture().getNumDoc());
+            }
+        });
+        tcompta.start();
     }
 
     public void closeOngletFacture(Onglets currentOnglet) {
@@ -732,7 +738,7 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
                     doc.setNumeroExterne(numDoc);
                     doc.setEnteteDoc(UtilsProject.headerDoc);
                     doc.setAuthor(UtilsProject.currentUser);
-                    doc = (YvsComDocVentes) dao.save1(doc);
+                    doc = dao.save1(doc);
                     new ServiceCreateFacture(this).saveCurrentCommercial(doc);
                 } else {
                     Platform.runLater(() -> LymytzService.openAlertDialog(GENERATION_FACTURE_NON_REUSSI, ERREUR, "Le numéro de référence n'a pas pu être généré !", Alert.AlertType.ERROR));
@@ -1114,7 +1120,7 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
     public void opnClotureFiche(Long idHeader) {
         try {
             FXMLLoader load = new FXMLLoader(LocalLoader.class
-                    .getResource("main/form_virement_recette.fxml"));
+                    .getResource("/pages/main/form_virement_recette.fxml"));
             VBox root = load.load();
             Scene scene = new Scene(root, 600, 250);
             Stage stage = new Stage();
@@ -1177,7 +1183,7 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
         if (UtilsProject.properties != null) {
             UtilsProject.loadInitData();
             loadProperties();
-            LymytzService.success();
+            ToastService.show(getMainStage(), "Les propriétés de l'application ont été rechargés avec succès ", 2500, INFO);
         }
     }
 

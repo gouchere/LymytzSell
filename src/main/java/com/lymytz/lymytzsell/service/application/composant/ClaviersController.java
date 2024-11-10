@@ -217,7 +217,6 @@ public class ClaviersController extends ManagedApplication implements Initializa
                             //lance la validation dans un thread
                             var statutMontantPaye = isValideMontantPaye(selectOnglet.getFacture().getTypeDoc(), montantAvance, selectOnglet.getNetAPayer());
                             if (EtatMontantPayer.OK.equals(statutMontantPaye)) {
-                                //todo: envisager une action si l'enregistrement ne se termine pas.
                                 new Thread(() -> page.confirmValideFacture(selectOnglet, montantAvance, getMontantAffiche())).start();
                                 printTicketFacture(selectOnglet.getFacture(), selectOnglet.getMontantRecu());
                                 page.closeOngletFacture(selectOnglet);

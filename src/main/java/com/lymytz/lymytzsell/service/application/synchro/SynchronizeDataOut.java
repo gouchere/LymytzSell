@@ -38,7 +38,7 @@ public class SynchronizeDataOut extends ScheduledService<Long> {
 
     public SynchronizeDataOut(int tempsDiffer, HomeCaisseController page) {
         running=true;
-        Ldao = new LocalQueryFactories<>();
+        Ldao = new LocalQueryFactories();
         this.page = page;
         //temps  d'attente avant le demarrage du service...
         this.setDelay(Duration.seconds(tempsDiffer));
@@ -158,9 +158,7 @@ public class SynchronizeDataOut extends ScheduledService<Long> {
                                 Tooltip.install(page.ICO_ALERT_EX, new Tooltip("Des lignes non synchronisées sont en attente d'une action de votre part !"));
                             });
                         } else {
-                            Platform.runLater(() -> {
-                                page.ICO_ALERT_EX.setVisible(false);
-                            });
+                            Platform.runLater(() -> page.ICO_ALERT_EX.setVisible(false));
                         }
                         updateProgress(0, 1);
                     }

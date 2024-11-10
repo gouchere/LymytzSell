@@ -34,7 +34,7 @@ import javafx.scene.layout.VBox;
  */
 public class LoaderArticleTask extends Task<ObservableList<GridPane>> {
 
-    LocalQueryFactories localQueryFactories = new LocalQueryFactories<>();
+    LocalQueryFactories localQueryFactories = new LocalQueryFactories();
     HomeCaisseController page;
     String reference;
     List<String> categories;

@@ -5,22 +5,6 @@
  */
 package com.lymytz.lymytzsell.dao.query;
 
-import java.io.Serializable;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.persistence.EntityManager;
-import javax.persistence.FlushModeType;
-import javax.persistence.NoResultException;
-import javax.persistence.Query;
-import javax.persistence.Table;
-
 import com.lymytz.lymytzsell.dao.LocalDao;
 import com.lymytz.lymytzsell.dao.LocalSqlDao;
 import com.lymytz.lymytzsell.dao.Options;
@@ -33,13 +17,31 @@ import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
 import com.lymytz.lymytzsell.service.utils.log.LogFiles;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
+
+import javax.persistence.EntityManager;
+import javax.persistence.FlushModeType;
+import javax.persistence.NoResultException;
+import javax.persistence.Query;
+import javax.persistence.Table;
+import java.io.Serializable;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import static com.lymytz.lymytzsell.service.utils.MessagesConstants.ECHEC_DE_LEXEECUTION_DE_LA_REQUETE;
 
 /**
- * @param <T>
  * @author Admin gestionnaire des requêtes locale
  */
 @NoArgsConstructor
-public class LocalQueryFactories<T extends Serializable> {
+public class LocalQueryFactories {
     private static final String QUERY_EXECUTION_ERROR_MESSAGE = "Echec de l'execution de la requete: %s";
 
     public static boolean pingServer() {
@@ -60,11 +62,11 @@ public class LocalQueryFactories<T extends Serializable> {
         return false;
     }
 
-    public T save1(T entity) {
+    public <T extends Serializable> T save1(T entity) {
         return save1(entity, true);
     }
 
-    public T save1(T entity, boolean synchronise) {
+    public <T extends Serializable> T save1(T entity, boolean synchronise) {
         if (LocalDao.getInstance() != null) {
             try {
                 EntityManager em = LocalDao.getInstance().getEntityManagerFactory().createEntityManager();
@@ -87,11 +89,11 @@ public class LocalQueryFactories<T extends Serializable> {
         return null;
     }
 
-    public T update(T entity) {
+    public <T extends Serializable> T update(T entity) {
         return update(entity, true);
     }
 
-    public T update(T entity, boolean synchronise) {
+    public <T extends Serializable> T update(T entity, boolean synchronise) {
         if (LocalDao.getInstance() != null) {
             try {
                 EntityManager em = LocalDao.getInstance().getEntityManagerFactory().createEntityManager();
@@ -143,11 +145,11 @@ public class LocalQueryFactories<T extends Serializable> {
         return null;
     }
 
-    public T findOneByNQ(String query, String[] param, Object[] paramValue) {
+    public <T extends Serializable> T findOneByNQ(String query, String[] param, Object[] paramValue) {
         if (LocalDao.getInstance() != null) {
             try {
                 try {
-                    T result = null;
+                    T result;
                     EntityManager em = LocalDao.getInstance().getEntityManagerFactory().createEntityManager();
                     em.clear();
                     Query qr = em.createNamedQuery(query);
@@ -204,7 +206,7 @@ public class LocalQueryFactories<T extends Serializable> {
         return null;
     }
 
-    public List<T> loadByNamedQuery(String query, String[] param, Object[] paramValue) {
+    public <T extends Serializable> List<T> loadByNamedQuery(String query, String[] param, Object[] paramValue) {
         List<T> result = new ArrayList<>();
         if (LocalDao.getInstance() != null) {
             try {
@@ -228,7 +230,7 @@ public class LocalQueryFactories<T extends Serializable> {
         return result;
     }
 
-    public List<T> loadByNamedQuery(String query, String[] param, Object[] paramValue, int offset, int max) {
+    public <T extends Serializable> List<T> loadByNamedQuery(String query, String[] param, Object[] paramValue, int offset, int max) {
         List<T> result = new ArrayList<>();
         if (LocalDao.getInstance() != null) {
             try {
@@ -256,6 +258,28 @@ public class LocalQueryFactories<T extends Serializable> {
 
     public List<Object[]> loadBySQLQuery(String query, Options[] params) {
         List<Object[]> result = new ArrayList<>();
+        if (LocalDao.getInstance() != null) {
+            try {
+                EntityManager em = LocalDao.getInstance().getEntityManagerFactory().createEntityManager();
+                Query qr = em.createNativeQuery(query);
+                for (Options o : params) {
+                    qr.setParameter(o.getPosition(), o.getValeur());
+                }
+                result = qr.getResultList();
+                em.close();
+                return result;
+            } catch (Exception ex) {
+                //Logging de l'erreur
+                LogFiles.addLogInFile(String.format(QUERY_EXECUTION_ERROR_MESSAGE, query), ex);
+                LocalDao.setInstance(null);
+                Logger.getLogger(LocalQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return result;
+    }
+
+    public List<Object> loadOneColumnBySQLQuery(final String query, Options[] params) {
+        List<Object> result = new ArrayList<>();
         if (LocalDao.getInstance() != null) {
             try {
                 EntityManager em = LocalDao.getInstance().getEntityManagerFactory().createEntityManager();
@@ -363,26 +387,26 @@ public class LocalQueryFactories<T extends Serializable> {
 
     public Long insertFromSqlQuery(String table, String query, Options[] params) {
         if (query != null && (LocalDao.getInstance() != null)) {
-                try {
-                    EntityManager em = LocalDao.getInstance().getEntityManagerFactory().createEntityManager();
-                    em.getTransaction().begin();
-                    Query qr = em.createNativeQuery(query);
-                    for (Options o : params) {
-                        qr.setParameter(o.getPosition(), o.getValeur());
-                    }
-                    qr.executeUpdate();
-                    //récupère la séquence
-                    qr = em.createNativeQuery(String.format("SELECT currval('%s_id_seq')", table));
-                    Long id = (Long) qr.getSingleResult();
-                    em.getTransaction().commit();
-                    em.close();
-                    return id;
-                } catch (Exception ex) {
-                    //Logging de l'erreur
-                    LogFiles.addLogInFile(String.format(QUERY_EXECUTION_ERROR_MESSAGE, query), ex);
-                    LocalDao.setInstance(null);
-                    Logger.getLogger(LocalQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
+            try {
+                EntityManager em = LocalDao.getInstance().getEntityManagerFactory().createEntityManager();
+                em.getTransaction().begin();
+                Query qr = em.createNativeQuery(query);
+                for (Options o : params) {
+                    qr.setParameter(o.getPosition(), o.getValeur());
                 }
+                qr.executeUpdate();
+                //récupère la séquence
+                qr = em.createNativeQuery(String.format("SELECT currval('%s_id_seq')", table));
+                Long id = (Long) qr.getSingleResult();
+                em.getTransaction().commit();
+                em.close();
+                return id;
+            } catch (Exception ex) {
+                //Logging de l'erreur
+                LogFiles.addLogInFile(String.format(QUERY_EXECUTION_ERROR_MESSAGE, query), ex);
+                LocalDao.setInstance(null);
+                Logger.getLogger(LocalQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
+            }
 
         }
         return 0L;
@@ -418,35 +442,38 @@ public class LocalQueryFactories<T extends Serializable> {
 
     public Long executeSqlQuery(String query, Options[] params) {
         if (query != null && (LocalDao.getInstance() != null)) {
-                try {
-                    EntityManager em = LocalDao.getInstance().getEntityManagerFactory().createEntityManager();
-                    em.getTransaction().begin();
-                    Query qr = em.createNativeQuery(query);
-                    for (Options o : params) {
-                        qr.setParameter(o.getPosition(), o.getValeur());
-                    }
-                    qr.executeUpdate();
-                    em.getTransaction().commit();
-                    em.close();
-                    return 1L;
-                } catch (Exception ex) {
-                    //Logging de l'erreur
-                    LogFiles.addLogInFile("Echec de l'execution de la requete " + query, ex);
-                    LocalDao.setInstance(null);
-                    Logger.getLogger(LocalQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
+            try {
+                EntityManager em = LocalDao.getInstance().getEntityManagerFactory().createEntityManager();
+                em.getTransaction().begin();
+                Query qr = em.createNativeQuery(query);
+                for (Options o : params) {
+                    qr.setParameter(o.getPosition(), o.getValeur());
                 }
+                qr.executeUpdate();
+                em.getTransaction().commit();
+                em.close();
+                return 1L;
+            } catch (Exception ex) {
+                //Logging de l'erreur
+                LogFiles.addLogInFile(ECHEC_DE_LEXEECUTION_DE_LA_REQUETE + query, ex);
+                LocalDao.setInstance(null);
+                Logger.getLogger(LocalQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
+            }
 
         }
         return 0L;
     }
 
     public void cleanDocWithoutContent(Long header) {
-        if (LocalDao.getInstance() != null) {
-            if (Constantes.asLong(header)) {
-                String query = "DELETE FROM yvs_com_doc_ventes WHERE id IN (SELECT d.id FROM yvs_com_doc_ventes d left join yvs_com_contenu_doc_vente c on d.id=c.doc_vente "
-                        + "WHERE c.id is NULL AND d.entete_doc=?)";
-                String query2 = "DELETE FROM yvs_synchro_listen_table WHERE id_source IN (SELECT d.id FROM yvs_com_doc_ventes d left join yvs_com_contenu_doc_vente c on d.id=c.doc_vente "
-                        + "WHERE c.id is NULL AND d.entete_doc=?) AND name_table='yvs_com_doc_ventes'";
+        if (LocalDao.getInstance() != null && (Constantes.asLong(header))) {
+                String query = """
+                        DELETE FROM yvs_com_doc_ventes WHERE id IN
+                                     (SELECT d.id FROM yvs_com_doc_ventes d left join yvs_com_contenu_doc_vente c on d.id=c.doc_vente WHERE c.id is NULL AND d.entete_doc=?)
+                        """;
+                String query2 = """ 
+                        DELETE FROM yvs_synchro_listen_table WHERE id_source IN
+                                            (SELECT d.id FROM yvs_com_doc_ventes d left join yvs_com_contenu_doc_vente c on d.id=c.doc_vente WHERE c.id is NULL AND d.entete_doc=?) AND name_table='yvs_com_doc_ventes'
+                        """;
                 EntityManager em = LocalDao.getInstance().getEntityManagerFactory().createEntityManager();
                 em.getTransaction().begin();
                 Query qr = em.createNativeQuery(query2);
@@ -458,7 +485,7 @@ public class LocalQueryFactories<T extends Serializable> {
                 em.getTransaction().commit();
                 em.close();
 
-            }
+
         }
     }
 
@@ -510,7 +537,7 @@ public class LocalQueryFactories<T extends Serializable> {
                     return 0L;
                 } catch (Exception ex) {
                     //Logging de l'erreur
-                    LogFiles.addLogInFile("Echec de l'execution de la requete " + rq, ex);
+                    LogFiles.addLogInFile(ECHEC_DE_LEXEECUTION_DE_LA_REQUETE + rq, ex);
                     LocalDao.setInstance(null);
                     Logger.getLogger(LocalQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -548,7 +575,7 @@ public class LocalQueryFactories<T extends Serializable> {
                         return idListen;
                     } catch (Exception ex) {
                         //Logging de l'erreur
-                        LogFiles.addLogInFile("Echec de l'execution de la requete " + sb.toString(), ex);
+                        LogFiles.addLogInFile(ECHEC_DE_LEXEECUTION_DE_LA_REQUETE + sb.toString(), ex);
                         LocalDao.setInstance(null);
                         Logger.getLogger(LocalQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -582,7 +609,7 @@ public class LocalQueryFactories<T extends Serializable> {
                 return idListen;
             } catch (Exception ex) {
                 //Logging de l'erreur
-                LogFiles.addLogInFile("Echec de l'execution de la requete " + sb.toString(), ex);
+                LogFiles.addLogInFile(ECHEC_DE_LEXEECUTION_DE_LA_REQUETE + sb.toString(), ex);
                 LocalDao.setInstance(null);
                 Logger.getLogger(LocalQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -652,62 +679,62 @@ public class LocalQueryFactories<T extends Serializable> {
                 em.close();
                 return (!re.isEmpty()) ? re.get(0) : null;
             } catch (NoResultException ex) {
-                LogFiles.addLogInFile("Echec de l'execution de la requete " + query, ex);
+                LogFiles.addLogInFile(ECHEC_DE_LEXEECUTION_DE_LA_REQUETE + query, ex);
                 Logger.getLogger(LocalQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
                 return null;
             }
         } catch (Exception ex) {
             //Logging de l'erreur
-            LogFiles.addLogInFile("Echec de l'execution de la requete " + query, ex);
+            LogFiles.addLogInFile(ECHEC_DE_LEXEECUTION_DE_LA_REQUETE + query, ex);
             Logger.getLogger(LocalDao.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
     }
 
-    public T afterCRUD(T entity, String action) {
+    public <T extends Serializable> T afterCRUD(T entity, String action) {
         try {
-            if (entity != null && (action != null && !action.isEmpty()) && (entity.getClass().isAnnotationPresent(Table.class) && (entity instanceof YvsEntity))) {
-                    YvsEntity instance = (YvsEntity) entity;
-                    String name = (instance.getClass().getAnnotation(Table.class)).name();
-                    String serverName = "127.0.0.1";
-                    if (instance.getAdresseServeur() != null && !instance.getAdresseServeur().isEmpty()) {
-                        serverName = instance.getAdresseServeur();
+            if (entity != null && StringUtils.isNotEmpty(action) && (entity.getClass().isAnnotationPresent(Table.class) && (entity instanceof YvsEntity instance))) {
+                String name = (instance.getClass().getAnnotation(Table.class)).name();
+                String serverName = "127.0.0.1";
+                if (instance.getAdresseServeur() != null && !instance.getAdresseServeur().isEmpty()) {
+                    serverName = instance.getAdresseServeur();
+                }
+                if (Constantes.asString(name) && Constantes.asString(serverName) && (instance.getId() != null && instance.getId() > 0)) {
+                    YvsSynchroServeurs serveur = findOneByNQ("YvsSynchroServeurs.findByAdresseIp", new String[]{"adresseIp"}, new Object[]{serverName});
+                    if (serveur == null || serveur.getId() < 1) {
+                        serveur = null;
                     }
-                    if (Constantes.asString(name) && Constantes.asString(serverName) && (instance.getId() != null && instance.getId() > 0)) {
-                        YvsSynchroServeurs serveur = (YvsSynchroServeurs) findOneByNQ("YvsSynchroServeurs.findByAdresseIp", new String[]{"adresseIp"}, new Object[]{serverName});
-                        if (serveur == null || serveur.getId() < 1) {
-                            serveur = null;
+                    YvsSynchroListenTable listen = findOneByNQ("YvsSynchroListenTable.findByActionSource", new String[]{"idSource", "nameTable", "action"}, new Object[]{instance.getId(), name, "DELETE"});
+                    YvsSynchroDataSynchro synchro;
+                    if (listen == null || listen.getId() < 1) {
+                        listen = new YvsSynchroListenTable();
+                        listen.setActionName(action);
+                        listen.setIdSource(instance.getId());
+                        listen.setNameTable(name);
+                        listen.setToListen(true);
+                        listen.setServeur(serveur);
+                        listen.setDateSave(new Date());
+                        Long author = instance.getAuthor() != null ? instance.getAuthor().getId() > 0 ? instance.getAuthor().getId() : null : null;
+                        listen.setAuthor(author);
+                        listen = save1(listen, false);
+                    } else {
+                        listen.setToListen(true);
+                        listen.setServeur(serveur);
+                        listen.setAuthor(instance.getAuthor() != null ? instance.getAuthor().getId() > 0 ? instance.getAuthor().getId() : null : null);
+                        update(listen, false);
+                    }
+                    if (serveur != null && serveur.getId() > 0) {
+                        synchro = findOneByNQ("YvsSynchroDataSynchro.findOne", new String[]{"listen", "distant", "serveur"}, new Object[]{listen, instance.getIdDistant(), serveur});
+                        if (synchro == null || synchro.getId() < 1) {
+                            synchro = new YvsSynchroDataSynchro();
+                            synchro.setIdListen(listen);
+                            synchro.setServeur(serveur);
+                            synchro.setIdDistant(instance.getIdDistant());
+                            save1(synchro, false);
                         }
-                        YvsSynchroListenTable listen = (YvsSynchroListenTable) findOneByNQ("YvsSynchroListenTable.findByActionSource", new String[]{"idSource", "nameTable", "action"}, new Object[]{instance.getId(), name, "DELETE"});
-                        YvsSynchroDataSynchro synchro;
-                        if (listen == null || listen.getId() < 1) {
-                            listen = new YvsSynchroListenTable();
-                            listen.setActionName(action);
-                            listen.setIdSource(instance.getId());
-                            listen.setNameTable(name);
-                            listen.setToListen(true);
-                            listen.setServeur(serveur);
-                            listen.setDateSave(new Date());
-                            listen.setAuthor(instance.getAuthor() != null ? instance.getAuthor().getId() > 0 ? instance.getAuthor().getId() : null : null);
-                            listen = (YvsSynchroListenTable) save1((T) listen, false);
-                        } else {
-                            listen.setToListen(true);
-                            listen.setServeur(serveur);
-                            listen.setAuthor(instance.getAuthor() != null ? instance.getAuthor().getId() > 0 ? instance.getAuthor().getId() : null : null);
-                            update((T) listen, false);
-                        }
-                        if (serveur != null ? serveur.getId() > 0 : false) {
-                            synchro = (YvsSynchroDataSynchro) findOneByNQ("YvsSynchroDataSynchro.findOne", new String[]{"listen", "distant", "serveur"}, new Object[]{listen, instance.getIdDistant(), serveur});
-                            if (synchro == null || synchro.getId() < 1) {
-                                synchro = new YvsSynchroDataSynchro();
-                                synchro.setIdListen(listen);
-                                synchro.setServeur(serveur);
-                                synchro.setIdDistant(instance.getIdDistant());
-                                save1((T) synchro, false);
-                            }
-                        }
+                    }
 
-                    }
+                }
 
             }
         } catch (IllegalArgumentException | SecurityException ex) {
@@ -722,7 +749,7 @@ public class LocalQueryFactories<T extends Serializable> {
         try {
             executeSqlQuery(query, new Options[]{new Options(nbFailed, 1), new Options(idListenn, 2)});
         } catch (NoResultException ex) {
-            LogFiles.addLogInFile("Echec de l'execution de la requete " + query, ex);
+            LogFiles.addLogInFile(ECHEC_DE_LEXEECUTION_DE_LA_REQUETE + query, ex);
             Logger.getLogger(LocalQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -732,7 +759,7 @@ public class LocalQueryFactories<T extends Serializable> {
         try {
             executeSqlQuery(query, new Options[]{new Options(message, 1), new Options(idListenn, 2)});
         } catch (NoResultException ex) {
-            LogFiles.addLogInFile("Echec de l'execution de la requete " + query, ex);
+            LogFiles.addLogInFile(ECHEC_DE_LEXEECUTION_DE_LA_REQUETE + query, ex);
             Logger.getLogger(LocalQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
         }
     }

@@ -1,15 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.*?>
-<?import javafx.scene.paint.*?>
-<?import javafx.scene.text.*?>
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<VBox minHeight="240.0" minWidth="599.0" prefHeight="268.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lymytz.service.application.service.reglement.FormVirementController">
+<VBox minHeight="240.0" minWidth="599.0" prefHeight="268.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lymytz.lymytzsell.service.application.service.reglement.FormVirementController">
    <children>
       <Label alignment="CENTER" contentDisplay="CENTER" lineSpacing="1.0" prefHeight="44.0" prefWidth="608.0" style="-fx-border-color: #333;" text="Clôture la fiche de vente" textFill="#804f4f" wrapText="true" VBox.vgrow="ALWAYS">
          <font>
@@ -20,10 +16,10 @@
          <children>
             <VBox prefHeight="145.0" prefWidth="246.0" style="-fx-background-color: #bba;">
                <children>
-                  <HBox prefHeight="38.0">
+                  <HBox alignment="CENTER_RIGHT" prefHeight="38.0">
                      <children>
-                        <Label prefHeight="36.0" prefWidth="118.0" text="Chiffre du jour" />
-                        <Label fx:id="LAB_CA" alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="10.0" layoutY="10.0" prefHeight="40.0" prefWidth="112.0" text="1 275 000" textFill="#0a193c">
+                        <Label prefHeight="36.0" prefWidth="160.0" text="Chiffre du jour" />
+                        <Label fx:id="LAB_CA" alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="10.0" layoutY="10.0" prefHeight="40.0" text="1 275 000" textFill="#0a193c">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>
@@ -37,10 +33,10 @@
                      </VBox.margin>
                   </HBox>
                   <Separator prefWidth="200.0" />
-                  <HBox prefHeight="36.0">
+                  <HBox alignment="CENTER_RIGHT" prefHeight="36.0">
                      <children>
-                        <Label prefHeight="38.0" prefWidth="118.0" text="Commande reçu" />
-                        <Label fx:id="LAB_COMMANDE" alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="10.0" layoutY="10.0" prefHeight="41.0" prefWidth="112.0" text="1 275 000" textFill="#0a193c">
+                        <Label prefHeight="36.0" prefWidth="160.0" text="Commande reçu" />
+                        <Label fx:id="LAB_COMMANDE" alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="10.0" layoutY="10.0" prefHeight="41.0" text="1 275 000" textFill="#0a193c">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>
@@ -57,10 +53,10 @@
                      </padding>
                   </HBox>
                   <Separator prefWidth="200.0" />
-                  <HBox prefHeight="36.0">
+                  <HBox alignment="CENTER_RIGHT" prefHeight="36.0">
                      <children>
-                        <Label prefHeight="40.0" prefWidth="118.0" text="Versement confirmé !" />
-                        <Label fx:id="LAB_VERSE" alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="10.0" layoutY="10.0" prefHeight="41.0" prefWidth="112.0" text="1 275 000" textFill="#0a193c">
+                        <Label prefHeight="36.0" prefWidth="160.0" text="Versement confirmé !" wrapText="true" />
+                        <Label fx:id="LAB_VERSE" alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="10.0" layoutY="10.0" prefHeight="41.0" text="1 275 000" textFill="#0a193c">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>
@@ -93,29 +89,14 @@
             </VBox>
          </children>
       </HBox>
-      <HBox layoutX="10.0" layoutY="138.0" prefHeight="36.0">
-         <children>
-            <Label fx:id="LAB_VERSEC" alignment="CENTER" contentDisplay="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="22.0" prefWidth="608.0" text="Entrez le montant à verser" textFill="#0a193c">
-               <font>
-                  <Font size="11.0" />
-               </font>
-               <padding>
-                  <Insets right="3.0" />
-               </padding>
-            </Label>
-         </children>
-         <padding>
-            <Insets left="5.0" />
-         </padding>
-      </HBox>
       <HBox layoutX="10.0" layoutY="74.0">
          <children>
-            <CheckBox fx:id="CHK_CLOTURE" mnemonicParsing="false" prefHeight="25.0" prefWidth="117.0" selected="true" text="Clôturer la fiche" wrapText="true">
+            <CheckBox fx:id="CHK_CLOTURE" mnemonicParsing="false" prefHeight="25.0" selected="true" text="Clôturer la fiche" wrapText="true">
                <HBox.margin>
-                  <Insets left="50.0" />
+                  <Insets left="30.0" />
                </HBox.margin>
             </CheckBox>
-            <TextField fx:id="TXT_MONTANT" alignment="CENTER" prefHeight="25.0" prefWidth="307.0" promptText="0" style="-fx-background-color: #CCffff; -fx-text-fill: #000000; -fx-font-weight: bold;">
+            <TextField fx:id="TXT_MONTANT" alignment="CENTER" prefHeight="25.0" prefWidth="307.0" promptText="Montant à virer" style="-fx-background-color: #CCffff; -fx-text-fill: #000000; -fx-font-weight: bold;">
                <font>
                   <Font name="System Bold" size="15.0" />
                </font>

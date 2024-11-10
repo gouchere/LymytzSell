@@ -15,4 +15,5 @@ public class MessagesConstants {
     public static final String IMPOSSIBE_DE_DEMARRER_L_APPLICATION = "Impossible de démarrer l'application. \n\nAstuce: Ouvrir l'application avec le Login ``ADMIN`` sans mot de passe pour paramétrer vos préférences";
     public static final String FICHIER_PROPERTIE_MAL_CONFIGURE = "Le fichier application.properties est mal configuré";
     public static final String VOUS_DEVEZ_INITIALISER_LA_PROPRIETE = "Vous devez initialiser la propriété ";
+    public static final String ECHEC_DE_LEXEECUTION_DE_LA_REQUETE = "Echec de l'execution de la requete ";
 }

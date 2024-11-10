@@ -26,6 +26,8 @@ import com.lymytz.lymytzsell.service.utils.UtilsProject;
 import com.lymytz.lymytzsell.service.utils.log.LogFiles;
 import com.lymytz.lymytzsell.synchro.ws.ResultatAction;
 import com.lymytz.lymytzsell.synchro.ws.WsSynchro;
+import lombok.Getter;
+import lombok.Setter;
 import org.json.JSONObject;
 
 import java.io.Serializable;
@@ -35,17 +37,24 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
- * @author Admin
  * @param <T>
+ * @author Admin
  */
 public class ExportService<T extends Serializable> extends Task<Boolean> {
 
     LocalQueryFactories Ldao = new LocalQueryFactories();
+    @Setter
+    @Getter
     private List<LymytzData> listData;
     ExportDataController page;
+    @Setter
+    @Getter
     private String source = "T";  // T= (thread: lancé par le schéduler) IHM= lancé lar l'IHM
+    @Setter
+    @Getter
     String table, action;
+    @Setter
+    @Getter
     Long idListen, idLocal;
 
     public ExportService() {
@@ -57,53 +66,6 @@ public class ExportService<T extends Serializable> extends Task<Boolean> {
         this.source = source;
     }
 
-    public String getTable() {
-        return table;
-    }
-
-    public void setTable(String table) {
-        this.table = table;
-    }
-
-    public String getSource() {
-        return source;
-    }
-
-    public void setSource(String source) {
-        this.source = source;
-    }
-
-    public String getAction() {
-        return action;
-    }
-
-    public void setAction(String action) {
-        this.action = action;
-    }
-
-    public Long getIdListen() {
-        return idListen;
-    }
-
-    public void setIdListen(Long idListen) {
-        this.idListen = idListen;
-    }
-
-    public Long getIdLocal() {
-        return idLocal;
-    }
-
-    public void setIdLocal(Long idLocal) {
-        this.idLocal = idLocal;
-    }
-
-    public List<LymytzData> getListData() {
-        return listData;
-    }
-
-    public void setListData(List<LymytzData> listData) {
-        this.listData = listData;
-    }
 
     private boolean synchroniseData(Long id, String table) {
         return false;
@@ -183,7 +145,7 @@ public class ExportService<T extends Serializable> extends Task<Boolean> {
                 //Construction de l'objet à partir de la base de données locale
                 YvsComEnteteDocVente en = BuilderEntitySynchro.builderHeader(localKey, idListen);
                 WsSynchro ws = new WsSynchro();
-                JSONObject entityJson = UtilExport.exportEnteteDoc(en,idListen);
+                JSONObject entityJson = UtilExport.exportEnteteDoc(en, idListen);
                 ResultatAction<YvsComEnteteDocVente> result = null;
                 if (entityJson != null) {
                     switch (action) {
@@ -238,7 +200,7 @@ public class ExportService<T extends Serializable> extends Task<Boolean> {
                 YvsComptaAcompteClient en = BuilderEntitySynchro.builderAcompteClient(localKey, idListen);
                 WsSynchro ws = new WsSynchro();
                 //Construction de l'objet avec ses liaisons sur le serveur distant
-                JSONObject entityJson = UtilExport.exportAcompteClient(en,idListen);
+                JSONObject entityJson = UtilExport.exportAcompteClient(en, idListen);
                 ResultatAction<YvsComptaAcompteClient> result = null;
                 if (entityJson != null) {
                     switch (action) {
@@ -261,7 +223,7 @@ public class ExportService<T extends Serializable> extends Task<Boolean> {
                 YvsComptaNotifReglementVente en = BuilderEntitySynchro.builderNotifReglement(localKey, idListen);
                 WsSynchro ws = new WsSynchro();
                 //Construction de l'objet avec ses liaisons sur le serveur distant
-                JSONObject entityJson = UtilExport.exportNotifReglement(en,idListen);
+                JSONObject entityJson = UtilExport.exportNotifReglement(en, idListen);
                 ResultatAction<YvsComptaAcompteClient> result = null;
                 if (entityJson != null) {
                     switch (action) {
@@ -307,7 +269,7 @@ public class ExportService<T extends Serializable> extends Task<Boolean> {
                 YvsComptaCaissePieceVente en = BuilderEntitySynchro.builderPieceReglement(localKey, idListen);
                 WsSynchro ws = new WsSynchro();
                 //Construction de l'objet avec ses liaisons sur le serveur distant
-                JSONObject entityJson = UtilExport.exportPieceCaisse(en,idListen);
+                JSONObject entityJson = UtilExport.exportPieceCaisse(en, idListen);
                 ResultatAction<YvsComptaCaissePieceVente> result = null;
                 if (entityJson != null) {
                     switch (action) {
@@ -343,7 +305,7 @@ public class ExportService<T extends Serializable> extends Task<Boolean> {
                 if (gson != null) {
                     JsonObject jo = gson.toJsonTree(result.getData()).getAsJsonObject();
                     entity = gson.fromJson(jo.toString(), YvsComEnteteDocVente.class);
-                    if (result.isResult() || result.isContinu()==false) {
+                    if (result.isResult() || result.isContinu() == false) {
                         //insert dans la table data_syncrho                            
                         Ldao.insertDataSynchro(idListen, entity.getId(), "OK", true);
                         WsSynchro.countOutI++;
@@ -647,7 +609,8 @@ public class ExportService<T extends Serializable> extends Task<Boolean> {
                         + "INNER JOIN yvs_com_doc_ventes d ON (d.id=l.id_source AND l.name_table='yvs_com_doc_ventes') "
                         + "WHERE d.id=? AND l.to_listen IS TRUE";
                 if (add) {
-                    WsSynchro.currentListen.addAll(Ldao.loadBySQLQuery(query, new Options[]{new Options(id_source, 1)}));
+                    var ids = Ldao.loadOneColumnBySQLQuery(query, new Options[]{new Options(id_source, 1)});
+                    WsSynchro.currentListen.addAll(ids.stream().map(e -> (Long) e).toList());
                 } else {
                     WsSynchro.currentListen.removeAll(Ldao.loadBySQLQuery(query, new Options[]{new Options(id_source, 1)}));
                 }
@@ -656,7 +619,8 @@ public class ExportService<T extends Serializable> extends Task<Boolean> {
                         + "INNER JOIN yvs_com_contenu_doc_vente c ON (c.id=l.id_source AND l.name_table='yvs_com_contenu_doc_vente') "
                         + "WHERE c.doc_vente=? AND l.to_listen IS TRUE";
                 if (add) {
-                    WsSynchro.currentListen.addAll(Ldao.loadBySQLQuery(query, new Options[]{new Options(id_source, 1)}));
+                    var ids = Ldao.loadOneColumnBySQLQuery(query, new Options[]{new Options(id_source, 1)});
+                    WsSynchro.currentListen.addAll(ids.stream().map(e -> (Long) e).toList());
                 } else {
                     WsSynchro.currentListen.removeAll(Ldao.loadBySQLQuery(query, new Options[]{new Options(id_source, 1)}));
                 }
@@ -665,7 +629,8 @@ public class ExportService<T extends Serializable> extends Task<Boolean> {
                         + "INNER JOIN yvs_compta_caisse_piece_vente pc ON (pc.id=l.id_source AND l.name_table='yvs_compta_caisse_piece_vente')"
                         + "WHERE pc.vente=? AND l.to_listen IS TRUE";
                 if (add) {
-                    WsSynchro.currentListen.addAll(Ldao.loadBySQLQuery(query, new Options[]{new Options(id_source, 1)}));
+                    var ids = Ldao.loadOneColumnBySQLQuery(query, new Options[]{new Options(id_source, 1)});
+                    WsSynchro.currentListen.addAll(ids.stream().map(e -> (Long) e).toList());
                 } else {
                     WsSynchro.currentListen.removeAll(Ldao.loadBySQLQuery(query, new Options[]{new Options(id_source, 1)}));
                 }

@@ -60,7 +60,7 @@ import static com.lymytz.lymytzsell.service.utils.MessagesConstants.KEY_VALUE;
  */
 public class PreferenceController implements Initializable, Controller {
 
-    LocalQueryFactories dao = new LocalQueryFactories<>();
+    LocalQueryFactories dao = new LocalQueryFactories();
 
     @FXML
     private TextField TXT_IP_L;
@@ -228,7 +228,6 @@ public class PreferenceController implements Initializable, Controller {
                 case "2" -> NB_COL_CATALOGUE.selectToggle(CATALOGUE_DISPLAY_2_COL);
                 case "3" -> NB_COL_CATALOGUE.selectToggle(CATALOGUE_DISPLAY_3_COL);
                 default -> {
-                    break;
                 }
             }
         });

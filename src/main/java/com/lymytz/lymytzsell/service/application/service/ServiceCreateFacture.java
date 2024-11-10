@@ -63,19 +63,19 @@ public class ServiceCreateFacture {
 
     public void saveCurrentCommercial(YvsComDocVentes facture) {
         if (UtilsProject.headerDoc != null && (UtilsProject.headerDoc.getCreneau() != null && (UtilsProject.headerDoc.getCreneau().getId() != null && UtilsProject.headerDoc.getCreneau().getId() > 0))) {
-            YvsBasePointVente pv = null;
-            YvsComCreneauPoint cr = UtilsProject.headerDoc.getCreneau().getCreneauPoint();
-            if (cr != null && cr.getId() > 0) {
-                pv = cr.getPoint();
-                if (pv != null && pv.getId() > 0) {
-                    pv = (YvsBasePointVente) dao.findOneByNQ("YvsBasePointVente.findById", new String[]{"id"}, new Object[]{pv.getId()});
+            YvsBasePointVente pointDeVente = null;
+            YvsComCreneauPoint creneauPoint = UtilsProject.headerDoc.getCreneau().getCreneauPoint();
+            if (creneauPoint != null && creneauPoint.getId() > 0) {
+                pointDeVente = creneauPoint.getPoint();
+                if (pointDeVente != null && pointDeVente.getId() > 0) {
+                    pointDeVente = dao.findOneByNQ("YvsBasePointVente.findById", new String[]{"id"}, new Object[]{pointDeVente.getId()});
                 }
             }
-            YvsComComerciale y = (YvsComComerciale) dao.findOneByNQ("YvsComComerciale.findByUser", new String[]{"user"}, new Object[]{UtilsProject.headerDoc.getCreneau().getUsers()});
-            if (y == null && pv != null) { //Commerciale est celui rattaché au user en cours
+            YvsComComerciale y = dao.findOneByNQ("YvsComComerciale.findByUser", new String[]{"user"}, new Object[]{UtilsProject.headerDoc.getCreneau().getUsers()});
+            if (y == null && pointDeVente != null) { //Commerciale est celui rattaché au user en cours
                 YvsComCommercialVente bean;
-                double taux = !pv.getCommerciaux().isEmpty() ? ((double) 100 / pv.getCommerciaux().size()) : 0;
-                for (YvsComCommercialPoint cp : pv.getCommerciaux()) {
+                double taux = !pointDeVente.getCommerciaux().isEmpty() ? ((double) 100 / pointDeVente.getCommerciaux().size()) : 0;
+                for (YvsComCommercialPoint cp : pointDeVente.getCommerciaux()) {
                     bean = new YvsComCommercialVente();
                     bean.setFacture(facture);
                     bean.setTaux(taux);
@@ -103,7 +103,7 @@ public class ServiceCreateFacture {
                 y.setDateUpdate(new Date());
                 if (y.getId() == null || y.getId() < 1) {
                     y.setId(null);
-                    y = (YvsComCommercialVente) dao.save1(y);
+                    y = dao.save1(y);
                 } else {
                     dao.update(y);
                 }

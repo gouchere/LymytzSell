@@ -1,0 +1,23 @@
+# Liste des tests fonctionnel à réaliser
+
+- [ ] Initier une fiche de vente
+- [ ] Créer une facture
+  - [ ] Par le raccourcis CTL + R 
+  - [ ] Par le raccourcis En cliquant sur un article
+  - [ ] Par bouton nouveau
+- [ ] Calcul sur les factures
+  - [ ] Le prix de vente est bien calculé
+  - [ ] La ristourne est bien calculé
+  - [ ] La remise
+  - [ ] La taxe
+- [ ] La facture s'enregistre avec succès
+- [ ] Le règlement est généré
+- [ ] Le bon de livraison est généré
+- [ ] La facture est bien comptabilisé
+- [ ] On enregistre le bon de commande
+- [ ] On peux avancer des montants sur le bon de commande
+- [ ] On peut clôturer une fiche et faire le virement
+  - [ ] Le chiffre d'affaire est bien calculé
+  - [ ] Les versements précédents sont bien affichés
+- [ ] La/les photos de l'article s'affichent correctement
+- [ ] Pourquoi mes fiches non clôturées ne sont plus visible
