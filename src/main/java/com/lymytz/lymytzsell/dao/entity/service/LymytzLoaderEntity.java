@@ -35,7 +35,7 @@ public final class LymytzLoaderEntity<T extends Serializable> {
     public LymytzLoaderEntity(boolean base) {
         //Initialise la liste de classes
         if (Constantes.ALLENTITY_BASE.isEmpty()) {
-            new Constantes();
+            Constantes.initConstant();
         }
         if (base) {
             loadAllEntityBase();

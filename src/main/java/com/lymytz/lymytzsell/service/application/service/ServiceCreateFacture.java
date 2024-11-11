@@ -24,7 +24,9 @@ import com.lymytz.lymytzsell.service.utils.LymytzService;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
 import com.lymytz.lymytzsell.synchro.ws.ResultatAction;
 import com.lymytz.lymytzsell.synchro.ws.WsSynchro;
+import com.lymytz.lymytzsell.view.component.ToastService;
 import com.lymytz.lymytzsell.view.main.HomeCaisseController;
+import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.Event;
@@ -115,7 +117,7 @@ public class ServiceCreateFacture {
     }
 
     /*Gestion de la validation*/
-    private boolean controleSaveReglement(YvsComDocVentes bean) {
+    private boolean controleSaveReglement() {
         //2. Contrôle la caisse
         if (UtilsProject.caisse == null) {
             UtilsProject.caisse = dao.findOneByNQ("YvsBaseCaisse.findByCaissier", new String[]{"caissier"}, new Object[]{UtilsProject.currentUser.getUsers()});
@@ -139,7 +141,7 @@ public class ServiceCreateFacture {
     }
 
     private boolean controleSaveFacture(YvsComDocVentes bean) {
-        if (controleSaveReglement(bean)) {
+        if (controleSaveReglement()) {
             //1. la fature dois être ditable, non encore livré, non encore soldé
             if (Constantes.ETAT_VALIDE.equals(bean.getStatut())) {
                 LymytzService.openAlertDialog("Impossible de modifier le statut de la facture !", "Erreur ", "Cette facture est déjà validé", Alert.AlertType.ERROR);
@@ -158,47 +160,48 @@ public class ServiceCreateFacture {
     }
 
     public void valideFacture() {
-        Onglets fac = (Onglets) page.TAB_FACTURES.getSelectionModel().getSelectedItem();
-        if (fac != null) {
-            if (controleSaveFacture(fac.getFacture())) { //1. Enregistrer le contenu
-                if (fac.getFacture().getTypeDoc().equals(Constantes.TYPE_FV)) {
-                    page.openDlgCalculatrice(fac, "F", KeyBoardAction.VALIDER);
-                } else {
-                    //cas de la commande
-                    //On vérifie avant tout que la commande soit réglé
-                    if (!fac.getFacture().getStatutRegle().equals(Constantes.ETAT_REGLE)) {
-                        if (fac.getFacture().getId() > 0) {
-                            saveOrGeneratedPaiement_(fac);
-                        } else {
-                            page.openDlgCalculatrice(fac, "F", KeyBoardAction.VALIDER);
-                        }
-                    } else {
-                        //Appelle le service de validation des commandes
-                        Alert dlg = new Alert(Alert.AlertType.CONFIRMATION, "Confirmez vous la livraison de cette commande ?", new ButtonType("Oui"), new ButtonType("Non"));
-                        Optional<ButtonType> re = dlg.showAndWait();
-                        if (re.get().getText().equals("Oui")) {
-                            //Vérifie que tout les règlements en rapport avec la commande sont synchronisé. 
-                            if (verifieSynchroCommande(fac.getFacture())) {
-                                //Appelle le service de validation des commandes
-                                Livraison task = new Livraison(fac.getFacture());
-                                task.addEventHandler(WorkerStateEvent.WORKER_STATE_SUCCEEDED, (EventHandler<Event>) event -> LymytzService.success()
-                                );
-                                new Thread(task).start();
+        Onglets onglet = (Onglets) page.TAB_FACTURES.getSelectionModel().getSelectedItem();
+        Optional.ofNullable(onglet)
+                .filter(ong -> controleSaveFacture(ong.getFacture()))
+                .ifPresentOrElse(fac -> {
+                            if (fac.getFacture().getTypeDoc().equals(Constantes.TYPE_FV)) {
+                                page.openDlgCalculatrice(fac, "F", KeyBoardAction.VALIDER);
                             } else {
-                                LymytzService.openAlertDialog("Veuillez patienter...", "La commande n'est pas encore entièrement synchroniser sur le serveur distant", "Ressayer dans quelques minutes", Alert.AlertType.WARNING);
+                                validationCommande(fac);
                             }
-                        }
+                        },
+                        () -> Platform.runLater(() -> ToastService.show(page.getMainStage(), "Assurez-vous de selectionner une facture", 5000, ToastService.ToastType.ERROR)));
+    }
 
-                    }
-                }
+    private void validationCommande(Onglets fac) {
+        if (!fac.getFacture().getStatutRegle().equals(Constantes.ETAT_REGLE)) {
+            if (fac.getFacture().getId() > 0) {
+                saveOrGeneratedPaiement_(fac);
+            } else {
+                page.openDlgCalculatrice(fac, "F", KeyBoardAction.VALIDER);
             }
         } else {
-            LymytzService.openAlertDialog("Aucune facture selectionné !", "Erreur ", "Aucune facture n'a été initié !", Alert.AlertType.ERROR);
+            //Appelle le service de validation des commandes
+            Alert dlg = new Alert(Alert.AlertType.CONFIRMATION, "Confirmez vous la livraison de cette commande ?", new ButtonType("Oui"), new ButtonType("Non"));
+            Optional<ButtonType> re = dlg.showAndWait();
+            if (re.get().getText().equals("Oui")) {
+                //Vérifie que tout les règlements en rapport avec la commande sont synchronisé.
+                if (verifieSynchroCommande(fac.getFacture())) {
+                    //Appelle le service de validation des commandes
+                    Livraison task = new Livraison(fac.getFacture());
+                    task.addEventHandler(WorkerStateEvent.WORKER_STATE_SUCCEEDED, (EventHandler<Event>) event -> LymytzService.success()
+                    );
+                    new Thread(task).start();
+                } else {
+                    LymytzService.openAlertDialog("Veuillez patienter...", "La commande n'est pas encore entièrement synchroniser sur le serveur distant", "Ressayer dans quelques minutes", Alert.AlertType.WARNING);
+                }
+            }
+
         }
     }
 
     public void saveOrGeneratedPaiement_(Onglets onglet) {
-        if (controleSaveReglement(onglet.getFacture())) {
+        if (controleSaveReglement()) {
             page.openDlgCalculatrice(onglet, onglet.getFacture().getTypeDoc().equals(Constantes.TYPE_BCV) ? "A" : "F", KeyBoardAction.REGLER);
         }
     }

@@ -1,10 +1,10 @@
 # Liste des tests fonctionnel à réaliser
 
 - [ ] Initier une fiche de vente
-- [ ] Créer une facture
-  - [ ] Par le raccourcis CTL + R 
-  - [ ] Par le raccourcis En cliquant sur un article
-  - [ ] Par bouton nouveau
+- [x] Créer une facture
+  - [x] Par le raccourcis CTL + R 
+  - [x] Par le raccourcis En cliquant sur un article
+  - [x] Par bouton nouveau
 - [ ] Calcul sur les factures
   - [ ] Le prix de vente est bien calculé
   - [ ] La ristourne est bien calculé

@@ -17,18 +17,20 @@ import java.util.Date;
 import java.util.List;
 
 import com.lymytz.lymytzsell.service.application.synchro.TableList;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 /**
  * @author Admin
  */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class Constantes {
     /*Constante DateFormat*/
 
-    public static Long localId = -999L;
     public static List<String> LISTEN_TABLE;   //tables dont on doit surveiller l'activité sur le serveur distant
     public static List<TableList> ALLENTITY_BASE = new ArrayList<>();   //données de base qui doivent provenir du serveur distant
     public static List<TableList> ALLENTITY_DATA = new ArrayList<>();   //données de base qui doivent partir du serveur local
-    public static String SEPARATOR = System.getProperty("file.separator");
+    public static final String SEPARATOR = File.separator;
     public static final DateFormat dfh = new SimpleDateFormat("dd-MM-yyyy HH:mm");
     public static final DateFormat dfD = new SimpleDateFormat("dd-MM-yyyy");
     public static final DateFormat HMS = new SimpleDateFormat("HH:mm:ss");
@@ -305,7 +307,7 @@ public class Constantes {
     public static final String CMPU1 = "Cout Moyen Pondere 1";
     public static final String CMPU2 = "Cout Moyen Pondere 2";
 
-    public Constantes() {
+    public static void initConstant() {
         LISTEN_TABLE = new ArrayList<>();
         ALLENTITY_BASE.add(new TableList(TABLE_CAISSE_USERS_NAME, TABLE_CAISSE_USERS_CODE));
         ALLENTITY_BASE.add(new TableList(TABLE_ARTICLE_POINT_NAME, TABLE_ARTICLE_POINT_CODE));
