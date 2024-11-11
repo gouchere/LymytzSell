@@ -114,6 +114,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
+import static com.lymytz.lymytzsell.business.helpers.HelperFactureVente.factureDtoFromEntity;
 import static com.lymytz.lymytzsell.service.utils.Constantes.ETAT_CLOTURE;
 import static com.lymytz.lymytzsell.service.utils.Constantes.ETAT_LIVRE;
 import static com.lymytz.lymytzsell.service.utils.Constantes.ETAT_REGLE;
@@ -121,7 +122,6 @@ import static com.lymytz.lymytzsell.service.utils.Constantes.ETAT_VALIDE;
 import static com.lymytz.lymytzsell.service.utils.Constantes.TYPE_FV;
 import static com.lymytz.lymytzsell.service.utils.MessagesConstants.ERREUR;
 import static com.lymytz.lymytzsell.service.utils.MessagesConstants.GENERATION_DE_LA_FACTURE_NON_REUSSI;
-import static com.lymytz.lymytzsell.service.utils.MessagesConstants.GENERATION_FACTURE_NON_REUSSI;
 import static com.lymytz.lymytzsell.view.component.ToastService.ToastType.ERROR;
 import static com.lymytz.lymytzsell.view.component.ToastService.ToastType.INFO;
 
@@ -677,40 +677,30 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
         }
         return lc;
     }
+    /* 1. Engitrer la facture
+     *  2. Generer la livraison
+     *  3. Générer le règlement
+     *  4. Comptabiliser
+     *  5.
+     * */
 
-    public void confirmValideFacture(Onglets currentOnglet, final double montantPaye, final double montantRecu) {
-        List<YvsComContenuDocVente> contenuDuPanier = new ArrayList<>(currentOnglet.getFacture().getContenus());
-        currentOnglet.getFacture().getContenus().clear();
-        YvsComDocVentes d = saveFacture(currentOnglet.getFacture());
-        if (d != null) {
-            currentOnglet.setFacture(d);
-            currentOnglet.getFacture().setContenus(contenuDuPanier);
-            if (saveContentFacture(currentOnglet.getFacture().getContenus(), currentOnglet.getFacture())) {
-                livrerEtReglerFactureValide(currentOnglet, montantPaye, montantRecu);
-            }
+    public void confirmValideFacture(YvsComDocVentes facture, final double montantPaye, final double montantRecu) {
+        List<YvsComContenuDocVente> contenuDuPanier = new ArrayList<>(facture.getContenus());
+        facture.getContenus().clear();
+        YvsComDocVentes entityFacture = saveFactureAndContent(facture, contenuDuPanier, montantPaye);
+        if (entityFacture != null) {
+            new ServiceCreateFacture(this).saveCurrentCommercial(facture);
+            livrerEtReglerFactureValide(facture, montantPaye, montantRecu);
         } else {
-            ToastService.show(getMainStage(), "Votre facture n'a pas été enregistré", 3000, ERROR);
-            //todo enregistrer dans une zone tempon
+            ToastService.show(getMainStage(), "Votre facture n'a pas été enregistré veuillez regarder vos notifications", 3500, ERROR);
         }
     }
 
-    private void livrerEtReglerFactureValide(Onglets currentOnglet, double montantPaye, double montantRecu) {
-        currentOnglet.getFacture().setStatut(ETAT_VALIDE);
-        currentOnglet.getFacture().setEtapeValide(1);
-        currentOnglet.getFacture().setStatutLivre(Constantes.ETAT_ATTENTE);
-        currentOnglet.getFacture().setStatutRegle(Constantes.ETAT_ATTENTE);
-        currentOnglet.getFacture().setMontantAvance(montantPaye);
-        List<YvsComContenuDocVente> temp = new ArrayList<>(currentOnglet.getFacture().getContenus());
-        currentOnglet.getFacture().getContenus().clear();
-        if (currentOnglet.getFacture().getTypeDoc().equals(Constantes.TYPE_BCV)) {
-            currentOnglet.getFacture().setLivraisonAuto(Boolean.FALSE);
-        }
-        dao.update(currentOnglet.getFacture());
-        currentOnglet.getFacture().getContenus().addAll(temp);
+    private void livrerEtReglerFactureValide(YvsComDocVentes facture, double montantPaye, double montantRecu) {
         Thread tcompta = new Thread(() -> {
-            saveLivraisonAndreglement(new YvsComDocVentes(currentOnglet.getFacture()), montantPaye, montantRecu);
-            if (Boolean.TRUE.equals(!UtilsProject.REPLICATION) && currentOnglet.getFacture().getTypeDoc().equals(TYPE_FV)) {
-                comptabilise(currentOnglet.getFacture().getId(), currentOnglet.getFacture().getNumDoc());
+            saveLivraisonAndreglement(new YvsComDocVentes(facture), montantPaye, montantRecu);
+            if (Boolean.TRUE.equals(!UtilsProject.REPLICATION) && facture.getTypeDoc().equals(TYPE_FV)) {
+                comptabilise(facture.getId(), facture.getNumDoc());
             }
         });
         tcompta.start();
@@ -727,32 +717,35 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
         });
     }
 
-    private YvsComDocVentes saveFacture(YvsComDocVentes doc) {
-        if (UtilsProject.headerDoc != null) {
-            if (doc.getId() <= 0) {
-                String numDoc = UtilsProject.generatedNumDoc((doc.getTypeDoc().equals(TYPE_FV)) ? Constantes.TYPE_FV_NAME : Constantes.TYPE_BCV_NAME);
-                if (Constantes.asString(numDoc)) {
-                    doc.setId(null);
-                    doc.setNumDoc(numDoc);
-                    doc.setNumPiece(numDoc);
-                    doc.setNumeroExterne(numDoc);
-                    doc.setEnteteDoc(UtilsProject.headerDoc);
-                    doc.setAuthor(UtilsProject.currentUser);
-                    doc = dao.save1(doc);
-                    new ServiceCreateFacture(this).saveCurrentCommercial(doc);
-                } else {
-                    Platform.runLater(() -> LymytzService.openAlertDialog(GENERATION_FACTURE_NON_REUSSI, ERREUR, "Le numéro de référence n'a pas pu être généré !", Alert.AlertType.ERROR));
-                    return null;
+    private YvsComDocVentes saveFactureAndContent(YvsComDocVentes facture, List<YvsComContenuDocVente> contenuDocVentes, double montantPaye) {
+        try {
+            if (facture.getId() <= 0) {
+                facture.setId(null);
+                facture.setNumPiece(facture.getNumDoc());
+                facture.setNumeroExterne(facture.getNumDoc());
+                facture.setAuthor(UtilsProject.currentUser);
+                facture.setStatut(ETAT_VALIDE);
+                facture.setEtapeValide(1);
+                facture.setStatutLivre(Constantes.ETAT_ATTENTE);
+                facture.setStatutRegle(Constantes.ETAT_ATTENTE);
+                facture.setMontantAvance(montantPaye);
+                if (facture.getTypeDoc().equals(Constantes.TYPE_BCV)) {
+                    facture.setLivraisonAuto(Boolean.FALSE);
                 }
+                facture = dao.save1(facture);
+                Optional.ofNullable(facture).ifPresent(fac -> saveContentFacture(contenuDocVentes, fac));
             } else {
-                return doc;
+                return dao.update(facture);
             }
-        } else {
-            Platform.runLater(() -> LymytzService.openAlertDialog(GENERATION_FACTURE_NON_REUSSI, ERREUR, "L'en-tête de la facture n'a pas été trouvé!", Alert.AlertType.ERROR));
-            return null;
+        } catch (Exception ex) {
+            //Enregistrer la facture sous forme de json si elle n'a pas pu être enregistré
+            var fatureLog = new YvsComDocVentes(facture);
+            fatureLog.setContenus(contenuDocVentes);
+            dao.saveLogsFacture(fatureLog);
         }
-        return doc;
+        return facture;
     }
+
 
     private boolean saveContentFacture(List<YvsComContenuDocVente> contents, YvsComDocVentes doc) {
         return contents.stream().noneMatch(c -> (!saveContentFacture(c, doc)));
@@ -763,7 +756,7 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
         c.setParent(null);
         if (c.getId() <= 0) {
             c.setId(null);
-            c = (YvsComContenuDocVente) dao.save1(c);
+            c = dao.save1(c);
             c.setId(c.getId());
             //Save les taxes
             saveAllTaxe(c);
@@ -784,7 +777,7 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
             long categorie = y.getDocVente().getCategorieComptable().getId();
 
             String nameQueri = "YvsBaseArticleCategorieComptable.findByCategorieArticle";
-            YvsBaseArticleCategorieComptable articleCategorieComptable = (YvsBaseArticleCategorieComptable) dao.findOneByNQ(nameQueri, new String[]{"categorie", "article"}, new Object[]{new YvsBaseCategorieComptable(categorie), y.getArticle()});
+            YvsBaseArticleCategorieComptable articleCategorieComptable = dao.findOneByNQ(nameQueri, new String[]{"categorie", "article"}, new Object[]{new YvsBaseCategorieComptable(categorie), y.getArticle()});
             if (articleCategorieComptable != null && (articleCategorieComptable.getId() != null && articleCategorieComptable.getId() > 0)) {
                 if (Boolean.TRUE.equals(y.getArticle().getPuvTtc())) {
                     for (YvsBaseArticleCategorieComptableTaxe t : articleCategorieComptable.getTaxes()) {
@@ -801,7 +794,7 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
                     }
                     taxe = dao.arrondi(UtilsProject.currentSociete.getId(), taxe);
 
-                    YvsComTaxeContenuVente ct = (YvsComTaxeContenuVente) dao.findOneByNQ("YvsComTaxeContenuVente.findOne", new String[]{"contenu", "taxe"}, new Object[]{y, t.getTaxe()});
+                    YvsComTaxeContenuVente ct = dao.findOneByNQ("YvsComTaxeContenuVente.findOne", new String[]{"contenu", "taxe"}, new Object[]{y, t.getTaxe()});
                     if (ct != null && (ct.getId() != null && ct.getId() > 0)) {
                         ct.setMontant(taxe);
                         ct.setAuthor(UtilsProject.currentUser);

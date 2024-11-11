@@ -6,11 +6,19 @@ import com.lymytz.lymytzsell.dao.entity.YvsComClient;
 import com.lymytz.lymytzsell.dao.entity.YvsComDocVentes;
 import com.lymytz.lymytzsell.dao.entity.YvsComEnteteDocVente;
 import com.lymytz.lymytzsell.dao.entity.YvsDictionnaire;
+import com.lymytz.lymytzsell.service.application.service.ServiceCreateFacture;
 import com.lymytz.lymytzsell.service.utils.Constantes;
+import com.lymytz.lymytzsell.service.utils.LymytzService;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
+import javafx.application.Platform;
+import javafx.scene.control.Alert;
 
 import java.util.Date;
 import java.util.function.Function;
+
+import static com.lymytz.lymytzsell.service.utils.Constantes.TYPE_FV;
+import static com.lymytz.lymytzsell.service.utils.MessagesConstants.ERREUR;
+import static com.lymytz.lymytzsell.service.utils.MessagesConstants.GENERATION_FACTURE_NON_REUSSI;
 
 public class ManagedFactureVente {
     private final YvsComEnteteDocVente headerDoc;
@@ -23,6 +31,13 @@ public class ManagedFactureVente {
 
 
     private final Function<YvsComDocVentes, StatutResponse> controle = docVente -> {
+        if (docVente.getEnteteDoc() == null) return StatutResponse.ENTETE_FACTURE_NON_TROUVE;
+        if (Boolean.TRUE.equals(docVente.getEnteteDoc().getCloturer())) return StatutResponse.FICHE_DEJA_CLOTURE;
+        if (docVente.getEnteteDoc().getDateEntete().after(new Date())) return StatutResponse.DATE_FICHE_INCORRECT;
+        if (docVente.getNumDoc() == null) return StatutResponse.NUMERO_DOC_NON_GENERE;
+        return StatutResponse.OK;
+    };
+    public static final Function<YvsComDocVentes, StatutResponse> controleBeforeSaveFacture = docVente -> {
         if (docVente.getEnteteDoc() == null) return StatutResponse.ENTETE_FACTURE_NON_TROUVE;
         if (Boolean.TRUE.equals(docVente.getEnteteDoc().getCloturer())) return StatutResponse.FICHE_DEJA_CLOTURE;
         if (docVente.getEnteteDoc().getDateEntete().after(new Date())) return StatutResponse.DATE_FICHE_INCORRECT;
@@ -45,7 +60,6 @@ public class ManagedFactureVente {
         var statut = controle.apply(facture);
         return new ResponseAction<>(facture, statut);
     }
-
 
     private YvsComDocVentes buildEntityFacture(String numDoc) {
         YvsComDocVentes bean = new YvsComDocVentes();

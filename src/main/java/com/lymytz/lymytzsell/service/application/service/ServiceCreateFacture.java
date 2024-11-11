@@ -9,14 +9,11 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.lymytz.lymytzsell.business.helpers.KeyBoardAction;
 import com.lymytz.lymytzsell.dao.Options;
-import com.lymytz.lymytzsell.dao.entity.YvsBaseCaisse;
-import com.lymytz.lymytzsell.dao.entity.YvsBaseModeReglement;
 import com.lymytz.lymytzsell.dao.entity.YvsBasePointVente;
 import com.lymytz.lymytzsell.dao.entity.YvsComClient;
 import com.lymytz.lymytzsell.dao.entity.YvsComComerciale;
 import com.lymytz.lymytzsell.dao.entity.YvsComCommercialPoint;
 import com.lymytz.lymytzsell.dao.entity.YvsComCommercialVente;
-import com.lymytz.lymytzsell.dao.entity.YvsComCreneauPoint;
 import com.lymytz.lymytzsell.dao.entity.YvsComDocVentes;
 import com.lymytz.lymytzsell.dao.query.LocalQueryFactories;
 import com.lymytz.lymytzsell.service.application.composant.Onglets;
@@ -62,22 +59,15 @@ public class ServiceCreateFacture {
     }
 
     public void saveCurrentCommercial(YvsComDocVentes facture) {
-        if (UtilsProject.headerDoc != null && (UtilsProject.headerDoc.getCreneau() != null && (UtilsProject.headerDoc.getCreneau().getId() != null && UtilsProject.headerDoc.getCreneau().getId() > 0))) {
-            YvsBasePointVente pointDeVente = null;
-            YvsComCreneauPoint creneauPoint = UtilsProject.headerDoc.getCreneau().getCreneauPoint();
-            if (creneauPoint != null && creneauPoint.getId() > 0) {
-                pointDeVente = creneauPoint.getPoint();
-                if (pointDeVente != null && pointDeVente.getId() > 0) {
-                    pointDeVente = dao.findOneByNQ("YvsBasePointVente.findById", new String[]{"id"}, new Object[]{pointDeVente.getId()});
-                }
-            }
+        Optional.ofNullable(facture).ifPresent(fac -> {
+            YvsBasePointVente pointDeVente = dao.findOneByNQ("YvsBasePointVente.findById", new String[]{"id"}, new Object[]{facture.getEnteteDoc().getCreneau().getCreneauPoint().getPoint().getId()});
             YvsComComerciale y = dao.findOneByNQ("YvsComComerciale.findByUser", new String[]{"user"}, new Object[]{UtilsProject.headerDoc.getCreneau().getUsers()});
             if (y == null && pointDeVente != null) { //Commerciale est celui rattaché au user en cours
                 YvsComCommercialVente bean;
                 double taux = !pointDeVente.getCommerciaux().isEmpty() ? ((double) 100 / pointDeVente.getCommerciaux().size()) : 0;
                 for (YvsComCommercialPoint cp : pointDeVente.getCommerciaux()) {
                     bean = new YvsComCommercialVente();
-                    bean.setFacture(facture);
+                    bean.setFacture(fac);
                     bean.setTaux(taux);
                     bean.setResponsable(false);
                     bean.setCommercial(cp.getCommercial());
@@ -86,44 +76,37 @@ public class ServiceCreateFacture {
             } else {
                 YvsComCommercialVente bean = new YvsComCommercialVente();
                 bean.setCommercial(y);
-                bean.setFacture(facture);
+                bean.setFacture(fac);
                 bean.setResponsable(true);
                 bean.setTaux(100d);
                 saveNewCommercial(bean);
             }
-
-        }
+        });
     }
 
-    public void saveNewCommercial(YvsComCommercialVente y) {
+    private void saveNewCommercial(YvsComCommercialVente y) {
         try {
-            if (y != null && y.getCommercial() != null) {
-                y.setAuthor(UtilsProject.currentUser);
-                y.setDateSave(new Date());
-                y.setDateUpdate(new Date());
-                if (y.getId() == null || y.getId() < 1) {
-                    y.setId(null);
-                    y = dao.save1(y);
-                } else {
-                    dao.update(y);
+            y.setAuthor(UtilsProject.currentUser);
+            y.setDateSave(new Date());
+            y.setDateUpdate(new Date());
+            if (y.getId() == null || y.getId() < 1) {
+                y.setId(null);
+                y = dao.save1(y);
+            } else {
+                dao.update(y);
+            }
+            if (Boolean.TRUE.equals(y.getResponsable()) && y.getCommercial().getTiers() != null && (!y.getFacture().getTiers().getId().equals(y.getCommercial().getTiers().getId()))) {
+                YvsComClient tiers = null;
+                if (y.getCommercial().getTiers().getId() > 0 && (y.getCommercial().getTiers().getClients() != null && !y.getCommercial().getTiers().getClients().isEmpty())) {
+                    tiers = y.getCommercial().getTiers().getClients().get(0);
                 }
-                if (Boolean.TRUE.equals(y.getResponsable())) {
-                    if (y.getFacture() != null && y.getCommercial().getTiers() != null) {
-                        if (y.getFacture().getTiers() == null || !y.getFacture().getTiers().getId().equals(y.getCommercial().getTiers().getId())) {
-                            YvsComClient tiers = null;
-                            if (y.getCommercial().getTiers().getId() > 0 && (y.getCommercial().getTiers().getClients() != null && !y.getCommercial().getTiers().getClients().isEmpty())) {
-                                tiers = y.getCommercial().getTiers().getClients().get(0);
-                            }
-                            if (tiers != null) {
-                                Options[] param = new Options[]{new Options(y.getFacture().getId(), 1), new Options(tiers.getId(), 2)};
-                                String query = "update yvs_com_doc_ventes set tiers = null where id = ?";
-                                if (tiers.getId() > 0) {
-                                    param = new Options[]{new Options(y.getCommercial().getTiers().getId(), 1), new Options(y.getFacture().getId(), 2)};
-                                }
-                                dao.executeSqlQuery(query, param);
-                            }
-                        }
+                if (tiers != null) {
+                    Options[] param = new Options[]{new Options(y.getFacture().getId(), 1), new Options(tiers.getId(), 2)};
+                    String query = "update yvs_com_doc_ventes set tiers = null where id = ?";
+                    if (tiers.getId() > 0) {
+                        param = new Options[]{new Options(y.getCommercial().getTiers().getId(), 1), new Options(y.getFacture().getId(), 2)};
                     }
+                    dao.executeSqlQuery(query, param);
                 }
             }
         } catch (Exception ex) {
@@ -135,9 +118,9 @@ public class ServiceCreateFacture {
     private boolean controleSaveReglement(YvsComDocVentes bean) {
         //2. Contrôle la caisse
         if (UtilsProject.caisse == null) {
-            UtilsProject.caisse = (YvsBaseCaisse) dao.findOneByNQ("YvsBaseCaisse.findByCaissier", new String[]{"caissier"}, new Object[]{UtilsProject.currentUser.getUsers()});
+            UtilsProject.caisse = dao.findOneByNQ("YvsBaseCaisse.findByCaissier", new String[]{"caissier"}, new Object[]{UtilsProject.currentUser.getUsers()});
             if (UtilsProject.caisse == null) {
-                UtilsProject.caisse = (YvsBaseCaisse) dao.findOneByNQ("YvsBaseCaisseUser.findByUser", new String[]{"user"}, new Object[]{UtilsProject.currentUser.getUsers()});
+                UtilsProject.caisse = dao.findOneByNQ("YvsBaseCaisseUser.findByUser", new String[]{"user"}, new Object[]{UtilsProject.currentUser.getUsers()});
             }
             if (UtilsProject.caisse == null) {
                 LymytzService.openAlertDialog("Aucune caisse n'a été trouvé pour ce profil!", "Erreur ", "Impossible de terminer cette action", Alert.AlertType.ERROR);
@@ -146,7 +129,7 @@ public class ServiceCreateFacture {
         }
         //3. Controle le mode de paiement
         if (UtilsProject.modeReg == null) {
-            UtilsProject.modeReg = (YvsBaseModeReglement) dao.findOneByNQ("YvsBaseModeReglement.findByDefault", new String[]{"type", "defaut", "actif"}, new Object[]{Constantes.MODE_PAIEMENT_ESPECE, true, true});
+            UtilsProject.modeReg = dao.findOneByNQ("YvsBaseModeReglement.findByDefault", new String[]{"type", "defaut", "actif"}, new Object[]{Constantes.MODE_PAIEMENT_ESPECE, true, true});
             if (UtilsProject.modeReg == null) {
                 LymytzService.openAlertDialog("Aucun mode de paiement n'a été trouvé pour ce profil!", "Erreur ", "Impossible de terminer cette action", Alert.AlertType.ERROR);
                 return false;
@@ -198,14 +181,7 @@ public class ServiceCreateFacture {
                             if (verifieSynchroCommande(fac.getFacture())) {
                                 //Appelle le service de validation des commandes
                                 Livraison task = new Livraison(fac.getFacture());
-                                task.addEventHandler(WorkerStateEvent.WORKER_STATE_SUCCEEDED, new EventHandler<Event>() {
-
-                                            @Override
-                                            public void handle(Event event) {
-                                                Boolean result = task.getValue();
-                                                LymytzService.success();
-                                            }
-                                        }
+                                task.addEventHandler(WorkerStateEvent.WORKER_STATE_SUCCEEDED, (EventHandler<Event>) event -> LymytzService.success()
                                 );
                                 new Thread(task).start();
                             } else {

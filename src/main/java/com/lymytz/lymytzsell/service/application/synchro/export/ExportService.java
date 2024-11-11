@@ -28,13 +28,13 @@ import com.lymytz.lymytzsell.synchro.ws.ResultatAction;
 import com.lymytz.lymytzsell.synchro.ws.WsSynchro;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * @param <T>
@@ -42,6 +42,7 @@ import java.util.logging.Logger;
  */
 public class ExportService<T extends Serializable> extends Task<Boolean> {
 
+    private final Logger LOGGER = LogManager.getLogger(ExportService.class);
     LocalQueryFactories Ldao = new LocalQueryFactories();
     @Setter
     @Getter
@@ -57,18 +58,10 @@ public class ExportService<T extends Serializable> extends Task<Boolean> {
     @Getter
     Long idListen, idLocal;
 
-    public ExportService() {
-    }
-
     public ExportService(String source, List<LymytzData> data, ExportDataController page) {
         this.listData = data;
         this.page = page;
         this.source = source;
-    }
-
-
-    private boolean synchroniseData(Long id, String table) {
-        return false;
     }
 
     @Override
@@ -129,7 +122,7 @@ public class ExportService<T extends Serializable> extends Task<Boolean> {
                         break;
                     }
                 }
-                if (localKey != null ? localKey > 0 : false) {
+                if (localKey != null && localKey > 0) {
                     synchroniseData(selectCol.getTableName(), idListen, localKey, action, true);
                 }
                 re.add(row);
@@ -300,7 +293,7 @@ public class ExportService<T extends Serializable> extends Task<Boolean> {
     private YvsComEnteteDocVente afterSynchroniseHeader(ResultatAction result, Long idListen) {
         YvsComEnteteDocVente entity = null;
         try {
-            if (result != null ? result.getData() != null : false) {
+            if (result != null && result.getData() != null) {
                 Gson gson = UtilEntityBase.createGson();
                 if (gson != null) {
                     JsonObject jo = gson.toJsonTree(result.getData()).getAsJsonObject();
@@ -325,8 +318,7 @@ public class ExportService<T extends Serializable> extends Task<Boolean> {
                 }
             }
         } catch (JsonSyntaxException ex) {
-            LogFiles.addLogInFile("", ex);
-            Logger.getLogger(ExportService.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.error(ex);
         } finally {
             //enlève de la file des synchro en cours
             WsSynchro.currentListen.remove(idListen);
@@ -338,7 +330,7 @@ public class ExportService<T extends Serializable> extends Task<Boolean> {
     private YvsComDocVentes afterSynchroniseDocVente(ResultatAction result, Long idListen, Long idSource) {
         YvsComDocVentes entity = null;
         try {
-            if (result != null ? result.getData() != null : false) {
+            if (result != null && result.getData() != null) {
                 Gson gson = UtilEntityBase.createGson();
                 if (gson != null) {
                     JsonObject jo = gson.toJsonTree(result.getData()).getAsJsonObject();
@@ -402,8 +394,7 @@ public class ExportService<T extends Serializable> extends Task<Boolean> {
                 }
             }
         } catch (JsonSyntaxException ex) {
-            LogFiles.addLogInFile("", ex);
-            Logger.getLogger(ExportService.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.error(ex);
         } finally {
             //enlève de la file des synchro en cours
             addRemoveIdListenWithDependence(idSource, idListen, Constantes.TABLE_DOC_VENTE_CODE, false);
@@ -414,7 +405,7 @@ public class ExportService<T extends Serializable> extends Task<Boolean> {
     private YvsComptaAcompteClient afterSynchroniseAcompteClient(ResultatAction result, Long idListen) {
         YvsComptaAcompteClient entity = null;
         try {
-            if (result != null ? result.getData() != null : false) {
+            if (result != null && result.getData() != null) {
                 Gson gson = UtilEntityBase.createGson();
                 if (gson != null) {
                     JsonObject jo = gson.toJsonTree(result.getData()).getAsJsonObject();
@@ -445,8 +436,7 @@ public class ExportService<T extends Serializable> extends Task<Boolean> {
                 }
             }
         } catch (JsonSyntaxException ex) {
-            LogFiles.addLogInFile("", ex);
-            Logger.getLogger(ExportService.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.error(ex);
         } finally {
             //enlève de la file des synchro en cours
             WsSynchro.currentListen.remove(idListen);
@@ -458,7 +448,7 @@ public class ExportService<T extends Serializable> extends Task<Boolean> {
     private YvsComContenuDocVente afterSynchroniseContentDocVente(ResultatAction result, Long idListen) {
         YvsComContenuDocVente entity = null;
         try {
-            if (result != null ? result.getData() != null : false) {
+            if (result != null && result.getData() != null) {
                 Gson gson = UtilEntityBase.createGson();
                 if (gson != null) {
                     JsonObject jo = gson.toJsonTree(result.getData()).getAsJsonObject();
@@ -485,8 +475,7 @@ public class ExportService<T extends Serializable> extends Task<Boolean> {
                 }
             }
         } catch (JsonSyntaxException ex) {
-            LogFiles.addLogInFile("", ex);
-            Logger.getLogger(ExportService.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.error(ex);
         } finally {
             //enlève de la file des synchro en cours
             WsSynchro.currentListen.remove(idListen);
@@ -498,7 +487,7 @@ public class ExportService<T extends Serializable> extends Task<Boolean> {
     private YvsComptaCaissePieceVente afterSynchronisePieceCaisse(ResultatAction result, Long idListen) {
         YvsComptaCaissePieceVente entity = null;
         try {
-            if (result != null ? result.getData() != null : false) {
+            if (result != null && result.getData() != null) {
                 Gson gson = UtilEntityBase.createGson();
                 if (gson != null) {
                     JsonObject jo = gson.toJsonTree(result.getData()).getAsJsonObject();
@@ -525,8 +514,7 @@ public class ExportService<T extends Serializable> extends Task<Boolean> {
                 }
             }
         } catch (Exception ex) {
-            LogFiles.addLogInFile("", ex);
-            Logger.getLogger(ExportService.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.error(ex);
         } finally {
             //enlève de la file des synchro en cours
             WsSynchro.currentListen.remove(idListen);
@@ -562,13 +550,9 @@ public class ExportService<T extends Serializable> extends Task<Boolean> {
                     Ldao.incrementNbFailed(idListen, nbFailed);
                 }
             }
-        } catch (JsonSyntaxException ex) {
-            LogFiles.addLogInFile("", ex);
-            Logger.getLogger(ExportService.class.getName()).log(Level.SEVERE, null, ex);
         } catch (Exception ex) {
-            LogFiles.addLogInFile("", ex);
-            Logger.getLogger(ExportService.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
+            LOGGER.error(ex);
+        }  finally {
             //enlève de la file des synchro en cours
             WsSynchro.currentListen.remove(idListen);
         }

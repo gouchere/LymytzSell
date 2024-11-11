@@ -1,6 +1,8 @@
 # Liste d'améliorations
 
 - [x] plutôt que d'avoir une modal qui dit aucune facture n'a été trouvé au moment de l'ajout d'un article au panier,
+- [x] Si une facture n'a pas pu s'enregistrer à cause d'un problème quelconque, les logs avec détails de la dite facture sont sauvegardé au format json dans la bdd
+- [ ] Créer une vue pour gérer les log de factures non enregistré
 - [ ] Afficher des notifications pour les factures non livré
 - [ ] La vue d'import peut être visible même si on est pas en mode synchro
 - [ ] Informer l'utilisateur si ses paramètres d'impression sont correcte ou pas. (Eventuellement, créer une modale de configuration de l'imprimante)

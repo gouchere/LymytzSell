@@ -15,7 +15,8 @@
 - [ ] Le bon de livraison est généré
 - [ ] La facture est bien comptabilisé
 - [ ] On enregistre le bon de commande
-- [ ] On peux avancer des montants sur le bon de commande
+- [ ] On peut avancer des montants sur le bon de commande
+- [ ] On peut valideer une commande avancé
 - [ ] On peut clôturer une fiche et faire le virement
   - [ ] Le chiffre d'affaire est bien calculé
   - [ ] Les versements précédents sont bien affichés

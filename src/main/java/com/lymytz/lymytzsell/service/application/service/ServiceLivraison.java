@@ -60,7 +60,7 @@ public class ServiceLivraison {
                 Platform.runLater(LymytzService::success);
             }
         } else {
-            ToastService.show(mainPage.getMainStage(), String.format("La livraison de la facture %s ne s'est pas terminé correctement", facture.getNumDoc()), 2500, ToastService.ToastType.ERROR);
+            Platform.runLater(() -> ToastService.show(mainPage.getMainStage(), String.format("La livraison de la facture %s ne s'est pas terminé correctement", facture.getNumDoc()), 5000, ToastService.ToastType.ERROR));
             LOGGER.error("La livraison de la facture {} ne s'est pas terminé correctement", facture.getNumDoc());
         }
     }

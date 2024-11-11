@@ -5,9 +5,11 @@
  */
 package com.lymytz.lymytzsell.dao.query;
 
+import com.lymytz.lymytzsell.business.helpers.HelperFactureVente;
 import com.lymytz.lymytzsell.dao.LocalDao;
 import com.lymytz.lymytzsell.dao.LocalSqlDao;
 import com.lymytz.lymytzsell.dao.Options;
+import com.lymytz.lymytzsell.dao.entity.YvsComDocVentes;
 import com.lymytz.lymytzsell.dao.entity.YvsEntity;
 import com.lymytz.lymytzsell.dao.entity.YvsSynchroDataSynchro;
 import com.lymytz.lymytzsell.dao.entity.YvsSynchroListenTable;
@@ -35,6 +37,8 @@ import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static com.lymytz.lymytzsell.business.helpers.HelperFactureVente.factureDtoFromEntity;
+import static com.lymytz.lymytzsell.business.helpers.HelperFactureVente.getStringJsonFromEntity;
 import static com.lymytz.lymytzsell.service.utils.MessagesConstants.ECHEC_DE_LEXEECUTION_DE_LA_REQUETE;
 
 /**
@@ -466,24 +470,24 @@ public class LocalQueryFactories {
 
     public void cleanDocWithoutContent(Long header) {
         if (LocalDao.getInstance() != null && (Constantes.asLong(header))) {
-                String query = """
-                        DELETE FROM yvs_com_doc_ventes WHERE id IN
-                                     (SELECT d.id FROM yvs_com_doc_ventes d left join yvs_com_contenu_doc_vente c on d.id=c.doc_vente WHERE c.id is NULL AND d.entete_doc=?)
-                        """;
-                String query2 = """ 
-                        DELETE FROM yvs_synchro_listen_table WHERE id_source IN
-                                            (SELECT d.id FROM yvs_com_doc_ventes d left join yvs_com_contenu_doc_vente c on d.id=c.doc_vente WHERE c.id is NULL AND d.entete_doc=?) AND name_table='yvs_com_doc_ventes'
-                        """;
-                EntityManager em = LocalDao.getInstance().getEntityManagerFactory().createEntityManager();
-                em.getTransaction().begin();
-                Query qr = em.createNativeQuery(query2);
-                qr.setParameter(1, header);
-                qr.executeUpdate();
-                Query qr2 = em.createNativeQuery(query);
-                qr2.setParameter(1, header);
-                qr2.executeUpdate();
-                em.getTransaction().commit();
-                em.close();
+            String query = """
+                    DELETE FROM yvs_com_doc_ventes WHERE id IN
+                                 (SELECT d.id FROM yvs_com_doc_ventes d left join yvs_com_contenu_doc_vente c on d.id=c.doc_vente WHERE c.id is NULL AND d.entete_doc=?)
+                    """;
+            String query2 = """ 
+                    DELETE FROM yvs_synchro_listen_table WHERE id_source IN
+                                        (SELECT d.id FROM yvs_com_doc_ventes d left join yvs_com_contenu_doc_vente c on d.id=c.doc_vente WHERE c.id is NULL AND d.entete_doc=?) AND name_table='yvs_com_doc_ventes'
+                    """;
+            EntityManager em = LocalDao.getInstance().getEntityManagerFactory().createEntityManager();
+            em.getTransaction().begin();
+            Query qr = em.createNativeQuery(query2);
+            qr.setParameter(1, header);
+            qr.executeUpdate();
+            Query qr2 = em.createNativeQuery(query);
+            qr2.setParameter(1, header);
+            qr2.executeUpdate();
+            em.getTransaction().commit();
+            em.close();
 
 
         }
@@ -762,5 +766,20 @@ public class LocalQueryFactories {
             LogFiles.addLogInFile(ECHEC_DE_LEXEECUTION_DE_LA_REQUETE + query, ex);
             Logger.getLogger(LocalQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    public void saveLogsFacture(YvsComDocVentes facture) {
+        final String query = "INSERT INTO yvs_logs_factures (date_doc, vendeur, creneau, entete, content_json) VALUES (?, ?, ?, ?, ?::jsonb)";
+        var em = LocalDao.getInstance().getEntityManagerFactory().createEntityManager();
+        em.getTransaction().begin();
+        em.createNativeQuery(query)
+                .setParameter(1, facture.getEnteteDoc().getDateEntete())
+                .setParameter(2, facture.getEnteteDoc().getCreneau().getUsers().getId())
+                .setParameter(3, facture.getEnteteDoc().getCreneau().getId())
+                .setParameter(4, facture.getEnteteDoc().getId())
+                .setParameter(5, getStringJsonFromEntity(factureDtoFromEntity(facture)))
+                .executeUpdate();
+        em.getTransaction().commit();
+        em.close();
     }
 }

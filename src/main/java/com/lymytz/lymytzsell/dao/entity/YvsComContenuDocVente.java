@@ -36,50 +36,49 @@ import java.util.List;
  */
 @Entity
 @Table(name = "yvs_com_contenu_doc_vente")
-@NamedQueries({
-        @NamedQuery(name = "YvsComContenuDocVente.findAll", query = "SELECT y FROM YvsComContenuDocVente y"),
-        @NamedQuery(name = "YvsComContenuDocVente.findById", query = "SELECT y FROM YvsComContenuDocVente y WHERE y.id = :id"),
-        @NamedQuery(name = "YvsComContenuDocVente.findDocById", query = "SELECT y.docVente FROM YvsComContenuDocVente y WHERE y.id = :id"),
-        @NamedQuery(name = "YvsComContenuDocVente.findByDocVente", query = "SELECT y FROM YvsComContenuDocVente y JOIN FETCH y.docVente WHERE y.docVente = :docVente"),
-        @NamedQuery(name = "YvsComContenuDocVente.findByPrix", query = "SELECT y FROM YvsComContenuDocVente y WHERE y.prix = :prix"),
-        @NamedQuery(name = "YvsComContenuDocVente.findByRemise", query = "SELECT y FROM YvsComContenuDocVente y WHERE y.remise = :remise"),
-        @NamedQuery(name = "YvsComContenuDocVente.findByTaxe", query = "SELECT y FROM YvsComContenuDocVente y WHERE y.taxe = :taxe"),
-        @NamedQuery(name = "YvsComContenuDocVente.findByRistourne", query = "SELECT y FROM YvsComContenuDocVente y WHERE y.ristourne = :ristourne"),
-        @NamedQuery(name = "YvsComContenuDocVente.findByComission", query = "SELECT y FROM YvsComContenuDocVente y WHERE y.comission = :comission"),
-        @NamedQuery(name = "YvsComContenuDocVente.findBySupp", query = "SELECT y FROM YvsComContenuDocVente y WHERE y.supp = :supp"),
-        @NamedQuery(name = "YvsComContenuDocVente.findByActif", query = "SELECT y FROM YvsComContenuDocVente y WHERE y.actif = :actif"),
-        @NamedQuery(name = "YvsComContenuDocVente.findByDateContenu", query = "SELECT y FROM YvsComContenuDocVente y WHERE y.dateContenu = :dateContenu"),
-        @NamedQuery(name = "YvsComContenuDocVente.findByDateSave", query = "SELECT y FROM YvsComContenuDocVente y WHERE y.dateSave = :dateSave"),
-        @NamedQuery(name = "YvsComContenuDocVente.findByCommentaire", query = "SELECT y FROM YvsComContenuDocVente y WHERE y.commentaire = :commentaire"),
-        @NamedQuery(name = "YvsComContenuDocVente.findByNumSerie", query = "SELECT y FROM YvsComContenuDocVente y WHERE y.numSerie = :numSerie"),
-        @NamedQuery(name = "YvsComContenuDocVente.findByRabais", query = "SELECT y FROM YvsComContenuDocVente y WHERE y.rabais = :rabais"),
-        @NamedQuery(name = "YvsComContenuDocVente.findByPr", query = "SELECT y FROM YvsComContenuDocVente y WHERE y.pr = :pr"),
-        @NamedQuery(name = "YvsComContenuDocVente.findByStatut", query = "SELECT y FROM YvsComContenuDocVente y WHERE y.statut = :statut"),
-        @NamedQuery(name = "YvsComContenuDocVente.findByPuvMin", query = "SELECT y FROM YvsComContenuDocVente y WHERE y.puvMin = :puvMin"),
-        @NamedQuery(name = "YvsComContenuDocVente.findByQuantiteBonus", query = "SELECT y FROM YvsComContenuDocVente y WHERE y.quantiteBonus = :quantiteBonus"),
-        @NamedQuery(name = "YvsComContenuDocVente.findByIdReservation", query = "SELECT y FROM YvsComContenuDocVente y WHERE y.idReservation = :idReservation"),
-        @NamedQuery(name = "YvsComContenuDocVente.findByPrixTotal", query = "SELECT y FROM YvsComContenuDocVente y WHERE y.prixTotal = :prixTotal"),
-        @NamedQuery(name = "YvsComContenuDocVente.findByMouvStock", query = "SELECT y FROM YvsComContenuDocVente y WHERE y.mouvStock = :mouvStock"),
-        @NamedQuery(name = "YvsComContenuDocVente.findByQualite", query = "SELECT y FROM YvsComContenuDocVente y WHERE y.qualite = :qualite"),
-        @NamedQuery(name = "YvsComContenuDocVente.findByStatutLivree", query = "SELECT y FROM YvsComContenuDocVente y WHERE y.statutLivree = :statutLivree"),
-        @NamedQuery(name = "YvsComContenuDocVente.findByTauxRemise", query = "SELECT y FROM YvsComContenuDocVente y WHERE y.tauxRemise = :tauxRemise"),
-        @NamedQuery(name = "YvsComContenuDocVente.findByDateUpdate", query = "SELECT y FROM YvsComContenuDocVente y WHERE y.dateUpdate = :dateUpdate"),
-        @NamedQuery(name = "YvsComContenuDocVente.findByFacture", query = "SELECT DISTINCT y FROM YvsComContenuDocVente y JOIN FETCH y.conditionnement JOIN FETCH y.article JOIN FETCH y.conditionnement.unite "
-                + "LEFT JOIN FETCH y.taxes T JOIN FETCH T.taxe "
-                + "WHERE y.docVente = :docVente ORDER BY y.id ASC"),
-        @NamedQuery(name = "YvsComContenuDocVente.findQteByArticle", query = "SELECT SUM(y.quantite) FROM YvsComContenuDocVente y WHERE y.article = :article AND y.conditionnement =:unite AND y.docVente = :docVente"),
-        @NamedQuery(name = "YvsComContenuDocVente.countQteVendu", query = "SELECT SUM(y.quantite) FROM YvsComContenuDocVente y WHERE y.docVente.typeDoc='FV' AND y.docVente.statut='V' AND y.docVente.enteteDoc=:header AND y.conditionnement=:conditionnement"),
-        @NamedQuery(name = "YvsComContenuDocVente.findByDocLierTypeStatutArticleS", query = "SELECT SUM(y.quantite) FROM YvsComContenuDocVente y WHERE y.docVente.documentLie = :docVente AND y.docVente.statut = :statut AND y.docVente.typeDoc = :typeDoc AND y.article = :article AND y.conditionnement = :unite"),
-        @NamedQuery(name = "YvsComContenuDocVente.findQteByArticle_", query = "SELECT SUM(y.quantite) FROM YvsComContenuDocVente y WHERE y.article = :article AND y.conditionnement = :unite AND y.conditionnementBonus = :unite AND y.docVente = :docVente"),
-        @NamedQuery(name = "YvsComContenuDocVente.findQteBonusByFacture", query = "SELECT SUM(y.quantiteBonus) FROM YvsComContenuDocVente y WHERE y.article = :article AND y.conditionnement =:unite AND y.docVente = :docVente"),
-        @NamedQuery(name = "YvsComContenuDocVente.findTotalByTypeDocAndHeader", query = "SELECT SUM(y.prixTotal) FROM YvsComContenuDocVente y WHERE y.docVente.enteteDoc = :header AND y.docVente.typeDoc = :typeDoc AND y.docVente.statut = 'V'"),
-        @NamedQuery(name = "YvsComContenuDocVente.findTotalByTypeDocAndLivre", query = "SELECT SUM(y.prixTotal) FROM YvsComContenuDocVente y WHERE y.docVente.enteteDoc = :header AND y.docVente.typeDoc = :typeDoc AND y.docVente.statut = 'V' AND y.docVente.statutLivre = :statutL"),
-        @NamedQuery(name = "YvsComContenuDocVente.findTotalByTypeDocAndRegle", query = "SELECT SUM(y.prixTotal) FROM YvsComContenuDocVente y WHERE y.docVente.enteteDoc = :header AND y.docVente.typeDoc = :typeDoc AND y.docVente.statut = 'V' AND y.docVente.statutRegle = :statutR"),
+@NamedQuery(name = "YvsComContenuDocVente.findAll", query = "SELECT y FROM YvsComContenuDocVente y")
+@NamedQuery(name = "YvsComContenuDocVente.findById", query = "SELECT y FROM YvsComContenuDocVente y WHERE y.id = :id")
+@NamedQuery(name = "YvsComContenuDocVente.findDocById", query = "SELECT y.docVente FROM YvsComContenuDocVente y WHERE y.id = :id")
+@NamedQuery(name = "YvsComContenuDocVente.findByDocVente", query = "SELECT y FROM YvsComContenuDocVente y JOIN FETCH y.docVente WHERE y.docVente = :docVente")
+@NamedQuery(name = "YvsComContenuDocVente.findByPrix", query = "SELECT y FROM YvsComContenuDocVente y WHERE y.prix = :prix")
+@NamedQuery(name = "YvsComContenuDocVente.findByRemise", query = "SELECT y FROM YvsComContenuDocVente y WHERE y.remise = :remise")
+@NamedQuery(name = "YvsComContenuDocVente.findByTaxe", query = "SELECT y FROM YvsComContenuDocVente y WHERE y.taxe = :taxe")
+@NamedQuery(name = "YvsComContenuDocVente.findByRistourne", query = "SELECT y FROM YvsComContenuDocVente y WHERE y.ristourne = :ristourne")
+@NamedQuery(name = "YvsComContenuDocVente.findByComission", query = "SELECT y FROM YvsComContenuDocVente y WHERE y.comission = :comission")
+@NamedQuery(name = "YvsComContenuDocVente.findBySupp", query = "SELECT y FROM YvsComContenuDocVente y WHERE y.supp = :supp")
+@NamedQuery(name = "YvsComContenuDocVente.findByActif", query = "SELECT y FROM YvsComContenuDocVente y WHERE y.actif = :actif")
+@NamedQuery(name = "YvsComContenuDocVente.findByDateContenu", query = "SELECT y FROM YvsComContenuDocVente y WHERE y.dateContenu = :dateContenu")
+@NamedQuery(name = "YvsComContenuDocVente.findByDateSave", query = "SELECT y FROM YvsComContenuDocVente y WHERE y.dateSave = :dateSave")
+@NamedQuery(name = "YvsComContenuDocVente.findByCommentaire", query = "SELECT y FROM YvsComContenuDocVente y WHERE y.commentaire = :commentaire")
+@NamedQuery(name = "YvsComContenuDocVente.findByNumSerie", query = "SELECT y FROM YvsComContenuDocVente y WHERE y.numSerie = :numSerie")
+@NamedQuery(name = "YvsComContenuDocVente.findByRabais", query = "SELECT y FROM YvsComContenuDocVente y WHERE y.rabais = :rabais")
+@NamedQuery(name = "YvsComContenuDocVente.findByPr", query = "SELECT y FROM YvsComContenuDocVente y WHERE y.pr = :pr")
+@NamedQuery(name = "YvsComContenuDocVente.findByStatut", query = "SELECT y FROM YvsComContenuDocVente y WHERE y.statut = :statut")
+@NamedQuery(name = "YvsComContenuDocVente.findByPuvMin", query = "SELECT y FROM YvsComContenuDocVente y WHERE y.puvMin = :puvMin")
+@NamedQuery(name = "YvsComContenuDocVente.findByQuantiteBonus", query = "SELECT y FROM YvsComContenuDocVente y WHERE y.quantiteBonus = :quantiteBonus")
+@NamedQuery(name = "YvsComContenuDocVente.findByIdReservation", query = "SELECT y FROM YvsComContenuDocVente y WHERE y.idReservation = :idReservation")
+@NamedQuery(name = "YvsComContenuDocVente.findByPrixTotal", query = "SELECT y FROM YvsComContenuDocVente y WHERE y.prixTotal = :prixTotal")
+@NamedQuery(name = "YvsComContenuDocVente.findByMouvStock", query = "SELECT y FROM YvsComContenuDocVente y WHERE y.mouvStock = :mouvStock")
+@NamedQuery(name = "YvsComContenuDocVente.findByQualite", query = "SELECT y FROM YvsComContenuDocVente y WHERE y.qualite = :qualite")
+@NamedQuery(name = "YvsComContenuDocVente.findByStatutLivree", query = "SELECT y FROM YvsComContenuDocVente y WHERE y.statutLivree = :statutLivree")
+@NamedQuery(name = "YvsComContenuDocVente.findByTauxRemise", query = "SELECT y FROM YvsComContenuDocVente y WHERE y.tauxRemise = :tauxRemise")
+@NamedQuery(name = "YvsComContenuDocVente.findByDateUpdate", query = "SELECT y FROM YvsComContenuDocVente y WHERE y.dateUpdate = :dateUpdate")
+@NamedQuery(name = "YvsComContenuDocVente.findByFacture", query = "SELECT DISTINCT y FROM YvsComContenuDocVente y JOIN FETCH y.conditionnement JOIN FETCH y.article JOIN FETCH y.conditionnement.unite "
+        + "LEFT JOIN FETCH y.taxes T JOIN FETCH T.taxe "
+        + "WHERE y.docVente = :docVente ORDER BY y.id ASC")
+@NamedQuery(name = "YvsComContenuDocVente.findQteByArticle", query = "SELECT SUM(y.quantite) FROM YvsComContenuDocVente y WHERE y.article = :article AND y.conditionnement =:unite AND y.docVente = :docVente")
+@NamedQuery(name = "YvsComContenuDocVente.countQteVendu", query = "SELECT SUM(y.quantite) FROM YvsComContenuDocVente y WHERE y.docVente.typeDoc='FV' AND y.docVente.statut='V' AND y.docVente.enteteDoc=:header AND y.conditionnement=:conditionnement")
+@NamedQuery(name = "YvsComContenuDocVente.findByDocLierTypeStatutArticleS", query = "SELECT SUM(y.quantite) FROM YvsComContenuDocVente y WHERE y.docVente.documentLie = :docVente AND y.docVente.statut = :statut AND y.docVente.typeDoc = :typeDoc AND y.article = :article AND y.conditionnement = :unite")
+@NamedQuery(name = "YvsComContenuDocVente.findQteByArticle_", query = "SELECT SUM(y.quantite) FROM YvsComContenuDocVente y WHERE y.article = :article AND y.conditionnement = :unite AND y.conditionnementBonus = :unite AND y.docVente = :docVente")
+@NamedQuery(name = "YvsComContenuDocVente.findQteBonusByFacture", query = "SELECT SUM(y.quantiteBonus) FROM YvsComContenuDocVente y WHERE y.article = :article AND y.conditionnement =:unite AND y.docVente = :docVente")
+@NamedQuery(name = "YvsComContenuDocVente.findTotalByTypeDocAndHeader", query = "SELECT SUM(y.prixTotal) FROM YvsComContenuDocVente y WHERE y.docVente.enteteDoc = :header AND y.docVente.typeDoc = :typeDoc AND y.docVente.statut = 'V'")
+@NamedQuery(name = "YvsComContenuDocVente.findTotalByTypeDocAndLivre", query = "SELECT SUM(y.prixTotal) FROM YvsComContenuDocVente y WHERE y.docVente.enteteDoc = :header AND y.docVente.typeDoc = :typeDoc AND y.docVente.statut = 'V' AND y.docVente.statutLivre = :statutL")
+@NamedQuery(name = "YvsComContenuDocVente.findTotalByTypeDocAndRegle", query = "SELECT SUM(y.prixTotal) FROM YvsComContenuDocVente y WHERE y.docVente.enteteDoc = :header AND y.docVente.typeDoc = :typeDoc AND y.docVente.statut = 'V' AND y.docVente.statutRegle = :statutR")
 
-        @NamedQuery(name = "YvsComContenuDocVente.findByCalculPr", query = "SELECT y FROM YvsComContenuDocVente y WHERE y.calculPr = :calculPr")})
+@NamedQuery(name = "YvsComContenuDocVente.findByCalculPr", query = "SELECT y FROM YvsComContenuDocVente y WHERE y.calculPr = :calculPr")
 @Getter
 @Setter
-@EqualsAndHashCode(of = {"id"})
+@EqualsAndHashCode(of = {"id"}, callSuper = true)
 @NoArgsConstructor
 public class YvsComContenuDocVente extends YvsEntity implements Serializable {
 
