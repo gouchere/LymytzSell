@@ -48,7 +48,6 @@
         @Setter
         @Getter
         private double pr;
-        PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
         public ContentPanier() {
             this.conditionnement = new YvsBaseConditionnement();

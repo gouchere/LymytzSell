@@ -5,8 +5,10 @@
  */
 package com.lymytz.lymytzsell.view.main;
 
+import com.lymytz.lymytzsell.business.ManagedFactureVente;
 import com.lymytz.lymytzsell.business.helpers.Helpers;
 import com.lymytz.lymytzsell.business.helpers.KeyBoardAction;
+import com.lymytz.lymytzsell.business.helpers.ResponseAction;
 import com.lymytz.lymytzsell.dao.Options;
 import com.lymytz.lymytzsell.dao.ParamConnection;
 import com.lymytz.lymytzsell.dao.UtilsBean;
@@ -58,6 +60,7 @@ import com.lymytz.lymytzsell.service.utils.log.LogFiles;
 import com.lymytz.lymytzsell.synchro.ws.WsSynchro;
 import com.lymytz.lymytzsell.view.LocalLoader;
 import com.lymytz.lymytzsell.view.component.CustomComponents;
+import com.lymytz.lymytzsell.view.component.ToastService;
 import com.lymytz.lymytzsell.view.main.report.PrintFacture;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
@@ -99,6 +102,8 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.print.attribute.standard.Severity;
 import java.io.IOException;
@@ -108,12 +113,16 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
+import static com.lymytz.lymytzsell.service.utils.Constantes.ETAT_CLOTURE;
+import static com.lymytz.lymytzsell.service.utils.Constantes.ETAT_LIVRE;
+import static com.lymytz.lymytzsell.service.utils.Constantes.ETAT_REGLE;
+import static com.lymytz.lymytzsell.service.utils.Constantes.ETAT_VALIDE;
 import static com.lymytz.lymytzsell.service.utils.Constantes.TYPE_FV;
 import static com.lymytz.lymytzsell.service.utils.MessagesConstants.ERREUR;
-import static com.lymytz.lymytzsell.service.utils.MessagesConstants.GENERATION_FACTURE_NON_REUSSI;
+import static com.lymytz.lymytzsell.service.utils.MessagesConstants.GENERATION_DE_LA_FACTURE_NON_REUSSI;
+import static com.lymytz.lymytzsell.view.component.ToastService.ToastType.ERROR;
+import static com.lymytz.lymytzsell.view.component.ToastService.ToastType.INFO;
 
 /**
  * FXML Controller class
@@ -122,6 +131,7 @@ import static com.lymytz.lymytzsell.service.utils.MessagesConstants.GENERATION_F
  */
 public class HomeCaisseController extends ManagedApplication implements Initializable {
 
+    private final Logger LOGGER = LogManager.getLogger(HomeCaisseController.class);
     private final BooleanProperty connectRemoteServer = new SimpleBooleanProperty();
     private final LongProperty time = new SimpleLongProperty();
 
@@ -335,40 +345,49 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
         initComponent();
         setMainPage(this);
         //Attacher un listener au text find
-        TEXT_FIND.focusedProperty().addListener((observable, oldValue, newValue) -> {
-            if (Boolean.FALSE.equals(newValue)) {
+    /*    TEXT_FIND.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (Boolean.TRUE.equals(newValue)) {
                 HomeCaisseController.this.filterArticleFromSearchField();
             }
-        });
+        });*/
         TEXT_FIND.setOnKeyReleased((KeyEvent event) -> {
-            if (event.getCode().equals(KeyCode.ENTER)) {
-                Onglets tab = (Onglets) TAB_FACTURES.getSelectionModel().getSelectedItem();
-                if (tab != null) {
+            if (event.getCode().equals(KeyCode.ENTER) || KeyCode.TAB.equals(event.getCode())) {
+               // Onglets tab = (Onglets) TAB_FACTURES.getSelectionModel().getSelectedItem();
+               // if (tab != null) {
                     filterArticleFromSearchField();
-                } else {
+                /*} else {
                     LymytzService.openAlertDialog("Aucune facture n'a été trouvé !", "Erreur", "Vous devez enregistrer la facture !", Alert.AlertType.ERROR);
-                }
+                }*/
             }
         });
     }
 
     private void filterArticleFromSearchField() {
-        Onglets tab = (Onglets) TAB_FACTURES.getSelectionModel().getSelectedItem();
-        if (tab != null && Constantes.asString(TEXT_FIND.getText())) {
+        if (Constantes.asString(TEXT_FIND.getText())) {
             LoaderArticleTask tache1 = new LoaderArticleTask(HomeCaisseController.this, TEXT_FIND.getText());
             YvsBaseConditionnement art = tache1.findOneArticle();
             if (art != null) {
-                if (tab.addArticleOnFacture(art, 1, false, art.getPrix())) {
-                    giveFocusAtTxtFind();
-                }
+                addInCardIfOneArtIsFind(art);
             } else {
                 loadCatalogue(TEXT_FIND.getText());
             }
         }
     }
 
+    private void addInCardIfOneArtIsFind(YvsBaseConditionnement art) {
+        Onglets tab = (Onglets) TAB_FACTURES.getSelectionModel().getSelectedItem();
+        if (tab == null) {
+            this.initFactureVenteClientDivers();
+            tab = (Onglets) TAB_FACTURES.getSelectionModel().getSelectedItem();
+        }
+        Optional.ofNullable(tab).ifPresent(ong -> {
+            if (ong.addArticleOnFacture(art, 1, false, art.getPrix())) {
+                giveFocusAtTxtFind();
+            }
+        });
+    }
+
     public void initComponent() {
-        //HOMEMENU.setPrefWidth(StartController.SCREENWIDTH);
         TAB_FACTURES.setPrefHeight(StartController.SCREENHEIGHT - 345d);
         RigthBoxWidth = new SimpleDoubleProperty(RIGHT_BOX.getPrefWidth());
         PROGRESS.setPrefHeight(18.0);
@@ -421,10 +440,15 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
         return gp;
     }
 
+    public void createAndAddProgressBar() {
+        Platform.runLater(() -> {
+            var hboxProgress = new HBox(PROGRESS_LABEL, PROGRESS);
+            MAIN_ARTICLE_CONTAINER.getChildren().add(0, hboxProgress);
+        });
+    }
+
     private void loadCatalogue(String ref) {
         var loaderArticleTask = new LoaderArticleTask(this, ref);
-        var hboxProgress = new HBox(PROGRESS_LABEL, PROGRESS);
-        MAIN_ARTICLE_CONTAINER.getChildren().add(0, hboxProgress);
         try {
             if (UtilsProject.depotLivraison != null && ref != null) {
                 BOX_ARTICLES.getChildren().clear();
@@ -448,7 +472,7 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
                 new Thread(loaderArticleTask).start();
             }
         } catch (Exception ex) {
-            Logger.getLogger(HomeCaisseController.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.error("Une exception survenue au chargement du catalogue", ex);
         }
     }
 
@@ -483,30 +507,30 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
             if (Constantes.asLong(facture.getId())) {
                 LAB_REF_FACTURE.setText(facture.getNumDoc());
             } else {
-                LAB_REF_FACTURE.setText(facture.getNumDoc() + ":" + facture.getClient().getCodeClient() + "" + facture.getId());
+                LAB_REF_FACTURE.setText(facture.getNumDoc() + ":" + facture.getClient().getCodeClient() + facture.getId());
             }
             LAB_CLIENT.setText(facture.getClient().getCodeClient());
-            CHK_LIVRE.setSelected(facture.getStatutLivre().equals(Constantes.ETAT_LIVRE));
-            CHK_REGLE.setSelected(facture.getStatutRegle().equals(Constantes.ETAT_REGLE));
+            CHK_LIVRE.setSelected(facture.getStatutLivre().equals(ETAT_LIVRE));
+            CHK_REGLE.setSelected(facture.getStatutRegle().equals(ETAT_REGLE));
             LAB_ADRESSSE.setText(facture.getAdresse() != null ? facture.getAdresse().getLibele() : "");
             LAB_NAME_CLT.setText(facture.getNomClient());
             double avance = facture.getMontantAvance();
 
-            Onglets on = (Onglets) TAB_FACTURES.getSelectionModel().getSelectedItem();
-            if (on != null) {
-                on.setNetAPayer(facture.getMontantResteApayer());
+            Onglets onglets = (Onglets) TAB_FACTURES.getSelectionModel().getSelectedItem();
+            if (onglets != null) {
+                onglets.setNetAPayer(facture.getMontantResteApayer());
                 LAB_T_AVANCE.setText(Constantes.nbf.format(avance));
-                LAB_NET_A_PAYER.setText(Constantes.nbf.format(on.getNetAPayer()));
+                LAB_NET_A_PAYER.setText(Constantes.nbf.format(onglets.getNetAPayer()));
             }
-            if (facture.getStatut().equals(Constantes.ETAT_VALIDE) || facture.getStatut().equals(Constantes.ETAT_CLOTURE)) {
+            if (facture.getStatut().equals(ETAT_VALIDE) || facture.getStatut().equals(ETAT_CLOTURE)) {
                 BTN_SAVE.setVisible(false);
                 BTN_PRINT.setVisible(true);
             } else {
                 BTN_SAVE.setVisible(true);
                 BTN_PRINT.setVisible(false);
             }
-            BTN_REGLER.setVisible(!facture.getStatutRegle().equals(Constantes.ETAT_REGLE));
-            BTN_LIVRER.setVisible(!facture.getStatutLivre().equals(Constantes.ETAT_LIVRE));
+            BTN_REGLER.setVisible(ETAT_VALIDE.equals(facture.getStatut()) && !facture.getStatutRegle().equals(ETAT_REGLE));
+            BTN_LIVRER.setVisible(ETAT_VALIDE.equals(facture.getStatut()) && !facture.getStatutLivre().equals(ETAT_LIVRE));
         } else {
             BTN_LIVRER.setVisible(false);
             BTN_REGLER.setVisible(false);
@@ -568,23 +592,48 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
                 });
             });
             new Thread(service).start();
-        } catch (Exception e) {
-            Logger.getLogger(HomeCaisseController.class.getName()).log(Level.SEVERE, null, e);
+        } catch (Exception ex) {
+            LOGGER.error("Une exception survenue à l'affichage des propriétés de l'article", ex);
         }
     }
 
-    public void createFactureDivers() {
-// créée une nouvelle facture     
+    public void initFactureVenteClientDivers() {
         try {
-            if (UtilsProject.headerDoc != null) {
-                ServiceCreateFacture f = new ServiceCreateFacture(UtilsProject.clientDivers, TYPE_FV, UtilsProject.defaultAdresse, "Client Divers", UtilsProject.headerDoc.getDateEntete(), null, this);
-                Thread t = new Thread(f);
-                t.start();
-            } else {
-                LymytzService.openAlertDialog(GENERATION_FACTURE_NON_REUSSI, ERREUR, "Aucune entête n'a été trouvé !", Alert.AlertType.ERROR);
-            }
+            ManagedFactureVente managedFacture = new ManagedFactureVente(UtilsProject.headerDoc, UtilsProject.defaultAdresse, UtilsProject.clientDivers, "Client Divers", TYPE_FV, UtilsProject.headerDoc.getDateEntete(), null);
+            var response = managedFacture.createNonPersistFacture(TYPE_FV);
+            processResponseCreateFacture(response);
         } catch (Exception ex) {
-            LogFiles.addLogInFile("", Severity.ERROR, ConsUtil.SOURCE_LOG_FILE_EXCEPTION, ex);
+            LOGGER.error("Une exception survenue à l'initialisation de la facture", ex);
+        }
+    }
+
+    public void processResponseCreateFacture(ResponseAction<YvsComDocVentes> response) {
+        switch (response.getStatutResponse()) {
+            case TIERS_INNEXISTANT ->
+                    Platform.runLater(() -> LymytzService.openAlertDialog("Le tiers rattaché à ce client n'existe pas !", "Action abandonné !", ERREUR, Alert.AlertType.ERROR));
+            case CLIENT_INNEXISTANT ->
+                    Platform.runLater(() -> LymytzService.openAlertDialog(GENERATION_DE_LA_FACTURE_NON_REUSSI, ERREUR, "Action abandonné !", Alert.AlertType.ERROR));
+            case NUMERO_DOC_NON_GENERE ->
+                    Platform.runLater(() -> LymytzService.openAlertDialog(GENERATION_DE_LA_FACTURE_NON_REUSSI, ERREUR, "Le numéro de référence n'a pas pu être généré !", Alert.AlertType.ERROR));
+            case FICHE_DEJA_CLOTURE ->
+                    Platform.runLater(() -> LymytzService.openAlertDialog(GENERATION_DE_LA_FACTURE_NON_REUSSI, ERREUR, "Votre fiche de vente est déjà clôturé !", Alert.AlertType.ERROR));
+            case ENTETE_FACTURE_NON_TROUVE ->
+                    Platform.runLater(() -> LymytzService.openAlertDialog(GENERATION_DE_LA_FACTURE_NON_REUSSI, ERREUR, "Aucune entête n'a été trouvé !", Alert.AlertType.ERROR));
+            case DATE_FICHE_INCORRECT ->
+                    Platform.runLater(() -> LymytzService.openAlertDialog(GENERATION_DE_LA_FACTURE_NON_REUSSI, ERREUR, "Vérifier la date de votre fiche !", Alert.AlertType.ERROR));
+            default -> Platform.runLater(() -> {
+                displayDetailFacture(response.getEntity());
+                initTabPane(response.getEntity());
+                TEXT_FIND.setText("");
+                BTN_REGLER.setVisible(response.getEntity().getStatutRegle().equals(ETAT_REGLE));
+                BTN_LIVRER.setVisible(response.getEntity().getStatutLivre().equals(ETAT_LIVRE));
+                afterCreateFacture();
+                TEXT_FIND.requestFocus();
+                if (getStageCreateFacture() != null) {
+                    getStageCreateFacture().close();
+                }
+                ToastService.show(getMainStage(), "Facture initiée avec succès", 2000, INFO);
+            });
         }
     }
 
@@ -631,45 +680,39 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
             bean.setRemise(c.getRemise());
             bean.setRabais(c.getRabais());
             bean.setRistourne(c.getRistourne());
-            bean.setStatut(Constantes.ETAT_VALIDE);
+            bean.setStatut(ETAT_VALIDE);
             bean.setStatutLivree(Constantes.STATUT_DOC_ATTENTE);
             lc.add(bean);
         }
         return lc;
     }
+    /* 1. Engitrer la facture
+     *  2. Generer la livraison
+     *  3. Générer le règlement
+     *  4. Comptabiliser
+     *  5.
+     * */
 
-    public boolean confirmValideFacture(Onglets currentOnglet, double montantPaye, double montantRecu) {
-        List<YvsComContenuDocVente> contenuDuPanier = new ArrayList<>(currentOnglet.getFacture().getContenus());
-        currentOnglet.getFacture().getContenus().clear();
-        YvsComDocVentes d = saveFacture(currentOnglet.getFacture());
-        if (d != null) {
-            currentOnglet.setFacture(d);
-            currentOnglet.getFacture().setContenus(contenuDuPanier);
-            if (saveContentFacture(currentOnglet.getFacture().getContenus(), currentOnglet.getFacture())) {
-                currentOnglet.getFacture().setStatut(Constantes.ETAT_VALIDE);
-                currentOnglet.getFacture().setEtapeValide(1);
-                currentOnglet.getFacture().setStatutLivre(Constantes.ETAT_ATTENTE);
-                currentOnglet.getFacture().setStatutRegle(Constantes.ETAT_ATTENTE);
-                currentOnglet.getFacture().setMontantAvance(montantPaye);
-                List<YvsComContenuDocVente> temp = new ArrayList<>(currentOnglet.getFacture().getContenus());
-                currentOnglet.getFacture().getContenus().clear();
-                if (currentOnglet.getFacture().getTypeDoc().equals(Constantes.TYPE_BCV)) {
-                    currentOnglet.getFacture().setLivraisonAuto(Boolean.FALSE);
-                }
-                dao.update(currentOnglet.getFacture());
-                currentOnglet.getFacture().getContenus().addAll(temp);
-                Thread tcompta = new Thread(() -> {
-                    saveLivraisonAndreglement(new YvsComDocVentes(currentOnglet.getFacture()), montantPaye, montantRecu);
-                    if (Boolean.TRUE.equals(!UtilsProject.REPLICATION) && currentOnglet.getFacture().getTypeDoc().equals(TYPE_FV)) {
-                        comptabilise(currentOnglet.getFacture().getId(), currentOnglet.getFacture().getNumDoc());
-                    }
-                });
-                tcompta.start();
-            }
+    public void confirmValideFacture(YvsComDocVentes facture, final double montantPaye, final double montantRecu) {
+        List<YvsComContenuDocVente> contenuDuPanier = new ArrayList<>(facture.getContenus());
+        facture.getContenus().clear();
+        YvsComDocVentes entityFacture = saveFactureAndContent(facture, contenuDuPanier, montantPaye);
+        if (entityFacture != null) {
+            new ServiceCreateFacture(this).saveCurrentCommercial(facture);
+            livrerEtReglerFactureValide(facture, montantPaye, montantRecu);
         } else {
-            return false;
+            ToastService.show(getMainStage(), "Votre facture n'a pas été enregistré veuillez regarder vos notifications", 3500, ERROR);
         }
-        return true;
+    }
+
+    private void livrerEtReglerFactureValide(YvsComDocVentes facture, double montantPaye, double montantRecu) {
+        Thread tcompta = new Thread(() -> {
+            saveLivraisonAndreglement(new YvsComDocVentes(facture), montantPaye, montantRecu);
+            if (Boolean.TRUE.equals(!UtilsProject.REPLICATION) && facture.getTypeDoc().equals(TYPE_FV)) {
+                comptabilise(facture.getId(), facture.getNumDoc());
+            }
+        });
+        tcompta.start();
     }
 
     public void closeOngletFacture(Onglets currentOnglet) {
@@ -683,32 +726,35 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
         });
     }
 
-    private YvsComDocVentes saveFacture(YvsComDocVentes doc) {
-        if (UtilsProject.headerDoc != null) {
-            if (doc.getId() <= 0) {
-                String numDoc = UtilsProject.generatedNumDoc((doc.getTypeDoc().equals(TYPE_FV)) ? Constantes.TYPE_FV_NAME : Constantes.TYPE_BCV_NAME);
-                if (Constantes.asString(numDoc)) {
-                    doc.setId(null);
-                    doc.setNumDoc(numDoc);
-                    doc.setNumPiece(numDoc);
-                    doc.setNumeroExterne(numDoc);
-                    doc.setEnteteDoc(UtilsProject.headerDoc);
-                    doc.setAuthor(UtilsProject.currentUser);
-                    doc = (YvsComDocVentes) dao.save1(doc);
-                    new ServiceCreateFacture(this).saveCurrentCommercial(doc);
-                } else {
-                    Platform.runLater(() -> LymytzService.openAlertDialog(GENERATION_FACTURE_NON_REUSSI, "Erreur ", "Le numéro de référence n'a pas pu être généré !", Alert.AlertType.ERROR));
-                    return null;
+    private YvsComDocVentes saveFactureAndContent(YvsComDocVentes facture, List<YvsComContenuDocVente> contenuDocVentes, double montantPaye) {
+        try {
+            if (facture.getId() <= 0) {
+                facture.setId(null);
+                facture.setNumPiece(facture.getNumDoc());
+                facture.setNumeroExterne(facture.getNumDoc());
+                facture.setAuthor(UtilsProject.currentUser);
+                facture.setStatut(ETAT_VALIDE);
+                facture.setEtapeValide(1);
+                facture.setStatutLivre(Constantes.ETAT_ATTENTE);
+                facture.setStatutRegle(Constantes.ETAT_ATTENTE);
+                facture.setMontantAvance(montantPaye);
+                if (facture.getTypeDoc().equals(Constantes.TYPE_BCV)) {
+                    facture.setLivraisonAuto(Boolean.FALSE);
                 }
+                facture = dao.save1(facture);
+                Optional.ofNullable(facture).ifPresent(fac -> saveContentFacture(contenuDocVentes, fac));
             } else {
-                return doc;
+                return dao.update(facture);
             }
-        } else {
-            Platform.runLater(() -> LymytzService.openAlertDialog(GENERATION_FACTURE_NON_REUSSI, "Erreur ", "L'en-tête de la facture n'a pas été trouvé!", Alert.AlertType.ERROR));
-            return null;
+        } catch (Exception ex) {
+            //Enregistrer la facture sous forme de json si elle n'a pas pu être enregistré
+            var fatureLog = new YvsComDocVentes(facture);
+            fatureLog.setContenus(contenuDocVentes);
+            dao.saveLogsFacture(fatureLog);
         }
-        return doc;
+        return facture;
     }
+
 
     private boolean saveContentFacture(List<YvsComContenuDocVente> contents, YvsComDocVentes doc) {
         return contents.stream().noneMatch(c -> (!saveContentFacture(c, doc)));
@@ -719,7 +765,7 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
         c.setParent(null);
         if (c.getId() <= 0) {
             c.setId(null);
-            c = (YvsComContenuDocVente) dao.save1(c);
+            c = dao.save1(c);
             c.setId(c.getId());
             //Save les taxes
             saveAllTaxe(c);
@@ -740,7 +786,7 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
             long categorie = y.getDocVente().getCategorieComptable().getId();
 
             String nameQueri = "YvsBaseArticleCategorieComptable.findByCategorieArticle";
-            YvsBaseArticleCategorieComptable articleCategorieComptable = (YvsBaseArticleCategorieComptable) dao.findOneByNQ(nameQueri, new String[]{"categorie", "article"}, new Object[]{new YvsBaseCategorieComptable(categorie), y.getArticle()});
+            YvsBaseArticleCategorieComptable articleCategorieComptable = dao.findOneByNQ(nameQueri, new String[]{"categorie", "article"}, new Object[]{new YvsBaseCategorieComptable(categorie), y.getArticle()});
             if (articleCategorieComptable != null && (articleCategorieComptable.getId() != null && articleCategorieComptable.getId() > 0)) {
                 if (Boolean.TRUE.equals(y.getArticle().getPuvTtc())) {
                     for (YvsBaseArticleCategorieComptableTaxe t : articleCategorieComptable.getTaxes()) {
@@ -757,7 +803,7 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
                     }
                     taxe = dao.arrondi(UtilsProject.currentSociete.getId(), taxe);
 
-                    YvsComTaxeContenuVente ct = (YvsComTaxeContenuVente) dao.findOneByNQ("YvsComTaxeContenuVente.findOne", new String[]{"contenu", "taxe"}, new Object[]{y, t.getTaxe()});
+                    YvsComTaxeContenuVente ct = dao.findOneByNQ("YvsComTaxeContenuVente.findOne", new String[]{"contenu", "taxe"}, new Object[]{y, t.getTaxe()});
                     if (ct != null && (ct.getId() != null && ct.getId() > 0)) {
                         ct.setMontant(taxe);
                         ct.setAuthor(UtilsProject.currentUser);
@@ -871,7 +917,7 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
     public void openViewLog(ActionEvent ev) {
         //Ouvre la fenêtre de gestion des imports
         VBox root = null;
-        LymytzService.openWindow("/data/read_log.fxml", "Log_", root, 630d, 500d);
+        LymytzService.openWindow("/pages/data/read_log.fxml", "Log_", root, 630d, 500d);
     }
 
     @FXML
@@ -908,7 +954,7 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
     @FXML
     private void openViewAbout(ActionEvent event) {
         VBox root = null;
-        LymytzService.openWindow("/component/form_about.fxml", "Lymytz /A propos", root, 400.0, 305.0, false);
+        LymytzService.openWindow("/pages/component/form_about.fxml", "Lymytz /A propos", root, 400.0, 305.0, false);
     }
 
     @FXML
@@ -971,7 +1017,7 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
     @FXML
     public void openViewListCommandes(ActionEvent ev) {
         VBox root = null;
-        ListFacturesController controler = LymytzService.openWindow("data/form_facture.fxml", "Lymytz /Liste de Factures", root, 900.0, 605.0, true, this);
+        ListFacturesController controler = LymytzService.openWindow("/pages/data/form_facture.fxml", "Lymytz /Liste de Factures", root, 900.0, 605.0, true, this);
         if (controler != null) {
             controler.initPage(this, Constantes.TYPE_BCV);
         }
@@ -980,7 +1026,7 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
     @FXML
     public void openDlgStatusSync(ActionEvent ev) {
         VBox root = null;
-        ListenTableController controler = LymytzService.openWindow("main/synchro/listen_table.fxml", "Lymytz /Etat Synchronisation", root, 900.0, 505.0, true, this);
+        ListenTableController controler = LymytzService.openWindow("/pages/main/synchro/listen_table.fxml", "Lymytz /Etat Synchronisation", root, 900.0, 505.0, true, this);
         if (controler != null) {
             controler.initPage(this);
         }
@@ -989,7 +1035,7 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
     @FXML
     public void openDlgStatusSyncImp(ActionEvent ev) {
         VBox root = null;
-        ListenRemoteTableController controler = LymytzService.openWindow("main/synchro/listen_table_remote.fxml", "Lymytz /Etat Synchronisation", root, 900.0, 505.0, true, this);
+        ListenRemoteTableController controler = LymytzService.openWindow("/pages/main/synchro/listen_table_remote.fxml", "Lymytz /Etat Synchronisation", root, 900.0, 505.0, true, this);
         if (controler != null) {
             controler.initPage(this);
         }
@@ -1065,8 +1111,7 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
                 }
             });
         } catch (IOException ex) {
-            Logger.getLogger(HomeCaisseController.class
-                    .getName()).log(Level.SEVERE, null, ex);
+            LOGGER.error("Une exception survenue à l'ouverture du clavier", ex);
         }
     }
 
@@ -1077,7 +1122,7 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
     public void opnClotureFiche(Long idHeader) {
         try {
             FXMLLoader load = new FXMLLoader(LocalLoader.class
-                    .getResource("main/form_virement_recette.fxml"));
+                    .getResource("/pages/main/form_virement_recette.fxml"));
             VBox root = load.load();
             Scene scene = new Scene(root, 600, 250);
             Stage stage = new Stage();
@@ -1089,7 +1134,7 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.initOwner(UtilsProject.primaryStage);
             stage.show();
-            FormVirementController controller = (FormVirementController) load.getController();
+            FormVirementController controller = load.getController();
             controller.initFormVirement(idHeader, UtilsProject.caisse, this, stage);
             scene.setOnKeyReleased(
                     (KeyEvent event) -> {
@@ -1098,8 +1143,7 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
                         }
                     });
         } catch (IOException ex) {
-            Logger.getLogger(ManagedApplication.class
-                    .getName()).log(Level.SEVERE, null, ex);
+            LOGGER.error("Une exception survenue à l'ouverture du formulaire e virement", ex);
         }
 
     }
@@ -1141,7 +1185,7 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
         if (UtilsProject.properties != null) {
             UtilsProject.loadInitData();
             loadProperties();
-            LymytzService.success();
+            ToastService.show(getMainStage(), "Les propriétés de l'application ont été rechargés avec succès ", 2500, INFO);
         }
     }
 
@@ -1303,4 +1347,7 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
         return clientSocket != null && clientSocket.getSocketClient() != null && clientSocket.getSocketClient().isClosed();
     }
 
+    public Stage getMainStage() {
+        return (Stage) TOOLBAR.getScene().getWindow();
+    }
 }

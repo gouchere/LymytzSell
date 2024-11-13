@@ -153,12 +153,10 @@
                         </HBox>
                         <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0" prefHeight="39.0"
                               prefWidth="346.0">
-                            <children>
-                                <Label layoutX="10.0" layoutY="21.0" prefHeight="17.0" prefWidth="67.0"
-                                       text="Tranche:" textOverrun="CENTER_ELLIPSIS"/>
-                                <Label fx:id="LAB_TRANCHE" layoutX="48.0" layoutY="21.0" text=" -- .-- "
-                                       textFill="#400202"/>
-                            </children>
+                            <Label layoutX="10.0" layoutY="21.0" prefHeight="17.0" prefWidth="67.0"
+                                   text="Tranche:" textOverrun="CENTER_ELLIPSIS"/>
+                            <Label fx:id="LAB_TRANCHE" layoutX="48.0" layoutY="21.0" text=" -- .-- "
+                                   textFill="#400202"/>
                         </HBox>
                     </VBox>
                     <Pane disable="true" HBox.hgrow="ALWAYS"/>
@@ -541,7 +539,7 @@
                                 </Label>
                                 <Label alignment="BOTTOM_RIGHT" contentDisplay="RIGHT"
                                        layoutX="10.0" layoutY="10.0" prefWidth="850.0"
-                                       text="Copyright(c) Lymytz 2020">
+                                       text="Copyright(c) Lymytz 2024">
                                     <font>
                                         <Font size="9.0"/>
                                     </font>

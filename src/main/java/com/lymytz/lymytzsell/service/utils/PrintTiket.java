@@ -7,7 +7,6 @@ package com.lymytz.lymytzsell.service.utils;
 
 import com.lymytz.lymytzsell.dao.entity.YvsComContenuDocVente;
 import com.lymytz.lymytzsell.dao.entity.YvsComDocVentes;
-import com.lymytz.lymytzsell.service.utils.log.LogFiles;
 import com.sun.javafx.print.PrintHelper;
 import com.sun.javafx.print.Units;
 import javafx.application.Platform;
@@ -25,23 +24,22 @@ import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-import javax.print.attribute.standard.Severity;
 import java.util.Date;
-import java.util.List;
 
 /**
- *
  * @author LENOVO
  */
 @Getter
 @Setter
 public class PrintTiket implements Runnable {
-
+    private final Logger LOGGER = LogManager.getLogger(PrintTiket.class);
     PrinterJob print;
     private double avance;
     String message;
-    private WebView view ;
+    private WebView view;
     private WebEngine wbEngine;
     private Double netAPayer;
     private Double montantRecu;
@@ -70,39 +68,42 @@ public class PrintTiket implements Runnable {
     }
 
     private void dataPrint() {
+        printerIsAvaillable();
         print = PrinterJob.createPrinterJob();
         print.getJobSettings().setJobName("Lymytz_caisse_print_ticket");
         PageLayout lay = getCustumPage();
         if (lay != null) {
             Platform.runLater(() -> {
                 TextFlow content = print();
-                if (print.printPage(lay, content)) {                    
+                if (print.printPage(lay, content)) {
                     print.endJob();
                 }
             });
         }
     }
-    double tremise = 0d, tristourne = 0d, trabais = 0d;
+
+    double tremise = 0d;
+    double tristourne = 0d;
+    double trabais = 0d;
 
     public TextFlow print() {
-        return FOOTER_TICKET_(facture, 0d, 0d, tremise, tristourne, avance, netAPayer, montantRecu, montantTotal, montantAvance, facture.getTypeDoc());
+        return FOOTER_TICKET_(facture, avance, netAPayer, montantRecu, montantTotal, montantAvance, facture.getTypeDoc());
     }
 
     private PageLayout getCustumPage() {
-        try{
-        PageLayout pl;
-        javafx.print.Paper paper = PrintHelper.createPaper("Perso", 300d, 15000d, Units.INCH);
-        PageOrientation PO = (UtilsProject.paramConnection.getOrientation() != null) ? UtilsProject.paramConnection.getOrientation().equals("PAYSAGE") ? PageOrientation.LANDSCAPE : PageOrientation.PORTRAIT : PageOrientation.PORTRAIT;
-        pl = Printer.getDefaultPrinter().createPageLayout(paper, PO, UtilsProject.paramConnection.getP_ml(), UtilsProject.paramConnection.getP_mr(), UtilsProject.paramConnection.getP_mt(), UtilsProject.paramConnection.getP_mb());
-        return pl;
-        }catch(Exception ex){
-            ex.printStackTrace();
-            LogFiles.addLogInFile("Impossible d'imprimer !", Severity.ERROR, ConsUtil.SOURCE_LOG_FILE_EXCEPTION, ex);
+        try {
+            PageLayout pl;
+            var paper = PrintHelper.createPaper("Perso", 300d, 15000d, Units.INCH);
+            PageOrientation pageOrientation = (UtilsProject.paramConnection.getOrientation() != null) ? UtilsProject.paramConnection.getOrientation().equals("PAYSAGE") ? PageOrientation.LANDSCAPE : PageOrientation.PORTRAIT : PageOrientation.PORTRAIT;
+            pl = Printer.getDefaultPrinter().createPageLayout(paper, pageOrientation, UtilsProject.paramConnection.getP_ml(), UtilsProject.paramConnection.getP_mr(), UtilsProject.paramConnection.getP_mt(), UtilsProject.paramConnection.getP_mb());
+            return pl;
+        } catch (Exception ex) {
+            LOGGER.error("Impossible d'imprimer !", ex);
         }
         return null;
     }
 
-    public TextFlow FOOTER_TICKET_(YvsComDocVentes facture, Double taxe, Double trabais, Double tremise, Double tristourne, double avance, Double netAPayer, Double montantRecu, Double montantTotal, Double montantAvance, String type) {
+    public TextFlow FOOTER_TICKET_(YvsComDocVentes facture, double avance, Double netAPayer, Double montantRecu, Double montantTotal, Double montantAvance, String type) {
 //header
         if (UtilsProject.currentSociete != null && UtilsProject.currentAgence != null && facture != null) {
             Text wel = getText("BIENVENUE AU " + UtilsProject.currentSociete.getName().toUpperCase() + " \n", 10, true);
@@ -124,7 +125,7 @@ public class PrintTiket implements Runnable {
                 telClt = getText(facture.getTelephone(), 9, false);
             }
             Text vend = getText("Vendeur:    \t " + UtilsProject.currentUser.getUsers().getNomUsers() + "\n", 9, false);
-            TextFlow tf = new TextFlow(wel, bp, rc, contr, tel1, tel2, numDoc, cltC, cltN, date, dateP, dateL, telClt,vend);
+            TextFlow tf = new TextFlow(wel, bp, rc, contr, tel1, tel2, numDoc, cltC, cltN, date, dateP, dateL, telClt, vend);
             //content
             Text headCol = getText("Quantité \t Prix.U \t P.Total \t N.A.P \n", 9, true);
             tf.getChildren().add(headCol);
@@ -189,5 +190,13 @@ public class PrintTiket implements Runnable {
             re.setFont(Font.font("Helvetica", FontWeight.BOLD, size));
         }
         return re;
+    }
+
+    private boolean printerIsAvaillable() {
+        if (Printer.getAllPrinters().isEmpty()) {
+            LOGGER.warn("Aucune imprimante detecté sur votre réseau");
+            return false;
+        }
+        return true;
     }
 }

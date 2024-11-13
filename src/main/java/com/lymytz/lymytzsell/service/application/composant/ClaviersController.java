@@ -5,14 +5,17 @@
  */
 package com.lymytz.lymytzsell.service.application.composant;
 
+import com.lymytz.lymytzsell.business.ManagedFactureVente;
 import com.lymytz.lymytzsell.business.helpers.EtatMontantPayer;
 import com.lymytz.lymytzsell.business.helpers.KeyBoardAction;
+import com.lymytz.lymytzsell.business.helpers.StatutResponse;
 import com.lymytz.lymytzsell.dao.entity.YvsComDocVentes;
 import com.lymytz.lymytzsell.service.application.Controller;
 import com.lymytz.lymytzsell.service.application.ManagedApplication;
 import com.lymytz.lymytzsell.service.application.bean.ContentPanier;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.LymytzService;
+import com.lymytz.lymytzsell.service.utils.MessagesConstants;
 import com.lymytz.lymytzsell.service.utils.PrintTiket;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
 import com.lymytz.lymytzsell.view.main.HomeCaisseController;
@@ -34,8 +37,12 @@ import javafx.stage.Stage;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import static com.lymytz.lymytzsell.business.helpers.EtatMontantPayer.OK;
 import static com.lymytz.lymytzsell.business.helpers.HelperFactureVente.isValideMontantPaye;
 import static com.lymytz.lymytzsell.service.utils.Constantes.TYPE_FV;
+import static com.lymytz.lymytzsell.service.utils.MessagesConstants.AUCUN_JOURNAL_DE_VENTE_TROUVE;
+import static com.lymytz.lymytzsell.service.utils.MessagesConstants.ERREUR;
+import static com.lymytz.lymytzsell.service.utils.MessagesConstants.GENERATION_DE_LA_FACTURE_NON_REUSSI;
 import static com.lymytz.lymytzsell.service.utils.UtilsProject.TYPE_RAPPORT_A4;
 import static com.lymytz.lymytzsell.service.utils.UtilsProject.TYPE_RAPPORT_TICKET;
 
@@ -149,6 +156,7 @@ public class ClaviersController extends ManagedApplication implements Initializa
 
     @FXML
     private void printOnly(ActionEvent event) {
+        // view more
     }
 
     @FXML
@@ -193,15 +201,7 @@ public class ClaviersController extends ManagedApplication implements Initializa
     private void valideFrappe(ActionEvent event) {
         selectOnglet.getFacture().setContenus(page.buildInfoTableToContentFacure(selectOnglet.getContentFacture()));
         if (avance) {
-            if (selectOnglet.getFacture().getTypeDoc().equals(Constantes.TYPE_BCV)) {
-                selectOnglet.getFacture().setMontantAvance(getMontantAffiche());
-                avance = false;
-                page.LAB_T_AVANCE.setText(Constantes.nbf.format(getMontantAffiche()));
-                montantAvance = getMontantAffiche();
-                page.LAB_NET_A_PAYER.setText(Constantes.nbf.format(selectOnglet.getNetAPayer() - montantAvance));
-                TITRE_CLAVIER.setText("Entrer Le montant reçu du client");
-                LAB_AFFICH.setText("");
-            }
+            enregistreUneAvance();
         } else {
             switch (this.action) {
                 case REGLER, VALIDER:
@@ -212,31 +212,18 @@ public class ClaviersController extends ManagedApplication implements Initializa
                         return;
                     }
                     switch (sourceOfAction) {
-                        case "F":
+                        case "F" -> {
                             //lance la validation dans un thread
-                            var statutMontantPaye = isValideMontantPaye(selectOnglet.getFacture().getTypeDoc(), montantAvance, selectOnglet.getNetAPayer());
-                            if (EtatMontantPayer.OK.equals(statutMontantPaye)) {
-                                //todo: envisager une action si l'enregistrement ne se termine pas.
-                                new Thread(() -> page.confirmValideFacture(selectOnglet, montantAvance, getMontantAffiche())).start();
-                                printTicketFacture(selectOnglet.getFacture(), selectOnglet.getMontantRecu());
-                                page.closeOngletFacture(selectOnglet);
-                            } else {
-                                if (EtatMontantPayer.KO_NET_FACTURE.equals(statutMontantPaye)) {
-                                    Platform.runLater(() -> LymytzService.openAlertDialog("Incohérence des montants !", "Erreur", "Le montant payé de la facture est différent du TTC !", Alert.AlertType.ERROR));
-                                } else if (EtatMontantPayer.KO_NET_COMMANDE.equals(statutMontantPaye)) {
-                                    Platform.runLater(() -> LymytzService.openAlertDialog("Incohérence des montants !", "Erreur", "Le montant d'avance de la commande est suppérieure au TTC !", Alert.AlertType.ERROR));
-                                }
-                            }
+                            saveAndValidateFacture();
                             fenetre.close();
-                            break;
-                        case "A":
+                        }
+                        case "A" -> {
                             //Enregistrer l'avance sur commande
                             page.saveReglement(selectOnglet.getFacture(), montantAvance, getMontantAffiche());
                             selectOnglet.displayMontantsBean();
                             fenetre.close();
-                            break;
-                        default:
-                            throw new IllegalStateException("Unexpected value: " + sourceOfAction);
+                        }
+                        default -> throw new IllegalStateException("Unexpected value: " + sourceOfAction);
                     }
                     break;
                 case SET_QTE:
@@ -247,7 +234,6 @@ public class ClaviersController extends ManagedApplication implements Initializa
                         lineContent = selectOnglet.evaluePrix(lineContent);
                         //exécute la méthode de modif de la vue
                         selectOnglet.addLineContent(lineContent, true);
-
                     }
                     fenetre.close();
                     break;
@@ -269,6 +255,39 @@ public class ClaviersController extends ManagedApplication implements Initializa
         }
     }
 
+    private void enregistreUneAvance() {
+        if (selectOnglet.getFacture().getTypeDoc().equals(Constantes.TYPE_BCV)) {
+            selectOnglet.getFacture().setMontantAvance(getMontantAffiche());
+            avance = false;
+            page.LAB_T_AVANCE.setText(Constantes.nbf.format(getMontantAffiche()));
+            montantAvance = getMontantAffiche();
+            page.LAB_NET_A_PAYER.setText(Constantes.nbf.format(selectOnglet.getNetAPayer() - montantAvance));
+            TITRE_CLAVIER.setText("Entrer Le montant reçu du client");
+            LAB_AFFICH.setText("");
+        }
+    }
+
+    private void saveAndValidateFacture() {
+        var facture = getDocVenteFromOnglet(selectOnglet);
+        var statutMontantPaye = isValideMontantPaye(selectOnglet.getFacture().getTypeDoc(), montantAvance, selectOnglet.getNetAPayer());
+        var statut = ManagedFactureVente.controleBeforeSaveFacture.apply(facture);
+        if (OK.equals(statutMontantPaye) && StatutResponse.OK.equals(statut)) {
+            new Thread(() -> page.confirmValideFacture(facture, montantAvance, getMontantAffiche())).start();
+            printTicketFacture(selectOnglet.getFacture(), selectOnglet.getMontantRecu());
+            page.closeOngletFacture(selectOnglet);
+        } else {
+            processResponseIfError(statut, statutMontantPaye);
+        }
+    }
+
+    private YvsComDocVentes getDocVenteFromOnglet(Onglets onglet) {
+        YvsComDocVentes docVente = new YvsComDocVentes(onglet.getFacture());
+        String numFacture = UtilsProject.generatedNumDoc((docVente.getTypeDoc().equals(TYPE_FV)) ? Constantes.TYPE_FV_NAME : Constantes.TYPE_BCV_NAME);
+        docVente.setNumDoc(numFacture);
+        docVente.setEnteteDoc(UtilsProject.headerDoc);
+        return docVente;
+    }
+
     private void printTicketFacture(YvsComDocVentes facture, double montantRecu) {
         if (Boolean.TRUE.equals(UtilsProject.paramConnection.getUsePrinter()) && TYPE_RAPPORT_TICKET.equals(UtilsProject.paramConnection.getTypeRapport())) {
             Platform.runLater(() -> {
@@ -288,8 +307,33 @@ public class ClaviersController extends ManagedApplication implements Initializa
         }
     }
 
+    public void processResponseIfError(StatutResponse response, EtatMontantPayer etatMontantPayer) {
+        switch (response) {
+            case TIERS_INNEXISTANT ->
+                    Platform.runLater(() -> LymytzService.openAlertDialog("Le tiers rattaché à ce client n'existe pas !", "Action abandonné !", ERREUR, Alert.AlertType.ERROR));
+            case CLIENT_INNEXISTANT ->
+                    Platform.runLater(() -> LymytzService.openAlertDialog(GENERATION_DE_LA_FACTURE_NON_REUSSI, ERREUR, "Action abandonné !", Alert.AlertType.ERROR));
+            case NUMERO_DOC_NON_GENERE ->
+                    Platform.runLater(() -> LymytzService.openAlertDialog(GENERATION_DE_LA_FACTURE_NON_REUSSI, ERREUR, "Le numéro de référence n'a pas pu être généré !", Alert.AlertType.ERROR));
+            case FICHE_DEJA_CLOTURE ->
+                    Platform.runLater(() -> LymytzService.openAlertDialog(GENERATION_DE_LA_FACTURE_NON_REUSSI, ERREUR, "Votre fiche de vente est déjà clôturé !", Alert.AlertType.ERROR));
+            case ENTETE_FACTURE_NON_TROUVE ->
+                    Platform.runLater(() -> LymytzService.openAlertDialog(GENERATION_DE_LA_FACTURE_NON_REUSSI, ERREUR, AUCUN_JOURNAL_DE_VENTE_TROUVE, Alert.AlertType.ERROR));
+            case DATE_FICHE_INCORRECT ->
+                    Platform.runLater(() -> LymytzService.openAlertDialog(GENERATION_DE_LA_FACTURE_NON_REUSSI, ERREUR, "Vérifier la date de votre fiche !", Alert.AlertType.ERROR));
+            default -> {
+            }
+        }
+        if (EtatMontantPayer.KO_NET_FACTURE.equals(etatMontantPayer)) {
+            Platform.runLater(() -> LymytzService.openAlertDialog("Incohérence des montants !", "Erreur", "Le montant payé de la facture est différent du TTC !", Alert.AlertType.ERROR));
+        } else if (EtatMontantPayer.KO_NET_COMMANDE.equals(etatMontantPayer)) {
+            Platform.runLater(() -> LymytzService.openAlertDialog("Incohérence des montants !", "Erreur", "Le montant d'avance de la commande est suppérieure au TTC !", Alert.AlertType.ERROR));
+        }
+    }
+
     @Override
     public void freeMemoryController() {
+        //comming soon
     }
 
 }

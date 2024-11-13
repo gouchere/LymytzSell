@@ -1,7 +1,7 @@
 # LymytzSell
 Application de gestion de caisse associé à Lymytz ERP
 ## Technologie:
-  ![JDK](https://img.shields.io/badge/LymytzSell-2.0.1-orange)
+  ![JDK](https://img.shields.io/badge/LymytzSell-3.0.1-orange)
   ![JDK](https://img.shields.io/badge/Jdk_Eclipse_Adoptium-17.0.13-orange)
   ![JDK](https://img.shields.io/badge/JavaFx_SDK-17.0.13-orange)
   ![JDK](https://img.shields.io/badge/PostgresSql-14-orange)

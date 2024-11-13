@@ -11,7 +11,6 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.lymytz.lymytzsell.business.helpers.Helpers;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
@@ -35,7 +34,7 @@ import javafx.scene.layout.VBox;
  */
 public class LoaderArticleTask extends Task<ObservableList<GridPane>> {
 
-    LocalQueryFactories localQueryFactories = new LocalQueryFactories<>();
+    LocalQueryFactories localQueryFactories = new LocalQueryFactories();
     HomeCaisseController page;
     String reference;
     List<String> categories;
@@ -63,6 +62,7 @@ public class LoaderArticleTask extends Task<ObservableList<GridPane>> {
     public ObservableList<GridPane> call() throws Exception {
         ObservableList<GridPane> result = FXCollections.observableArrayList();
         try {
+            this.page.createAndAddProgressBar();
             List<Object[]> articles = filterDoublon(filterArticlesInDb());
             GridPane container = CustomComponents.getBasicGridPane();
             var total = articles.size();
@@ -241,7 +241,4 @@ public class LoaderArticleTask extends Task<ObservableList<GridPane>> {
         return art;
     }
 
-    private boolean pair(int nb) {
-        return (nb % 2) == 0;
-    }
 }

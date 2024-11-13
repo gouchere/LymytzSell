@@ -51,6 +51,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * @author LENOVO Regroupe les fonctionnalité statiques partagé de
@@ -62,7 +63,7 @@ public class UtilsProject {
     private UtilsProject() {
         // no implementation
     }
-
+    public static final AtomicLong localId = new AtomicLong(-9999);
     public static ServerSocket server;
     public static HomeCaisseController currentPage;
     public static ParamConnection paramConnection;
@@ -100,9 +101,8 @@ public class UtilsProject {
 
     public static String generatedNumDoc(String type) {
         UtilsBean util = new UtilsBean();
-        if (headerDoc != null ? headerDoc.getCreneau() != null : false) {
-            String reference = util.genererReference(type, headerDoc.getDateEntete(), headerDoc.getCreneau().getCreneauPoint().getPoint().getId(), Constantes.POINTVENTE, "", currentAgence);
-            return reference;
+        if (headerDoc != null && headerDoc.getCreneau() != null) {
+            return util.genererReference(type, headerDoc.getDateEntete(), headerDoc.getCreneau().getCreneauPoint().getPoint().getId(), Constantes.POINTVENTE, "", currentAgence);
         }
         return null;
     }
@@ -116,7 +116,7 @@ public class UtilsProject {
     }
 
     public static boolean verifyDateVente(Date date) {
-        LocalQueryFactories dao = new LocalQueryFactories<>();
+        LocalQueryFactories dao = new LocalQueryFactories();
         int ecart = -1;
         int nbFiches = -1;
         if (date == null || date.after(new Date())) {
@@ -141,7 +141,7 @@ public class UtilsProject {
     }
 
     public static boolean verifyDate(Date date, int ecart) {
-        LocalQueryFactories dao = new LocalQueryFactories<>();
+        LocalQueryFactories dao = new LocalQueryFactories();
         String[] champ = new String[]{"dateJour"};
         Object[] val = new Object[]{date};
         YvsBaseExercice exo = (YvsBaseExercice) dao.findOneByNQ("YvsBaseExercice.findActifByDate", champ, val);
@@ -194,7 +194,7 @@ public class UtilsProject {
     public static double getStocks(YvsBaseConditionnement c, long depot) {
         Double re;
         if (Boolean.FALSE.equals(UtilsProject.REPLICATION)) {
-            LocalQueryFactories rq = new LocalQueryFactories<>();
+            LocalQueryFactories rq = new LocalQueryFactories();
             re = (Double) (rq.findOneObjectBySQLQ("select public.get_stock_reel(?,?,?,?,?,?::date,?,?)", new Options[]{
                     new Options(c.getArticle().getId(), 1), new Options(0, 2), new Options(depot, 3), new Options(0, 4), new Options(0, 5),
                     new Options(UtilsProject.headerDoc.getDateEntete(), 6), new Options(c.getId(), 7), new Options(0, 8)
@@ -212,7 +212,7 @@ public class UtilsProject {
     public static double getPr(YvsBaseConditionnement c, long depot) {
         Double prixDeRevient;
         if (Boolean.FALSE.equals(UtilsProject.REPLICATION)) {
-            var queryFactorie = new LocalQueryFactories<>();
+            var queryFactorie = new LocalQueryFactories();
             prixDeRevient = (Double) (queryFactorie.findOneObjectBySQLQ("select public.get_pr(?,?,?,?::date,?)", new Options[]{
                     new Options(c.getArticle().getId(), 1), new Options(depot, 2), new Options(0, 3),
                     new Options(UtilsProject.headerDoc.getDateEntete(), 4), new Options(c.getId(), 5)
@@ -319,7 +319,7 @@ public class UtilsProject {
     }
 
     public static void loadInitData() {
-        LocalQueryFactories dao = new LocalQueryFactories<>();
+        LocalQueryFactories dao = new LocalQueryFactories();
         if (paramConnection == null) {
             paramConnection = new ParamConnection();
         }

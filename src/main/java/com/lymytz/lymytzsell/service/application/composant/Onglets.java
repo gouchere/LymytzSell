@@ -74,7 +74,7 @@ public final class Onglets extends Tab {
         super(title, new ScrollPane(new VBox()));
         contentFacture = new ArrayList<>();
         this.page = page;
-        dao = new LocalQueryFactories<>();
+        dao = new LocalQueryFactories();
     }
 
     public Onglets(Onglets onglet) {
@@ -238,6 +238,7 @@ public final class Onglets extends Tab {
     public ContentPanier evaluePrix(ContentPanier line) {
         if (line != null) {
             PrixArticles prix = getPrixArticle(line.getConditionnement(), line.getQuantite(), getFacture(), line.getPrix());
+            //todo retirer ce commentaire
             if (Boolean.TRUE.equals(!UtilsProject.REPLICATION) && UtilsProject.depotLivraison != null) {
                 //si on est pas en mode replication, calcul immédiatement le stock
                 /*var pr = UtilsProject.getPr(line.getConditionnement(), UtilsProject.depotLivraison.getId());
@@ -269,8 +270,9 @@ public final class Onglets extends Tab {
     public boolean addArticleOnFacture(YvsBaseConditionnement cond, double qteLine, boolean resetQte, double prixV) {
         Onglets tab = (Onglets) page.TAB_FACTURES.getSelectionModel().getSelectedItem();
         if (isEditableCurrentFacture()) {
-            page.displayPropertyArticle(cond, false);
+            //page.displayPropertyArticle(cond, false);
             ContentPanier line = tab.buildLineContentanier(cond);
+            cond.setStock(UtilsProject.getStocks(cond, UtilsProject.depotLivraison.getId()));
             //contrôle de stock
             if (isStockEnable(cond, qteLine, tab, line)) {
                 line = tab.getContentFacture().stream().filter(line::equals).findFirst().orElse(line);
@@ -313,10 +315,9 @@ public final class Onglets extends Tab {
     }
 
     private boolean isStockEnable(YvsBaseConditionnement cond, double qteLine, Onglets tab, ContentPanier line) {
-        return Boolean.FALSE.equals(UtilsProject.REPLICATION) &&
-                Constantes.TYPE_FV.equals(tab.getFacture().getTypeDoc()) &&
-                (cond.getStock() - qteLine > 0 ||
-                        canSaveWithoutStock(cond, tab, line));
+        return Boolean.FALSE.equals(UtilsProject.REPLICATION) && (Constantes.TYPE_FV.equals(tab.getFacture().getTypeDoc()) &&
+                (cond.getStock() - qteLine > 0 || canSaveWithoutStock(cond, tab, line))) ||
+                Constantes.TYPE_BCV.equals(tab.getFacture().getTypeDoc());
     }
 
     private boolean isEditableCurrentFacture() {

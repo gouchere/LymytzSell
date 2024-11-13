@@ -41,7 +41,7 @@ import java.util.List;
 @NamedQueries({
         @NamedQuery(name = "YvsComDocVentes.findAll", query = "SELECT y FROM YvsComDocVentes y"),
         @NamedQuery(name = "YvsComDocVentes.findById", query = "SELECT y FROM YvsComDocVentes y LEFT JOIN FETCH y.contenus WHERE y.id = :id"),
-        @NamedQuery(name = "YvsComDocVentes.findByReference", query = "SELECT y FROM YvsComDocVentes y WHERE y.numeroExterne LIKE :numDoc ORDER by y.numeroExterne DESC"),
+        @NamedQuery(name = "YvsComDocVentes.findByReference", query = "SELECT y FROM YvsComDocVentes y WHERE y.numDoc LIKE :numDoc ORDER by y.numDoc DESC"),
         @NamedQuery(name = "YvsComDocVentes.countDocByHeaderAndType", query = "SELECT COUNT(y) FROM YvsComDocVentes y WHERE (y.typeDoc =:type1 OR y.typeDoc=:type2) AND y.enteteDoc=:header"),
         @NamedQuery(name = "YvsComDocVentes.countAllFacturesByHeader", query = "SELECT COUNT(y) FROM YvsComDocVentes y WHERE  (y.typeDoc = :typesDoc OR y.typeDoc = :typesDoc1)  AND y.enteteDoc=:header AND y.statut='V'"),
         @NamedQuery(name = "YvsComDocVentes.countAllFacturesByHeaderNLivre", query = "SELECT COUNT(y) FROM YvsComDocVentes y WHERE y.enteteDoc=:header AND y.statutLivre!=:statutLivre AND y.typeDoc IN :typesDocs"),
@@ -401,11 +401,7 @@ public class YvsComDocVentes extends YvsEntity implements Serializable {
 
     @XmlTransient
     public double getMontantResteAPlanifier() {
-        double re = getMontantTotal();
-//        for (YvsComptaCaissePieceVente p : reglements) {
-//            re -= p.getMontant();
-//        }
-        return re;
+        return getMontantTotal();
     }
 
     @XmlTransient
@@ -452,6 +448,10 @@ public class YvsComDocVentes extends YvsEntity implements Serializable {
     @Override
     public String toString() {
         return "YvsComDocVentes{" + "id=" + id + ", numPiece=" + numPiece + ", typeDoc=" + typeDoc + ", statut=" + statut + ", nomClient=" + nomClient + ", numDoc=" + numDoc + ", heureDoc=" + heureDoc + ", montantAvance=" + montantAvance + ", dateSave=" + dateSave + ", mouvStock=" + mouvStock + ", impression=" + impression + ", dateSolder=" + dateSolder + ", dateLivraison=" + dateLivraison + ", cloturer=" + cloturer + ", dateCloturer=" + dateCloturer + ", dateValider=" + dateValider + ", dateAnnuler=" + dateAnnuler + ", description=" + description + ", statutLivre=" + statutLivre + ", statutRegle=" + statutRegle + ", dateLivraisonPrevu=" + dateLivraisonPrevu + ", livraisonAuto=" + livraisonAuto + ", dateUpdate=" + dateUpdate + ", commision=" + commision + ", etapeTotal=" + etapeTotal + ", etapeValide=" + etapeValide + ", numeroExterne=" + numeroExterne + ", telephone=" + telephone + ", comptabilise=" + comptabilise + ", nature=" + nature + ", notes=" + notes + ", categorieComptable=" + categorieComptable + ", depotLivrer=" + depotLivrer + ", annulerBy=" + annulerBy + ", modelReglement=" + modelReglement + ", tiers=" + tiers + ", client=" + client + ", validerBy=" + validerBy + ", documentLie=" + documentLie + ", enteteDoc=" + enteteDoc + ", author=" + author + ", adresse=" + adresse + ", trancheLivrer=" + trancheLivrer + ", operateur=" + operateur + ", livreur=" + livreur + ", cloturerBy=" + cloturerBy + ", contenus=" + contenus + ", reglements=" + reglements + ", commerciaux=" + commerciaux + ", synchroniser=" + synchroniser + ", montantHT=" + montantHT + ", montantTaxe=" + montantTaxe + ", montantTTC=" + montantTTC + ", montantRemise=" + montantRemise + ", montantRemises=" + montantRemises + ", montantTotal=" + montantTotal + ", montantRistourne=" + montantRistourne + ", montantCommission=" + montantCommission + ", montantCS=" + montantCS + ", montantResteApayer=" + montantResteApayer + ", montantTaxeR=" + montantTaxeR + ", montantPlanifier=" + montantPlanifier + ", montantNetAPayer=" + montantNetAPayer + ", montantAvoir=" + montantAvoir + ", montantAvanceAvoir=" + montantAvanceAvoir + ", livrer=" + livrer + ", nom_client=" + nom_client + '}';
+    }
+
+    public static YvsComDocVentes builder(){
+        return new YvsComDocVentes();
     }
 
 }

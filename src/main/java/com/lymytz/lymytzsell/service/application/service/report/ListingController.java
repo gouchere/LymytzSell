@@ -50,6 +50,9 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static com.lymytz.lymytzsell.service.utils.MessagesConstants.AUCUN_JOURNAL_DE_VENTE_TROUVE;
+import static com.lymytz.lymytzsell.service.utils.MessagesConstants.VEUILLEZ_ENREGISTRER_UN_JOURNAL;
+
 /**
  * FXML Controller class
  *
@@ -165,7 +168,7 @@ public class ListingController implements Initializable, Controller {
                 t.setName("Loader listing");
                 t.start();
             } else {
-                LymytzService.openAlertDialog("Veuillez enregistrer l'entête de votre journal", "Aucune entête trouvé", "Aucune entête trouvé", Alert.AlertType.ERROR);
+                LymytzService.openAlertDialog(VEUILLEZ_ENREGISTRER_UN_JOURNAL, AUCUN_JOURNAL_DE_VENTE_TROUVE, AUCUN_JOURNAL_DE_VENTE_TROUVE, Alert.AlertType.ERROR);
             }
         } catch (Exception ex) {
             Logger.getLogger(ListFacturesController.class.getName()).log(Level.SEVERE, null, ex);

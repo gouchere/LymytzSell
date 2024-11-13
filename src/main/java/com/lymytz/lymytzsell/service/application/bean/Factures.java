@@ -6,6 +6,7 @@
 package com.lymytz.lymytzsell.service.application.bean;
 
 import java.util.Date;
+
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleLongProperty;
@@ -13,23 +14,22 @@ import javafx.beans.property.SimpleStringProperty;
 import com.lymytz.lymytzsell.dao.entity.YvsComEnteteDocVente;
 
 /**
- *
  * @author LENOVO
  */
 public class Factures {
 
     private Integer numLine;
-    private SimpleLongProperty id;
-    private SimpleStringProperty numDoc;
-    private SimpleStringProperty numPiece;
-    private SimpleStringProperty nomClient;
-    private SimpleStringProperty categorieClient;
-    private SimpleStringProperty categorieComptable;
-    private SimpleStringProperty adresse;
-    private SimpleBooleanProperty actif;
-    private SimpleBooleanProperty toListen;
-    private SimpleLongProperty idDistant;
-    private SimpleDoubleProperty total;
+    private final SimpleLongProperty id;
+    private final SimpleStringProperty numDoc;
+    private final SimpleStringProperty numPiece;
+    private final SimpleStringProperty nomClient;
+    private final SimpleStringProperty categorieClient;
+    private final SimpleStringProperty categorieComptable;
+    private final SimpleStringProperty adresse;
+    private final SimpleBooleanProperty actif;
+    private final SimpleBooleanProperty toListen;
+    private final SimpleLongProperty idDistant;
+    private final SimpleDoubleProperty total;
     private YvsComEnteteDocVente header;
     private Date date;
     private Date heure;
@@ -40,7 +40,7 @@ public class Factures {
     private String statutReglement;
 
     public Factures() {
-        numLine = new Integer(0);
+        numLine = 0;
         id = new SimpleLongProperty();
         numDoc = new SimpleStringProperty();
         numPiece = new SimpleStringProperty();

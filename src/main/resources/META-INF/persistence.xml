@@ -68,6 +68,7 @@
     <class>com.lymytz.lymytzsell.dao.entity.YvsComRabais</class>
     <class>com.lymytz.lymytzsell.dao.entity.YvsBaseLiaisonCaisse</class>
     <class>com.lymytz.lymytzsell.dao.entity.YvsComptaCaissePieceVirement</class>
+    <class>com.lymytz.lymytzsell.dao.entity.YvsLogsFactures</class>
     <shared-cache-mode>NONE</shared-cache-mode>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/lymytz_sell_extension"/>

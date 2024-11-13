@@ -8,7 +8,6 @@ package com.lymytz.lymytzsell.service.application.composant.factory;
 /**
  *
  * @author LENOVO
- * @param <T>
  */
 public class ButtonCellFactory implements IButtonCellFactory {
 

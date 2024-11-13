@@ -5,18 +5,18 @@
  */
 package com.lymytz.lymytzsell.service.application.composant;
 
-import javafx.scene.control.Alert;
+import com.lymytz.lymytzsell.dao.entity.YvsBaseConditionnement;
+import com.lymytz.lymytzsell.view.main.HomeCaisseController;
+import javafx.application.Platform;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
-import com.lymytz.lymytzsell.dao.entity.YvsBaseConditionnement;
-import com.lymytz.lymytzsell.service.utils.LymytzService;
-import com.lymytz.lymytzsell.view.main.HomeCaisseController;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Optional;
+
 /**
- *
  * @author LYMYTZ
  */
 public class ButtonArticles extends VBox {
@@ -25,11 +25,9 @@ public class ButtonArticles extends VBox {
     @Getter
     private YvsBaseConditionnement conditionnement;
     private final HomeCaisseController page;
-    private final ButtonArticles current;
 
     public ButtonArticles(YvsBaseConditionnement conditionnement, HomeCaisseController home) {
         super();
-        current = this;
         this.conditionnement = conditionnement;
         this.page = home;
         this.setOnMouseClicked((MouseEvent event) -> {
@@ -38,7 +36,11 @@ public class ButtonArticles extends VBox {
                 if (tab != null) {
                     tab.addArticleOnFacture(conditionnement, 1, false, conditionnement.getPrix());
                 } else {
-                    LymytzService.openAlertDialog("Aucune facture n'a été trouvé !", "Erreur", "Vous devez enregistrer la facture !", Alert.AlertType.ERROR);
+                    this.page.initFactureVenteClientDivers();
+                    Platform.runLater(() -> {
+                        var newTab = (Onglets) page.TAB_FACTURES.getSelectionModel().getSelectedItem();
+                        Optional.ofNullable(newTab).ifPresent(t -> t.addArticleOnFacture(conditionnement, 1, false, conditionnement.getPrix()));
+                    });
                 }
             } else if (event.getButton().equals(MouseButton.SECONDARY)) {
                 page.displayPropertyArticle(conditionnement, true);

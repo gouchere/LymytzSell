@@ -26,6 +26,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
 //import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
@@ -58,6 +59,7 @@ import java.util.Date;
 @NoArgsConstructor
 public class YvsComEnteteDocVente extends YvsEntity implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

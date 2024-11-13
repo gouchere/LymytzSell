@@ -6,19 +6,24 @@
 package com.lymytz.lymytzsell.synchro.ws;
 
 import com.lymytz.lymytzsell.dao.entity.YvsUsersAgence;
-import com.lymytz.lymytzsell.service.utils.ConsUtil;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.LymytzService;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
 import com.lymytz.lymytzsell.service.utils.log.LogFiles;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.glassfish.jersey.client.ClientConfig;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import javax.print.attribute.standard.Severity;
-import javax.ws.rs.client.*;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.Invocation;
+import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
@@ -27,22 +32,23 @@ import java.net.ConnectException;
 import java.net.URI;
 import java.util.HashSet;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
  * @author LYMYTZ
- * @param <T> : Entity persistant
  */
-public class WsSynchro<T extends Serializable> {
+public class WsSynchro {
+
+    private static final Logger LOGGER= LogManager.getLogger(WsSynchro.class);
 
     public static boolean runningOut = false; // est à true lorsque la synchronisation est en cours
     public static final AtomicBoolean runningIn = new AtomicBoolean(false); //pour controler la synchronisation entrante
     public static boolean dialogOpen = false;
-    public static Long countI = -1L, countU = -1L, countD = -1L;
-    public static Long countOutI = 0L, countOutU = 0L, countOutD = 0L;
-    public static HashSet<Long> currentListen = new HashSet<>();
+    public static Long countI = -1L;
+    public static Long countU = -1L;
+    public static Long countD = -1L;
+    public static Long countOutI = 0L;
+    public static final HashSet<Long> currentListen = new HashSet<>();
 
     public WsSynchro() {
         //  nécessaire pour le demarrage du composant
@@ -72,12 +78,13 @@ public class WsSynchro<T extends Serializable> {
             if (!dialogOpen && (ex.getCause() != null && (ex.getCause().getClass().equals(ConnectException.class)))) {
                         Platform.runLater(() -> {
                             LymytzService.openAlertDialog("Impossible de trouver les services distants! Verifiez votre connexion au serveur de "
-                                    + "replication; si votre connexion est correcte, contactez votre Administrateur", "Connexion non trouvé !", "Connexion aux service distants impossible", Alert.AlertType.ERROR);
+                                    + "replication; si votre connexion est ouverte, contactez votre Administrateur", "Connexion non trouvé !", "Connexion aux service distants impossible", Alert.AlertType.ERROR);
                             dialogOpen = true;
                         });
 
 
             }
+            LOGGER.error(ex);
             return false;
         }
     }
@@ -96,13 +103,12 @@ public class WsSynchro<T extends Serializable> {
             }
             return r;
         } catch (JSONException ex) {
-            LogFiles.addLogInFile("", Severity.ERROR, ConsUtil.SOURCE_LOG_FILE_EXCEPTION, ex);
-            Logger.getLogger(WsSynchro.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.error(ex);
         }
         return null;
     }
 
-    public ResultatAction<T> synchronizeDataCom(JSONObject entity, String uri) {
+    public <T extends Serializable> ResultatAction<T> synchronizeDataCom(JSONObject entity, String uri) {
         try {
             Client client = ClientBuilder.newClient(new ClientConfig());
             WebTarget target = client.target(getUriAdresse("commercial/v1/" + uri));
@@ -113,13 +119,12 @@ public class WsSynchro<T extends Serializable> {
             }
             return resultatAction;
         } catch (Exception ex) {
-            LogFiles.addLogInFile("", Severity.ERROR, ConsUtil.SOURCE_LOG_FILE_EXCEPTION, ex);
-            Logger.getLogger(WsSynchro.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.error(ex);
         }
         return null;
     }
 
-    public ResultatAction<T> synchronizeDataCompta(JSONObject entity, String uri) {
+    public <T extends Serializable> ResultatAction<T> synchronizeDataCompta(JSONObject entity, String uri) {
         try {
             Client client = ClientBuilder.newClient(new ClientConfig());
             WebTarget target = client.target(getUriAdresse("compta/v1/" + uri));
@@ -127,8 +132,7 @@ public class WsSynchro<T extends Serializable> {
             Response rep = invocation.post(Entity.json(entity.toString()));
             return rep.readEntity(ResultatAction.class);
         } catch (Exception ex) {
-            LogFiles.addLogInFile("", Severity.ERROR, ConsUtil.SOURCE_LOG_FILE_EXCEPTION, ex);
-            Logger.getLogger(WsSynchro.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.error(ex);
         }
         return null;
     }
@@ -143,10 +147,9 @@ public class WsSynchro<T extends Serializable> {
             Response rep = invocation.get();
             return rep.readEntity(Boolean.class);
         } catch (Exception ex) {
-            LogFiles.addLogInFile("", Severity.ERROR, ConsUtil.SOURCE_LOG_FILE_EXCEPTION, ex);
-            Logger.getLogger(WsSynchro.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.error(ex);
+            return false;
         }
-        return null;
     }
 
     /**
@@ -167,8 +170,7 @@ public class WsSynchro<T extends Serializable> {
             Response rep = invocation.post(Entity.text("{doc:"+idDocVente+", idUser:"+auteur+"}"));
             return rep.readEntity(ResultatAction.class);
         } catch (Exception ex) {
-            LogFiles.addLogInFile("", Severity.ERROR, ConsUtil.SOURCE_LOG_FILE_EXCEPTION, ex);
-            Logger.getLogger(WsSynchro.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.error(ex);
         }
         return null;
     }
@@ -209,8 +211,7 @@ public class WsSynchro<T extends Serializable> {
             Response rep = invocation.get();
             return rep.readEntity(Double.class);
         } catch (Exception ex) {
-            LogFiles.addLogInFile("", Severity.ERROR, ConsUtil.SOURCE_LOG_FILE_EXCEPTION, ex);
-            Logger.getLogger(WsSynchro.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.error(ex);
         }
         return null;
     }
@@ -223,17 +224,15 @@ public class WsSynchro<T extends Serializable> {
             invocation.header("depot_", depot);
             invocation.header("article_", article);
             invocation.header("unite_", cond);
-            //invocation.header("date", date);
             Response rep = invocation.get();
             return rep.readEntity(Double.class);
         } catch (Exception ex) {
-            LogFiles.addLogInFile("", Severity.ERROR, ConsUtil.SOURCE_LOG_FILE_EXCEPTION, ex);
-            Logger.getLogger(WsSynchro.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.error(ex);
         }
         return null;
     }
 
-    public ResultatAction livraisonDocVente(JSONObject entity, String uri) {
+    public <T extends Serializable>ResultatAction<T> livraisonDocVente(JSONObject entity, String uri) {
         try {
             Client client = ClientBuilder.newClient(new ClientConfig());
             WebTarget target = client.target(getUriAdresse("commercial/v1/" + uri));
@@ -242,13 +241,12 @@ public class WsSynchro<T extends Serializable> {
                 return rep.readEntity(ResultatAction.class);
             }
         } catch (Exception ex) {
-            LogFiles.addLogInFile("", Severity.ERROR, ConsUtil.SOURCE_LOG_FILE_EXCEPTION, ex);
-            Logger.getLogger(WsSynchro.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.error(ex);
         }
         return null;
     }
 
-    public ResultatAction saveVirement(JSONObject entity) {
+    public <T extends Serializable> ResultatAction<T> saveVirement(JSONObject entity) {
         try {
             if (serverOnline()) {
                 Client clt = ClientBuilder.newClient(new ClientConfig());
@@ -261,8 +259,7 @@ public class WsSynchro<T extends Serializable> {
                 return resultatAction;
             }
         } catch (Exception ex) {
-            LogFiles.addLogInFile("", Severity.ERROR, ConsUtil.SOURCE_LOG_FILE_EXCEPTION, ex);
-            Logger.getLogger(WsSynchro.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.error(ex);
         }
         return null;
     }
