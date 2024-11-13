@@ -270,8 +270,9 @@ public final class Onglets extends Tab {
     public boolean addArticleOnFacture(YvsBaseConditionnement cond, double qteLine, boolean resetQte, double prixV) {
         Onglets tab = (Onglets) page.TAB_FACTURES.getSelectionModel().getSelectedItem();
         if (isEditableCurrentFacture()) {
-            page.displayPropertyArticle(cond, false);
+            //page.displayPropertyArticle(cond, false);
             ContentPanier line = tab.buildLineContentanier(cond);
+            cond.setStock(UtilsProject.getStocks(cond, UtilsProject.depotLivraison.getId()));
             //contrôle de stock
             if (isStockEnable(cond, qteLine, tab, line)) {
                 line = tab.getContentFacture().stream().filter(line::equals).findFirst().orElse(line);

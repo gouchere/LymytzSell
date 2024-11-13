@@ -10,15 +10,15 @@
   - [ ] La ristourne est bien calculé
   - [ ] La remise
   - [ ] La taxe
-- [ ] La facture s'enregistre avec succès
-- [ ] Le règlement est généré
-- [ ] Le bon de livraison est généré
-- [ ] La facture est bien comptabilisé
-- [ ] On enregistre le bon de commande
-- [ ] On peut avancer des montants sur le bon de commande
-- [ ] On peut valideer une commande avancé
+- [x] La facture s'enregistre avec succès
+- [X] Le règlement est généré
+- [x] Le bon de livraison est généré
+- [x] La facture est bien comptabilisé
+- [x] On enregistre le bon de commande
+- [x] On peut avancer des montants sur le bon de commande
+- [x] On peut valider une commande avancé
 - [ ] On peut clôturer une fiche et faire le virement
   - [ ] Le chiffre d'affaire est bien calculé
-  - [ ] Les versements précédents sont bien affichés
+  - [x] Les versements précédents sont bien affichés
 - [ ] La/les photos de l'article s'affichent correctement
 - [ ] Pourquoi mes fiches non clôturées ne sont plus visible

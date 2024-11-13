@@ -78,7 +78,7 @@ public class WsSynchro {
             if (!dialogOpen && (ex.getCause() != null && (ex.getCause().getClass().equals(ConnectException.class)))) {
                         Platform.runLater(() -> {
                             LymytzService.openAlertDialog("Impossible de trouver les services distants! Verifiez votre connexion au serveur de "
-                                    + "replication; si votre connexion est correcte, contactez votre Administrateur", "Connexion non trouvé !", "Connexion aux service distants impossible", Alert.AlertType.ERROR);
+                                    + "replication; si votre connexion est ouverte, contactez votre Administrateur", "Connexion non trouvé !", "Connexion aux service distants impossible", Alert.AlertType.ERROR);
                             dialogOpen = true;
                         });
 

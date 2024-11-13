@@ -6,6 +6,7 @@
 package com.lymytz.lymytzsell.service.application.service.report;
 
 import com.lymytz.lymytzsell.service.application.Controller;
+import com.lymytz.lymytzsell.service.utils.MessagesConstants;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
@@ -49,6 +50,9 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static com.lymytz.lymytzsell.service.utils.MessagesConstants.AUCUN_JOURNAL_DE_VENTE_TROUVE;
+import static com.lymytz.lymytzsell.service.utils.MessagesConstants.VEUILLEZ_ENREGISTRER_UN_JOURNAL;
+
 /**
  * FXML Controller class
  *
@@ -84,7 +88,7 @@ public class ListingCumuleController implements Initializable, Controller {
     private TextField F_ARTICLE;
     @FXML
     private ProgressBar PROGRESS;
-    
+
     public ObservableList<ContentPanier> getItems() {
         return items;
     }
@@ -114,7 +118,7 @@ public class ListingCumuleController implements Initializable, Controller {
     }
 
     private void initColumnData() {
-       COL_TOTAL.setCellValueFactory((TableColumn.CellDataFeatures<ContentPanier, String> param) -> new SimpleObjectProperty(Constantes.nbf.format(param.getValue().getMontantTotalTTC())));
+        COL_TOTAL.setCellValueFactory((TableColumn.CellDataFeatures<ContentPanier, String> param) -> new SimpleObjectProperty(Constantes.nbf.format(param.getValue().getMontantTotalTTC())));
         COL_QTE.setCellValueFactory((TableColumn.CellDataFeatures<ContentPanier, String> param) -> new SimpleObjectProperty(Constantes.nbf.format(param.getValue().getQuantite())));
         //COL_N.setCellValueFactory((TableColumn.CellDataFeatures<ContentPanier, Integer> param) -> new SimpleObjectProperty(param.getValue().getNumLine()));
         COL_REF.setCellValueFactory((TableColumn.CellDataFeatures<ContentPanier, String> param) -> new SimpleObjectProperty(param.getValue().getConditionnement().getArticle().getRefArt()));
@@ -134,18 +138,16 @@ public class ListingCumuleController implements Initializable, Controller {
                 LoaderListing task = new LoaderListing(false);
                 PROGRESS.progressProperty().unbind();
                 PROGRESS.progressProperty().bind(task.progressProperty());
-                task.setOnSucceeded((WorkerStateEvent event) -> {
-                    Platform.runLater(() -> {
-                        items.clear();
-                        items.addAll(task.getValue());
-                        TABLE_LISTING.setItems(items);
-                    });
-                });
+                task.setOnSucceeded((WorkerStateEvent event) -> Platform.runLater(() -> {
+                    items.clear();
+                    items.addAll(task.getValue());
+                    TABLE_LISTING.setItems(items);
+                }));
                 Thread t = new Thread(task);
                 t.setName("Loader listing");
                 t.start();
             } else {
-                LymytzService.openAlertDialog("Veuillez enregistrer l'entête de votre journal", "Aucune entête trouvé", "Aucune entête trouvé", Alert.AlertType.ERROR);
+                LymytzService.openAlertDialog(VEUILLEZ_ENREGISTRER_UN_JOURNAL, AUCUN_JOURNAL_DE_VENTE_TROUVE, AUCUN_JOURNAL_DE_VENTE_TROUVE, Alert.AlertType.ERROR);
             }
         } catch (Exception ex) {
             Logger.getLogger(ListFacturesController.class.getName()).log(Level.SEVERE, null, ex);
@@ -154,7 +156,7 @@ public class ListingCumuleController implements Initializable, Controller {
 
     @FXML
     private void addParamRefArticle(KeyEvent event) {
-       
+
     }
 
 ////    private void findByNumDoc() {

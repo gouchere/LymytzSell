@@ -41,7 +41,7 @@ import java.util.List;
 @NamedQueries({
         @NamedQuery(name = "YvsComDocVentes.findAll", query = "SELECT y FROM YvsComDocVentes y"),
         @NamedQuery(name = "YvsComDocVentes.findById", query = "SELECT y FROM YvsComDocVentes y LEFT JOIN FETCH y.contenus WHERE y.id = :id"),
-        @NamedQuery(name = "YvsComDocVentes.findByReference", query = "SELECT y FROM YvsComDocVentes y WHERE y.numeroExterne LIKE :numDoc ORDER by y.numeroExterne DESC"),
+        @NamedQuery(name = "YvsComDocVentes.findByReference", query = "SELECT y FROM YvsComDocVentes y WHERE y.numDoc LIKE :numDoc ORDER by y.numDoc DESC"),
         @NamedQuery(name = "YvsComDocVentes.countDocByHeaderAndType", query = "SELECT COUNT(y) FROM YvsComDocVentes y WHERE (y.typeDoc =:type1 OR y.typeDoc=:type2) AND y.enteteDoc=:header"),
         @NamedQuery(name = "YvsComDocVentes.countAllFacturesByHeader", query = "SELECT COUNT(y) FROM YvsComDocVentes y WHERE  (y.typeDoc = :typesDoc OR y.typeDoc = :typesDoc1)  AND y.enteteDoc=:header AND y.statut='V'"),
         @NamedQuery(name = "YvsComDocVentes.countAllFacturesByHeaderNLivre", query = "SELECT COUNT(y) FROM YvsComDocVentes y WHERE y.enteteDoc=:header AND y.statutLivre!=:statutLivre AND y.typeDoc IN :typesDocs"),

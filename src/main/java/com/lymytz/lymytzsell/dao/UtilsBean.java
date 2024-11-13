@@ -22,6 +22,14 @@ import com.lymytz.lymytzsell.dao.query.LocalQueryFactories;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
 
+import static com.lymytz.lymytzsell.service.utils.Constantes.TYPE_BAV_NAME;
+import static com.lymytz.lymytzsell.service.utils.Constantes.TYPE_BCV_NAME;
+import static com.lymytz.lymytzsell.service.utils.Constantes.TYPE_BLV_NAME;
+import static com.lymytz.lymytzsell.service.utils.Constantes.TYPE_BRV_NAME;
+import static com.lymytz.lymytzsell.service.utils.Constantes.TYPE_FAV_NAME;
+import static com.lymytz.lymytzsell.service.utils.Constantes.TYPE_FRV_NAME;
+import static com.lymytz.lymytzsell.service.utils.Constantes.TYPE_FV_NAME;
+
 /**
  * @author LENOVO
  */
@@ -36,8 +44,7 @@ public class UtilsBean {
             String[] ch = new String[]{"designation", "societe"};
             Object[] v = new Object[]{mot, UtilsProject.currentAgence.getSociete()};
             String query = "YvsBaseModeleReference.findByElement";
-            YvsBaseModeleReference l = dao.findOneByNQ(query, ch, v);
-            return l;
+            return dao.findOneByNQ(query, ch, v);
         }
         return null;
     }
@@ -56,13 +63,13 @@ public class UtilsBean {
         String motRefTable = "";
         StringBuilder inter = new StringBuilder(genererPrefixeComplet(modele, date, id, type, code, agence));
         switch (modele.getElement().getDesignation()) {
-            case Constantes.TYPE_BLV_NAME:
-            case Constantes.TYPE_BRV_NAME:
-            case Constantes.TYPE_BAV_NAME:
-            case Constantes.TYPE_BCV_NAME:
-            case Constantes.TYPE_FRV_NAME:
-            case Constantes.TYPE_FAV_NAME:
-            case Constantes.TYPE_FV_NAME: {
+            case TYPE_BLV_NAME,
+                 TYPE_BRV_NAME,
+                 TYPE_BAV_NAME,
+                 TYPE_BCV_NAME,
+                 TYPE_FRV_NAME,
+                 TYPE_FAV_NAME,
+                 TYPE_FV_NAME -> {
                 String[] ch = new String[]{"numDoc"};
                 Object[] v = new Object[]{inter + "%"};
                 String query = "YvsComDocVentes.findByReference";
@@ -72,9 +79,8 @@ public class UtilsBean {
                 } else {
                     motRefTable = "";
                 }
-                break;
             }
-            case Constantes.TYPE_PC_NAME: {
+            case Constantes.TYPE_PC_NAME -> {
                 String[] ch = new String[]{"numeroPiece", "societe"};
                 Object[] v = new Object[]{inter + "%", UtilsProject.currentSociete};
                 List<YvsComptaCaissePieceVente> l = dao.loadByNamedQuery("YvsComptaCaissePieceVente.findByNumeroPiece", ch, v);
@@ -83,28 +89,21 @@ public class UtilsBean {
                 } else {
                     motRefTable = "";
                 }
-                break;
             }
 
-            default: {
-                break;
-            }
+            default -> motRefTable = "";
         }
         String partieNum = motRefTable.replaceFirst(inter.toString(), "");
         if (!partieNum.trim().isEmpty()) {
-            int num = Integer.valueOf(partieNum.trim().replace("°", ""));
+            int num = Integer.parseInt(partieNum.trim().replace("°", ""));
             if (Integer.toString(num + 1).length() > modele.getTaille()) {
                 return "";
             } else {
-                for (int i = 0; i < (modele.getTaille() - Integer.toString(num + 1).length()); i++) {
-                    inter.append("0");
-                }
+                inter.append("0".repeat(Math.max(0, (modele.getTaille() - Integer.toString(num + 1).length()))));
             }
             inter.append(Long.parseLong(partieNum.trim().replace("°", "")) + 1);
         } else {
-            for (int i = 0; i < modele.getTaille() - 1; i++) {
-                inter.append("0");
-            }
+            inter.append("0".repeat(Math.max(0, modele.getTaille() - 1)));
             inter.append("1");
         }
         return inter.toString();

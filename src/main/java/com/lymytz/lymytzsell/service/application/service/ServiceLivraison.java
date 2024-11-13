@@ -6,6 +6,7 @@
 package com.lymytz.lymytzsell.service.application.service;
 
 import com.lymytz.lymytzsell.service.application.synchro.export.UtilExport;
+import com.lymytz.lymytzsell.service.utils.MessagesConstants;
 import com.lymytz.lymytzsell.view.component.ToastService;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
@@ -31,6 +32,9 @@ import java.util.List;
 
 import org.apache.logging.log4j.Logger;
 
+import static com.lymytz.lymytzsell.service.utils.MessagesConstants.ERREUR;
+import static com.lymytz.lymytzsell.service.utils.MessagesConstants.ERREUR_A_LA_GENERATION_FACTURE;
+import static com.lymytz.lymytzsell.service.utils.MessagesConstants.GENERATION_FACTURE_NON_REUSSI;
 import static com.lymytz.lymytzsell.service.utils.UtilsProject.getStocks;
 
 /**
@@ -95,10 +99,10 @@ public class ServiceLivraison {
                     return true;
                 }
             } else {
-                LymytzService.openAlertDialog("La facture n'a pas pu être généré !", "Erreur lors de la génération de la facture", "Erreur !", Alert.AlertType.ERROR);
+                LymytzService.openAlertDialog(GENERATION_FACTURE_NON_REUSSI, ERREUR_A_LA_GENERATION_FACTURE, ERREUR, Alert.AlertType.ERROR);
             }
         } catch (Exception ex) {
-            LOGGER.error(ex);
+            LOGGER.error(ERREUR_A_LA_GENERATION_FACTURE, ex);
         }
         return false;
     }

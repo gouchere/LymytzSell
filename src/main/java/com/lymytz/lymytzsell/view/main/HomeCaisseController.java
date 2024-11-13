@@ -114,7 +114,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-import static com.lymytz.lymytzsell.business.helpers.HelperFactureVente.factureDtoFromEntity;
 import static com.lymytz.lymytzsell.service.utils.Constantes.ETAT_CLOTURE;
 import static com.lymytz.lymytzsell.service.utils.Constantes.ETAT_LIVRE;
 import static com.lymytz.lymytzsell.service.utils.Constantes.ETAT_REGLE;
@@ -346,36 +345,46 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
         initComponent();
         setMainPage(this);
         //Attacher un listener au text find
-        TEXT_FIND.focusedProperty().addListener((observable, oldValue, newValue) -> {
-            if (Boolean.FALSE.equals(newValue)) {
+    /*    TEXT_FIND.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (Boolean.TRUE.equals(newValue)) {
                 HomeCaisseController.this.filterArticleFromSearchField();
             }
-        });
+        });*/
         TEXT_FIND.setOnKeyReleased((KeyEvent event) -> {
-            if (event.getCode().equals(KeyCode.ENTER)) {
-                Onglets tab = (Onglets) TAB_FACTURES.getSelectionModel().getSelectedItem();
-                if (tab != null) {
+            if (event.getCode().equals(KeyCode.ENTER) || KeyCode.TAB.equals(event.getCode())) {
+               // Onglets tab = (Onglets) TAB_FACTURES.getSelectionModel().getSelectedItem();
+               // if (tab != null) {
                     filterArticleFromSearchField();
-                } else {
+                /*} else {
                     LymytzService.openAlertDialog("Aucune facture n'a été trouvé !", "Erreur", "Vous devez enregistrer la facture !", Alert.AlertType.ERROR);
-                }
+                }*/
             }
         });
     }
 
     private void filterArticleFromSearchField() {
-        Onglets tab = (Onglets) TAB_FACTURES.getSelectionModel().getSelectedItem();
-        if (tab != null && Constantes.asString(TEXT_FIND.getText())) {
+        if (Constantes.asString(TEXT_FIND.getText())) {
             LoaderArticleTask tache1 = new LoaderArticleTask(HomeCaisseController.this, TEXT_FIND.getText());
             YvsBaseConditionnement art = tache1.findOneArticle();
             if (art != null) {
-                if (tab.addArticleOnFacture(art, 1, false, art.getPrix())) {
-                    giveFocusAtTxtFind();
-                }
+                addInCardIfOneArtIsFind(art);
             } else {
                 loadCatalogue(TEXT_FIND.getText());
             }
         }
+    }
+
+    private void addInCardIfOneArtIsFind(YvsBaseConditionnement art) {
+        Onglets tab = (Onglets) TAB_FACTURES.getSelectionModel().getSelectedItem();
+        if (tab == null) {
+            this.initFactureVenteClientDivers();
+            tab = (Onglets) TAB_FACTURES.getSelectionModel().getSelectedItem();
+        }
+        Optional.ofNullable(tab).ifPresent(ong -> {
+            if (ong.addArticleOnFacture(art, 1, false, art.getPrix())) {
+                giveFocusAtTxtFind();
+            }
+        });
     }
 
     public void initComponent() {
@@ -908,7 +917,7 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
     public void openViewLog(ActionEvent ev) {
         //Ouvre la fenêtre de gestion des imports
         VBox root = null;
-        LymytzService.openWindow("/data/read_log.fxml", "Log_", root, 630d, 500d);
+        LymytzService.openWindow("/pages/data/read_log.fxml", "Log_", root, 630d, 500d);
     }
 
     @FXML
@@ -945,7 +954,7 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
     @FXML
     private void openViewAbout(ActionEvent event) {
         VBox root = null;
-        LymytzService.openWindow("/component/form_about.fxml", "Lymytz /A propos", root, 400.0, 305.0, false);
+        LymytzService.openWindow("/pages/component/form_about.fxml", "Lymytz /A propos", root, 400.0, 305.0, false);
     }
 
     @FXML
@@ -1008,7 +1017,7 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
     @FXML
     public void openViewListCommandes(ActionEvent ev) {
         VBox root = null;
-        ListFacturesController controler = LymytzService.openWindow("data/form_facture.fxml", "Lymytz /Liste de Factures", root, 900.0, 605.0, true, this);
+        ListFacturesController controler = LymytzService.openWindow("/pages/data/form_facture.fxml", "Lymytz /Liste de Factures", root, 900.0, 605.0, true, this);
         if (controler != null) {
             controler.initPage(this, Constantes.TYPE_BCV);
         }
@@ -1017,7 +1026,7 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
     @FXML
     public void openDlgStatusSync(ActionEvent ev) {
         VBox root = null;
-        ListenTableController controler = LymytzService.openWindow("main/synchro/listen_table.fxml", "Lymytz /Etat Synchronisation", root, 900.0, 505.0, true, this);
+        ListenTableController controler = LymytzService.openWindow("/pages/main/synchro/listen_table.fxml", "Lymytz /Etat Synchronisation", root, 900.0, 505.0, true, this);
         if (controler != null) {
             controler.initPage(this);
         }
@@ -1026,7 +1035,7 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
     @FXML
     public void openDlgStatusSyncImp(ActionEvent ev) {
         VBox root = null;
-        ListenRemoteTableController controler = LymytzService.openWindow("main/synchro/listen_table_remote.fxml", "Lymytz /Etat Synchronisation", root, 900.0, 505.0, true, this);
+        ListenRemoteTableController controler = LymytzService.openWindow("/pages/main/synchro/listen_table_remote.fxml", "Lymytz /Etat Synchronisation", root, 900.0, 505.0, true, this);
         if (controler != null) {
             controler.initPage(this);
         }

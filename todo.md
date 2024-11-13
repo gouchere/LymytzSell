@@ -23,8 +23,14 @@
 - [x] Configurer les logs dans un fichier
 - [ ] A l'initialisation, filtrer les sociétés et les agences en fonction d'un identifiant fourni.
 - [x] mettre en place un système de notification
+- [ ] Tester les fonctions de synchronisations
+- [ ] Revoir le process de validation de la commande: (trop lent)
 
+# Pour Acropole
+- [ ] Chargement initiale du catalogue (ordonner les rticles les plus vendus)
+- [ ] Paginer sur le catalogue
+- [ ] Se servir de la vue de gauche pour afficher les familes d'articles
 # Approche optimiste de l'enregistrement des factures:
 
 Il s'agit de lancer l'impression du ticket en parallèle de l'enregistrement de la facture
-Si l'enregistrement de la facture échoue, il faut être capable de la reprendre.
+Si l'enregistrement de la facture échoue, il faut être capable de la reprendre. (Retry avec Circuit breaker)
