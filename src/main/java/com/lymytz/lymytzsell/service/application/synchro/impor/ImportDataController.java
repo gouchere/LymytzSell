@@ -395,7 +395,7 @@ public class ImportDataController implements Initializable, Controller {
 
             @Override
             public void handle(Event event) {
-                Boolean result = service.getValue();
+                service.getValue();
                 PROGRESS_LABEL.textProperty().unbind();
                 PROGRESS_LABEL.setText("Importation terminé !");
                 LAB_RUN_IMPORT.setText("");

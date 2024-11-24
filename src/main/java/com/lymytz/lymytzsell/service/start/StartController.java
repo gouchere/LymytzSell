@@ -325,7 +325,7 @@ public class StartController implements Initializable, Controller {
     }
 
     public void loadInitDataR() {
-        new Thread(UtilsProject::loadInitDataR).start();
+        new Thread(UtilsProject::chargerLesDonneesDistante).start();
     }
 
     @Override

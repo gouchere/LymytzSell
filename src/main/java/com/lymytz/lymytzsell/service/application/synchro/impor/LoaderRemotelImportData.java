@@ -13,6 +13,8 @@ import com.lymytz.lymytzsell.dao.entity.service.LymytzData;
 import com.lymytz.lymytzsell.dao.query.RQueryFactories;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
 import com.lymytz.lymytzsell.service.utils.log.LogFiles;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -26,6 +28,9 @@ import java.util.logging.Logger;
  *
  * @author Admin
  */
+
+@Getter
+@Setter
 public class LoaderRemotelImportData extends Task<ObservableList<ObservableList>> {
 
     RQueryFactories dao = new RQueryFactories();
@@ -39,62 +44,6 @@ public class LoaderRemotelImportData extends Task<ObservableList<ObservableList>
 
     public LoaderRemotelImportData() {
         listData = new ArrayList<>();
-    }
-
-    public List<LymytzData> getListData() {
-        return listData;
-    }
-
-    public void setListData(List<LymytzData> listData) {
-        this.listData = listData;
-    }
-
-    public String getMethode() {
-        return methode;
-    }
-
-    public void setMethode(String methode) {
-        this.methode = methode;
-    }
-
-    public String getTable() {
-        return table;
-    }
-
-    public void setTable(String table) {
-        this.table = table;
-    }
-
-    public List<EntityColumn> getColonnes() {
-        return colonnes;
-    }
-
-    public void setColonnes(List<EntityColumn> colonnes) {
-        this.colonnes = colonnes;
-    }
-
-    public String[] getColFilter() {
-        return colFilter;
-    }
-
-    public void setColFilter(String[] colFilter) {
-        this.colFilter = colFilter;
-    }
-
-    public Object[] getValueFilters() {
-        return valueFilters;
-    }
-
-    public void setValueFilters(Object[] valueFilters) {
-        this.valueFilters = valueFilters;
-    }
-
-    public Object getValueFilter() {
-        return valueFilter;
-    }
-
-    public void setValueFilter(Object valueFilter) {
-        this.valueFilter = valueFilter;
     }
 
     public ObservableList<ObservableList> requeteLibre(PreparedStatement st) {
@@ -161,22 +110,15 @@ public class LoaderRemotelImportData extends Task<ObservableList<ObservableList>
         String re = null;
         try {
             if (type != null) {
-                switch (type) {
-                    case "bigint":
-                    case "bigserial":
-                        re = ((rs.getObject(colIndex) != null) ? String.valueOf(rs.getLong(colIndex)) : "");
-                        break;
-                    case "double precision":
-                        re = ((rs.getObject(colIndex) != null) ? String.valueOf(rs.getDouble(colIndex)) : "");
-                        break;
-                    case "character varying":
-                        re = ((rs.getObject(colIndex) != null) ? String.valueOf(rs.getString(colIndex)) : "");
-                        break;
-                    default:
-                        re = ((rs.getObject(colIndex) != null) ? String.valueOf(rs.getObject(colIndex)) : "");
-                        break;
-
-                }
+                re = switch (type) {
+                    case "bigint", "bigserial" ->
+                            ((rs.getObject(colIndex) != null) ? String.valueOf(rs.getLong(colIndex)) : "");
+                    case "double precision" ->
+                            ((rs.getObject(colIndex) != null) ? String.valueOf(rs.getDouble(colIndex)) : "");
+                    case "character varying" ->
+                            ((rs.getObject(colIndex) != null) ? String.valueOf(rs.getString(colIndex)) : "");
+                    default -> ((rs.getObject(colIndex) != null) ? String.valueOf(rs.getObject(colIndex)) : "");
+                };
             }
         } catch (SQLException ex) {
             try {
@@ -197,7 +139,7 @@ public class LoaderRemotelImportData extends Task<ObservableList<ObservableList>
             if (valueFilter != null) {
                 valueFilters[valueFilters.length] = valueFilter;
             }
-            return requeteLibre(dao.buildeGenericRemoteQuery(table, colonnes, colFilter, valueFilters));
+            return requeteLibre(dao.buildGenericRemoteQuery(table, colonnes, colFilter, valueFilters));
         } catch (Exception ex) {
             Logger.getLogger(RQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
         }

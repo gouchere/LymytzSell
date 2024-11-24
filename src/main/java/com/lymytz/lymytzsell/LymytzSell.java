@@ -134,7 +134,7 @@ public class LymytzSell extends Application {
             }
             // set up a system tray icon.
             SystemTray tray = SystemTray.getSystemTray();
-            URL imageLoc = new URL(LocalLoader.class.getResource("/icones/memo_apps.png").toExternalForm());
+            URL imageLoc = new URL(Objects.requireNonNull(LocalLoader.class.getResource("/icones/memo_apps.png")).toExternalForm());
             java.awt.Image image = ImageIO.read(imageLoc);
             TrayIcon trayIcon = new TrayIcon(image);
 

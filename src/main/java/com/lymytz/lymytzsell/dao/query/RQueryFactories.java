@@ -166,12 +166,12 @@ public class RQueryFactories<T extends Serializable> {
         return 0L;
     }
 
-    public PreparedStatement buildeGenericRemoteQuery(String table, List<EntityColumn> colonnes, String colFilter[], Object valueFilter) {
-        return buildeGenericRemoteQuery(table, colonnes, colFilter, (valueFilter != null ? new Object[]{valueFilter} : null));
+    public PreparedStatement buildGenericRemoteQuery(String table, List<EntityColumn> colonnes, String[] colFilter, Object valueFilter) {
+        return buildGenericRemoteQuery(table, colonnes, colFilter, (valueFilter != null ? new Object[]{valueFilter} : null));
     }
 
-    public PreparedStatement buildeGenericRemoteQuery(String table, List<EntityColumn> colonnes, String colFilter[], Object[] param) {
-        boolean withDefaultFilter = ((colFilter != null ? (colFilter.length <= 0) : true));
+    public PreparedStatement buildGenericRemoteQuery(String table, List<EntityColumn> colonnes, String[] colFilter, Object[] param) {
+        boolean withDefaultFilter = ((colFilter == null || (colFilter.length == 0)));
         LQuery query = UtilsProject.buildQueryRemote(table, colonnes, colFilter, withDefaultFilter, null);
         PreparedStatement st = null;
         if (RemoteDao.getInstance() != null) {

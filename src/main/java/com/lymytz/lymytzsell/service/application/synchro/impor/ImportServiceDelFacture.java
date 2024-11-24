@@ -212,7 +212,7 @@ public class ImportServiceDelFacture extends Task<Boolean> {
         LoaderRemotelImportData task = new LoaderRemotelImportData();
         task.setTable(table);
         task.setColonnes(colonnes);
-        task.requeteLibre(task.dao.buildeGenericRemoteQuery(table, colonnes, null, null));
+        task.requeteLibre(task.dao.buildGenericRemoteQuery(table, colonnes, null, null));
         insertDataIntoLocalDB(table, mapForeignKeyToLocalKey(task.getListData()));
     }
 
@@ -227,7 +227,7 @@ public class ImportServiceDelFacture extends Task<Boolean> {
         String[] cols = new String[]{"y.id"};
         task.setColFilter(cols);
         task.setValueFilter(col.getColumnValue());
-        task.requeteLibre(task.dao.buildeGenericRemoteQuery(table, colonnes, task.getColFilter(), col.getColumnValue()));
+        task.requeteLibre(task.dao.buildGenericRemoteQuery(table, colonnes, task.getColFilter(), col.getColumnValue()));
         insertDataIntoLocalDB(table, mapForeignKeyToLocalKey(task.getListData()));
     }
     int i = 0;

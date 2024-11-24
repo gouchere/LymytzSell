@@ -45,6 +45,7 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -331,17 +332,25 @@ public class LymytzService {
     }
 
     public static String getMacAdress() {
-        InetAddress ip;
         try {
-            ip = InetAddress.getLocalHost();
-            NetworkInterface network = NetworkInterface.getByInetAddress(ip);
-            byte[] mac = network.getHardwareAddress();
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < mac.length; i++) {
-                sb.append(String.format("%02X%s", mac[i], (i < mac.length - 1) ? "-" : ""));
+            NetworkInterface network = null;
+            Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
+            while (interfaces.hasMoreElements()) {
+                NetworkInterface networkInterface = interfaces.nextElement();
+                if (networkInterface.isLoopback() || !networkInterface.isUp()) {
+                    network = networkInterface;
+                    break;
+                }
             }
-            return sb.toString();
-        } catch (SocketException | UnknownHostException e) {
+            if (network != null) {
+                byte[] mac = network.getHardwareAddress();
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < mac.length; i++) {
+                    sb.append(String.format("%02X%s", mac[i], (i < mac.length - 1) ? "-" : ""));
+                }
+                return sb.toString();
+            }
+        } catch (SocketException e) {
             LOGGER.error(e);
         }
         return null;
