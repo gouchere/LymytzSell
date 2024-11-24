@@ -35,7 +35,7 @@ import javafx.util.Callback;
 import com.lymytz.lymytzsell.dao.Options;
 import com.lymytz.lymytzsell.dao.entity.service.EntityColumn;
 import com.lymytz.lymytzsell.dao.entity.service.LymytzData;
-import com.lymytz.lymytzsell.dao.entity.service.LymytzEntityClass;
+import com.lymytz.lymytzsell.dao.entity.service.EntityClass;
 import com.lymytz.lymytzsell.dao.entity.service.LymytzLoaderEntity;
 import com.lymytz.lymytzsell.dao.query.RQueryFactories;
 import com.lymytz.lymytzsell.service.application.bean.TableBean;
@@ -401,7 +401,7 @@ public class ImportDataController implements Initializable, Controller {
                 LAB_RUN_IMPORT.setText("");
                 //relance le service  de synchro implicite
                 WsSynchro.runningIn.set(false);
-                LymytzEntityClass c = LymytzLoaderEntity.ALLENTITY.get(LymytzLoaderEntity.ALLENTITY.indexOf(new LymytzEntityClass(null, null, TV_TABLE.getSelectionModel().getSelectedItem().getNameTable())));
+                EntityClass c = LymytzLoaderEntity.ALLENTITY.get(LymytzLoaderEntity.ALLENTITY.indexOf(new EntityClass(null, null, TV_TABLE.getSelectionModel().getSelectedItem().getNameTable())));
                 countTable(c);
                 TV_TABLE.refresh();
             }
@@ -417,10 +417,10 @@ public class ImportDataController implements Initializable, Controller {
 
     }
 
-    private List<TableBean> getListTable(List<LymytzEntityClass> classes) {
+    private List<TableBean> getListTable(List<EntityClass> classes) {
         List<TableBean> re = new ArrayList<>();
         TableBean t;
-        for (LymytzEntityClass c : classes) {
+        for (EntityClass c : classes) {
             t = new TableBean();
             t.setNameEntity(c.getEntity());
             t.setNameTable(c.getAnotationTable());
@@ -450,7 +450,7 @@ public class ImportDataController implements Initializable, Controller {
         t.start();
     }
 
-    private void countTable(LymytzEntityClass c) {
+    private void countTable(EntityClass c) {
         List<EntityColumn> colonnes;
         String query;
         TableBean item;
@@ -495,7 +495,7 @@ public class ImportDataController implements Initializable, Controller {
     public void openViewFilter(List<EntityColumn> colonnes) {
         //Ouvre la fenêtre de gestion des imports
         VBox root = null;
-        CustomWindow w = LymytzService.openWindowNew("main/synchro/import_filter.fxml", "Lymytz /Importation/Paramètres", root, 400.0, 350.0, false);
+        CustomWindow w = LymytzService.openWindowNew("/pages/main/import_filter.fxml", "Lymytz /Importation/Paramètres", root, 400.0, 350.0, false);
         ImportFilterController controler = (ImportFilterController) w.getController();
         if (controler != null) {
             fenetre = w.getStage();

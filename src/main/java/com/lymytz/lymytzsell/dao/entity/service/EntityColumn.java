@@ -8,6 +8,8 @@ package com.lymytz.lymytzsell.dao.entity.service;
 import java.lang.reflect.Type;
 import java.util.Objects;
 import javafx.scene.control.TableColumn;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  *
@@ -23,6 +25,8 @@ import javafx.scene.control.TableColumn;
  * @JoinKey précise sur quelle colonne de @joinTable est réalisé la jointure
  * @columnValue la valeur de la celulle
  */
+@Setter
+@Getter
 public class EntityColumn extends TableColumn {
 
     private String name;
@@ -63,86 +67,6 @@ public class EntityColumn extends TableColumn {
         this.name = name;
         this.columnName = tableName;
         this.type = type;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getColumnName() {
-        return columnName;
-    }
-
-    public void setColumnName(String columnName) {
-        this.columnName = columnName;
-    }
-
-    public Type getType() {
-        return type;
-    }
-
-    public void setType(Type type) {
-        this.type = type;
-    }
-
-    public Object getColumnValue() {
-        return columnValue;
-    }
-
-    public void setColumnValue(Object columnValue) {
-        this.columnValue = columnValue;
-    }
-
-    public int getColIndex() {
-        return colIndex;
-    }
-
-    public void setColIndex(int colIndex) {
-        this.colIndex = colIndex;
-    }
-
-    public boolean isHasJoinColum() {
-        return hasJoinColum;
-    }
-
-    public void setHasJoinColum(boolean hasJoinColum) {
-        this.hasJoinColum = hasJoinColum;
-    }
-
-    public String getJoinTable() {
-        return joinTable;
-    }
-
-    public void setJoinTable(String joinTable) {
-        this.joinTable = joinTable;
-    }
-
-    public String getJoinkey() {
-        return joinkey;
-    }
-
-    public void setJoinkey(String joinkey) {
-        this.joinkey = joinkey;
-    }
-
-    public String getTableName() {
-        return tableName;
-    }
-
-    public void setTableName(String tableName) {
-        this.tableName = tableName;
-    }
-
-    public String getTypeDatabase() {
-        return typeDatabase;
-    }
-
-    public void setTypeDatabase(String typeDatabase) {
-        this.typeDatabase = typeDatabase;
     }
 
     @Override

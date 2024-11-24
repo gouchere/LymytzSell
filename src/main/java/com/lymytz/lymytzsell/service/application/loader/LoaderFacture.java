@@ -52,23 +52,11 @@ public class LoaderFacture extends Task<ObservableList<Factures>> {
             params[pos] = new Options(p.getValeur(), pos + 1);
             pos++;
         }
-//        if(type.equals(Constantes.TYPE_FV)){
-//            params=new Options[]{
-//            new Options(UtilsProject.headerDoc.getId(), 1),
-//            new Options(this.type, 2),
-//            new Options(Constantes.ETAT_ANNULE, 3),};
-//        }else{
-//            params=new Options[]{
-//            new Options(this.type, 1),
-//            new Options(Constantes.ETAT_ANNULE, 2),
-//            new Options(Constantes.ETAT_LIVRE, 3),
-//            new Options(UtilsProject.currentAgence.getId(), 4)};
-//        }
         List<Object[]> factures = Ldao.loadBySQLQuery((UtilsProject.REPLICATION) ? getQuery1(true) : getQuery(true), params);
         int i = 1;
         ObservableList<Factures> result = FXCollections.observableArrayList();
         List<Long> ids = new ArrayList<>();
-        if (factures.size() > 0) {
+        if (!factures.isEmpty()) {
             Factures f = null;
             Long id;
             for (Object[] art : factures) {

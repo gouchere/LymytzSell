@@ -9,11 +9,13 @@ import javafx.event.ActionEvent;
 import com.lymytz.lymytzsell.service.application.MyComptesController;
 import com.lymytz.lymytzsell.service.application.bean.HeaderDoc;
 import com.lymytz.lymytzsell.view.main.HomeCaisseController;
+import lombok.Setter;
 
 /**
  *
  * @author LENOVO
  */
+@Setter
 public class BCellActive extends AbstractButtonCell<HeaderDoc> {
 
     HomeCaisseController mainControler;
@@ -26,14 +28,6 @@ public class BCellActive extends AbstractButtonCell<HeaderDoc> {
     public BCellActive(String text, HomeCaisseController main) {
         this(text);
         mainControler = main;
-    }
-
-    public void setMainControler(HomeCaisseController mainControler) {
-        this.mainControler = mainControler;
-    }
-
-    public void setCompteController(MyComptesController compteController) {
-        this.compteController = compteController;
     }
 
     @Override

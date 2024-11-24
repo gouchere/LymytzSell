@@ -30,6 +30,8 @@ import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static com.lymytz.lymytzsell.synchro.ws.WsSynchro.serverOnline;
+
 /**
  *
  * @author LYMYTZ
@@ -136,13 +138,13 @@ public class UtilEntityBase {
 
     public static Long synchronizeAuthor(YvsUsersAgence ua) {
         WsSynchro ws = new WsSynchro();
-        if (ws.serverOnline()) {
+        if (serverOnline()) {
             ua.setId(-1L);
             ua.setDateSave(new Date());
             ua.setDateUpdate(new Date());
             ua.setAgence(new YvsAgences(UtilEntityBase.findIdRemoteData(Constantes.TABLE_AGENCE_CODE, ua.getAgence().getId())));
             ua.setUsers(new YvsUsers(UtilEntityBase.findIdRemoteData(Constantes.TABLE_USERS_CODE, ua.getUsers().getId())));
-            return ws.synchronizeAuthor(ua, "save_author");
+            return WsSynchro.synchronizeAuthor(ua, "save_author");
         } else {
             Platform.runLater(new Runnable() {
                 @Override

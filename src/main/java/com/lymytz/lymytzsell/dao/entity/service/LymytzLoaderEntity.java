@@ -6,6 +6,7 @@
 package com.lymytz.lymytzsell.dao.entity.service;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,12 +15,14 @@ import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.persistence.Column;
 import javax.persistence.JoinColumn;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 
 /**
@@ -30,7 +33,7 @@ public final class LymytzLoaderEntity<T extends Serializable> {
 
     //    String path = "";
 //    List<String> chemin;
-    public static List<LymytzEntityClass> ALLENTITY = new ArrayList<>();
+    public static List<EntityClass> ALLENTITY = new ArrayList<>();
 
     public LymytzLoaderEntity(boolean base) {
         //Initialise la liste de classes
@@ -46,8 +49,12 @@ public final class LymytzLoaderEntity<T extends Serializable> {
 
     /*todo: trouver une lib qui permet de parser le xml*/
     public void loadAllEntityBase() {
-       /* try (InputStream in = ClassLoader.getSystemResourceAsStream("lymytz/view/resources/persistence.xml")) {
-            BufferedReader input = new BufferedReader(new InputStreamReader(in));
+        try {
+            File file = new File(Objects.requireNonNull(LymytzLoaderEntity.class.getResource("/synchro/import-entities.xml")).getFile());
+            XmlMapper xmlMapper = new XmlMapper();
+            EntitiesClass entities = xmlMapper.readValue(file, EntitiesClass.class);
+            ALLENTITY=entities.getEntities();
+            /*BufferedReader input = new BufferedReader(new InputStreamReader(in));
             SAXBuilder sax = new SAXBuilder();
             org.jdom.Document doc = (org.jdom.Document) sax.build(input);
             Element root = doc.getRootElement();
@@ -57,20 +64,16 @@ public final class LymytzLoaderEntity<T extends Serializable> {
                 ALLENTITY.clear();
                 for (Object list1 : list) {
                     nodeEntity = (Element) list1;
-                    ALLENTITY.add(new LymytzEntityClass(nodeEntity.getValue().trim(), nodeEntity.getAttribute("name").getValue(), nodeEntity.getAttribute("table").getValue()));
+                    ALLENTITY.add(new EntityClass(nodeEntity.getValue().trim(), nodeEntity.getAttribute("name").getValue(), nodeEntity.getAttribute("table").getValue()));
                 }
-            }
-        } catch (FileNotFoundException ex) {
-            LogFiles.addLogInFile("Lecture du fichier persistence.xml impossible", ex);
+            }*/
+        } catch (IOException ex) {
             Logger.getLogger(LymytzLoaderEntity.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException | JDOMException ex) {
-            LogFiles.addLogInFile("Lecture du fichier persistence.xml impossible", ex);
-            Logger.getLogger(LymytzLoaderEntity.class.getName()).log(Level.SEVERE, null, ex);
-        }*/
+        }
     }
 
     public void loadAllEntityFonctionnelle() {
-        /*try (InputStream in = ClassLoader.getSystemResourceAsStream("lymytz/view/resources/persistence_com.xml")) {
+        /*try (InputStream in = ClassLoader.getSystemResourceAsStream("lymytz/view/resources/export-entities.xml")) {
             BufferedReader input = new BufferedReader(new InputStreamReader(in));
             SAXBuilder sax = new SAXBuilder();
             org.jdom.Document doc = (org.jdom.Document) sax.build(input);
@@ -85,10 +88,10 @@ public final class LymytzLoaderEntity<T extends Serializable> {
                 }
             }
         } catch (FileNotFoundException ex) {
-            LogFiles.addLogInFile("Lecture du fichier persistence.xml impossible", ex);
+            LogFiles.addLogInFile("Lecture du fichier import-entities.xml impossible", ex);
             Logger.getLogger(LymytzLoaderEntity.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException | JDOMException ex) {
-            LogFiles.addLogInFile("Lecture du fichier persistence.xml impossible", ex);
+            LogFiles.addLogInFile("Lecture du fichier import-entities.xml impossible", ex);
             Logger.getLogger(LymytzLoaderEntity.class.getName()).log(Level.SEVERE, null, ex);
         }*/
     }

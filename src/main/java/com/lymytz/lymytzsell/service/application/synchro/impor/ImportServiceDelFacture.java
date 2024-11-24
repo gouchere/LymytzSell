@@ -12,7 +12,7 @@ import javafx.concurrent.Task;
 import com.lymytz.lymytzsell.dao.Options;
 import com.lymytz.lymytzsell.dao.entity.service.EntityColumn;
 import com.lymytz.lymytzsell.dao.entity.service.LymytzData;
-import com.lymytz.lymytzsell.dao.entity.service.LymytzEntityClass;
+import com.lymytz.lymytzsell.dao.entity.service.EntityClass;
 import com.lymytz.lymytzsell.dao.entity.service.LymytzLoaderEntity;
 import com.lymytz.lymytzsell.dao.query.RQueryFactories;
 import com.lymytz.lymytzsell.service.utils.Constantes;
@@ -206,7 +206,7 @@ public class ImportServiceDelFacture extends Task<Boolean> {
     }
 
     private void importAllDataFromRemoteTable(String table) {
-        LymytzEntityClass entity = LymytzLoaderEntity.ALLENTITY.get(LymytzLoaderEntity.ALLENTITY.indexOf(new LymytzEntityClass(null, null, table)));
+        EntityClass entity = LymytzLoaderEntity.ALLENTITY.get(LymytzLoaderEntity.ALLENTITY.indexOf(new EntityClass(null, null, table)));
         //récupère les colonnes
         List<EntityColumn> colonnes = LymytzLoaderEntity.loadEntityColumn(entity.getEntity());
         LoaderRemotelImportData task = new LoaderRemotelImportData();
@@ -217,8 +217,8 @@ public class ImportServiceDelFacture extends Task<Boolean> {
     }
 
     private void importDataFromRemoteTableByKey(String table, EntityColumn col) {
-        int idx = LymytzLoaderEntity.ALLENTITY.indexOf(new LymytzEntityClass(null, null, table));
-        LymytzEntityClass entity = LymytzLoaderEntity.ALLENTITY.get(idx);
+        int idx = LymytzLoaderEntity.ALLENTITY.indexOf(new EntityClass(null, null, table));
+        EntityClass entity = LymytzLoaderEntity.ALLENTITY.get(idx);
         //récupère les colonnes
         List<EntityColumn> colonnes = LymytzLoaderEntity.loadEntityColumn(entity.getEntity());
         LoaderRemotelImportData task = new LoaderRemotelImportData();

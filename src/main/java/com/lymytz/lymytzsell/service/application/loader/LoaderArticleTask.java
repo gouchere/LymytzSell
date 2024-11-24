@@ -6,11 +6,16 @@
 package com.lymytz.lymytzsell.service.application.loader;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.lymytz.lymytzsell.dao.entity.YvsBaseDepots;
+import com.lymytz.lymytzsell.dao.entity.YvsComEnteteDocVente;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
@@ -28,6 +33,7 @@ import com.lymytz.lymytzsell.service.utils.UtilsProject;
 import com.lymytz.lymytzsell.view.component.CustomComponents;
 import com.lymytz.lymytzsell.view.main.HomeCaisseController;
 import javafx.scene.layout.VBox;
+import org.glassfish.jersey.internal.guava.Lists;
 
 /**
  * @author LYMYTZ
@@ -37,16 +43,35 @@ public class LoaderArticleTask extends Task<ObservableList<GridPane>> {
     LocalQueryFactories localQueryFactories = new LocalQueryFactories();
     HomeCaisseController page;
     String reference;
-    List<String> categories;
+    private int currentPage = 0;
+    private int pageSize = 50;
+    private final YvsComEnteteDocVente header;
+    private YvsBaseFamilleArticle familleArticle;
 
-    public LoaderArticleTask(HomeCaisseController page, String reference) {
+    public LoaderArticleTask(final HomeCaisseController page,
+                             final YvsComEnteteDocVente header,
+                             String reference) {
         this.page = page;
-        this.reference = reference;
-        categories = new ArrayList<>();
-        categories.add(Constantes.CAT_MARCHANDISE);
-        categories.add(Constantes.CAT_PF);
-        categories.add(Constantes.CAT_SERVICE);
+        this.reference = reference == null ? "" : reference;
+        this.header = header;
 
+    }
+
+    public LoaderArticleTask(final HomeCaisseController page,
+                             final YvsComEnteteDocVente header,
+                             String reference, int currentPage, int pageSize) {
+        this(page, header, reference);
+        this.currentPage = currentPage;
+        this.pageSize = pageSize;
+    }
+
+    public LoaderArticleTask(final HomeCaisseController page,
+                             final YvsComEnteteDocVente header,
+                             String reference,
+                             final YvsBaseFamilleArticle familleArticle,
+                             int currentPage, int pageSize) {
+        this(page, header, reference, currentPage, pageSize);
+        this.familleArticle = familleArticle;
     }
 
     public YvsBaseConditionnement findOneArticle() {
@@ -118,16 +143,38 @@ public class LoaderArticleTask extends Task<ObservableList<GridPane>> {
 
 
     private List<Object[]> filterArticlesInDb() {
-        return localQueryFactories.loadBySQLQuery(getQuery(), new Options[]{
-                new Options(UtilsProject.headerDoc.getCreneau().getCreneauPoint().getPoint().getId(), 1),
-                new Options(UtilsProject.depotLivraison.getId(), 2),
-                new Options(("%" + reference + "%"), 3),
-                new Options(("%" + reference + "%"), 4),
-                new Options(reference, 5),
-                new Options(Constantes.CAT_MARCHANDISE, 6),
-                new Options(Constantes.CAT_PF, 7),
-                new Options(Constantes.CAT_SERVICE, 8)
-        }, 0, 50);
+        return localQueryFactories.loadBySQLQuery(getQuery(), getQueryParameters(), currentPage * pageSize, pageSize);
+    }
+
+    public Long countArticlesInDb() {
+        return (Long) localQueryFactories.findOneObjectBySQLQ(queryCount(), getQueryParameters());
+    }
+
+    private Options[] getQueryParameters() {
+        if (this.familleArticle == null) {
+            return new Options[]{
+                    new Options(header.getCreneau().getCreneauPoint().getPoint().getId(), 1),
+                    new Options(header.getCreneau().getCreneauDepot().getDepot().getId(), 2),
+                    new Options(("%" + reference + "%"), 3),
+                    new Options(("%" + reference + "%"), 4),
+                    new Options(reference, 5),
+                    new Options(Constantes.CAT_MARCHANDISE, 6),
+                    new Options(Constantes.CAT_PF, 7),
+                    new Options(Constantes.CAT_SERVICE, 8)
+            };
+        } else {
+            return new Options[]{
+                    new Options(header.getCreneau().getCreneauPoint().getPoint().getId(), 1),
+                    new Options(header.getCreneau().getCreneauDepot().getDepot().getId(), 2),
+                    new Options(("%" + reference + "%"), 3),
+                    new Options(("%" + reference + "%"), 4),
+                    new Options(reference, 5),
+                    new Options(Constantes.CAT_MARCHANDISE, 6),
+                    new Options(Constantes.CAT_PF, 7),
+                    new Options(Constantes.CAT_SERVICE, 8),
+                    new Options(this.familleArticle.getId(), 9)
+            };
+        }
     }
 
     private String getQuery() {
@@ -160,20 +207,29 @@ public class LoaderArticleTask extends Task<ObservableList<GridPane>> {
                 "cb.code_barre, " +//26
                 "cl1.id::bigint, " +//27
                 "cl2.id::bigint " +//28
-                "FROM yvs_base_articles y LEFT JOIN yvs_base_conditionnement c ON y.id=c.article " +
-                "INNER JOIN yvs_base_famille_article f ON f.id=y.famille " +
-                "INNER JOIN yvs_base_article_depot ad ON ad.article=y.id " +
-                "LEFT JOIN yvs_base_unite_mesure u ON u.id=c.unite " +
-                "LEFT JOIN yvs_base_groupes_article g ON g.id=y.groupe " +
-                "LEFT JOIN yvs_base_classes_stat cl1 ON cl1.id=y.classe1 " +
-                "LEFT JOIN yvs_base_classes_stat cl2 ON cl2.id=y.classe2 " +
-                "LEFT JOIN yvs_base_article_point ap ON (ap.article=y.id AND ap.point=?) " +
-                "LEFT JOIN yvs_base_conditionnement_point cp ON (cp.article=ap.id AND cp.conditionnement=c.id) " +
-                "LEFT JOIN yvs_base_article_code_barre cb ON cb.conditionnement=c.id " +
-                "WHERE ad.depot=? AND (UPPER(y.ref_art) LIKE UPPER(?) OR UPPER(y.designation) LIKE UPPER(?) OR  UPPER(cb.code_barre)=UPPER(?)) " +
-                "AND ad.actif IS TRUE AND (c.actif IS TRUE OR c.actif IS NULL) AND y.actif IS TRUE AND (cp.actif IS TRUE OR cp.actif IS NULL) " +
-                "AND y.categorie IN (?,?,?) " +
-                "ORDER BY f.id, y.ref_art ";
+                queryFrom() + (this.familleArticle != null ? " AND f.id=?" : "") + " ORDER BY y.ref_art;";
+    }
+
+    private String queryCount() {
+        return "SELECT COUNT(y.id) " + queryFrom() + (this.familleArticle != null ? " AND f.id=?" : "");
+    }
+
+    private String queryFrom() {
+        return """
+                FROM yvs_base_articles y LEFT JOIN yvs_base_conditionnement c ON y.id=c.article
+                                INNER JOIN yvs_base_famille_article f ON f.id=y.famille
+                                INNER JOIN yvs_base_article_depot ad ON ad.article=y.id
+                                LEFT JOIN yvs_base_unite_mesure u ON u.id=c.unite
+                                LEFT JOIN yvs_base_groupes_article g ON g.id=y.groupe
+                                LEFT JOIN yvs_base_classes_stat cl1 ON cl1.id=y.classe1
+                                LEFT JOIN yvs_base_classes_stat cl2 ON cl2.id=y.classe2
+                                LEFT JOIN yvs_base_article_point ap ON (ap.article=y.id AND ap.point=?)
+                                LEFT JOIN yvs_base_conditionnement_point cp ON (cp.article=ap.id AND cp.conditionnement=c.id)
+                                LEFT JOIN yvs_base_article_code_barre cb ON cb.conditionnement=c.id
+                                WHERE ad.depot=? AND (UPPER(y.ref_art) LIKE UPPER(?) OR UPPER(y.designation) LIKE UPPER(?) OR  UPPER(cb.code_barre)=UPPER(?))
+                                AND ad.actif IS TRUE AND (c.actif IS TRUE OR c.actif IS NULL) AND y.actif IS TRUE AND (cp.actif IS TRUE OR cp.actif IS NULL)
+                                AND y.categorie IN (?,?,?)
+                """;
     }
 
     private YvsBaseConditionnement buildConditionnement(Object[] row) {
@@ -240,5 +296,4 @@ public class LoaderArticleTask extends Task<ObservableList<GridPane>> {
 //        art.setGroupe(g);
         return art;
     }
-
 }

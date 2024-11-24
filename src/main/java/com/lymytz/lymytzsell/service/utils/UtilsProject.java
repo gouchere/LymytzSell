@@ -334,28 +334,28 @@ public class UtilsProject {
         villes = dao.loadByNamedQuery("YvsDictionnaire.findVilles", new String[]{}, new Object[]{});
         //charge l'agence par defaut
         if (currentAgence != null && Constantes.asLong(currentAgence.getId())) {
-            paramVente = (YvsComParametreVente) dao.findOneByNQ("YvsComParametreVente.findByAgence", new String[]{"agence"}, new Object[]{new YvsAgences(currentAgence.getId())});
+            paramVente = dao.findOneByNQ("YvsComParametreVente.findByAgence", new String[]{"agence"}, new Object[]{new YvsAgences(currentAgence.getId())});
             if (currentAgence == null) {
                 Platform.runLater(() -> LymytzService.openAlertDialog("Impossible de trouver l'agence locale", "Erreur au demarrage", "Aucune Agence n'a été trouvé !", Alert.AlertType.ERROR));
             }
         }
         if (Constantes.asLong(paramConnection.getCodeSociete())) {
-            currentSociete = (YvsSocietes) dao.findOneByNQ("YvsSocietes.findById", new String[]{"id"}, new Object[]{paramConnection.getCodeSociete()});
+            currentSociete = dao.findOneByNQ("YvsSocietes.findById", new String[]{"id"}, new Object[]{paramConnection.getCodeSociete()});
             if (currentSociete == null) {
                 Platform.runLater(() -> LymytzService.openAlertDialog("Impossible de trouver la société", "Erreur au demarrage", "Aucune société n'a été trouvé !", Alert.AlertType.ERROR));
             }
         }
         if (Constantes.asLong(paramConnection.getClientDivers())) {
-            clientDivers = (YvsComClient) dao.findOneByNQ("YvsComClient.findById", new String[]{"id"}, new Object[]{paramConnection.getClientDivers()});
+            clientDivers = dao.findOneByNQ("YvsComClient.findById", new String[]{"id"}, new Object[]{paramConnection.getClientDivers()});
         }
         if (Constantes.asLong(paramConnection.getSecteur())) {
-            defaultAdresse = (YvsDictionnaire) dao.findOneByNQ("YvsDictionnaire.findById", new String[]{"id"}, new Object[]{paramConnection.getSecteur()});
+            defaultAdresse = dao.findOneByNQ("YvsDictionnaire.findById", new String[]{"id"}, new Object[]{paramConnection.getSecteur()});
         }
         if (Constantes.asLong(paramConnection.getModeReg())) {
-            modeReg = (YvsBaseModeReglement) dao.findOneByNQ("YvsBaseModeReglement.findById", new String[]{"id"}, new Object[]{paramConnection.getModeReg()});
+            modeReg = dao.findOneByNQ("YvsBaseModeReglement.findById", new String[]{"id"}, new Object[]{paramConnection.getModeReg()});
         }
         if (Constantes.asLong(paramConnection.getModelReg())) {
-            modelReg = (YvsBaseModelReglement) dao.findOneByNQ("YvsBaseModelReglement.findById", new String[]{"id"}, new Object[]{paramConnection.getModelReg()});
+            modelReg = dao.findOneByNQ("YvsBaseModelReglement.findById", new String[]{"id"}, new Object[]{paramConnection.getModelReg()});
         }
         REPLICATION = getReplication();
         if (Boolean.TRUE.equals(REPLICATION)) {

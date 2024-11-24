@@ -29,7 +29,7 @@ import javafx.scene.layout.VBox;
 import javafx.util.Callback;
 import com.lymytz.lymytzsell.dao.entity.service.EntityColumn;
 import com.lymytz.lymytzsell.dao.entity.service.LymytzData;
-import com.lymytz.lymytzsell.dao.entity.service.LymytzEntityClass;
+import com.lymytz.lymytzsell.dao.entity.service.EntityClass;
 import com.lymytz.lymytzsell.dao.entity.service.LymytzLoaderEntity;
 import com.lymytz.lymytzsell.dao.query.LocalQueryFactories;
 import com.lymytz.lymytzsell.dao.query.RQueryFactories;
@@ -58,11 +58,11 @@ public class ExportDataController implements Initializable, Controller {
     @FXML
     private Label LAB_NAME_TABLE;
     @FXML
-    private TableView<LymytzEntityClass> TV_TABLE;
+    private TableView<EntityClass> TV_TABLE;
     @FXML
-    private TableColumn<LymytzEntityClass, String> C_TABLE;
+    private TableColumn<EntityClass, String> C_TABLE;
     @FXML
-    private TableColumn<LymytzEntityClass, Double> C_MAJ;
+    private TableColumn<EntityClass, Double> C_MAJ;
 
     @FXML
     public ProgressBar PROGRESS_LOCAL;
@@ -105,9 +105,9 @@ public class ExportDataController implements Initializable, Controller {
         C_TABLE.setEditable(true);
         C_MAJ.setCellValueFactory(new PropertyValueFactory<>("NbAction"));
         //selection d'une table
-        TV_TABLE.getSelectionModel().getSelectedItems().addListener(new ListChangeListener<LymytzEntityClass>() {
+        TV_TABLE.getSelectionModel().getSelectedItems().addListener(new ListChangeListener<EntityClass>() {
 
-            public void onChanged(ListChangeListener.Change<? extends LymytzEntityClass> c) {
+            public void onChanged(ListChangeListener.Change<? extends EntityClass> c) {
                 LAB_NAME_TABLE.setText(TV_TABLE.getSelectionModel().getSelectedItem().getSimpleName());
                 TV_LOCALE = new TableView<>();
                 TV_LOCALE.getColumns().clear();

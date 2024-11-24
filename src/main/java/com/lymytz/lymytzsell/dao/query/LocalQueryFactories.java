@@ -186,7 +186,7 @@ public class LocalQueryFactories {
         if (LocalDao.getInstance() != null) {
             try {
                 try {
-                    Object result = null;
+                    Object result;
                     EntityManager em = LocalDao.getInstance().getEntityManagerFactory().createEntityManager();
                     Query qr = em.createNativeQuery(query);
                     for (Options o : paramValue) {

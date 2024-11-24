@@ -209,6 +209,7 @@ public class CustomComponents {
         return vbox1;
     }
 
+
     public static Label getLabelBold(String text) {
         Label lab = new Label(text);
         lab.getStyleClass().add("bold");
@@ -233,22 +234,5 @@ public class CustomComponents {
         return lab;
     }
 
- /*   public static void createImage(String photo, HBox hbox1) {
-        Image img = null;
-        try {
-            File f = new File(ParamConnection.readFile(LymytzService.getFileInputStream()).getCheminPhotos() + "\\" + photo);
-            img = new Image(new FileInputStream(f));
-        } catch (FileNotFoundException ex) {
-            File f = new File(CustomComponents.class.getResourceAsStream("/icones/produits.png"));
-            if (f.exists()) {
-                try {
-                    img = new Image(new FileInputStream(f));
-                } catch (FileNotFoundException ex1) {
-                    Logger.getLogger(ButtonArticles.class.getName()).log(Level.SEVERE, null, ex1);
-                }
-            }
-        }
-        hbox1.getChildren().add(0, new ImageView(img));
-    }*/
 
 }

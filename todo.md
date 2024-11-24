@@ -30,6 +30,8 @@
 - [ ] Chargement initiale du catalogue (ordonner les rticles les plus vendus)
 - [ ] Paginer sur le catalogue
 - [ ] Se servir de la vue de gauche pour afficher les familes d'articles
+- [ ] Chargement initialse du catalogue
+- [ ] Afficher 
 # Approche optimiste de l'enregistrement des factures:
 
 Il s'agit de lancer l'impression du ticket en parallèle de l'enregistrement de la facture

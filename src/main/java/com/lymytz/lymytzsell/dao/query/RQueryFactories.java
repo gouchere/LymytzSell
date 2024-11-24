@@ -186,7 +186,7 @@ public class RQueryFactories<T extends Serializable> {
                     }
                     indice++;
                 }
-                if (param != null ? param.length > 0 : false) {
+                if (param != null && param.length > 0) {
                     st = UtilsProject.applyParam(st, param, indice);
                 }
             } catch (SQLException | CloseConException ex) {

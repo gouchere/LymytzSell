@@ -278,7 +278,7 @@
                 <HBox style="-fx-background-color: yellow;">
                     <SplitPane fx:id="SPLIT_CENTER" dividerPositions="0.19, 0.79"
                                prefWidth="${screen.visualBounds.width}" HBox.hgrow="ALWAYS">
-                        <VBox>
+                        <VBox fx:id="MAIN_LEFT_PANE">
                             <HBox style="-fx-background-color: #bbb;">
                                 <Label prefHeight="22.0" prefWidth="124.0"
                                        style="-fx-background-color: #bbb;" text="INFOS FACTURE"
@@ -299,8 +299,6 @@
                             </HBox>
                             <VBox prefHeight="200.0" prefWidth="100.0">
                                 <VBox>
-                                    <Label prefHeight="22.0" prefWidth="51.0" text="Client"
-                                           underline="true"/>
                                     <HBox prefHeight="29.0">
                                         <Label prefHeight="40.0" text="Code client:">
                                             <HBox.margin>
@@ -435,12 +433,12 @@
                                 </Label>
                             </HBox>
                             <Separator prefWidth="200.0"/>
-                            <VBox fx:id="ZONE_IMG" alignment="CENTER" prefHeight="200.0">
+                            <!--<VBox fx:id="ZONE_IMG" alignment="CENTER" prefHeight="0.0" visible="false">
                                 <ImageView fitHeight="250" fitWidth="224.0" pickOnBounds="true"
                                            preserveRatio="true">
                                     <Image url="/icones/coffee.png"/>
                                 </ImageView>
-                            </VBox>
+                            </VBox>-->
                             <VBox prefHeight="43.0" prefWidth="386.0">
                                 <Label fx:id="LAB_REF" text="REF. ART"/>
                                 <Label fx:id="LAB_DES" text="DESIGNATION"/>
