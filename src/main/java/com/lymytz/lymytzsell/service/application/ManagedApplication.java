@@ -63,8 +63,8 @@ public class ManagedApplication {
     @Setter
     private HomeCaisseController mainPage;
     public ListenServersRemote serviceListen;
-    @Setter
-    private List<Long> idDepots;
+/*    @Setter
+    private List<Long> idDepots;*/
     List<String> categories;
 
     public ManagedApplication() {

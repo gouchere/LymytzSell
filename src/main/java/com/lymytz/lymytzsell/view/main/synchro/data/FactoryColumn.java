@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javafx.scene.control.TableColumn;
 import com.lymytz.lymytzsell.dao.entity.service.EntityColumn;
-import com.lymytz.lymytzsell.dao.entity.service.LymytzEntityClass;
+import com.lymytz.lymytzsell.dao.entity.service.EntityClass;
 import com.lymytz.lymytzsell.dao.entity.service.LymytzLoaderEntity;
 
 /**
@@ -27,7 +27,7 @@ public class FactoryColumn {
         this.table = table;
     }
 
-    public static List<TableColumn> factoryTableColum(LymytzEntityClass entity) {
+    public static List<TableColumn> factoryTableColum(EntityClass entity) {
         //1. récupérer la classe à partir du nom de la table
         List<TableColumn> re=new ArrayList<>();
         if (entity != null) {

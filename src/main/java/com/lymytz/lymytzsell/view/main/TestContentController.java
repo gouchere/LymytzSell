@@ -35,4 +35,7 @@ public class TestContentController implements Initializable {
         PANE.getChildren().add(v);
     }
 
+    public record Response(String header, String statut, String content) {
+
+    }
 }

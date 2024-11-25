@@ -282,17 +282,19 @@
                                     <RadioButton fx:id="CATALOGUE_DISPLAY_3_COL" mnemonicParsing="false" text="3 Colonnes" toggleGroup="$NB_COL_CATALOGUE" />
                                  </children>
                               </HBox>
-                              <HBox layoutX="10.0" layoutY="10.0">
-                                 <children>
-                                    <RadioButton fx:id="CATALOGUE_DISPLAY_5_LINE" mnemonicParsing="false" text="5 Lignes">
-                                       <toggleGroup>
-                                          <ToggleGroup fx:id="NB_LINE_CATALOGUE" />
-                                       </toggleGroup>
-                                    </RadioButton>
-                                    <RadioButton fx:id="CATALOGUE_DISPLAY_6_LINE" mnemonicParsing="false" text="6 Lignes" toggleGroup="$NB_LINE_CATALOGUE" />
-                                    <RadioButton fx:id="CATALOGUE_DISPLAY_10_LINE" layoutX="89.0" layoutY="10.0" mnemonicParsing="false" text="10 Lignes" toggleGroup="$NB_LINE_CATALOGUE" />
-                                 </children>
-                              </HBox>
+                               <HBox layoutX="10.0" layoutY="10.0">
+                                   <RadioButton fx:id="CATALOGUE_DISPLAY_5_LINE" mnemonicParsing="false"
+                                                text="5 Lignes">
+                                      <toggleGroup>
+                                          <ToggleGroup fx:id="NB_LINE_CATALOGUE"/>
+                                      </toggleGroup>
+                                   </RadioButton>
+                                   <RadioButton fx:id="CATALOGUE_DISPLAY_6_LINE" mnemonicParsing="false" text="6 Lignes"
+                                                toggleGroup="$NB_LINE_CATALOGUE"/>
+                                   <RadioButton fx:id="CATALOGUE_DISPLAY_10_LINE" layoutX="89.0" layoutY="10.0"
+                                                mnemonicParsing="false" text="10 Lignes"
+                                                toggleGroup="$NB_LINE_CATALOGUE"/>
+                               </HBox>
                            </children>
                         </VBox>
                      </children>

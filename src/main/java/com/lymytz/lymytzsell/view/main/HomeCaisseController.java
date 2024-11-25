@@ -17,6 +17,7 @@ import com.lymytz.lymytzsell.dao.entity.YvsBaseArticleCategorieComptableTaxe;
 import com.lymytz.lymytzsell.dao.entity.YvsBaseCategorieComptable;
 import com.lymytz.lymytzsell.dao.entity.YvsBaseConditionnement;
 import com.lymytz.lymytzsell.dao.entity.YvsBaseDepots;
+import com.lymytz.lymytzsell.dao.entity.YvsBaseFamilleArticle;
 import com.lymytz.lymytzsell.dao.entity.YvsComContenuDocVente;
 import com.lymytz.lymytzsell.dao.entity.YvsComDocVentes;
 import com.lymytz.lymytzsell.dao.entity.YvsComEnteteDocVente;
@@ -32,6 +33,8 @@ import com.lymytz.lymytzsell.service.application.bean.ContentPanier;
 import com.lymytz.lymytzsell.service.application.composant.ClaviersController;
 import com.lymytz.lymytzsell.service.application.composant.Onglets;
 import com.lymytz.lymytzsell.service.application.loader.LoaderArticleTask;
+import com.lymytz.lymytzsell.service.application.loader.LoaderFamilleArticleTask;
+import com.lymytz.lymytzsell.service.application.loader.LoaderInitData;
 import com.lymytz.lymytzsell.service.application.loader.LoaderStock;
 import com.lymytz.lymytzsell.service.application.service.ListenServersLocal;
 import com.lymytz.lymytzsell.service.application.service.ListenServersRemote;
@@ -65,9 +68,11 @@ import com.lymytz.lymytzsell.view.main.report.PrintFacture;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.LongProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
@@ -76,6 +81,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -87,6 +93,7 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
@@ -113,6 +120,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.lymytz.lymytzsell.service.utils.Constantes.ETAT_CLOTURE;
 import static com.lymytz.lymytzsell.service.utils.Constantes.ETAT_LIVRE;
@@ -134,7 +142,13 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
     private final Logger LOGGER = LogManager.getLogger(HomeCaisseController.class);
     private final BooleanProperty connectRemoteServer = new SimpleBooleanProperty();
     private final LongProperty time = new SimpleLongProperty();
-
+    public final AtomicInteger currentPage = new AtomicInteger(0);
+    private static final int MAX_SIZE = 20;
+    private final IntegerProperty totalPages = new SimpleIntegerProperty(0);
+    private final IntegerProperty currentPageProperty = new SimpleIntegerProperty(0);
+    @Setter
+    @Getter
+    private YvsBaseFamilleArticle selectedFamilleArticle;
     ClientMessage clientSocket;
 
     private SynchronizeDataOut myServiceOut;
@@ -143,6 +157,8 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
     @Setter
     private Stage stageCreateFacture;
 
+    @FXML
+    private VBox MAIN_LEFT_PANE;
     @FXML
     private MenuBar HOMEMENU;
     @FXML
@@ -302,8 +318,8 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
     public Label LAB_DES;
     @FXML
     public Label QTE_FACTURE;
-    @FXML
-    private VBox ZONE_IMG;
+    /* @FXML
+     private VBox ZONE_IMG;*/
     @FXML
     private Label SESS_DUREE;
     //Footer
@@ -312,6 +328,7 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
 
     private final ProgressBar PROGRESS = new ProgressBar(0.0);
     private final Label PROGRESS_LABEL = new Label();
+    private final HBox CATALOGUE_NAVIGATION = new HBox();
 
     public HomeCaisseController() {
         //utile pour l'api javafx
@@ -334,6 +351,17 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
         this.connectRemoteServer.setValue(connect);
     }
 
+    public void setCurrentPageProperty(int currentPage) {
+        if (currentPage < 0 || currentPage > totalPages.get()) {
+            currentPageProperty.set(0);
+            this.currentPage.set(0);
+        } else currentPageProperty.set(currentPage);
+    }
+
+    public void setTotalPages(int total) {
+        totalPages.set(total);
+    }
+
     /**
      * Initializes the controller class.
      *
@@ -342,35 +370,37 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        LoaderInitData loaderInitData = new LoaderInitData(dao, this);
+        loaderInitData.addEventHandler(WorkerStateEvent.WORKER_STATE_SUCCEEDED, event -> {
+            this.displayPropertiesFiche(UtilsProject.headerDoc);
+        });
         initComponent();
         setMainPage(this);
-        //Attacher un listener au text find
-    /*    TEXT_FIND.focusedProperty().addListener((observable, oldValue, newValue) -> {
-            if (Boolean.TRUE.equals(newValue)) {
-                HomeCaisseController.this.filterArticleFromSearchField();
-            }
-        });*/
-        TEXT_FIND.setOnKeyReleased((KeyEvent event) -> {
-            if (event.getCode().equals(KeyCode.ENTER) || KeyCode.TAB.equals(event.getCode())) {
-               // Onglets tab = (Onglets) TAB_FACTURES.getSelectionModel().getSelectedItem();
-               // if (tab != null) {
-                    filterArticleFromSearchField();
-                /*} else {
-                    LymytzService.openAlertDialog("Aucune facture n'a été trouvé !", "Erreur", "Vous devez enregistrer la facture !", Alert.AlertType.ERROR);
-                }*/
+        TEXT_FIND.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+            if (event.getCode() == KeyCode.ENTER || event.getCode() == KeyCode.TAB) {
+                event.consume();
+                handlePressTab(TEXT_FIND);
             }
         });
     }
 
-    private void filterArticleFromSearchField() {
-        if (Constantes.asString(TEXT_FIND.getText())) {
-            LoaderArticleTask tache1 = new LoaderArticleTask(HomeCaisseController.this, TEXT_FIND.getText());
+    private void handlePressTab(TextField textField) {
+        filterArticleFromSearchField(textField.getText());
+    }
+
+    private void filterArticleFromSearchField(String keyFilter) {
+        if (Constantes.asString(keyFilter) && UtilsProject.headerDoc != null) {
+            LoaderArticleTask tache1 = new LoaderArticleTask(this, UtilsProject.headerDoc, keyFilter);
             YvsBaseConditionnement art = tache1.findOneArticle();
             if (art != null) {
                 addInCardIfOneArtIsFind(art);
             } else {
-                loadCatalogue(TEXT_FIND.getText());
+                // init pagination properties
+                currentPageProperty.set(0);
+                loadCatalogue(UtilsProject.headerDoc, keyFilter);
             }
+        } else if (UtilsProject.headerDoc == null) {
+            ToastService.show(this.getMainStage(), "L'initialisation de la fiche de vente est requise pour commencer la recherche", 5000, ERROR);
         }
     }
 
@@ -397,7 +427,8 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
         if (UtilsProject.currentAgence != null && UtilsProject.currentSociete != null) {
             TEXT_SOCIETE.setText(UtilsProject.currentSociete.getName() + "[" + UtilsProject.currentAgence.getDesignation() + "]");
         }
-        loadCatalogue(" ");
+        /*loadFamilleArticles();
+        loadCatalogue(" ");*/
         //Lance l'horloge d'écoulement du temps
         time.addListener((ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> Platform.runLater(() -> SESS_DUREE.setText(Constantes.HMS.format(new Date(getTime())))));
         connectRemoteServer.addListener((observable, oldValue, newValue) -> {
@@ -422,6 +453,43 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
                 ITEM_PREF.setVisible(false);
             }
         }
+        addButtonsNav();
+    }
+
+    private void addButtonsNav() {
+        Label label = new Label(currentPageProperty.get() + "/" + totalPages.get());
+        Button prevButton = new Button("← Prev");
+        Button nextButton = new Button("Next →");
+        prevButton.getStyleClass().add("navigation-button");
+        nextButton.getStyleClass().add("navigation-button");
+        CATALOGUE_NAVIGATION.getChildren().addAll(prevButton, label, nextButton);
+        initEventsPagination(prevButton, nextButton, label);
+    }
+
+    private void toogleDisplayButtonNav(boolean display) {
+        if (display) {
+            CATALOGUE_NAVIGATION.setAlignment(Pos.CENTER_RIGHT);
+            CATALOGUE_NAVIGATION.setSpacing(10d);
+            MAIN_ARTICLE_CONTAINER.getChildren().add(CATALOGUE_NAVIGATION);
+        } else {
+            MAIN_ARTICLE_CONTAINER.getChildren().remove(CATALOGUE_NAVIGATION);
+        }
+    }
+
+    private void initEventsPagination(Button prevButton, Button nextButton, Label label) {
+        nextButton.setOnAction(event -> {
+            setCurrentPageProperty(currentPage.incrementAndGet());
+            loadCatalogue(UtilsProject.headerDoc, TEXT_FIND.getText());
+        });
+        prevButton.setOnAction(event -> {
+            setCurrentPageProperty(currentPage.decrementAndGet());
+            loadCatalogue(UtilsProject.headerDoc, TEXT_FIND.getText());
+        });
+        currentPageProperty.addListener((ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> label.setText(newValue + "/" + totalPages.get()));
+        totalPages.addListener((ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
+            label.setText(currentPage.get() + "/" + newValue);
+            toogleDisplayButtonNav(newValue != null && newValue.intValue() > 1);
+        });
     }
 
     private void startHorloge() {
@@ -447,10 +515,15 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
         });
     }
 
-    private void loadCatalogue(String ref) {
-        var loaderArticleTask = new LoaderArticleTask(this, ref);
+    public void loadCatalogue(YvsComEnteteDocVente header, String ref) {
+        loadCatalogue(header, ref, this.getSelectedFamilleArticle());
+    }
+
+    public void loadCatalogue(YvsComEnteteDocVente header, String ref, YvsBaseFamilleArticle familleArticle) {
+        var loaderArticleTask = new LoaderArticleTask(this, header, ref, familleArticle, currentPageProperty.get(), MAX_SIZE);
         try {
-            if (UtilsProject.depotLivraison != null && ref != null) {
+            if (header != null) {
+                setTotalPages(calculPageTotal(ref, familleArticle));
                 BOX_ARTICLES.getChildren().clear();
                 PROGRESS.progressProperty().unbind();
                 PROGRESS_LABEL.textProperty().unbind();
@@ -476,6 +549,34 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
         }
     }
 
+    public void loadFamilleArticles(YvsComEnteteDocVente header) {
+        var loaderFamilleTask = new LoaderFamilleArticleTask(this, header);
+        try {
+            if (header != null) {
+                loaderFamilleTask.addEventHandler(WorkerStateEvent.WORKER_STATE_SUCCEEDED, event -> {
+                    VBox value = loaderFamilleTask.getValue();
+                    ScrollPane scrollPane = new ScrollPane();
+                    scrollPane.setId("ZONE_FAMILLE");
+                    scrollPane.setContent(value);
+                    scrollPane.setFitToWidth(true);
+                    scrollPane.setMaxHeight(350);
+                    var node = MAIN_LEFT_PANE.getChildren().stream().filter(elt -> "ZONE_FAMILLE".equals(elt.getId())).findFirst();
+                    node.ifPresent((e) -> MAIN_LEFT_PANE.getChildren().remove(e));
+                    MAIN_LEFT_PANE.getChildren().add(0, scrollPane);
+                });
+                new Thread(loaderFamilleTask).start();
+            }
+        } catch (Exception ex) {
+            LOGGER.error("Une exception survenue au chargement du catalogue", ex);
+        }
+    }
+
+    private int calculPageTotal(String ref, YvsBaseFamilleArticle familleArticle) {
+        Long nbArticleCatalogue = new LoaderArticleTask(this, UtilsProject.headerDoc, ref, familleArticle, 0, 0).countArticlesInDb();
+        return Optional.of(nbArticleCatalogue).map(n -> Math.ceil((double) n / MAX_SIZE))
+                .map(Double::intValue).orElse(0);
+    }
+
     public void displayPropertiesFiche(YvsComEnteteDocVente head) {
         if (head != null) {
             LAB_DATE.setText(Constantes.dfD.format(head.getDateEntete()));
@@ -491,7 +592,7 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
             }
             LAB_TRANCHE.setText(UtilsProject.trancheLivraison.getTitre());
             //Récupère les ids des dépôts lié au point de vente courant
-            setIdDepots(dao.loadByNamedQuery("YvsBasePointVenteDepot.findIdDepotByPoint", new String[]{"pointVente"}, new Object[]{head.getCreneau().getCreneauPoint().getPoint()}));
+            //setIdDepots(dao.loadByNamedQuery("YvsBasePointVenteDepot.findIdDepotByPoint", new String[]{"pointVente"}, new Object[]{head.getCreneau().getCreneauPoint().getPoint()}));
         }
     }
 
@@ -550,9 +651,9 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
         if (art != null) {
             LAB_REF.setText(art.getArticle().getRefArt());
             LAB_DES.setText(art.getArticle().getDesignation());
-            ZONE_IMG.getChildren().clear();
+            // ZONE_IMG.getChildren().clear();
             createImageProduit(art.getArticle());
-            ZONE_IMG.getChildren().add(pagination);
+            // ZONE_IMG.getChildren().add(pagination);
             List<YvsBaseDepots> depots;
             if (displayAllProperties) {
                 depots = dao.loadByNamedQuery("YvsBaseArticleDepot.findDepotActifByArt", new String[]{"article"}, new Object[]{art.getArticle()});
@@ -585,10 +686,13 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
         try {
             LoaderStock service = new LoaderStock(this, depots, art);
             service.addEventHandler(WorkerStateEvent.WORKER_STATE_SUCCEEDED, (WorkerStateEvent event) -> {
-                VBox re1 = service.getValue();
+                VBox containerStock = service.getValue();
+                ScrollPane scrollPane = new ScrollPane(containerStock);
+                scrollPane.setFitToHeight(true);
+                scrollPane.setPrefHeight(150);
                 Platform.runLater(() -> {
                     PAN_STOCK.getChildren().clear();
-                    PAN_STOCK.getChildren().add(re1);
+                    PAN_STOCK.getChildren().add(scrollPane);
                 });
             });
             new Thread(service).start();
@@ -889,7 +993,7 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
     @FXML
     public void openViewImport(ActionEvent ev) {
         //Ouvre la fenêtre de gestion des imports
-        CustomWindow<ImportDataController> windowModal = LymytzService.openWindowNew("/main/synchro/import_data.fxml", "Lymytz /Importation", null, 1000.0, 500.0, true);
+        CustomWindow<ImportDataController> windowModal = LymytzService.openWindowNew("/pages/main/import_data.fxml", "Lymytz /Importation", null, 1000.0, 500.0, true);
         assert windowModal != null;
         ImportDataController controler = windowModal.getController();
         this.stageCreateFacture = windowModal.getStage();
@@ -902,14 +1006,14 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
     public void openViewExport(ActionEvent ev) {
         //Ouvre la fenêtre de gestion des imports
         BorderPane root = null;
-        LymytzService.openWindow("main/synchro/export_data.fxml", "Lymytz /Exportation", root, 1000.0, 600.0);
+        LymytzService.openWindow("/pages/main/export_data.fxml", "Lymytz /Exportation", root, 1000.0, 600.0);
     }
 
     @FXML
     public void openViewControlService(ActionEvent ev) {
         //Ouvre la fenêtre de gestion des imports
         VBox root = null;
-        ControlServiceController controler = LymytzService.openWindow("/main/synchro/form_control_service.fxml", "Etat Service", root, 460d, 300d);
+        ControlServiceController controler = LymytzService.openWindow("/pages/main/form_control_service.fxml", "Etat Service", root, 460d, 300d);
         controler.initPage(this, this.myServiceOut, this.myServiceIn);
     }
 
@@ -1035,7 +1139,7 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
     @FXML
     public void openDlgStatusSyncImp(ActionEvent ev) {
         VBox root = null;
-        ListenRemoteTableController controler = LymytzService.openWindow("/pages/main/synchro/listen_table_remote.fxml", "Lymytz /Etat Synchronisation", root, 900.0, 505.0, true, this);
+        ListenRemoteTableController controler = LymytzService.openWindow("/pages/main/listen_table_remote.fxml", "Lymytz /Etat Synchronisation", root, 900.0, 505.0, true, this);
         if (controler != null) {
             controler.initPage(this);
         }

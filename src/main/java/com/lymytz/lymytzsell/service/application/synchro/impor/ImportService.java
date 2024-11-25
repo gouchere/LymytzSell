@@ -11,30 +11,34 @@ import javafx.concurrent.Task;
 import com.lymytz.lymytzsell.dao.Options;
 import com.lymytz.lymytzsell.dao.entity.service.EntityColumn;
 import com.lymytz.lymytzsell.dao.entity.service.LymytzData;
-import com.lymytz.lymytzsell.dao.entity.service.LymytzEntityClass;
+import com.lymytz.lymytzsell.dao.entity.service.EntityClass;
 import com.lymytz.lymytzsell.dao.entity.service.LymytzLoaderEntity;
 import com.lymytz.lymytzsell.dao.query.LocalQueryFactories;
 import com.lymytz.lymytzsell.dao.query.RQueryFactories;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
-import com.lymytz.lymytzsell.service.utils.log.LogFiles;
 import com.lymytz.lymytzsell.synchro.ws.WsSynchro;
+import lombok.Getter;
+import lombok.Setter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.print.attribute.standard.Severity;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 
 /**
  *
  * @author Admin
  */
+@Getter
+@Setter
 public class ImportService extends Task<Boolean> {
 
     LocalQueryFactories Ldao = new LocalQueryFactories();
     RQueryFactories Rdao = new RQueryFactories();
 
-    Logger log;
+    private final Logger LOGGER = LogManager.getLogger(ImportService.class);
     private Options[] parametres;
     private List<ParamQuery> params;
     private List<LymytzData> listData;
@@ -57,42 +61,10 @@ public class ImportService extends Task<Boolean> {
         this.page = page;
     }
 
-    public Long getRemoteIdListen() {
-        return remoteIdListen;
-    }
-
-    public void setRemoteIdListen(Long remoteIdListen) {
-        this.remoteIdListen = remoteIdListen;
-    }
-
-    public Long getRemoteIdLocal() {
-        return remoteIdLocal;
-    }
-
-    public void setRemoteIdLocal(Long remoteIdLocal) {
-        this.remoteIdLocal = remoteIdLocal;
-    }
-
-    public List<LymytzData> getListData() {
-        return listData;
-    }
-
-    public void setListData(List<LymytzData> listData) {
-        this.listData = listData;
-    }
-
-    public List<ParamQuery> getParams() {
-        return params;
-    }
-
-    public void setParams(List<ParamQuery> params) {
-        this.params = params;
-    }
-
     @Override
     protected Boolean call() throws Exception {
         compteur = 1;
-        if (listData != null ? !listData.isEmpty() : false) {
+        if (listData != null && !listData.isEmpty()) {
             List<LymytzData> result = mapForeignKeyToLocalKey(listData);
             if (page != null) {
                 page.actualiseMessageImport("");
@@ -127,16 +99,14 @@ public class ImportService extends Task<Boolean> {
                         //trouve l'élément de liaison
                         key = findForeignKey(col, col.getJoinTable());
 //                        log.log(Level.INFO, "{0}   Id Locale {1}", new Object[]{col.getJoinTable(), key});
-//                        System.err.println(col.getJoinTable()+" Id locale "+key);
                         if (key == null) {
                             // si la clé n'a pas encore été synchronisé sur le serveur local
                             key = findForeignTableFromRemoteDB(col, col.getTableName());
                         }
                         row.getValue()[i].setColumnValue(key);
-                        if ((key != null) ? key <= 0 : false) {
+                        if (key != null && key <= 0) {
                             //si la clé n'est pas trouvé, on peut interrompre le traitement en indiquant la valeur non trouvé
-                            //(Créer un fichier de log des importations)
-                            LogFiles.addLogInFile("Erreur d'importation de la l'entité " + table + " pour la clé " + row.getpKey() + ". La référence à la table " + col.getJoinTable() + " Id=" + col.getColumnValue(), Severity.WARNING);
+                            LOGGER.warn("Erreur d'importation de la l'entité " + table + " pour la clé " + row.getpKey() + ". La référence à la table " + col.getJoinTable() + " Id=" + col.getColumnValue(), Severity.WARNING);
                             return null;
                         }
                     }
@@ -215,19 +185,19 @@ public class ImportService extends Task<Boolean> {
     }
 
     private void importAllDataFromRemoteTable(String table) {
-        LymytzEntityClass entity = LymytzLoaderEntity.ALLENTITY.get(LymytzLoaderEntity.ALLENTITY.indexOf(new LymytzEntityClass(null, null, table)));
+        EntityClass entity = LymytzLoaderEntity.ALLENTITY.get(LymytzLoaderEntity.ALLENTITY.indexOf(new EntityClass(null, null, table)));
         //récupère les colonnes
         List<EntityColumn> colonnes = LymytzLoaderEntity.loadEntityColumn(entity.getEntity());
         LoaderRemotelImportData task = new LoaderRemotelImportData();
         task.setTable(table);
         task.setColonnes(colonnes);
-        task.requeteLibre(task.dao.buildeGenericRemoteQuery(table, colonnes, null, null));
+        task.requeteLibre(task.dao.buildGenericRemoteQuery(table, colonnes, null, null));
         insertDataIntoLocalDB(table, mapForeignKeyToLocalKey(task.getListData()));
     }
 
     private void importDataFromRemoteTableByKey(String table, EntityColumn col) {
-        int idx = LymytzLoaderEntity.ALLENTITY.indexOf(new LymytzEntityClass(null, null, table));
-        LymytzEntityClass entity = LymytzLoaderEntity.ALLENTITY.get(idx);
+        int idx = LymytzLoaderEntity.ALLENTITY.indexOf(new EntityClass(null, null, table));
+        EntityClass entity = LymytzLoaderEntity.ALLENTITY.get(idx);
         //récupère les colonnes
         List<EntityColumn> colonnes = LymytzLoaderEntity.loadEntityColumn(entity.getEntity());
         LoaderRemotelImportData task = new LoaderRemotelImportData();
@@ -236,7 +206,7 @@ public class ImportService extends Task<Boolean> {
         String[] cols = new String[]{"y.id"};
         task.setColFilter(cols);
         task.setValueFilter(col.getColumnValue());
-        task.requeteLibre(task.dao.buildeGenericRemoteQuery(table, colonnes, task.getColFilter(), col.getColumnValue()));
+        task.requeteLibre(task.dao.buildGenericRemoteQuery(table, colonnes, task.getColFilter(), col.getColumnValue()));
         insertDataIntoLocalDB(table, mapForeignKeyToLocalKey(task.getListData()), false);
     }
     int i = 0;
@@ -249,11 +219,10 @@ public class ImportService extends Task<Boolean> {
         try {
             if (data != null) {
                 i = 0;
-                data.stream().forEach((row) -> {
+                data.forEach((row) -> {
                     String query;
                     Long localId;
                     String action = row.getAction();
-                    Long idL = null;
                     if (!listData.isEmpty()) {
                         //Maj des données sur le serveur locale
                         switch (action) {
@@ -270,7 +239,7 @@ public class ImportService extends Task<Boolean> {
                                 break;
                             default:
                                 localId = UtilEntityBase.findIdLocalFromIdListen(table, row.getIdDistant());
-                                if (localId != null ? localId > 0 : false) {
+                                if (localId != null && localId > 0) {
                                     query = "DELETE FROM " + table + " WHERE id= ?";
                                     Ldao.executeSqlQuery(query, new Options[]{new Options(localId, 1)});
                                 }
@@ -308,7 +277,7 @@ public class ImportService extends Task<Boolean> {
                 });
             } else if (onlyDelete) {
                 Long localId = UtilEntityBase.findIdLocalFromIdListen(table, remoteIdLocal);
-                if (localId != null ? localId > 0 : false) {
+                if (localId != null && localId > 0) {
                     String query = "DELETE FROM " + table + " WHERE id= ?";
                     Ldao.executeSqlQuery(query, new Options[]{new Options(localId, 1)});
                 }
@@ -318,6 +287,7 @@ public class ImportService extends Task<Boolean> {
                 }
             }
         } catch (Exception ex) {
+            LOGGER.error("Une erreur est survenue lors de l'insertion des données", ex);
             WsSynchro.runningIn.set(false);
         }
         return true;

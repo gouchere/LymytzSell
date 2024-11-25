@@ -15,7 +15,7 @@ import javafx.util.Duration;
 import com.lymytz.lymytzsell.dao.Options;
 import com.lymytz.lymytzsell.dao.entity.service.EntityColumn;
 import com.lymytz.lymytzsell.dao.entity.service.LymytzData;
-import com.lymytz.lymytzsell.dao.entity.service.LymytzEntityClass;
+import com.lymytz.lymytzsell.dao.entity.service.EntityClass;
 import com.lymytz.lymytzsell.dao.entity.service.LymytzLoaderEntity;
 import com.lymytz.lymytzsell.dao.query.RQueryFactories;
 import com.lymytz.lymytzsell.service.application.service.ListenServersRemote;
@@ -99,17 +99,17 @@ public class SynchronizeDataIn extends ScheduledService<Boolean> {
                             String dure_init = UtilsProject.properties.get("DATE_INIT").toString();
                             Date date = getDate(dure_init);
                             List<Object[]> l = Rdao.loadBySQLQuery(query, new Options[]{new Options(UtilsProject.ID_SERVEUR, 1), new Options(UtilsProject.RcurrentSociete.getId(), 2), new Options(date, 3)});
-                            if (l != null ? !l.isEmpty() : false) {
+                            if (l != null && !l.isEmpty()) {
                                 WsSynchro.runningIn.set(true);
                                 Long idListenOnRemote = Long.valueOf((String) l.get(0)[0]);
                                 String table = (String) l.get(0)[1];
                                 Long idLocalOnRemote = Long.valueOf((String) l.get(0)[2]);
                                 String action = (String) l.get(0)[3];
-                                int idx = LymytzLoaderEntity.ALLENTITY.indexOf(new LymytzEntityClass("", "", table));
+                                int idx = LymytzLoaderEntity.ALLENTITY.indexOf(new EntityClass("", "", table));
                                 if (idx >= 0) {
                                     try {
                                         ImportService service;
-                                        LymytzEntityClass classe = LymytzLoaderEntity.ALLENTITY.get(idx);
+                                        EntityClass classe = LymytzLoaderEntity.ALLENTITY.get(idx);
                                         List<EntityColumn> colonnes = LymytzLoaderEntity.loadEntityColumn(classe.getEntity());
                                         //exécute la requête de récupération
                                         LQuery queryData = UtilsProject.buildQueryRemote(table, colonnes, new String[]{"y.id"}, false, idListenOnRemote);
@@ -134,7 +134,6 @@ public class SynchronizeDataIn extends ScheduledService<Boolean> {
                             String action;                            
                             for (Object[] current_ : re) {
                                 action = (String) current_[1];
-                                System.err.println(" After Import "+action+" ---- "+current_[0]);
                                 switch (action) {
                                     case Constantes.INSERT_ACTION:
                                         if (Constantes.asString((String) current_[0])) {

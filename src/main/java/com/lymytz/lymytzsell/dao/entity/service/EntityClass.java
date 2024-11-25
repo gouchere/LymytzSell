@@ -5,8 +5,12 @@
  */
 package com.lymytz.lymytzsell.dao.entity.service;
 
-import java.util.Objects;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+import java.util.Objects;
 /**
  *
  * @author Admin Cette classe permet de stocker en mémoire l'ensemble des Classe
@@ -15,65 +19,25 @@ import java.util.Objects;
  * @simpleName  nom compréhensible qu'on choisit de donner à cette classe
  * @anotationTable  nom de la table sur laquelle est mappé la base de donnée
  */
-public class LymytzEntityClass {
 
+@Setter
+@Getter
+@NoArgsConstructor
+public class EntityClass {
+
+    @JacksonXmlProperty(localName = "path")
     private String entity;
+    @JacksonXmlProperty(isAttribute = true, localName = "name")
     private String simpleName;
+    @JacksonXmlProperty(isAttribute = true, localName = "table")
     private String anotationTable;
     private int equalsField = 1;
     private double NbAction = 1;
 
-    public LymytzEntityClass() {
-    }
-
-    public LymytzEntityClass(String entity) {
-        this.entity = entity;
-    }
-
-    public LymytzEntityClass(String entity, String name, String anotationTable) {
+    public EntityClass(String entity, String name, String anotationTable) {
         this.entity = entity;
         this.anotationTable = anotationTable;
         this.simpleName = name;
-    }
-
-    public String getEntity() {
-        return entity;
-    }
-
-    public void setEntity(String entity) {
-        this.entity = entity;
-    }
-
-    public String getAnotationTable() {
-        return anotationTable;
-    }
-
-    public void setAnotationTable(String anotationTable) {
-        this.anotationTable = anotationTable;
-    }
-
-    public int getEqualsField() {
-        return equalsField;
-    }
-
-    public void setEqualsField(int equalsField) {
-        this.equalsField = equalsField;
-    }
-
-    public String getSimpleName() {
-        return simpleName;
-    }
-
-    public void setSimpleName(String simpleName) {
-        this.simpleName = simpleName;
-    }
-
-    public double getNbAction() {
-        return NbAction;
-    }
-
-    public void setNbAction(double NbAction) {
-        this.NbAction = NbAction;
     }
 
     @Override
@@ -91,7 +55,7 @@ public class LymytzEntityClass {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final LymytzEntityClass other = (LymytzEntityClass) obj;
+        final EntityClass other = (EntityClass) obj;
         if (!Objects.equals(this.anotationTable, other.anotationTable)) {
             return false;
         }

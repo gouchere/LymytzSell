@@ -63,6 +63,7 @@ public class UtilsProject {
     private UtilsProject() {
         // no implementation
     }
+
     public static final AtomicLong localId = new AtomicLong(-9999);
     public static ServerSocket server;
     public static HomeCaisseController currentPage;
@@ -232,7 +233,7 @@ public class UtilsProject {
             String re = UtilsProject.properties.getProperty(key);
             return (Constantes.asString(re) ? re : null);
         } catch (Exception ex) {
-            LogFiles.addLogInFile("Récupération de la date erronée !", Severity.ERROR, ConsUtil.SOURCE_LOG_FILE_USER, ex);
+            LOGGER.error("Récupération de la clé erronée ! {}", key, ex);
         }
         return null;
     }
@@ -278,13 +279,15 @@ public class UtilsProject {
                 paramConnection.setUsePrinter(!Constantes.asString(getVal(Constantes.KEY_USE_PRINTER)) || Boolean.parseBoolean(getVal(Constantes.KEY_USE_PRINTER)));
                 paramConnection.setUsers(getVal(Constantes.KEY_LOCAL_USERS));
                 paramConnection.setUsersRemote(getVal(Constantes.KEY_REMOTE_USERS));
+                var isropertyLoad=Constantes.asString(getVal(Constantes.KEY_LOAD_CATALOGUE));
+                paramConnection.setLoadCatalogue(isropertyLoad && Boolean.parseBoolean(getVal(Constantes.KEY_LOAD_CATALOGUE)));
             }
         } catch (IOException ex) {
             LOGGER.error("Fichier d'Environnement non trouvé !", ex);
         }
     }
 
-    public static void loadInitDataR() {
+    public static void chargerLesDonneesDistante() {
         loadFilePropertie();
         try {
             if (UtilsProject.properties != null) {
@@ -294,6 +297,10 @@ public class UtilsProject {
                 }
                 REPLICATION = getReplication();
                 LOGGER.info("Le mode réplication {}", (REPLICATION ? "est activé" : "n'est pas activé"));
+                if (REPLICATION && Constantes.asString(properties.getProperty(Constantes.KEY_LOCAL_AGENCE))) {
+                    currentAgence = new YvsAgences(Long.valueOf(properties.getProperty(Constantes.KEY_LOCAL_AGENCE)));
+                    RcurrentAgence = new YvsAgences(UtilEntityBase.findIdRemoteData(Constantes.TABLE_AGENCE_CODE, currentAgence.getId()));
+                }
             }
             if (REPLICATION) {
                 ID_SERVEUR = RQueryFactories.getIdServer();
@@ -310,6 +317,9 @@ public class UtilsProject {
     public static void initDataR() {
         if (Constantes.asString((String) properties.get(Constantes.KEY_REMOTE_SOCIETE))) {
             RcurrentSociete = new YvsSocietes(Long.valueOf(properties.getProperty(Constantes.KEY_REMOTE_SOCIETE)));
+        }
+        if (currentAgence != null && currentAgence.getId() > 0) {
+            RcurrentAgence = new YvsAgences(UtilEntityBase.findIdRemoteData(Constantes.TABLE_AGENCE_CODE, currentAgence.getId()));
         }
         ID_SERVEUR = RQueryFactories.getIdServer();
         if (ID_SERVEUR == null || ID_SERVEUR <= 0) {
@@ -334,28 +344,28 @@ public class UtilsProject {
         villes = dao.loadByNamedQuery("YvsDictionnaire.findVilles", new String[]{}, new Object[]{});
         //charge l'agence par defaut
         if (currentAgence != null && Constantes.asLong(currentAgence.getId())) {
-            paramVente = (YvsComParametreVente) dao.findOneByNQ("YvsComParametreVente.findByAgence", new String[]{"agence"}, new Object[]{new YvsAgences(currentAgence.getId())});
+            paramVente = dao.findOneByNQ("YvsComParametreVente.findByAgence", new String[]{"agence"}, new Object[]{new YvsAgences(currentAgence.getId())});
             if (currentAgence == null) {
                 Platform.runLater(() -> LymytzService.openAlertDialog("Impossible de trouver l'agence locale", "Erreur au demarrage", "Aucune Agence n'a été trouvé !", Alert.AlertType.ERROR));
             }
         }
         if (Constantes.asLong(paramConnection.getCodeSociete())) {
-            currentSociete = (YvsSocietes) dao.findOneByNQ("YvsSocietes.findById", new String[]{"id"}, new Object[]{paramConnection.getCodeSociete()});
+            currentSociete = dao.findOneByNQ("YvsSocietes.findById", new String[]{"id"}, new Object[]{paramConnection.getCodeSociete()});
             if (currentSociete == null) {
                 Platform.runLater(() -> LymytzService.openAlertDialog("Impossible de trouver la société", "Erreur au demarrage", "Aucune société n'a été trouvé !", Alert.AlertType.ERROR));
             }
         }
         if (Constantes.asLong(paramConnection.getClientDivers())) {
-            clientDivers = (YvsComClient) dao.findOneByNQ("YvsComClient.findById", new String[]{"id"}, new Object[]{paramConnection.getClientDivers()});
+            clientDivers = dao.findOneByNQ("YvsComClient.findById", new String[]{"id"}, new Object[]{paramConnection.getClientDivers()});
         }
         if (Constantes.asLong(paramConnection.getSecteur())) {
-            defaultAdresse = (YvsDictionnaire) dao.findOneByNQ("YvsDictionnaire.findById", new String[]{"id"}, new Object[]{paramConnection.getSecteur()});
+            defaultAdresse = dao.findOneByNQ("YvsDictionnaire.findById", new String[]{"id"}, new Object[]{paramConnection.getSecteur()});
         }
         if (Constantes.asLong(paramConnection.getModeReg())) {
-            modeReg = (YvsBaseModeReglement) dao.findOneByNQ("YvsBaseModeReglement.findById", new String[]{"id"}, new Object[]{paramConnection.getModeReg()});
+            modeReg = dao.findOneByNQ("YvsBaseModeReglement.findById", new String[]{"id"}, new Object[]{paramConnection.getModeReg()});
         }
         if (Constantes.asLong(paramConnection.getModelReg())) {
-            modelReg = (YvsBaseModelReglement) dao.findOneByNQ("YvsBaseModelReglement.findById", new String[]{"id"}, new Object[]{paramConnection.getModelReg()});
+            modelReg = dao.findOneByNQ("YvsBaseModelReglement.findById", new String[]{"id"}, new Object[]{paramConnection.getModelReg()});
         }
         REPLICATION = getReplication();
         if (Boolean.TRUE.equals(REPLICATION)) {
@@ -406,7 +416,7 @@ public class UtilsProject {
         return re;
     }
 
-  /*  public static LQuery buildQueryRemote(String table, List<EntityColumn> colonnes, String[] colFilter, Long idListen) {
+   /* public static LQuery buildQueryRemote(String table, List<EntityColumn> colonnes, String[] colFilter, Long idListen) {
         return buildQueryRemote(table, colonnes, colFilter, true, idListen);
     }*/
 
@@ -482,9 +492,7 @@ public class UtilsProject {
             case Constantes.TABLE_CRENEAU_HORAIRE_USER_CODE:
                 if (withDefaultFilter) {
                     query.append(" FROM ").append(table).append(" y INNER JOIN yvs_users_agence ua ON ua.id=y.author INNER JOIN yvs_agences a ON a.id=ua.agence LEFT JOIN yvs_synchro_listen_table l ON (l.id_source=y.id AND l.name_table='").append(table).append("' AND l.action_name='INSERT') WHERE y.creneau_point IS NOT NULL AND a.id=? ");
-                    if (!param.contains("agence")) {
-                        param += "agence";
-                    }
+                    param += "agence";
                 } else {
                     query.append(" FROM ").append(table).append(" y LEFT JOIN yvs_synchro_listen_table l ON (l.id_source=y.id AND l.name_table='").append(table).append("')");
                 }
@@ -493,19 +501,13 @@ public class UtilsProject {
                 if (withDefaultFilter) {
                     if (hasSociete) {
                         query.append(" FROM ").append(table).append(" y LEFT JOIN yvs_synchro_listen_table l ON (l.id_source=y.id AND l.name_table='").append(table).append("' AND l.action_name='INSERT') WHERE y.societe=? ");
-                        if (!param.contains("societe")) {
-                            param += "societe";
-                        }
+                        param += "societe";
                     } else if (hasAgence) {
                         query.append(" FROM ").append(table).append(" y INNER JOIN yvs_agences a ON a.id=y.agence LEFT JOIN yvs_synchro_listen_table l ON (l.id_source=y.id AND l.name_table='").append(table).append("' AND l.action_name='INSERT') WHERE a.societe=? ");
-                        if (!param.contains("societe")) {
-                            param += "societe";
-                        }
+                        param += "societe";
                     } else {
                         query.append(" FROM ").append(table).append(" y INNER JOIN yvs_users_agence ua ON ua.id=y.author INNER JOIN yvs_agences a ON a.id=ua.agence LEFT JOIN yvs_synchro_listen_table l ON (l.id_source=y.id AND l.name_table='").append(table).append("' AND l.action_name='INSERT') WHERE a.societe=? ");
-                        if (!param.contains("societe")) {
-                            param += "societe";
-                        }
+                        param += "societe";
                     }
                 } else {
                     query.append(" FROM ").append(table).append(" y LEFT JOIN yvs_synchro_listen_table l ON (l.id_source=y.id AND l.name_table='").append(table).append("')");

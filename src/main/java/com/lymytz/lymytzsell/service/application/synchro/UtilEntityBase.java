@@ -30,6 +30,8 @@ import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static com.lymytz.lymytzsell.synchro.ws.WsSynchro.serverOnline;
+
 /**
  *
  * @author LYMYTZ
@@ -47,19 +49,6 @@ public class UtilEntityBase {
             if(!Constantes.asLong(id) && table.equals(Constantes.TABLE_USER_AGENCE_CODE)){
                 id=UtilsProject.remoteAuthor;
             }
-//            if (Constantes.asLong(id)) {
-//                //Vérifie que l'élément existe bien sur le serveur distant
-//                WsSynchro ws = new WsSynchro();
-//                Boolean b = ws.pingElementOnserver(id, table);
-//                //un résultat null veux dire qu'il y a eu un problème (serveur hors ligne ou erreur serveur)
-//                if (b != null ? !b : false) {
-//                    //efface les lignes data_synchro de cet élément et mettre le listen de l'élément à false dans listen_table
-//                    dao.majInfosDataSynchro(id, table, localId);
-//                    id = -1L;
-//                }else if(b==null){
-//                    id=-1L;
-//                }
-//            }
         }
         return id;
     }
@@ -68,16 +57,14 @@ public class UtilEntityBase {
         LocalQueryFactories dao = new LocalQueryFactories();
         String query = "SELECT id_source FROM yvs_synchro_listen_table l INNER JOIN yvs_synchro_data_synchro s ON s.id_listen=l.id "
                 + "WHERE l.name_table=? AND s.id_distant=? ";
-        Long id = (Long) dao.findOneObjectBySQLQ(query, new Options[]{new Options(table, 1), new Options(localId, 2)});
-        return id;
+        return (Long) dao.findOneObjectBySQLQ(query, new Options[]{new Options(table, 1), new Options(localId, 2)});
     }
 
     public static Long findIdListen(String table, Long localId, String action) {
         LocalQueryFactories dao = new LocalQueryFactories();
         String query = "SELECT id FROM yvs_synchro_listen_table l "
                 + "WHERE l.name_table=? AND l.id_source=? AND l.action_name=? ";
-        Long id = (Long) dao.findOneObjectBySQLQ(query, new Options[]{new Options(table, 1), new Options(localId, 2), new Options(action, 3)});
-        return id;
+        return (Long) dao.findOneObjectBySQLQ(query, new Options[]{new Options(table, 1), new Options(localId, 2), new Options(action, 3)});
     }
 
     public static Long findIdListen(String table, Long localId) {
@@ -136,13 +123,13 @@ public class UtilEntityBase {
 
     public static Long synchronizeAuthor(YvsUsersAgence ua) {
         WsSynchro ws = new WsSynchro();
-        if (ws.serverOnline()) {
+        if (serverOnline()) {
             ua.setId(-1L);
             ua.setDateSave(new Date());
             ua.setDateUpdate(new Date());
             ua.setAgence(new YvsAgences(UtilEntityBase.findIdRemoteData(Constantes.TABLE_AGENCE_CODE, ua.getAgence().getId())));
             ua.setUsers(new YvsUsers(UtilEntityBase.findIdRemoteData(Constantes.TABLE_USERS_CODE, ua.getUsers().getId())));
-            return ws.synchronizeAuthor(ua, "save_author");
+            return WsSynchro.synchronizeAuthor(ua, "save_author");
         } else {
             Platform.runLater(new Runnable() {
                 @Override

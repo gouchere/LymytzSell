@@ -5,7 +5,6 @@
  */
 package com.lymytz.lymytzsell.dao.query;
 
-import com.lymytz.lymytzsell.business.helpers.HelperFactureVente;
 import com.lymytz.lymytzsell.dao.LocalDao;
 import com.lymytz.lymytzsell.dao.LocalSqlDao;
 import com.lymytz.lymytzsell.dao.Options;
@@ -124,7 +123,7 @@ public class LocalQueryFactories {
         if (LocalDao.getInstance() != null) {
             try {
                 try {
-                    Object result = null;
+                    Object result;
                     EntityManager em = LocalDao.getInstance().getEntityManagerFactory().createEntityManager();
                     Query qr = em.createNamedQuery(query);
                     int i = 0;
@@ -182,11 +181,11 @@ public class LocalQueryFactories {
         return null;
     }
 
-    public Object findOneObjectBySQLQ(String query, Options[] paramValue) {
+    public Object findOneObjectBySQLQ(final String query, Options[] paramValue) {
         if (LocalDao.getInstance() != null) {
             try {
                 try {
-                    Object result = null;
+                    Object result;
                     EntityManager em = LocalDao.getInstance().getEntityManagerFactory().createEntityManager();
                     Query qr = em.createNativeQuery(query);
                     for (Options o : paramValue) {

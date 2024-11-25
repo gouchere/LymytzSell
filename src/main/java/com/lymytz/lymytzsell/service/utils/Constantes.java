@@ -49,35 +49,24 @@ public class Constantes {
     //Type de documents vente
     public static final String TYPE_FV = "FV"; //Facture Vente
     public static final String TYPE_FV_NAME = "Facture Vente"; //
-    public static final String TYPE_FRV = "FRV"; //Facture Retour Vente
     public static final String TYPE_FRV_NAME = "Facture Retour Vente"; //
-    public static final String TYPE_FAV = "FAV"; //Facture Avoir Vente
     public static final String TYPE_FAV_NAME = "Facture Avoir Vente"; //
     public static final String TYPE_BCV = "BCV"; //Bon Commande Vente
     public static final String TYPE_BCV_NAME = "Bon Commande Vente"; //
     public static final String TYPE_BLV = "BLV"; //Bon Livraison Vente
     public static final String TYPE_BLV_NAME = "Bon Livraison Vente"; //
-    public static final String TYPE_BRV = "BRV"; //Bon Retour Vente
     public static final String TYPE_BRV_NAME = "Bon Retour Vente"; //
-    public static final String TYPE_BAV = "BAV"; //Bon Avoir Vente
     public static final String TYPE_BAV_NAME = "Bon Avoir Vente"; //
 
     public static final String NATURE_DOC_VENTE_VENTE = "VENTE"; //
-    public static final String NATURE_DOC_VENTE_LOCATION = "LOCATION"; //
 
     //Type de documents autres
-    public static final String TYPE_PIECE_COMPTABLE_NAME = "PIECE COMPTABLE"; //
-    public static final String TYPE_PT = "PT"; //Piece Tresorerie
     public static final String TYPE_PT_NAME = "Piece Tresorerie"; //
     public static final String TYPE_PC_NAME = "Piece Caisse"; //
-    public static final String TYPE_PC_ACHAT_NAME = "Piece Caisse Achat"; //
-    public static final String TYPE_PC_VENTE_NAME = "Piece Caisse Vente"; //
-    public static final String TYPE_CONTRAT_CLIENT_NAME = "Contrat Client";
 
     public static final String TYPE_PT_AVANCE_VENTE = "Piece Avance Vente";
 
     public static final String MOUV_CAISS_ENTREE = "R";
-    public static final String MOUV_CAISS_SORTIE = "D";
 
     public static final char STATUT_DOC_ATTENTE = 'W', STATUT_DOC_ENCOUR = 'R', STATUT_DOC_VALIDE = 'V', STATUT_DOC_SUSPENDU = 'S', STATUT_DOC_ANNULE = 'A', STATUT_DOC_SOUMIS = 'U',
             STATUT_DOC_TERMINE = 'T', STATUT_DOC_CLOTURE = 'C', STATUT_DOC_PAYER = 'P', STATUT_DOC_LIVRER = 'L', STATUT_DOC_EDITABLE = 'E', STATUT_DOC_RENVOYE = 'B';
@@ -85,21 +74,13 @@ public class Constantes {
     //Etat et Statut
     public static final String ETAT_ATTENTE = "W";
     public static final String ETAT_EDITABLE = "E";
-    public static final String ETAT_SOUMIS = "U";
     public static final String ETAT_REGLE = "P";
     public static final String ETAT_VALIDE = "V";
     public static final String ETAT_ANNULE = "A";
-    public static final String ETAT_RELANCE = "C";
     public static final String ETAT_LIVRE = "L";
-    public static final String ETAT_PROD_LANCE = "L";
     public static final String ETAT_ENCOURS = "R";
-    public static final String ETAT_RENVOYE = "B";
-    public static final String ETAT_JUSTIFIE = "J";
-    public static final String ETAT_INJUSTIFIE = "I";
     public static final String ETAT_SUSPENDU = "S";
-    public static final String ETAT_TERMINE = "T";
     public static final String ETAT_CLOTURE = "F";
-    public static final String ETAT_INCOMPLET = "M";
 
     public static final String CAT_MARCHANDISE = "MARCHANDISE", CAT_SERVICE = "SERVICE";
     public static final String CAT_PSF = "PSF";
@@ -114,7 +95,6 @@ public class Constantes {
     public static final String SOCIETE = "SOCIETE";
     public static final String AGENCE = "AGENCE";
     public static final String DEPOT = "DEPOT";
-    public static final String JOURNAL = "JOURNAL";
     public static final String POINTVENTE = "POINTVENTE";
     public static final String CAISSE = "CAISSE";
     public static final String AUTRES = "AUTRES";
@@ -239,8 +219,6 @@ public class Constantes {
     public static final String TABLE_CONDITIONNEMENT_POINT_CODE = "yvs_base_conditionnement_point";
     public static final String TABLE_CAISSE_USERS_NAME = "Caisses Users";
     public static final String TABLE_CAISSE_USERS_CODE = "yvs_base_caisse_user";
-    public static final String TABLE_TAXE_VENTE_NAME = "Taxes Vente";
-    public static final String TABLE_TAXE_VENTE_CODE = "yvs_com_taxe_contenu_vente";
 
     //Données fonctionnelle
     public static final String TABLE_HEADER_DOC_NAME = "Entete Facture";
@@ -299,6 +277,7 @@ public class Constantes {
     public static final String KEY_DATE_INIT = "DATE_INIT";
     public static final String KEY_LINE_CATALOGUE = "LINE_CATALOGUE";
     public static final String KEY_COL_CATALOGUE = "COL_CATALOGUE";
+    public static final String KEY_LOAD_CATALOGUE = "load_catologue"; //Chargement du catalogue à l'ouverture
 
     public static final String KEY_ENCRYPT = "1023";
 

@@ -9,6 +9,7 @@ package com.lymytz.lymytzsell;
 import com.lymytz.lymytzsell.service.ServeurMessage;
 import com.lymytz.lymytzsell.service.application.ManagedApplication;
 import com.lymytz.lymytzsell.service.utils.Constantes;
+import com.lymytz.lymytzsell.service.utils.EncryptMessage;
 import com.lymytz.lymytzsell.service.utils.LymytzService;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
 import com.lymytz.lymytzsell.service.utils.log.ListenFolder;
@@ -23,6 +24,7 @@ import javafx.stage.Stage;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.logging.log4j.Logger;
+import org.flywaydb.core.Flyway;
 
 import javax.imageio.ImageIO;
 import javax.print.attribute.standard.Severity;
@@ -132,7 +134,7 @@ public class LymytzSell extends Application {
             }
             // set up a system tray icon.
             SystemTray tray = SystemTray.getSystemTray();
-            URL imageLoc = new URL(LocalLoader.class.getResource("/icones/memo_apps.png").toExternalForm());
+            URL imageLoc = new URL(Objects.requireNonNull(LocalLoader.class.getResource("/icones/memo_apps.png")).toExternalForm());
             java.awt.Image image = ImageIO.read(imageLoc);
             TrayIcon trayIcon = new TrayIcon(image);
 

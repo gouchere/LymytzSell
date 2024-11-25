@@ -38,7 +38,6 @@ public class LoaderCatalogue extends Task<ObservableList<Articles>> {
                 this.updateProgress(i, articles.size());
                 this.updateMessage(i + " sur " + articles.size());
             }
-        } else {
         }
         return result;
     }

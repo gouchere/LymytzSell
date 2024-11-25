@@ -289,3 +289,148 @@
     -fx-max-height: 100px;
 }
 
+/* Style général des boutons de navigation */
+.navigation-button {
+    -fx-padding: 10px 20px;
+    -fx-background-color: #0078d7; /* Couleur de fond bleue */
+    -fx-text-fill: white; /* Couleur du texte blanche */
+    -fx-font-size: 14px; /* Taille de la police */
+    -fx-font-weight: bold; /* Police en gras */
+    -fx-border-radius: 5px; /* Coins arrondis */
+    -fx-background-radius: 5px; /* Coins arrondis pour l'arrière-plan */
+    -fx-cursor: hand; /* Change le curseur à une main */
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 5, 0, 2, 2); /* Ombre douce */
+    -fx-alignment: center; /* Centre le texte ou les icônes */
+    -fx-transition: all 0.3s ease; /* Transition douce pour les effets */
+}
+
+/* Effet au survol */
+.navigation-button:hover {
+    -fx-background-color: #005a9e; /* Couleur légèrement plus sombre */
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 7, 0, 3, 3); /* Ombre plus prononcée */
+}
+
+/* Effet lors du clic */
+.navigation-button:pressed {
+    -fx-background-color: #004377; /* Couleur encore plus sombre */
+    -fx-effect: none; /* Supprime l'ombre lors du clic */
+    -fx-translate-y: 2px; /* Légère impression de clic */
+}
+
+/* Style spécifique pour le bouton Prev */
+.prev-button {
+    -fx-background-color: #6c757d; /* Couleur grise */
+    -fx-background-radius: 50%; /* Apparence circulaire */
+    -fx-border-radius: 50%;
+    -fx-padding: 10px; /* Ajustez pour équilibrer le contenu */
+    -fx-text-fill: white; /* Texte blanc */
+}
+
+/* Style spécifique pour le bouton Next */
+.next-button {
+    -fx-background-color: #0078d7; /* Couleur bleue */
+    -fx-background-radius: 50%; /* Apparence circulaire */
+    -fx-border-radius: 50%;
+    -fx-padding: 10px; /* Ajustez pour équilibrer le contenu */
+    -fx-text-fill: white; /* Texte blanc */
+}
+
+.pagination {
+    -fx-background-color: transparent;
+    -fx-border-width: 0;
+}
+
+.pagination-control {
+    -fx-background-color: transparent;
+    -fx-text-fill: #0078d7;
+    -fx-font-size: 22px;
+    -fx-padding: 15px 20px;
+    -fx-border-color: transparent;
+}
+
+.pagination-control:hover {
+    -fx-background-color: #e6f7ff;
+    -fx-border-color: #0078d7;
+    -fx-text-fill: #005a9e;
+}
+
+.pagination-control:selected {
+    -fx-background-color: #0078d7;
+    -fx-text-fill: white;
+}
+
+/* Style général pour le conteneur */
+.family-panel {
+    -fx-padding: 10px;
+    -fx-spacing: 5px;
+    -fx-background-color: #f9f9f9;
+    -fx-border-color: #cccccc;
+    -fx-border-width: 1px;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+}
+
+/* Style pour chaque famille */
+.family-item {
+    -fx-padding: 10px;
+    -fx-background-color: #ffffff;
+    -fx-border-color: #cccccc;
+    -fx-border-width: 1px;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+    -fx-font-size: 14px;
+    -fx-text-fill: #333333;
+    -fx-cursor: hand;
+    -fx-transition: all 0.3s ease; /* Douce transition pour les effets */
+}
+
+/* Effet au survol */
+.family-item:hover {
+    -fx-background-color: #e6e6e6;
+    -fx-border-color: #aaaaaa;
+}
+
+/* Style pour la famille sélectionnée */
+.family-item.selected {
+    -fx-background-color: #0078d7; /* Couleur bleue pour la sélection */
+    -fx-text-fill: white; /* Texte blanc pour contraste */
+    -fx-border-color: #005a9e;
+}
+
+/* Effet lors du clic */
+.family-item:pressed {
+    -fx-background-color: #005a9e;
+    -fx-translate-y: 2px; /* Impression de clic */
+}
+/* Style général pour le ScrollPane */
+.scroll-pane {
+    -fx-background-color: transparent; /* Optionnel, pour un fond transparent */
+}
+
+/* Style pour la barre de défilement verticale */
+.scroll-pane .scroll-bar:vertical {
+    -fx-pref-width: 16px; /* Largeur de la barre */
+}
+
+/* Style pour la barre de défilement horizontale */
+.scroll-pane .scroll-bar:horizontal {
+    -fx-pref-height: 16px;
+}
+
+/* Style pour le bouton de la barre (la "thumb") */
+.scroll-pane .scroll-bar .thumb {
+    -fx-background-color: #363B48;
+    -fx-background-radius: 8px;
+}
+
+/* Effet au survol de la thumb */
+.scroll-pane .scroll-bar .thumb:hover {
+    -fx-background-color: #005a9e; /* Couleur plus sombre au survol */
+}
+
+/* Effet lors du clic sur la thumb */
+.scroll-pane .scroll-bar .thumb:pressed {
+    -fx-background-color: #004377; /* Couleur encore plus sombre lors du clic */
+}
+
+

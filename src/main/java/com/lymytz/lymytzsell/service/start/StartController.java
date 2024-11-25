@@ -6,9 +6,7 @@
 package com.lymytz.lymytzsell.service.start;
 
 import com.lymytz.lymytzsell.business.helpers.KeyBoardAction;
-import com.lymytz.lymytzsell.dao.entity.YvsBaseCaisse;
 import com.lymytz.lymytzsell.dao.entity.YvsComCreneauHoraireUsers;
-import com.lymytz.lymytzsell.dao.entity.YvsComEnteteDocVente;
 import com.lymytz.lymytzsell.dao.entity.YvsUsers;
 import com.lymytz.lymytzsell.dao.entity.YvsUsersAgence;
 import com.lymytz.lymytzsell.dao.query.LocalQueryFactories;
@@ -17,6 +15,7 @@ import com.lymytz.lymytzsell.service.application.composant.Onglets;
 import com.lymytz.lymytzsell.service.application.synchro.UtilEntityBase;
 import com.lymytz.lymytzsell.service.utils.ConsUtil;
 import com.lymytz.lymytzsell.service.utils.Constantes;
+import com.lymytz.lymytzsell.service.utils.EncryptMessage;
 import com.lymytz.lymytzsell.service.utils.LymytzService;
 import com.lymytz.lymytzsell.service.utils.MdpUtil;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
@@ -39,24 +38,23 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.flywaydb.core.Flyway;
 
 import javax.print.attribute.standard.Severity;
 import java.awt.*;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
- *
  * @author LENOVO
  */
 public class StartController implements Initializable, Controller {
 
+    private final Logger LOGGER = LogManager.getLogger(StartController.class);
     LocalQueryFactories dao = new LocalQueryFactories();
 
     @FXML
@@ -81,9 +79,8 @@ public class StartController implements Initializable, Controller {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         BTN_CONNECT.setDisable(false);
-        /*todo: this is only for developpement*/
-        TXT_LOGIN.setText("ADMINGLP");
-        TXT_PWD.setText("Yves/1910#");
+        initialiseUserForDevIfNecessary();
+        this.executeFlywayMigration();
     }
 
     @FXML
@@ -112,12 +109,11 @@ public class StartController implements Initializable, Controller {
 
     private void openApplication() {
         if (controlePassword(controleConnection(TXT_LOGIN.getText()), TXT_PWD.getText()) && (LymytzService.controleFileProperties())) {
-                if (controleParamPlannification()) {
-                    // Sauvegarde la relation UserAgence                
-                    loadInitData();
-                    openMainView();
-                    // trouve le planning à la date
-                    var etats = List.of(Constantes.ETAT_CLOTURE,Constantes.ETAT_ATTENTE,Constantes.ETAT_SUSPENDU);
+            if (controleParamPlannification()) {
+                // Sauvegarde la relation UserAgence
+                loadInitData();
+                // trouve le planning à la date
+                    /*var etats = List.of(Constantes.ETAT_CLOTURE,Constantes.ETAT_ATTENTE,Constantes.ETAT_SUSPENDU);
                     Date ier = Constantes.givePrevOrNextDate(new Date(), -2);
                     List<YvsComEnteteDocVente> l = dao.loadByNamedQuery("YvsComEnteteDocVente.findEncourByUsers_", new String[]{"users", "etats", "date"}, new Object[]{UtilsProject.currentUser.getUsers(), etats, ier});
                     if (l == null || l.isEmpty()) {
@@ -126,11 +122,11 @@ public class StartController implements Initializable, Controller {
                         UtilsProject.currentsHeaderDoc = l;
                         UtilsProject.headerDoc = l.get(0);
                     }
-                    UtilsProject.caisse = (YvsBaseCaisse) dao.findOneByNQ("YvsBaseCaisse.findByCaissier", new String[]{"caissier"}, new Object[]{UtilsProject.currentUser.getUsers()});
-                    mainController.displayPropertiesFiche(UtilsProject.headerDoc);
-                } else {
-                    LymytzService.openAlertDialog("Impossible de vous connecter !", "Connexion", "Aucune informations de plannification n'a été trouvé !", Alert.AlertType.ERROR);
-                }
+                    UtilsProject.caisse = dao.findOneByNQ("YvsBaseCaisse.findByCaissier", new String[]{"caissier"}, new Object[]{UtilsProject.currentUser.getUsers()});*/
+                openMainView();
+            } else {
+                LymytzService.openAlertDialog("Impossible de vous connecter !", "Connexion", "Aucune informations de plannification n'a été trouvé !", Alert.AlertType.ERROR);
+            }
 
         }
 
@@ -179,35 +175,35 @@ public class StartController implements Initializable, Controller {
                     mainController.openAndLoadFormCompte();
                 } else {
                     switch (event.getCode()) {
-                        case ALT,ALT_GRAPH:
+                        case ALT, ALT_GRAPH:
                             mainController.TEXT_FIND.selectAll();
                             mainController.TEXT_FIND.requestFocus();
                             mainController.TEXT_FIND.setText("");
                             break;
                         case ADD:
                             if (mainController.TAB_FACTURES != null && (!mainController.TAB_FACTURES.getTabs().isEmpty())) {
-                                    Onglets o = (Onglets) mainController.TAB_FACTURES.getSelectionModel().getSelectedItem();
-                                    if (!o.getContentFacture().isEmpty()) {
-                                        o.addArticleOnFacture(o.getContentFacture().get(o.getContentFacture().size() - 1).getConditionnement(), 1, false, o.getContentFacture().get(o.getContentFacture().size() - 1).getPrix());
-                                    }
+                                Onglets o = (Onglets) mainController.TAB_FACTURES.getSelectionModel().getSelectedItem();
+                                if (!o.getContentFacture().isEmpty()) {
+                                    o.addArticleOnFacture(o.getContentFacture().get(o.getContentFacture().size() - 1).getConditionnement(), 1, false, o.getContentFacture().get(o.getContentFacture().size() - 1).getPrix());
+                                }
 
                             }
                             break;
                         case SUBTRACT:
                             if (mainController.TAB_FACTURES != null && (!mainController.TAB_FACTURES.getTabs().isEmpty())) {
-                                    Onglets o = (Onglets) mainController.TAB_FACTURES.getSelectionModel().getSelectedItem();
-                                    if (!o.getContentFacture().isEmpty()) {
-                                        o.addArticleOnFacture(o.getContentFacture().get(o.getContentFacture().size() - 1).getConditionnement(), -1, false, o.getContentFacture().get(o.getContentFacture().size() - 1).getPrix());
-                                    }
+                                Onglets o = (Onglets) mainController.TAB_FACTURES.getSelectionModel().getSelectedItem();
+                                if (!o.getContentFacture().isEmpty()) {
+                                    o.addArticleOnFacture(o.getContentFacture().get(o.getContentFacture().size() - 1).getConditionnement(), -1, false, o.getContentFacture().get(o.getContentFacture().size() - 1).getPrix());
+                                }
 
                             }
                             break;
                         case Q:
                             if (mainController.TAB_FACTURES != null && (!mainController.TAB_FACTURES.getTabs().isEmpty())) {
-                                    Onglets o = (Onglets) mainController.TAB_FACTURES.getSelectionModel().getSelectedItem();
-                                    if (!o.getContentFacture().isEmpty()) {
-                                        mainController.openDlgCalculatrice(o, "F", KeyBoardAction.SET_QTE, o.getContentFacture().get(o.getContentFacture().size() - 1));
-                                    }
+                                Onglets o = (Onglets) mainController.TAB_FACTURES.getSelectionModel().getSelectedItem();
+                                if (!o.getContentFacture().isEmpty()) {
+                                    mainController.openDlgCalculatrice(o, "F", KeyBoardAction.SET_QTE, o.getContentFacture().get(o.getContentFacture().size() - 1));
+                                }
 
                             }
                             break;
@@ -220,7 +216,7 @@ public class StartController implements Initializable, Controller {
                 }
             });
         } catch (IOException ex) {
-            Logger.getLogger(StartController.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.error(ex);
             LogFiles.addLogInFile("Impossible d'ouvrir la page !", Severity.ERROR, ConsUtil.SOURCE_LOG_FILE_EXCEPTION, ex);
         }
     }
@@ -274,7 +270,7 @@ public class StartController implements Initializable, Controller {
     private boolean controleParamPlannification() {
         //Vérifier que l'utilisateur à un planning actif à la date de connexion 
         Date d = Constantes.givePrevOrNextDate(new Date(), -4);
-        YvsComCreneauHoraireUsers creno = (YvsComCreneauHoraireUsers) dao.findOneByNQ("YvsComCreneauHoraireUsers.findByUsersOnPV", new String[]{"users", "date1", "date2"}, new Object[]{UtilsProject.currentUser.getUsers(), d, new Date()});
+        YvsComCreneauHoraireUsers creno = dao.findOneByNQ("YvsComCreneauHoraireUsers.findByUsersOnPV", new String[]{"users", "date1", "date2"}, new Object[]{UtilsProject.currentUser.getUsers(), d, new Date()});
         //charge un creneau provisoire
         boolean re = creno != null || (UtilsProject.currentUser.getUsers().getCodeUsers().equals("ADMINGLP"));
         //charge l'agence
@@ -291,14 +287,14 @@ public class StartController implements Initializable, Controller {
         try {
             String[] champ = new String[]{"user", "agence"};
             Object[] val = new Object[]{UtilsProject.currentUser.getUsers(), UtilsProject.currentAgence};
-            YvsUsersAgence ua = (YvsUsersAgence) dao.findOneByNQ("YvsUsersAgence.findByUsersAgence", champ, val);
+            YvsUsersAgence ua = dao.findOneByNQ("YvsUsersAgence.findByUsersAgence", champ, val);
             if (ua == null && UtilsProject.currentAgence != null && UtilsProject.currentUser != null) {
                 ua = new YvsUsersAgence();
                 ua.setAgence(UtilsProject.currentAgence);
                 ua.setUsers(UtilsProject.currentUser.getUsers());
                 ua.setDateSave(new Date());
                 ua.setDateUpdate(new Date());
-                ua = (YvsUsersAgence) dao.save1(ua);
+                ua = dao.save1(ua);
             }
             if (ua != null) {
                 UtilsProject.currentUser = ua;
@@ -317,7 +313,7 @@ public class StartController implements Initializable, Controller {
                 UtilsProject.remoteAuthor = (ua != null) ? ua.getId() : -1L;
             }
         } catch (Exception ex) {
-            Logger.getLogger(StartController.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.error(ex);
         }
     }
 
@@ -329,11 +325,39 @@ public class StartController implements Initializable, Controller {
     }
 
     public void loadInitDataR() {
-        new Thread(UtilsProject::loadInitDataR).start();
+        new Thread(UtilsProject::chargerLesDonneesDistante).start();
     }
+
     @Override
     public void freeMemoryController() {
         //implement later
+    }
+
+    private void initialiseUserForDevIfNecessary() {
+        String defaultUserName = System.getProperty("default_user", "");
+        String defaultUserPwd = System.getProperty("default_pwd", "");
+        TXT_LOGIN.setText(defaultUserName);
+        TXT_PWD.setText(defaultUserPwd);
+    }
+
+    private void executeFlywayMigration() {
+        String host = UtilsProject.properties.getProperty(Constantes.KEY_LOCAL_HOST);
+        String port = UtilsProject.properties.getProperty(Constantes.KEY_LOCAL_PORT);
+        String dbName = UtilsProject.properties.getProperty(Constantes.KEY_LOCAL_DB_NAME);
+        String user = EncryptMessage.decrypt(UtilsProject.properties.getProperty(Constantes.KEY_LOCAL_USERS), Constantes.KEY_ENCRYPT);
+        String password = EncryptMessage.decrypt(UtilsProject.properties.getProperty(Constantes.KEY_LOCAL_PASSWORD), Constantes.KEY_ENCRYPT);
+        String url = "jdbc:postgresql://" + host + ":" + port + "/" + dbName;
+        try {
+            Flyway flyway = Flyway.configure()
+                    .locations("filesystem:src/main/resources/db/migration")
+                    .dataSource(url, user, password)
+                    .loggers("console")
+                    .load();
+            flyway.migrate();
+            LOGGER.info("Migrations exécutées avec succès!");
+        }catch (Exception ex) {
+            LOGGER.error(ex);
+        }
     }
 
 }

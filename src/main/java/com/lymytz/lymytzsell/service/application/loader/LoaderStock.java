@@ -43,11 +43,13 @@ public class LoaderStock extends Task<VBox> {
         try {
             for (YvsBaseDepots d : depots) {
                 lineStock = new HBox(2);
-                Label lstock = new Label(d.getDesignation() + " : ");
                 stock = UtilsProject.getStocks(cond, d.getId());
-                Label lqte = new Label(Constantes.nbf.format(stock));
-                lineStock.getChildren().addAll(lstock, lqte, new Label("  "), new Label(cond.getUnite().getLibelle() + " en stock"));
-                box.getChildren().addAll(lineStock);
+                if (stock > 0) {
+                    Label lstock = new Label(d.getDesignation() + " : ");
+                    Label lqte = new Label(Constantes.nbf.format(stock));
+                    lineStock.getChildren().addAll(lstock, lqte, new Label("  "), new Label(cond.getUnite().getLibelle()));
+                    box.getChildren().addAll(lineStock);
+                }
                 if (d.equals(UtilsProject.depotLivraison)) {
                     cond.setStock(stock);
                 }

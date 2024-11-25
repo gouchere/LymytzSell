@@ -14,7 +14,7 @@ import javafx.util.Duration;
 import com.lymytz.lymytzsell.dao.Options;
 import com.lymytz.lymytzsell.dao.entity.service.EntityColumn;
 import com.lymytz.lymytzsell.dao.entity.service.LymytzData;
-import com.lymytz.lymytzsell.dao.entity.service.LymytzEntityClass;
+import com.lymytz.lymytzsell.dao.entity.service.EntityClass;
 import com.lymytz.lymytzsell.dao.entity.service.LymytzLoaderEntity;
 import com.lymytz.lymytzsell.dao.query.LocalQueryFactories;
 import com.lymytz.lymytzsell.dao.query.RQueryFactories;
@@ -94,10 +94,10 @@ public class SynchronizeDeleteFacture extends ScheduledService<Boolean> {
                         String table = (String) l.get(0)[1];
                         Long idLocalOnRemote = Long.valueOf((String) l.get(0)[2]);
                         String action = (String) l.get(0)[3];
-                        int idx = LymytzLoaderEntity.ALLENTITY.indexOf(new LymytzEntityClass("", "", table));
+                        int idx = LymytzLoaderEntity.ALLENTITY.indexOf(new EntityClass("", "", table));
                         if (idx >= 0) {
                             try {
-                                LymytzEntityClass classe = LymytzLoaderEntity.ALLENTITY.get(idx);
+                                EntityClass classe = LymytzLoaderEntity.ALLENTITY.get(idx);
                                 List<EntityColumn> colonnes = LymytzLoaderEntity.loadEntityColumn(classe.getEntity());
                                 //exécute la requête de récupération
                                 LQuery queryData = UtilsProject.buildQueryRemote(table, colonnes, new String[]{"y.id"}, false, idListenOnRemote);
