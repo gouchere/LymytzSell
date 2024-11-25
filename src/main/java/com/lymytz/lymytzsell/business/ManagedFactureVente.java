@@ -6,19 +6,11 @@ import com.lymytz.lymytzsell.dao.entity.YvsComClient;
 import com.lymytz.lymytzsell.dao.entity.YvsComDocVentes;
 import com.lymytz.lymytzsell.dao.entity.YvsComEnteteDocVente;
 import com.lymytz.lymytzsell.dao.entity.YvsDictionnaire;
-import com.lymytz.lymytzsell.service.application.service.ServiceCreateFacture;
 import com.lymytz.lymytzsell.service.utils.Constantes;
-import com.lymytz.lymytzsell.service.utils.LymytzService;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
-import javafx.application.Platform;
-import javafx.scene.control.Alert;
 
 import java.util.Date;
 import java.util.function.Function;
-
-import static com.lymytz.lymytzsell.service.utils.Constantes.TYPE_FV;
-import static com.lymytz.lymytzsell.service.utils.MessagesConstants.ERREUR;
-import static com.lymytz.lymytzsell.service.utils.MessagesConstants.GENERATION_FACTURE_NON_REUSSI;
 
 public class ManagedFactureVente {
     private final YvsComEnteteDocVente headerDoc;
@@ -56,6 +48,9 @@ public class ManagedFactureVente {
     }
 
     public ResponseAction<YvsComDocVentes> createNonPersistFacture(String numDoc) {
+        if(UtilsProject.headerDoc==null){
+            return new ResponseAction<>(null, StatutResponse.ENTETE_FACTURE_NON_TROUVE);
+        }
         var facture = buildEntityFacture(numDoc);
         var statut = controle.apply(facture);
         return new ResponseAction<>(facture, statut);

@@ -703,6 +703,7 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
 
     public void initFactureVenteClientDivers() {
         try {
+            //ResponseAction<YvsComDocVentes> response
             ManagedFactureVente managedFacture = new ManagedFactureVente(UtilsProject.headerDoc, UtilsProject.defaultAdresse, UtilsProject.clientDivers, "Client Divers", TYPE_FV, UtilsProject.headerDoc.getDateEntete(), null);
             var response = managedFacture.createNonPersistFacture(TYPE_FV);
             processResponseCreateFacture(response);

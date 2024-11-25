@@ -315,9 +315,10 @@ public final class Onglets extends Tab {
     }
 
     private boolean isStockEnable(YvsBaseConditionnement cond, double qteLine, Onglets tab, ContentPanier line) {
-        return Boolean.FALSE.equals(UtilsProject.REPLICATION) && (Constantes.TYPE_FV.equals(tab.getFacture().getTypeDoc()) &&
-                (cond.getStock() - qteLine > 0 || canSaveWithoutStock(cond, tab, line))) ||
-                Constantes.TYPE_BCV.equals(tab.getFacture().getTypeDoc());
+        return (Boolean.FALSE.equals(UtilsProject.REPLICATION) && (Constantes.TYPE_FV.equals(tab.getFacture().getTypeDoc()) &&
+                (cond.getStock() - qteLine > 0 || canSaveWithoutStock(cond, tab, line)))) ||
+                Constantes.TYPE_BCV.equals(tab.getFacture().getTypeDoc())
+                || Boolean.TRUE.equals(UtilsProject.REPLICATION);
     }
 
     private boolean isEditableCurrentFacture() {
