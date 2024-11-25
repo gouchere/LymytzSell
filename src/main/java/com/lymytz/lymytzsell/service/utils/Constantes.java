@@ -277,6 +277,7 @@ public class Constantes {
     public static final String KEY_DATE_INIT = "DATE_INIT";
     public static final String KEY_LINE_CATALOGUE = "LINE_CATALOGUE";
     public static final String KEY_COL_CATALOGUE = "COL_CATALOGUE";
+    public static final String KEY_LOAD_CATALOGUE = "load_catologue"; //Chargement du catalogue à l'ouverture
 
     public static final String KEY_ENCRYPT = "1023";
 

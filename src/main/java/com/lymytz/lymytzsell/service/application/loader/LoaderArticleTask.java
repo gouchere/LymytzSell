@@ -44,7 +44,7 @@ public class LoaderArticleTask extends Task<ObservableList<GridPane>> {
     HomeCaisseController page;
     String reference;
     private int currentPage = 0;
-    private int pageSize = 50;
+    private int pageSize = 20;
     private final YvsComEnteteDocVente header;
     private YvsBaseFamilleArticle familleArticle;
 

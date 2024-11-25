@@ -143,7 +143,7 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
     private final BooleanProperty connectRemoteServer = new SimpleBooleanProperty();
     private final LongProperty time = new SimpleLongProperty();
     public final AtomicInteger currentPage = new AtomicInteger(0);
-    private static final int MAX_SIZE = 50;
+    private static final int MAX_SIZE = 20;
     private final IntegerProperty totalPages = new SimpleIntegerProperty(0);
     private final IntegerProperty currentPageProperty = new SimpleIntegerProperty(0);
     @Setter
@@ -328,6 +328,7 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
 
     private final ProgressBar PROGRESS = new ProgressBar(0.0);
     private final Label PROGRESS_LABEL = new Label();
+    private final HBox CATALOGUE_NAVIGATION = new HBox();
 
     public HomeCaisseController() {
         //utile pour l'api javafx
@@ -461,11 +462,18 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
         Button nextButton = new Button("Next →");
         prevButton.getStyleClass().add("navigation-button");
         nextButton.getStyleClass().add("navigation-button");
-        var box = new HBox(prevButton, label, nextButton);
-        box.setAlignment(Pos.CENTER_RIGHT);
-        box.setSpacing(10d);
-        MAIN_ARTICLE_CONTAINER.getChildren().add(box);
+        CATALOGUE_NAVIGATION.getChildren().addAll(prevButton, label, nextButton);
         initEventsPagination(prevButton, nextButton, label);
+    }
+
+    private void toogleDisplayButtonNav(boolean display) {
+        if (display) {
+            CATALOGUE_NAVIGATION.setAlignment(Pos.CENTER_RIGHT);
+            CATALOGUE_NAVIGATION.setSpacing(10d);
+            MAIN_ARTICLE_CONTAINER.getChildren().add(CATALOGUE_NAVIGATION);
+        } else {
+            MAIN_ARTICLE_CONTAINER.getChildren().remove(CATALOGUE_NAVIGATION);
+        }
     }
 
     private void initEventsPagination(Button prevButton, Button nextButton, Label label) {
@@ -477,11 +485,10 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
             setCurrentPageProperty(currentPage.decrementAndGet());
             loadCatalogue(UtilsProject.headerDoc, TEXT_FIND.getText());
         });
-        currentPageProperty.addListener((ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
-            label.setText(newValue + "/" + totalPages.get());
-        });
+        currentPageProperty.addListener((ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> label.setText(newValue + "/" + totalPages.get()));
         totalPages.addListener((ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
             label.setText(currentPage.get() + "/" + newValue);
+            toogleDisplayButtonNav(newValue != null && newValue.intValue() > 1);
         });
     }
 

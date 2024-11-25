@@ -233,7 +233,7 @@ public class UtilsProject {
             String re = UtilsProject.properties.getProperty(key);
             return (Constantes.asString(re) ? re : null);
         } catch (Exception ex) {
-            LogFiles.addLogInFile("Récupération de la date erronée !", Severity.ERROR, ConsUtil.SOURCE_LOG_FILE_USER, ex);
+            LOGGER.error("Récupération de la clé erronée ! {}", key, ex);
         }
         return null;
     }
@@ -279,6 +279,8 @@ public class UtilsProject {
                 paramConnection.setUsePrinter(!Constantes.asString(getVal(Constantes.KEY_USE_PRINTER)) || Boolean.parseBoolean(getVal(Constantes.KEY_USE_PRINTER)));
                 paramConnection.setUsers(getVal(Constantes.KEY_LOCAL_USERS));
                 paramConnection.setUsersRemote(getVal(Constantes.KEY_REMOTE_USERS));
+                var isropertyLoad=Constantes.asString(getVal(Constantes.KEY_LOAD_CATALOGUE));
+                paramConnection.setLoadCatalogue(isropertyLoad && Boolean.parseBoolean(getVal(Constantes.KEY_LOAD_CATALOGUE)));
             }
         } catch (IOException ex) {
             LOGGER.error("Fichier d'Environnement non trouvé !", ex);
@@ -295,9 +297,9 @@ public class UtilsProject {
                 }
                 REPLICATION = getReplication();
                 LOGGER.info("Le mode réplication {}", (REPLICATION ? "est activé" : "n'est pas activé"));
-                if(REPLICATION && Constantes.asString(properties.getProperty(Constantes.KEY_LOCAL_AGENCE))){
-                       currentAgence=new YvsAgences(Long.valueOf(properties.getProperty(Constantes.KEY_LOCAL_AGENCE)));
-                       RcurrentAgence = new YvsAgences(UtilEntityBase.findIdRemoteData(Constantes.TABLE_AGENCE_CODE, currentAgence.getId()));
+                if (REPLICATION && Constantes.asString(properties.getProperty(Constantes.KEY_LOCAL_AGENCE))) {
+                    currentAgence = new YvsAgences(Long.valueOf(properties.getProperty(Constantes.KEY_LOCAL_AGENCE)));
+                    RcurrentAgence = new YvsAgences(UtilEntityBase.findIdRemoteData(Constantes.TABLE_AGENCE_CODE, currentAgence.getId()));
                 }
             }
             if (REPLICATION) {

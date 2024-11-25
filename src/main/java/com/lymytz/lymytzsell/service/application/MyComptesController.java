@@ -195,7 +195,7 @@
                 initColumnTableHeader();
                 // Si l'utilisateur est en planning permanent, lui donner la possibilité d'initialiser une nouvelle fiche
                 List<YvsComCreneauHoraireUsers> l = dao.loadByNamedQuery("YvsComCreneauHoraireUsers.findPointPermanentByUser", new String[]{"users"}, new Object[]{UtilsProject.currentUser.getUsers()});
-                if (l != null ? !l.isEmpty() : false) {
+                if (l != null && !l.isEmpty()) {
                     listeCreneaux = FXCollections.observableList(buildPlanning(l));
                     CB_CRENO.setItems(listeCreneaux);
                     ZONE_NEW.setVisible(true);
@@ -214,7 +214,6 @@
             current = this;
             COL_PV.setCellValueFactory(new PropertyValueFactory("pointVente"));
             COL_TRANCHE.setCellValueFactory(new PropertyValueFactory("tranche"));
-//        COL_ACTIF.setCellValueFactory(new PropertyValueFactory("actif"));
             COL_OP.setCellValueFactory(new PropertyValueFactory("id"));
             COL_DATE.setCellValueFactory(new PropertyValueFactory("date"));
             COL_ACTIF.setCellValueFactory((TableColumn.CellDataFeatures<Planning, Boolean> param) -> {
@@ -329,11 +328,13 @@
                 UtilsProject.headerDoc = header;
                 // display statistique
                 mainControler.loadFamilleArticles(header);
-                mainControler.loadCatalogue(header, null);
                 mainControler.displayPropertiesFiche(header);
+                if (UtilsProject.paramConnection.getLoadCatalogue()) {
+                    mainControler.loadCatalogue(header, null);
+                }
                 displayStatHeader(header);
             } else {
-                ToastService.show(mainControler.getMainStage(),"Aucune lignne selectionné", 5000, ERROR);
+                ToastService.show(mainControler.getMainStage(), "Aucune lignne selectionné", 5000, ERROR);
             }
         }
 
@@ -377,7 +378,7 @@
                         + "WHERE d.type_doc IN ('FV','BCV') AND d.entete_doc=? "
                         + "GROUP BY d.num_doc, d.nom_client ORDER BY somme desc LIMIT 1 ";
                 result = dao.loadBySQLQuery(query, new Options[]{new Options(header.getId(), 1)});
-                if (result != null ? !result.isEmpty() : false) {
+                if (result != null && !result.isEmpty()) {
                     F_NUM_BEST_VENTE.setText("( " + Constantes.nbf.format(result.get(0)[0]) + " ) -> " + result.get(0)[1]);
                     //2. Client ayant réalisé la Meilleur vente
                     F_CLIENT_BEST_VENTE.setText("" + result.get(0)[2]);

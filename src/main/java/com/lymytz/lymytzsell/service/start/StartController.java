@@ -356,7 +356,6 @@ public class StartController implements Initializable, Controller {
             flyway.migrate();
             LOGGER.info("Migrations exécutées avec succès!");
         }catch (Exception ex) {
-            ex.printStackTrace();
             LOGGER.error(ex);
         }
     }
