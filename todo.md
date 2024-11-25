@@ -31,6 +31,8 @@
 - [ ] Paginer sur le catalogue
 - [ ] Se servir de la vue de gauche pour afficher les familes d'articles
 - [ ] Chargement initialse du catalogue
+- [ ] Ne pas forcément restart après la récupération des données client
+- [ ] Ordonnancer la récupération de l'ensemble des données nécéssaires au lancement de l'application en une seule opération
 - [ ] Afficher 
 # Approche optimiste de l'enregistrement des factures:
 
