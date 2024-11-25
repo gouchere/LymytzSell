@@ -6,7 +6,7 @@
 
     <groupId>lymytz</groupId>
     <artifactId>lymytzSell</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>3.0.1</version>
     <name>lymytz-sell</name>
 
     <properties>
