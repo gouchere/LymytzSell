@@ -272,7 +272,7 @@ public final class Onglets extends Tab {
         if (isEditableCurrentFacture()) {
             //page.displayPropertyArticle(cond, false);
             ContentPanier line = tab.buildLineContentanier(cond);
-            cond.setStock(UtilsProject.getStocks(cond, UtilsProject.depotLivraison.getId()));
+            cond.setStock(page.displayStockArticle(cond));
             //contrôle de stock
             if (isStockEnable(cond, qteLine, tab, line)) {
                 line = tab.getContentFacture().stream().filter(line::equals).findFirst().orElse(line);
