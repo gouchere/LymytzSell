@@ -313,8 +313,6 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
     public Label LAB_SYNC_MSG;
     //display articles
     @FXML
-    public Label LAB_REF;
-    @FXML
     public Label LAB_DES;
     @FXML
     public Label QTE_FACTURE;
@@ -649,7 +647,6 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
 
     public void displayPropertyArticle(YvsBaseConditionnement art, boolean displayAllProperties) {
         if (art != null) {
-            LAB_REF.setText(art.getArticle().getRefArt());
             LAB_DES.setText(art.getArticle().getDesignation());
             // ZONE_IMG.getChildren().clear();
             createImageProduit(art.getArticle());
@@ -668,6 +665,30 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
                 getAndDisplayArticleProperties(art, depots);
             }
         }
+    }
+
+    public double displayStockArticle(YvsBaseConditionnement art) {
+        if (art != null) {
+            PAN_STOCK.getChildren().clear();
+            if (UtilsProject.headerDoc != null && UtilsProject.headerDoc.getCreneau() != null) {
+                Double qte = (Double) dao.findOneObjectByNQ("YvsComContenuDocVente.countQteVendu", new String[]{"conditionnement", "header"}, new Object[]{art, UtilsProject.headerDoc});
+                if (qte != null && qte > 0) {
+                    QTE_FACTURE.setText(Constantes.nbf.format(qte));
+                } else {
+                    QTE_FACTURE.setText(Constantes.nbf.format(0));
+                }
+                if (Boolean.FALSE.equals(UtilsProject.REPLICATION) && UtilsProject.depotLivraison != null) {
+                    //si on est pas en mode replication, calcul immédiatement le stock
+                    double stock = UtilsProject.getStocks(art, UtilsProject.depotLivraison.getId());
+                    art.setStock(stock);
+                    var hBox = new HBox(new Label(UtilsProject.depotLivraison.getDesignation()+": "), new Label(stock+" "+art.getUnite().getReference()));
+                    hBox.setSpacing(10);
+                    PAN_STOCK.getChildren().add(hBox);
+                    return stock;
+                }
+            }
+        }
+        return 0;
     }
 
     private void getAndDisplayArticleProperties(YvsBaseConditionnement art, List<YvsBaseDepots> depots) {

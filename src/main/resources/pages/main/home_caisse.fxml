@@ -440,8 +440,7 @@
                                 </ImageView>
                             </VBox>-->
                             <VBox prefHeight="43.0" prefWidth="386.0">
-                                <Label fx:id="LAB_REF" text="REF. ART"/>
-                                <Label fx:id="LAB_DES" text="DESIGNATION"/>
+                                <Label fx:id="LAB_DES" text="DESIGNATION" style="-fx-font-weight: bold"/>
                                 <HBox>
                                     <Label prefHeight="31.0"
                                            text="Quantité facturée(s) durant la session:"
