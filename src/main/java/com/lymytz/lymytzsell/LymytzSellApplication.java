@@ -6,16 +6,17 @@ package com.lymytz.lymytzsell;
  * and open the template in the editor.
  */
 
+import com.lymytz.lymytzsell.monitoring.MetricHttpServer;
 import com.lymytz.lymytzsell.service.ServeurMessage;
 import com.lymytz.lymytzsell.service.application.ManagedApplication;
 import com.lymytz.lymytzsell.service.utils.Constantes;
-import com.lymytz.lymytzsell.service.utils.EncryptMessage;
 import com.lymytz.lymytzsell.service.utils.LymytzService;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
 import com.lymytz.lymytzsell.service.utils.log.ListenFolder;
 import com.lymytz.lymytzsell.service.utils.log.LogFiles;
 import com.lymytz.lymytzsell.view.LocalLoader;
 import com.lymytz.lymytzsell.view.start.LaunchApps;
+import io.micrometer.prometheusmetrics.PrometheusMeterRegistry;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
@@ -24,7 +25,6 @@ import javafx.stage.Stage;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.logging.log4j.Logger;
-import org.flywaydb.core.Flyway;
 
 import javax.imageio.ImageIO;
 import javax.print.attribute.standard.Severity;
@@ -43,7 +43,7 @@ import static org.apache.logging.log4j.LogManager.getLogger;
 /**
  * @author LENOVO
  */
-public class LymytzSell extends Application {
+public class LymytzSellApplication extends Application {
 
     @Setter
     @Getter
@@ -52,10 +52,10 @@ public class LymytzSell extends Application {
     @Getter
     private boolean connecte = false;
     Exception exception;
-    private static final Logger LOGGER = getLogger(LymytzSell.class.getName());
+    private static final Logger LOGGER = getLogger(LymytzSellApplication.class.getName());
+    private static PrometheusMeterRegistry metricRegistry;
 
-
-    public LymytzSell() {
+    public LymytzSellApplication() {
         // not necessary to implement
     }
 
@@ -72,13 +72,16 @@ public class LymytzSell extends Application {
     }
 
     @Override
-    public void start(Stage primaryStage) {
+    public void start(Stage primaryStage) throws IOException {
         this.primaryStage = primaryStage;
         Thread t = new Thread(new ListenFolder());
         t.setName("Listen folder");
         t.start();
         Platform.setImplicitExit(true);
         javax.swing.SwingUtilities.invokeLater(this::addAppToTray);
+        MetricHttpServer metricHttpServer = new MetricHttpServer();
+        metricHttpServer.start();
+        metricRegistry = metricHttpServer.getMeterRegistry();
         initializePort();
         startApps();
     }
@@ -87,7 +90,7 @@ public class LymytzSell extends Application {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        launch(LymytzSell.class, "--preloader", LaunchApps.class.getName(), Arrays.toString(args));
+        launch(LymytzSellApplication.class, "--preloader", LaunchApps.class.getName(), Arrays.toString(args));
         LOGGER.info("Démarrage de l'application de caisse...");
         //Lance ensuite la méthode init() et ensuite la méthode start
         //Créer et lancer le thred d'écoute du fichier de log       
@@ -171,7 +174,7 @@ public class LymytzSell extends Application {
             LOGGER.error("Unable to init system tray", e);
             System.exit(0);
         }
-        new Thread(LymytzSell.this::initialiserLaSynchronisation).start();
+        new Thread(LymytzSellApplication.this::initialiserLaSynchronisation).start();
     }
 
     private void initialiserLaSynchronisation() {
@@ -180,5 +183,9 @@ public class LymytzSell extends Application {
         if (Constantes.APPS_MODE_BOTH.equals(mode)) {
             ServeurMessage.initSocket();
         }
+    }
+
+    public static PrometheusMeterRegistry getMeterRegistry() {
+        return metricRegistry;
     }
 }

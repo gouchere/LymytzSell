@@ -76,6 +76,7 @@
       <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver"/>
       <property name="javax.persistence.jdbc.password" value="yves1910/"/>
       <!--<property name="eclipselink.logging.level" value="FINE"/>-->
+      <property name="eclipselink.session.customizer" value="com.lymytz.lymytzsell.monitoring.DataBaseMetricsService"/>
     </properties>
   </persistence-unit>
 </persistence>

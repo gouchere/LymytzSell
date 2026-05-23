@@ -63,8 +63,8 @@ public class ManagedApplication {
     @Setter
     private HomeCaisseController mainPage;
     public ListenServersRemote serviceListen;
-/*    @Setter
-    private List<Long> idDepots;*/
+    /*    @Setter
+        private List<Long> idDepots;*/
     List<String> categories;
 
     public ManagedApplication() {
@@ -76,18 +76,19 @@ public class ManagedApplication {
     public YvsComEnteteDocVente createNewFicheFromCreneaux(long idCreno, Date date) {
         //Vérifie si le vendeur a déjà ouvert une fiche ce jour
         //récupère les paramètres commerciale
-        YvsComCreneauHoraireUsers creno = (YvsComCreneauHoraireUsers) dao.findOneByNQ("YvsComCreneauHoraireUsers.findById", new String[]{"id"}, new Object[]{idCreno});
+        YvsComCreneauHoraireUsers creno = dao.findOneByNQ("YvsComCreneauHoraireUsers.findById", new String[]{"id"}, new Object[]{idCreno});
         date = (date == null && creno != null) ? creno.getDateTravail() : (date == null) ? new Date() : date;
         if (!UtilsProject.verifyDateVente(date)) {
             return null;
         }
         if (creno != null) {
-            YvsComEnteteDocVente header = (YvsComEnteteDocVente) dao.findOneByNQ("YvsComEnteteDocVente.findOneFiche", new String[]{"date", "creno"}, new Object[]{date, creno});
+            YvsComEnteteDocVente header = dao.findOneByNQ("YvsComEnteteDocVente.findOneFiche", new String[]{"date", "creno"}, new Object[]{date, creno});
             if (header != null) {
                 //vérifie que la fiche ne soit pas déjà clôturé
                 if (Boolean.TRUE.equals(header.getCloturer()) || header.getEtat().equals(Constantes.ETAT_CLOTURE)) {
                     LymytzService.openAlertDialog("La fiche de ce planning est déjà clôturé", "information", "Fiche non editable", Alert.AlertType.WARNING);
                     UtilsProject.headerDoc = null;
+                    return null;
                 } else {
                     LymytzService.openAlertDialog("Vous avez déjà une fiche pour cette journée", "information", "La fiche existe", Alert.AlertType.INFORMATION);
                     UtilsProject.headerDoc = header;

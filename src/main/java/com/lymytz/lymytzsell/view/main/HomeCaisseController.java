@@ -468,7 +468,9 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
         if (display) {
             CATALOGUE_NAVIGATION.setAlignment(Pos.CENTER_RIGHT);
             CATALOGUE_NAVIGATION.setSpacing(10d);
-            MAIN_ARTICLE_CONTAINER.getChildren().add(CATALOGUE_NAVIGATION);
+            if (!MAIN_ARTICLE_CONTAINER.getChildren().contains(CATALOGUE_NAVIGATION)) {
+                MAIN_ARTICLE_CONTAINER.getChildren().add(CATALOGUE_NAVIGATION);
+            }
         } else {
             MAIN_ARTICLE_CONTAINER.getChildren().remove(CATALOGUE_NAVIGATION);
         }
@@ -681,7 +683,7 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
                     //si on est pas en mode replication, calcul immédiatement le stock
                     double stock = UtilsProject.getStocks(art, UtilsProject.depotLivraison.getId());
                     art.setStock(stock);
-                    var hBox = new HBox(new Label(UtilsProject.depotLivraison.getDesignation()+": "), new Label(stock+" "+art.getUnite().getReference()));
+                    var hBox = new HBox(new Label(UtilsProject.depotLivraison.getDesignation() + ": "), new Label(stock + " " + art.getUnite().getReference()));
                     hBox.setSpacing(10);
                     PAN_STOCK.getChildren().add(hBox);
                     return stock;

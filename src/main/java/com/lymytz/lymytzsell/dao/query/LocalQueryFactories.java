@@ -17,7 +17,6 @@ import com.lymytz.lymytzsell.dao.entity.service.EntityColumn;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
 import com.lymytz.lymytzsell.service.utils.log.LogFiles;
-import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.persistence.EntityManager;
@@ -43,9 +42,11 @@ import static com.lymytz.lymytzsell.service.utils.MessagesConstants.ECHEC_DE_LEX
 /**
  * @author Admin gestionnaire des requêtes locale
  */
-@NoArgsConstructor
 public class LocalQueryFactories {
     private static final String QUERY_EXECUTION_ERROR_MESSAGE = "Echec de l'execution de la requete: %s";
+
+    public LocalQueryFactories() {
+    }
 
     public static boolean pingServer() {
         String query = "SELECT 1";
