@@ -1,0 +1,1 @@
+ALTER TABLE public.yvs_synchro_listen_table ADD nb_failed int4 NULL;

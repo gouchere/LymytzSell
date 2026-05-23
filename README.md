@@ -6,6 +6,12 @@ Application de gestion de caisse associé à Lymytz ERP
   ![JDK](https://img.shields.io/badge/JavaFx_SDK-17.0.13-orange)
   ![JDK](https://img.shields.io/badge/PostgresSql-14-orange)
 
+## Exécuter l'application en developpement
+### Chargement de la configuration
+  L'application utilise un fichier de configuration nommé `application.properties` qui est en principe initialisé à la première exécution de l'application. 
+  dans le dossier home de l'utilisateur "C:\Users\{user}\lymytz-sell\conf\application.properties".
+Ce fichier contient des paramètres essentiels pour le fonctionnement de l'application, tels que les informations de connexion à la base de données, les paramètres de synchronisation, et d'autres configurations spécifiques à l'environnement d'exécution. Il est important de s'assurer que ce fichier est correctement configuré avant de lancer l'application pour éviter tout problème de connexion ou de fonctionnement.
+
 ## Génération d'un exécutable avec jpackage
 ### Contruction du runtime
 ```bash
@@ -23,15 +29,15 @@ Générer l'installeur
 jpackage --input ./LymytzSell/target/
 --name Lymytz-sell
 --main-jar lymytzSell-1.0-SNAPSHOT.jar
---main-class com.lymytz.lymytzsell.LymytzSell
+--main-class com.lymytz.lymytzsell.LymytzSellApplication
 --type msi --runtime-image ./runtimejdk17
 --app-version 3.0.1
 --icon lymytz-sell.ico
---java-options "--add-opens=javafx.graphics/com.sun.javafx.application=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens javafx.controls/com.sun.javafx.scene.control.skin.resources=ALL-UNNAMED --add-exports=javafx.base/com.sun.javafx.event=ALL-UNNAMED --add-exports=javafx.controls/com.sun.javafx.scene.control.behavior=ALL-UNNAMED --add-exports=javafx.controls/com.sun.javafx.scene.control=ALL-UNNAMED --add-exports javafx.graphics/com.sun.javafx.print=ALL-UNNAMED"                                                                                                           
+--java-options "-Xms2g -Xmx2g --add-opens=javafx.graphics/com.sun.javafx.application=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens javafx.controls/com.sun.javafx.scene.control.skin.resources=ALL-UNNAMED --add-exports=javafx.base/com.sun.javafx.event=ALL-UNNAMED --add-exports=javafx.controls/com.sun.javafx.scene.control.behavior=ALL-UNNAMED --add-exports=javafx.controls/com.sun.javafx.scene.control=ALL-UNNAMED --add-exports javafx.graphics/com.sun.javafx.print=ALL-UNNAMED"                                                                                                           
 ```
 One Line 
 ``` bash
-jpackage --input ./LymytzSell/target/ --name Lymytz-sell --main-jar lymytzSell-1.0-SNAPSHOT.jar --main-class com.lymytz.lymytzsell.LymytzSell --type msi --runtime-image ./runtimejdk17 --vendor Lymytz --app-version 3.0.2 --icon logo_lymytzSell.png --java-options "--add-opens=javafx.graphics/com.sun.javafx.application=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens javafx.controls/com.sun.javafx.scene.control.skin.resources=ALL-UNNAMED --add-exports=javafx.base/com.sun.javafx.event=ALL-UNNAMED --add-exports=javafx.controls/com.sun.javafx.scene.control.behavior=ALL-UNNAMED --add-exports=javafx.controls/com.sun.javafx.scene.control=ALL-UNNAMED --add-exports javafx.graphics/com.sun.javafx.print=ALL-UNNAMED" --win-shortcut --win-menu
+jpackage --input ./LymytzSell/target/ --name Lymytz-sell --main-jar lymytzSell-1.0-SNAPSHOT.jar --main-class com.lymytz.lymytzsell.LymytzSellApplication --type msi --runtime-image ./runtimejdk17 --vendor Lymytz --app-version 3.0.1 --icon logo_lymytzSell.png --java-options "--add-opens=javafx.graphics/com.sun.javafx.application=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens javafx.controls/com.sun.javafx.scene.control.skin.resources=ALL-UNNAMED --add-exports=javafx.base/com.sun.javafx.event=ALL-UNNAMED --add-exports=javafx.controls/com.sun.javafx.scene.control.behavior=ALL-UNNAMED --add-exports=javafx.controls/com.sun.javafx.scene.control=ALL-UNNAMED --add-exports javafx.graphics/com.sun.javafx.print=ALL-UNNAMED" --win-shortcut --win-menu
 ```
 ## Lancer l'application en ligne de commande avec le runtime
 ```bash

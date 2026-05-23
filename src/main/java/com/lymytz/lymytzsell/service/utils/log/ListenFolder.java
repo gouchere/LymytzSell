@@ -37,14 +37,6 @@ public class ListenFolder implements Runnable {
             logFile.mkdirs();
         }
         this.path = Paths.get(logFile.getAbsolutePath());
-//        logFile = new File(fileName);
-//        if (!logFile.exists()) {
-//            try {
-//                logFile.createNewFile();
-//            } catch (IOException ex) {
-//                Logger.getLogger(LogFiles.class.getName()).log(Level.SEVERE, null, ex);
-//            }
-//        }
     }
 
     @Override
