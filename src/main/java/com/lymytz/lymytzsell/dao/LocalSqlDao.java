@@ -8,13 +8,13 @@ package com.lymytz.lymytzsell.dao;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.print.attribute.standard.Severity;
+
+import com.lymytz.lymytzsell.service.application.config.PropertiesManager;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.EncryptMessage;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
-import com.lymytz.lymytzsell.service.utils.log.LogFiles;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  *
@@ -22,6 +22,7 @@ import com.lymytz.lymytzsell.service.utils.log.LogFiles;
  */
 public class LocalSqlDao {
 
+    private static final Logger LOGGER = LogManager.getLogger(LocalSqlDao.class);
     private static LocalSqlDao instance = null;
     private static Connection con;
 
@@ -31,29 +32,29 @@ public class LocalSqlDao {
             try {
                 Class.forName("org.postgresql.Driver");
             } catch (ClassNotFoundException ex) {
-                LogFiles.addLogInFile("Aucun pilote de connexion à votre BD n'a été trouvé", ex);
+                LOGGER.error("Aucun pilote de connexion à votre BD n'a été trouvé", ex);
                 throw new Exception("Aucun pilote de connexion à votre BD n'a été trouvé", ex.getCause());
             }
             UtilsProject.loadFilePropertie();
             if (UtilsProject.properties != null) {
 
-                String host = UtilsProject.properties.getProperty(Constantes.KEY_LOCAL_HOST);
-                String port = UtilsProject.properties.getProperty(Constantes.KEY_LOCAL_PORT);
-                String dbName = UtilsProject.properties.getProperty(Constantes.KEY_LOCAL_DB_NAME);
-                String user = EncryptMessage.decrypt(UtilsProject.properties.getProperty(Constantes.KEY_LOCAL_USERS), Constantes.KEY_ENCRYPT);
-                String password = EncryptMessage.decrypt(UtilsProject.properties.getProperty(Constantes.KEY_LOCAL_PASSWORD), Constantes.KEY_ENCRYPT);
+                String host = PropertiesManager.getInstance().getVal(Constantes.KEY_LOCAL_HOST);
+                String port = PropertiesManager.getInstance().getVal(Constantes.KEY_LOCAL_PORT);
+                String dbName = PropertiesManager.getInstance().getVal(Constantes.KEY_LOCAL_DB_NAME);
+                String user = EncryptMessage.decrypt(PropertiesManager.getInstance().getVal(Constantes.KEY_LOCAL_USERS), Constantes.KEY_ENCRYPT);
+                String password = EncryptMessage.decrypt(PropertiesManager.getInstance().getVal(Constantes.KEY_LOCAL_PASSWORD), Constantes.KEY_ENCRYPT);
                 String URL = "jdbc:postgresql://" + host + ":" + port + "/" + dbName;
                 try {
                     LocalSqlDao.con = DriverManager.getConnection(URL, user, password);
                 } catch (SQLException ex) {
-                    LogFiles.addLogInFile("Connexion au serveur de données echoué", ex);
+                    LOGGER.error("Connexion au serveur de données echoué", ex);
                     throw new Exception("Connexion au serveur de données echoué", ex);
                 }
             } else {
-                LogFiles.addLogInFile("Aucun paramètres de connexion à la BD trouvé !", Severity.REPORT);
+                LOGGER.info("Aucun paramètres de connexion à la BD trouvé !");
             }
         } catch (Exception ex) {
-            LogFiles.addLogInFile("Erreur lors de la lecture des paramètres de connexion !", ex);
+            LOGGER.error("Erreur lors de la lecture des paramètres de connexion !", ex);
             throw new Exception("Erreur lors de la lecture des paramètres de connexion !", ex);
         }
     }
@@ -76,7 +77,7 @@ public class LocalSqlDao {
                     try {
                         instance = new LocalSqlDao();
                     } catch (Exception ex) {
-                        Logger.getLogger(LocalSqlDao.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
+                        LOGGER.error(ex.getMessage(), ex);
                     }
                 }
             }

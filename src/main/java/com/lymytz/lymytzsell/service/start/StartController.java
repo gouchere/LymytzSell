@@ -12,14 +12,13 @@ import com.lymytz.lymytzsell.dao.entity.YvsUsersAgence;
 import com.lymytz.lymytzsell.dao.query.LocalQueryFactories;
 import com.lymytz.lymytzsell.service.application.Controller;
 import com.lymytz.lymytzsell.service.application.composant.Onglets;
+import com.lymytz.lymytzsell.service.application.config.PropertiesManager;
 import com.lymytz.lymytzsell.service.application.synchro.UtilEntityBase;
-import com.lymytz.lymytzsell.service.utils.ConsUtil;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.EncryptMessage;
 import com.lymytz.lymytzsell.service.utils.LymytzService;
 import com.lymytz.lymytzsell.service.utils.MdpUtil;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
-import com.lymytz.lymytzsell.service.utils.log.LogFiles;
 import com.lymytz.lymytzsell.view.main.HomeCaisseController;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -217,7 +216,6 @@ public class StartController implements Initializable, Controller {
             });
         } catch (IOException ex) {
             LOGGER.error(ex);
-            LogFiles.addLogInFile("Impossible d'ouvrir la page !", Severity.ERROR, ConsUtil.SOURCE_LOG_FILE_EXCEPTION, ex);
         }
     }
 
@@ -341,11 +339,11 @@ public class StartController implements Initializable, Controller {
     }
 
     private void executeFlywayMigration() {
-        String host = UtilsProject.properties.getProperty(Constantes.KEY_LOCAL_HOST);
-        String port = UtilsProject.properties.getProperty(Constantes.KEY_LOCAL_PORT);
-        String dbName = UtilsProject.properties.getProperty(Constantes.KEY_LOCAL_DB_NAME);
-        String user = EncryptMessage.decrypt(UtilsProject.properties.getProperty(Constantes.KEY_LOCAL_USERS), Constantes.KEY_ENCRYPT);
-        String password = EncryptMessage.decrypt(UtilsProject.properties.getProperty(Constantes.KEY_LOCAL_PASSWORD), Constantes.KEY_ENCRYPT);
+        String host = PropertiesManager.getInstance().getVal(Constantes.KEY_LOCAL_HOST);
+        String port = PropertiesManager.getInstance().getVal(Constantes.KEY_LOCAL_PORT);
+        String dbName = PropertiesManager.getInstance().getVal(Constantes.KEY_LOCAL_DB_NAME);
+        String user = EncryptMessage.decrypt(PropertiesManager.getInstance().getVal(Constantes.KEY_LOCAL_USERS), Constantes.KEY_ENCRYPT);
+        String password = EncryptMessage.decrypt(PropertiesManager.getInstance().getVal(Constantes.KEY_LOCAL_PASSWORD), Constantes.KEY_ENCRYPT);
         String url = "jdbc:postgresql://" + host + ":" + port + "/" + dbName;
         try {
             Flyway flyway = Flyway.configure()

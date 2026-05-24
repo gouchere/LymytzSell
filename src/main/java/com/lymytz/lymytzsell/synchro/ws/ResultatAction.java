@@ -5,13 +5,16 @@
  */
 package com.lymytz.lymytzsell.synchro.ws;
 
+import lombok.Getter;
+
 import java.io.Serializable;
 
 /**
  *
- * @author LYMYTZ
  * @param <T>
+ * @author LYMYTZ
  */
+@Getter
 public class ResultatAction<T extends Serializable> {
 
     private boolean result = false;
@@ -28,91 +31,54 @@ public class ResultatAction<T extends Serializable> {
     public ResultatAction() {
     }
 
-    public ResultatAction(int codeInfo, Long idEntity, Long source, String message, String module, String fonctionalite, Object data, T entity) {
-        
+    public ResultatAction(boolean result, String message) {
+        this.result = result;
+        this.message = message;
     }
 
-    public boolean isResult() {
-        return result;
+    public ResultatAction(int codeInfo, Long idEntity, Long source, String message, String module, String fonctionalite, Object data, T entity) {
+
     }
 
     public void setResult(boolean result) {
         this.result = result;
     }
 
-    public int getCodeInfo() {
-        return codeInfo;
-    }
-
     public void setCodeInfo(int codeInfo) {
         this.codeInfo = codeInfo;
-    }
-
-    public Long getIdEntity() {
-        return idEntity;
     }
 
     public void setIdEntity(Long idEntity) {
         this.idEntity = idEntity;
     }
 
-    public Long getSource() {
-        return source;
-    }
-
     public void setSource(Long source) {
         this.source = source;
-    }
-
-    public String getMessage() {
-        return message;
     }
 
     public void setMessage(String message) {
         this.message = message;
     }
 
-    public String getModule() {
-        return module;
-    }
-
     public void setModule(String module) {
         this.module = module;
-    }
-
-    public String getFonctionalite() {
-        return fonctionalite;
     }
 
     public void setFonctionalite(String fonctionalite) {
         this.fonctionalite = fonctionalite;
     }
 
-    public Object getData() {
-        return data;
-    }
-
     public void setData(Object data) {
         this.data = data;
-    }
-
-    public T getEntity() {
-        return entity;
     }
 
     public void setEntity(T entity) {
         this.entity = entity;
     }
 
-    public boolean isContinu() {
-        return continu;
-    }
-
     public void setContinu(boolean continu) {
         this.continu = continu;
     }
-    
-    
-    
-    
+
+
 }

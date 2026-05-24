@@ -17,7 +17,6 @@ import com.lymytz.lymytzsell.dao.query.LocalQueryFactories;
 import com.lymytz.lymytzsell.service.application.synchro.export.ExportService;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
-import com.lymytz.lymytzsell.service.utils.log.LogFiles;
 import com.lymytz.lymytzsell.synchro.ws.WsSynchro;
 import com.lymytz.lymytzsell.view.main.HomeCaisseController;
 
@@ -31,6 +30,8 @@ import java.util.logging.Logger;
  * @author LENOVO
  */
 public class SynchronizeDataOut extends ScheduledService<Long> {
+
+    private static final org.apache.logging.log4j.Logger LOGGER = org.apache.logging.log4j.LogManager.getLogger(SynchronizeDataOut.class);
 
     HomeCaisseController page;
     LocalQueryFactories Ldao;
@@ -116,7 +117,7 @@ public class SynchronizeDataOut extends ScheduledService<Long> {
                                 }
                             }
                         } else {
-                            LogFiles.addLogInFile("Les services distants sont indisponible", Severity.ERROR);
+                            LOGGER.error("Les services distants sont indisponible");
                             if (UtilsProject.APPLICATION_IHM) {
                                 Platform.runLater(() -> {
                                     UtilsProject.currentPage.LAB_SYNC_MSG.setText("Le service n'est pas en ligne !");
@@ -163,7 +164,7 @@ public class SynchronizeDataOut extends ScheduledService<Long> {
                         updateProgress(0, 1);
                     }
                 } catch (Exception ex) {
-                    LogFiles.addLogInFile("Synchronisation des données de ventes non réussi ", ex);
+                    LOGGER.error("Synchronisation des données de ventes non réussi ", ex);
                     Logger.getLogger(SynchronizeDataOut.class.getName()).log(Level.SEVERE, null, ex);
                     this.failed();
                 }

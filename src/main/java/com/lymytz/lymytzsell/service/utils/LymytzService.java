@@ -6,6 +6,7 @@
 package com.lymytz.lymytzsell.service.utils;
 
 import com.lymytz.lymytzsell.business.helpers.Helpers;
+import com.lymytz.lymytzsell.service.application.config.PropertiesManager;
 import com.lymytz.lymytzsell.service.start.StartController;
 import com.lymytz.lymytzsell.view.LocalLoader;
 import com.lymytz.lymytzsell.view.main.HomeCaisseController;
@@ -251,63 +252,6 @@ public class LymytzService {
         return null;
     }
 
-    public static FileInputStream getPropertiesFileInputStream() throws IOException {
-        File file = Helpers.getPropertiesFile(PROPERTIE_FILE_NAME);
-        assert file != null;
-        var lines = Files.readAllLines(file.toPath());
-        if (!file.exists() || lines.isEmpty()) {
-            //ajoute y des entrée
-            UtilsProject.properties.setProperty(Constantes.KEY_APPS_PORT, "1025");
-            UtilsProject.properties.setProperty(Constantes.KEY_CLIENT_DIVERS, "");
-            UtilsProject.properties.setProperty(Constantes.KEY_ENVIRONNEMENT, "PRODUCTION");
-            UtilsProject.properties.setProperty(Constantes.KEY_LOCAL_AGENCE, "");
-            UtilsProject.properties.setProperty(Constantes.KEY_LOCAL_DB_NAME, "lymytz_sell_extension");
-            UtilsProject.properties.setProperty(Constantes.KEY_LOCAL_HOST, "localhost");
-            UtilsProject.properties.setProperty(Constantes.KEY_LOCAL_PASSWORD, EncryptMessage.encrypt("yves1910/", Constantes.KEY_ENCRYPT));
-            UtilsProject.properties.setProperty(Constantes.KEY_LOCAL_PORT, "5432");
-            UtilsProject.properties.setProperty(Constantes.KEY_LOCAL_SOCIETE, "");
-            UtilsProject.properties.setProperty(Constantes.KEY_LOCAL_USERS, EncryptMessage.encrypt("postgres", Constantes.KEY_ENCRYPT));
-            UtilsProject.properties.setProperty(Constantes.KEY_MODE, "BOTH");
-            UtilsProject.properties.setProperty(Constantes.KEY_MODEL_REGLEMENT, "");
-            UtilsProject.properties.setProperty(Constantes.KEY_MODE_REGLEMENT, "");
-            UtilsProject.properties.setProperty(Constantes.KEY_ORIENTATION_PRINT, "");
-            UtilsProject.properties.setProperty(Constantes.KEY_PAPER_HEIGHT, "0");
-            UtilsProject.properties.setProperty(Constantes.KEY_PAPER_WIDTH, "0");
-            UtilsProject.properties.setProperty(Constantes.KEY_PAPER_M_BOTOM, "0");
-            UtilsProject.properties.setProperty(Constantes.KEY_PAPER_M_LEFT, "0");
-            UtilsProject.properties.setProperty(Constantes.KEY_PAPER_M_RIGHT, "0");
-            UtilsProject.properties.setProperty(Constantes.KEY_PAPER_M_TOP, "0");
-            UtilsProject.properties.setProperty(Constantes.KEY_PATH, "");
-            UtilsProject.properties.setProperty(Constantes.KEY_REMOTE_DB_NAME, "lymytz_demo_0");
-            UtilsProject.properties.setProperty(Constantes.KEY_REMOTE_HOST, "");
-            UtilsProject.properties.setProperty(Constantes.KEY_REMOTE_PASSWORD, EncryptMessage.encrypt("yves1910/", Constantes.KEY_ENCRYPT));
-            UtilsProject.properties.setProperty(Constantes.KEY_REMOTE_PORT, "5432");
-            UtilsProject.properties.setProperty(Constantes.KEY_REMOTE_SOCIETE, "");
-            UtilsProject.properties.setProperty(Constantes.KEY_REMOTE_USERS, EncryptMessage.encrypt("postgres", Constantes.KEY_ENCRYPT));
-            UtilsProject.properties.setProperty(Constantes.KEY_SECTEUR, "");
-            UtilsProject.properties.setProperty(Constantes.KEY_TYPE_PRINT, "TICKET");
-            UtilsProject.properties.setProperty(Constantes.KEY_USE_CODE_BARRE, "TRUE");
-            UtilsProject.properties.setProperty(Constantes.KEY_USE_PRINTER, "TRUE");
-            UtilsProject.properties.setProperty(Constantes.KEY_VILLE, "");
-            UtilsProject.properties.setProperty(Constantes.KEY_WEB_HOST, "");
-            UtilsProject.properties.setProperty(Constantes.KEY_WEB_PORT, "8080");
-            UtilsProject.properties.setProperty(Constantes.KEY_DATE_INIT, Constantes.dfD.format(new Date()));
-            try (FileOutputStream oStream = new FileOutputStream(file)) {
-                UtilsProject.properties.store(oStream, "test");
-                return new FileInputStream(file);
-            } catch (IOException ex) {
-                LOGGER.error("Le fichier de configuration n'a pas pu être initialisé", ex);
-            }
-        } else {
-            try {
-                LOGGER.info("Chargement des propriétés de l'application");
-                return new FileInputStream(file);
-            } catch (FileNotFoundException ex) {
-                LOGGER.error("Le fichier de configuration n'a pas pu être récupéré", ex);
-            }
-        }
-        return null;
-    }
 
     public static FileOutputStream getFileoutputStream() {
         File file = new File("conf/servConfig.ltz");
@@ -375,23 +319,23 @@ public class LymytzService {
         UtilsProject.loadFilePropertie();
         String val;
         if (UtilsProject.properties != null) {
-            val = (String) UtilsProject.properties.get(Constantes.KEY_APPS_PORT);
+            val = PropertiesManager.getInstance().getVal(Constantes.KEY_APPS_PORT);
             if (!Constantes.asString(val)) {
                 openAlertDialog(IMPOSSIBE_DE_DEMARRER_L_APPLICATION, FICHIER_PROPERTIE_MAL_CONFIGURE, VOUS_DEVEZ_INITIALISER_LA_PROPRIETE + Constantes.KEY_APPS_PORT, Alert.AlertType.ERROR);
                 return false;
             }
-            val = (String) UtilsProject.properties.get(Constantes.KEY_ENVIRONNEMENT);
+            val = PropertiesManager.getInstance().getVal(Constantes.KEY_ENVIRONNEMENT);
             if (!Constantes.asString(val)) {
                 openAlertDialog(IMPOSSIBE_DE_DEMARRER_L_APPLICATION, FICHIER_PROPERTIE_MAL_CONFIGURE, VOUS_DEVEZ_INITIALISER_LA_PROPRIETE + Constantes.KEY_ENVIRONNEMENT, Alert.AlertType.ERROR);
                 return false;
             }
-            val = (String) UtilsProject.properties.get(Constantes.KEY_LOCAL_AGENCE);
+            val = PropertiesManager.getInstance().getVal(Constantes.KEY_LOCAL_AGENCE);
             if (!Constantes.asString(val)) {
                 openAlertDialog(IMPOSSIBE_DE_DEMARRER_L_APPLICATION, FICHIER_PROPERTIE_MAL_CONFIGURE,
                         VOUS_DEVEZ_INITIALISER_LA_PROPRIETE + Constantes.KEY_LOCAL_AGENCE, Alert.AlertType.ERROR);
                 return false;
             }
-            val = (String) UtilsProject.properties.get(Constantes.KEY_LOCAL_SOCIETE);
+            val = PropertiesManager.getInstance().getVal(Constantes.KEY_LOCAL_SOCIETE);
             if (!Constantes.asString(val)) {
                 openAlertDialog(IMPOSSIBE_DE_DEMARRER_L_APPLICATION, FICHIER_PROPERTIE_MAL_CONFIGURE,
                         VOUS_DEVEZ_INITIALISER_LA_PROPRIETE + Constantes.KEY_LOCAL_SOCIETE, Alert.AlertType.ERROR);

@@ -12,6 +12,7 @@ import java.util.logging.Logger;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
+import com.lymytz.lymytzsell.service.application.config.PropertiesManager;
 import com.lymytz.lymytzsell.service.application.exception.FonctionalException;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.EncryptMessage;
@@ -32,11 +33,11 @@ public class LocalDao {
         //récupère les paramètres de connexion
         UtilsProject.loadFilePropertie();
         if (UtilsProject.properties != null) {
-            String host = UtilsProject.properties.getProperty(Constantes.KEY_LOCAL_HOST);
-            String port = UtilsProject.properties.getProperty(Constantes.KEY_LOCAL_PORT);
-            String dbName = UtilsProject.properties.getProperty(Constantes.KEY_LOCAL_DB_NAME);
-            String user = EncryptMessage.decrypt(UtilsProject.properties.getProperty(Constantes.KEY_LOCAL_USERS), Constantes.KEY_ENCRYPT);
-            String password = EncryptMessage.decrypt(UtilsProject.properties.getProperty(Constantes.KEY_LOCAL_PASSWORD), Constantes.KEY_ENCRYPT);
+            String host = PropertiesManager.getInstance().getVal(Constantes.KEY_LOCAL_HOST);
+            String port = PropertiesManager.getInstance().getVal(Constantes.KEY_LOCAL_PORT);
+            String dbName = PropertiesManager.getInstance().getVal(Constantes.KEY_LOCAL_DB_NAME);
+            String user = EncryptMessage.decrypt(PropertiesManager.getInstance().getVal(Constantes.KEY_LOCAL_USERS), Constantes.KEY_ENCRYPT);
+            String password = EncryptMessage.decrypt(PropertiesManager.getInstance().getVal(Constantes.KEY_LOCAL_PASSWORD), Constantes.KEY_ENCRYPT);
             String url = "jdbc:postgresql://" + host + ":" + port + "/" + dbName;
             Map<String, String> properties = new HashMap<>();
             properties.put("javax.persistence.jdbc.driver", "org.postgresql.Driver");

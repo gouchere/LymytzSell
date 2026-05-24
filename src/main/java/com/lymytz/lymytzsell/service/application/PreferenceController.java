@@ -5,6 +5,7 @@
  */
 package com.lymytz.lymytzsell.service.application;
 
+import com.lymytz.lymytzsell.LymytzSellApplication;
 import com.lymytz.lymytzsell.business.helpers.Helpers;
 import com.lymytz.lymytzsell.dao.entity.YvsAgences;
 import com.lymytz.lymytzsell.dao.entity.YvsBaseModeReglement;
@@ -13,11 +14,11 @@ import com.lymytz.lymytzsell.dao.entity.YvsComClient;
 import com.lymytz.lymytzsell.dao.entity.YvsEntity;
 import com.lymytz.lymytzsell.dao.entity.YvsSocietes;
 import com.lymytz.lymytzsell.dao.query.LocalQueryFactories;
+import com.lymytz.lymytzsell.service.application.config.PropertiesManager;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.EncryptMessage;
 import com.lymytz.lymytzsell.service.utils.LymytzService;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
-import com.lymytz.lymytzsell.service.utils.log.LogFiles;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -52,6 +53,7 @@ import java.util.logging.Logger;
 
 import static com.lymytz.lymytzsell.service.utils.Constantes.PROPERTIE_FILE_NAME;
 import static com.lymytz.lymytzsell.service.utils.MessagesConstants.KEY_VALUE;
+import static org.apache.logging.log4j.LogManager.getLogger;
 
 /**
  * FXML Controller class
@@ -61,6 +63,7 @@ import static com.lymytz.lymytzsell.service.utils.MessagesConstants.KEY_VALUE;
 public class PreferenceController implements Initializable, Controller {
 
     LocalQueryFactories dao = new LocalQueryFactories();
+    private static final org.apache.logging.log4j.Logger LOGGER = getLogger(PreferenceController.class.getName());
 
     @FXML
     private TextField TXT_IP_L;
@@ -248,53 +251,47 @@ public class PreferenceController implements Initializable, Controller {
 
     public boolean copyToSave() {
         File file = Helpers.getPropertiesFile(PROPERTIE_FILE_NAME);
-        if (file.exists()) {
-            UtilsProject.properties.setProperty(Constantes.KEY_APPS_PORT, getVal(TXT_PORT_APP.getText()));
-            UtilsProject.properties.setProperty(Constantes.KEY_ENVIRONNEMENT, getVal(CB_ENVIRONNEMENT.getValue()));
+        if (file != null && file.exists()) {
+            PropertiesManager.getInstance().setProperty(Constantes.KEY_APPS_PORT, getVal(TXT_PORT_APP.getText()));
+            PropertiesManager.getInstance().setProperty(Constantes.KEY_ENVIRONNEMENT, getVal(CB_ENVIRONNEMENT.getValue()));
             verifyAndSaveComboBoxValue(CB_CLT, Constantes.KEY_CLIENT_DIVERS);
             verifyAndSaveComboBoxValue(CB_AGENCE_L, Constantes.KEY_LOCAL_AGENCE);
             verifyAndSaveComboBoxValue(CB_SOCIETE_L, Constantes.KEY_LOCAL_SOCIETE);
             verifyAndSaveComboBoxValue(CB_MDR, Constantes.KEY_MODEL_REGLEMENT);
             verifyAndSaveComboBoxValue(CB_MODE_R, Constantes.KEY_MODE_REGLEMENT);
-            UtilsProject.properties.setProperty(Constantes.KEY_LOCAL_DB_NAME, getVal(TXT_BD_NAME_L.getText()));
-            UtilsProject.properties.setProperty(Constantes.KEY_LOCAL_HOST, getVal(TXT_IP_L.getText()));
-            UtilsProject.properties.setProperty(Constantes.KEY_LOCAL_PASSWORD, EncryptMessage.encrypt(getVal(TXT_PASSWORD_L.getText()), Constantes.KEY_ENCRYPT));
-            UtilsProject.properties.setProperty(Constantes.KEY_LOCAL_PORT, getVal(TXT_PORT_L.getText()));
-            UtilsProject.properties.setProperty(Constantes.KEY_LOCAL_USERS, EncryptMessage.encrypt(getVal(TXT_USER_L.getText()), Constantes.KEY_ENCRYPT));
-            UtilsProject.properties.setProperty(Constantes.KEY_MODE, getVal(CB_MODE.getValue()));
-            UtilsProject.properties.setProperty(Constantes.KEY_ORIENTATION_PRINT, "");
-            UtilsProject.properties.setProperty(Constantes.KEY_PAPER_HEIGHT, getVal(TXT_PAPER_H.getText()));
-            UtilsProject.properties.setProperty(Constantes.KEY_PAPER_WIDTH, getVal(TXT_PAPER_L.getText()));
-            UtilsProject.properties.setProperty(Constantes.KEY_PAPER_M_BOTOM, getVal(TXT_M_B.getText()));
-            UtilsProject.properties.setProperty(Constantes.KEY_PAPER_M_LEFT, getVal(TXT_M_G.getText()));
-            UtilsProject.properties.setProperty(Constantes.KEY_PAPER_M_RIGHT, getVal(TXT_M_D.getText()));
-            UtilsProject.properties.setProperty(Constantes.KEY_PAPER_M_TOP, getVal(TXT_M_H.getText()));
-            UtilsProject.properties.setProperty(Constantes.KEY_PATH, getVal(TXT_PATH.getText()));
-            UtilsProject.properties.setProperty(Constantes.KEY_REMOTE_DB_NAME, getVal(TXT_BD_NAME_R.getText()));
-            UtilsProject.properties.setProperty(Constantes.KEY_REMOTE_HOST, getVal(TXT_IP_R.getText()));
-            UtilsProject.properties.setProperty(Constantes.KEY_REMOTE_PASSWORD, EncryptMessage.encrypt(getVal(TXT_PASSWORD_R.getText()), Constantes.KEY_ENCRYPT));
-            UtilsProject.properties.setProperty(Constantes.KEY_REMOTE_PORT, getVal(TXT_PORT_R.getText()));
-            UtilsProject.properties.setProperty(Constantes.KEY_REMOTE_SOCIETE, getVal(TXT_SOCIETE_R.getText()));
-            UtilsProject.properties.setProperty(Constantes.KEY_REMOTE_USERS, EncryptMessage.encrypt(getVal(TXT_USER_R.getText()), Constantes.KEY_ENCRYPT));
-            UtilsProject.properties.setProperty(Constantes.KEY_SECTEUR, "");
-            UtilsProject.properties.setProperty(Constantes.KEY_TYPE_PRINT, getVal(CB_TYPE_PRINT.getValue()));
-            UtilsProject.properties.setProperty(Constantes.KEY_USE_CODE_BARRE, "" + CKB_CODE_BARRE.isSelected());
-            UtilsProject.properties.setProperty(Constantes.KEY_USE_PRINTER, CKB_PRINT.isSelected() + "");
-            UtilsProject.properties.setProperty(Constantes.KEY_VILLE, "");
-            UtilsProject.properties.setProperty(Constantes.KEY_WEB_HOST, getVal(TXT_IP_WEB.getText()));
-            UtilsProject.properties.setProperty(Constantes.KEY_WEB_PORT, getVal(TXT_PORT_WEB.getText()));
-            UtilsProject.properties.setProperty(Constantes.KEY_DATE_INIT, getDate());
+            PropertiesManager.getInstance().setProperty(Constantes.KEY_LOCAL_DB_NAME, getVal(TXT_BD_NAME_L.getText()));
+            PropertiesManager.getInstance().setProperty(Constantes.KEY_LOCAL_HOST, getVal(TXT_IP_L.getText()));
+            PropertiesManager.getInstance().setProperty(Constantes.KEY_LOCAL_PASSWORD, EncryptMessage.encrypt(getVal(TXT_PASSWORD_L.getText()), Constantes.KEY_ENCRYPT));
+            PropertiesManager.getInstance().setProperty(Constantes.KEY_LOCAL_PORT, getVal(TXT_PORT_L.getText()));
+            PropertiesManager.getInstance().setProperty(Constantes.KEY_LOCAL_USERS, EncryptMessage.encrypt(getVal(TXT_USER_L.getText()), Constantes.KEY_ENCRYPT));
+            PropertiesManager.getInstance().setProperty(Constantes.KEY_MODE, getVal(CB_MODE.getValue()));
+            PropertiesManager.getInstance().setProperty(Constantes.KEY_ORIENTATION_PRINT, "");
+            PropertiesManager.getInstance().setProperty(Constantes.KEY_PAPER_HEIGHT, getVal(TXT_PAPER_H.getText()));
+            PropertiesManager.getInstance().setProperty(Constantes.KEY_PAPER_WIDTH, getVal(TXT_PAPER_L.getText()));
+            PropertiesManager.getInstance().setProperty(Constantes.KEY_PAPER_M_BOTOM, getVal(TXT_M_B.getText()));
+            PropertiesManager.getInstance().setProperty(Constantes.KEY_PAPER_M_LEFT, getVal(TXT_M_G.getText()));
+            PropertiesManager.getInstance().setProperty(Constantes.KEY_PAPER_M_RIGHT, getVal(TXT_M_D.getText()));
+            PropertiesManager.getInstance().setProperty(Constantes.KEY_PAPER_M_TOP, getVal(TXT_M_H.getText()));
+            PropertiesManager.getInstance().setProperty(Constantes.KEY_PATH, getVal(TXT_PATH.getText()));
+            PropertiesManager.getInstance().setProperty(Constantes.KEY_REMOTE_DB_NAME, getVal(TXT_BD_NAME_R.getText()));
+            PropertiesManager.getInstance().setProperty(Constantes.KEY_REMOTE_HOST, getVal(TXT_IP_R.getText()));
+            PropertiesManager.getInstance().setProperty(Constantes.KEY_REMOTE_PASSWORD, EncryptMessage.encrypt(getVal(TXT_PASSWORD_R.getText()), Constantes.KEY_ENCRYPT));
+            PropertiesManager.getInstance().setProperty(Constantes.KEY_REMOTE_PORT, getVal(TXT_PORT_R.getText()));
+            PropertiesManager.getInstance().setProperty(Constantes.KEY_REMOTE_SOCIETE, getVal(TXT_SOCIETE_R.getText()));
+            PropertiesManager.getInstance().setProperty(Constantes.KEY_REMOTE_USERS, EncryptMessage.encrypt(getVal(TXT_USER_R.getText()), Constantes.KEY_ENCRYPT));
+            PropertiesManager.getInstance().setProperty(Constantes.KEY_SECTEUR, "");
+            PropertiesManager.getInstance().setProperty(Constantes.KEY_TYPE_PRINT, getVal(CB_TYPE_PRINT.getValue()));
+            PropertiesManager.getInstance().setProperty(Constantes.KEY_USE_CODE_BARRE, "" + CKB_CODE_BARRE.isSelected());
+            PropertiesManager.getInstance().setProperty(Constantes.KEY_USE_PRINTER, CKB_PRINT.isSelected() + "");
+            PropertiesManager.getInstance().setProperty(Constantes.KEY_VILLE, "");
+            PropertiesManager.getInstance().setProperty(Constantes.KEY_WEB_HOST, getVal(TXT_IP_WEB.getText()));
+            PropertiesManager.getInstance().setProperty(Constantes.KEY_WEB_PORT, getVal(TXT_PORT_WEB.getText()));
+            PropertiesManager.getInstance().setProperty(Constantes.KEY_DATE_INIT, getDate());
             RadioButton radioButtonCol = (RadioButton) NB_COL_CATALOGUE.getSelectedToggle();
             RadioButton radioButtonLine = (RadioButton) NB_LINE_CATALOGUE.getSelectedToggle();
-            UtilsProject.properties.setProperty(Constantes.KEY_COL_CATALOGUE, radioButtonCol != null ? (String) radioButtonCol.getProperties().get("value") : "");
-            UtilsProject.properties.setProperty(Constantes.KEY_LINE_CATALOGUE, radioButtonLine != null ? (String) radioButtonLine.getProperties().get("value") : "");
-            try (FileOutputStream oStream = new FileOutputStream(file)) {
-                UtilsProject.properties.store(oStream, "");
-                return true;
-            } catch (IOException ex) {
-                Logger.getLogger(PreferenceController.class.getName()).log(Level.SEVERE, null, ex);
-                LymytzService.openExceptionDialog("", Alert.AlertType.ERROR, ex);
-            }
+            PropertiesManager.getInstance().setProperty(Constantes.KEY_COL_CATALOGUE, radioButtonCol != null ? (String) radioButtonCol.getProperties().get("value") : "");
+            PropertiesManager.getInstance().setProperty(Constantes.KEY_LINE_CATALOGUE, radioButtonLine != null ? (String) radioButtonLine.getProperties().get("value") : "");
+            PropertiesManager.getInstance().storeValues(file);
         }
         return false;
     }
@@ -304,7 +301,7 @@ public class PreferenceController implements Initializable, Controller {
                 .map(YvsEntity::getId)
                 .filter(Constantes::asLong)
                 .map(Object::toString)
-                .ifPresent(idAgence -> UtilsProject.properties.setProperty(keyProperty, idAgence));
+                .ifPresent(idAgence -> PropertiesManager.getInstance().setProperty(keyProperty, idAgence));
     }
 
     private void initDataView() {
@@ -395,7 +392,7 @@ public class PreferenceController implements Initializable, Controller {
         });
 //charge les societe disponible
         List<YvsSocietes> societes = dao.loadByNamedQuery("YvsSocietes.findAll", new String[]{}, new Object[]{});
-        societes.add(0,null);
+        societes.add(0, null);
         CB_SOCIETE_L.setItems(FXCollections.observableArrayList(societes));
         CB_SOCIETE_L.setConverter(new StringConverter<>() {
             @Override
@@ -415,10 +412,10 @@ public class PreferenceController implements Initializable, Controller {
 
     private String getProp(String key) {
         try {
-            String re = UtilsProject.properties.getProperty(key);
+            String re = PropertiesManager.getInstance().getVal(key);
             return (Constantes.asString(re) ? re : null);
         } catch (Exception ex) {
-            LogFiles.addLogInFile("Récupération de la date erronée !", ex);
+            LOGGER.error("Récupération de la date erronée !", ex);
         }
         return null;
     }

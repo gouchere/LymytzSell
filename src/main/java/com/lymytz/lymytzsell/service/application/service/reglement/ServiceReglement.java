@@ -20,7 +20,6 @@ import com.lymytz.lymytzsell.dao.entity.YvsComptaNotifReglementVente;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.LymytzService;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
-import com.lymytz.lymytzsell.service.utils.log.LogFiles;
 import com.lymytz.lymytzsell.view.main.HomeCaisseController;
 
 /**
@@ -28,6 +27,8 @@ import com.lymytz.lymytzsell.view.main.HomeCaisseController;
  * @author LENOVO
  */
 public class ServiceReglement {
+
+    private static final org.apache.logging.log4j.Logger LOGGER = org.apache.logging.log4j.LogManager.getLogger(ServiceReglement.class);
 
     LocalQueryFactories dao = new LocalQueryFactories();
     HomeCaisseController mainPage;
@@ -97,7 +98,7 @@ public class ServiceReglement {
             if (facture.getTypeDoc().equals(Constantes.TYPE_BCV)) {
                 avance = saveAcompteClient(facture, montant, UtilsProject.headerDoc.getDateEntete());
                 if (avance == null ? true : avance.getId() <= 0) {
-                    LogFiles.addLogInFile("L'avance de la commande " + facture.getNumDoc() + " n'a pas pue être généré !", Severity.ERROR);
+                    LOGGER.error("L'avance de la commande " + facture.getNumDoc() + " n'a pas pue être généré !");
                     return Constantes.ETAT_ATTENTE;
                 }
             }
@@ -130,7 +131,7 @@ public class ServiceReglement {
                 }
             }
         }
-        LogFiles.addLogInFile("Impossible de générer le numéro de la pièce de paiement!", Severity.ERROR);
+        LOGGER.error("Impossible de générer le numéro de la pièce de paiement!");
         return Constantes.ETAT_ATTENTE;
     }
 
@@ -161,7 +162,7 @@ public class ServiceReglement {
 //            bean=(YvsComptaAcompteClient)rq.findOneEntity("YvsComptaAcompteClient.findById", new String[]{"id"}, new Object[]{idExt});
             return bean;
         } else {
-            LogFiles.addLogInFile("Le numéro de pièce d'avance client n'a pu être généré ", Severity.ERROR);
+            LOGGER.error("Le numéro de pièce d'avance client n'a pu être généré ");
             return null;
         }
     }
@@ -179,7 +180,7 @@ public class ServiceReglement {
                     notif.setDateUpdate(new Date());
                     dao.save1(notif);
                 } else {
-                    LogFiles.addLogInFile("Le montant de l'acompte est inférieure au total de la pièce !", Severity.ERROR);
+                    LOGGER.error("Le montant de l'acompte est inférieure au total de la pièce !");
                 }
             }
         }

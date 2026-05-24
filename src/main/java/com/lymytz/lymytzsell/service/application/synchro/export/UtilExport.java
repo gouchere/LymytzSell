@@ -36,7 +36,6 @@ import com.lymytz.lymytzsell.service.application.synchro.UtilEntityBase;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.LymytzService;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
-import com.lymytz.lymytzsell.service.utils.log.LogFiles;
 import org.json.JSONObject;
 
 import javax.print.attribute.standard.Severity;
@@ -50,6 +49,8 @@ import java.util.logging.Logger;
  * @author LYMYTZ
  */
 public class UtilExport {
+
+    private static final org.apache.logging.log4j.Logger LOGGER = org.apache.logging.log4j.LogManager.getLogger(UtilExport.class);
 
     public static LocalQueryFactories dao = new LocalQueryFactories();
 
@@ -133,7 +134,7 @@ public class UtilExport {
             Long idRemoteHeader = findHeader(localDoc.getEnteteDoc().getId());
             if (!Constantes.asLong(idRemoteHeader)) {
                 //arrête la synchro
-                LogFiles.addLogInFile("Impossible de trouver l'En-tête de la facture", Severity.ERROR);
+                LOGGER.error("Impossible de trouver l'En-tête de la facture");
                 return null;
             } else {
                 re.setEnteteDoc(buildExportEnteteDoc(localDoc.getEnteteDoc(), idRemoteHeader));
@@ -191,13 +192,13 @@ public class UtilExport {
                 boolean ok = true;
                 for (YvsComContenuDocVente c : re.getContenus()) {
                     if (c.getArticle() != null ? !Constantes.asLong(c.getArticle().getId()) : true) {
-                        LogFiles.addLogInFile("Le contenu de la facture" + localDoc.getNumDoc() + " ne peut pas être synchronisé, l'id de l'article n'existe pas", Severity.ERROR);
+                        LOGGER.error("Le contenu de la facture" + localDoc.getNumDoc() + " ne peut pas être synchronisé, l'id de l'article n'existe pas");
                         ok = false;
                         break;
                     }
                     if (c.getConditionnement() != null ? !Constantes.asLong(c.getConditionnement().getId()) : true) {
                         ok = false;
-                        LogFiles.addLogInFile("Le contenu de la facture " + localDoc.getNumDoc() + " ne peut pas être synchronisé, l'id du conditionnement n'existe pas", Severity.ERROR);
+                        LOGGER.error("Le contenu de la facture " + localDoc.getNumDoc() + " ne peut pas être synchronisé, l'id du conditionnement n'existe pas");
                         break;
                     }
                 }
@@ -210,12 +211,12 @@ public class UtilExport {
                     //vérifie la conformité des lignes de règlements
                     for (YvsComptaCaissePieceVente r : re.getReglements()) {
                         if (r.getCaisse() != null ? !Constantes.asLong(r.getCaisse().getId()) : true) {
-                            LogFiles.addLogInFile("Le règlement de la facture" + localDoc.getNumDoc() + " ne peut pas être synchronisé, l'id de la caisse n'existe pas", Severity.ERROR);
+                            LOGGER.error("Le règlement de la facture" + localDoc.getNumDoc() + " ne peut pas être synchronisé, l'id de la caisse n'existe pas");
                             ok = false;
                             break;
                         }
                         if (r.getModel() != null ? !Constantes.asLong(r.getModel().getId()) : true) {
-                            LogFiles.addLogInFile("Le règlement de la facture " + localDoc.getNumDoc() + "ne peut pas être synchronisé, l'id du mode de règlement n'existe pas", Severity.ERROR);
+                            LOGGER.error("Le règlement de la facture " + localDoc.getNumDoc() + "ne peut pas être synchronisé, l'id du mode de règlement n'existe pas");
                             ok = false;
                             break;
                         }
@@ -400,23 +401,23 @@ public class UtilExport {
                 }
                 //controle les clés étrangère avant de transformer l'élément JSON
                 if (!Constantes.asLong(re.getAgence().getId())) {
-                    LogFiles.addLogInFile("Impossible de synchroniser l'objet  " + localHead.getClass().getSimpleName() + " [" + localHead.getId() + "]" + " car agence est null", Severity.ERROR);
+                    LOGGER.error("Impossible de synchroniser l'objet  " + localHead.getClass().getSimpleName() + " [" + localHead.getId() + "]" + " car agence est null");
                     continue_ = false;
                 }
                 if (!Constantes.asLong(re.getAgence().getSociete().getId())) {
-                    LogFiles.addLogInFile("Impossible de synchroniser l'objet  " + localHead.getClass().getSimpleName() + " [" + localHead.getId() + "]" + " car société est null", Severity.ERROR);
+                    LOGGER.error("Impossible de synchroniser l'objet  " + localHead.getClass().getSimpleName() + " [" + localHead.getId() + "]" + " car société est null");
                     continue_ = false;
                 }
                 if (!Constantes.asLong(re.getCreneau().getId())) {
-                    LogFiles.addLogInFile("Impossible de synchroniser l'objet  " + localHead.getClass().getSimpleName() + " " + localHead.getId() + "]" + " car le creneau est null", Severity.ERROR);
+                    LOGGER.error("Impossible de synchroniser l'objet  " + localHead.getClass().getSimpleName() + " " + localHead.getId() + "]" + " car le creneau est null");
                     continue_ = false;
                 }
                 if (!Constantes.asLong(re.getCreneau().getUsers().getId())) {
-                    LogFiles.addLogInFile("Impossible de synchroniser l'objet  " + localHead.getClass().getSimpleName() + " [" + localHead.getId() + "]" + " car le user est null", Severity.ERROR);
+                    LOGGER.error("Impossible de synchroniser l'objet  " + localHead.getClass().getSimpleName() + " [" + localHead.getId() + "]" + " car le user est null");
                     continue_ = false;
                 }
                 if (!Constantes.asLong(re.getAuthor().getId())) {
-                    LogFiles.addLogInFile("Impossible de synchroniser l'objet  " + localHead.getClass().getSimpleName() + " [" + localHead.getId() + "]" + " car author est null", Severity.ERROR);
+                    LOGGER.error("Impossible de synchroniser l'objet  " + localHead.getClass().getSimpleName() + " [" + localHead.getId() + "]" + " car author est null");
                     continue_ = false;
                 }
                 if (continue_) {
@@ -428,50 +429,41 @@ public class UtilExport {
                 }
             }
         } catch (Exception ex) {
-            LogFiles.addLogInFile("", ex);
+            LOGGER.error("", ex);
             Logger.getLogger(UtilExport.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
     }
 
     public static JSONObject exportDocVente(YvsComDocVentes localDoc, boolean withChild, Long idListen) {
-        //récupère la ligne de donnée
-        YvsComDocVentes re = null;
+        YvsComDocVentes re;
         try {
             if (localDoc != null) {
                 re = buildExportDocVente(localDoc, null, withChild);
-                if (!withChild) {
-                    if (re.getContenus() != null) {
-                        re.getContenus().clear();
-                    }
-                    if (re.getReglements() != null) {
-                        re.getReglements().clear();
-                    }
-                    if (re.getCommerciaux() != null) {
-                        re.getCommerciaux().clear();
-                    }
-                }
                 if (re != null) {
+                    if (!withChild) {
+                        cleanDependentChildrenBefore(re);
+                    }
                     boolean continue_ = true;
                     if (!Constantes.asLong(re.getEnteteDoc().getId())) {
                         //notification interne
-                        LogFiles.addLogInFile("Impossible de synchroniser l'objet  " + localDoc.getClass().getSimpleName() + " [" + localDoc.getId() + "]" + " car le header est null", Severity.ERROR);
+                        LOGGER.error("Impossible de synchroniser l'objet  " + localDoc.getClass().getSimpleName() + " [" + localDoc.getId() + "]" + " car le header est null");
                         continue_ = false;
                     }
                     if (!Constantes.asLong(re.getCategorieComptable().getId())) {
-                        LogFiles.addLogInFile("Impossible de synchroniser l'objet  " + localDoc.getClass().getSimpleName() + " [" + localDoc.getId() + "]" + " car la catégorie comptable est null", Severity.ERROR);
+                        LOGGER.error("Impossible de synchroniser l'objet  " + localDoc.getClass().getSimpleName() + " [" + localDoc.getId() + "]" + " car la catégorie comptable est null");
                         continue_ = false;
                     }
                     if (!Constantes.asLong(re.getTiers().getId())) {
-                        LogFiles.addLogInFile("Impossible de synchroniser l'objet  " + localDoc.getClass().getSimpleName() + " [" + localDoc.getId() + "]" + " car le tiers est null", Severity.ERROR);
+                        LOGGER.error("Impossible de synchroniser l'objet  " + localDoc.getClass().getSimpleName() + " [" + localDoc.getId() + "]" + " car le tiers est null");
                         continue_ = false;
                     }
                     if (!Constantes.asLong(re.getClient().getId())) {
-                        LogFiles.addLogInFile("Impossible de synchroniser l'objet  " + localDoc.getClass().getSimpleName() + " [" + localDoc.getId() + "]" + " car le client est null", Severity.ERROR);
+                        LOGGER.error("Impossible de synchroniser l'objet  " + localDoc.getClass().getSimpleName() + " [" + localDoc.getId() + "]" + " car le client est null");
                         continue_ = false;
                     }
                     if (!Constantes.asLong(re.getAuthor().getId())) {
-                        LogFiles.addLogInFile("Impossible de synchroniser l'objet  " + localDoc.getClass().getSimpleName() + " [" + localDoc.getId() + "]" + " car author est null", Severity.ERROR);
+                        LOGGER.error("Impossible de synchroniser l'objet  " + localDoc.getClass().getSimpleName() + " [" + localDoc.getId() + "]" + " car author est null");
                         continue_ = false;
                     }
                     if (continue_) {
@@ -484,10 +476,22 @@ public class UtilExport {
                 }
             }
         } catch (Exception ex) {
-            LogFiles.addLogInFile("", ex);
+            LOGGER.error("", ex);
             Logger.getLogger(UtilExport.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
+    }
+
+    private static void cleanDependentChildrenBefore(YvsComDocVentes re) {
+        if (re.getContenus() != null) {
+            re.getContenus().clear();
+        }
+        if (re.getReglements() != null) {
+            re.getReglements().clear();
+        }
+        if (re.getCommerciaux() != null) {
+            re.getCommerciaux().clear();
+        }
     }
 
     public static JSONObject exportContentVente(YvsComContenuDocVente localDoc, Long idListen) {
@@ -499,19 +503,19 @@ public class UtilExport {
                 if (re != null) {
                     boolean continue_ = true;
                     if (re.getDocVente() != null ? !Constantes.asLong(re.getDocVente().getId()) : true) {
-                        LogFiles.addLogInFile("Impossible de synchroniser l'objet  " + localDoc.getClass().getSimpleName() + " [" + localDoc.getId() + "]" + " car le doc de vente est null", Severity.ERROR);
+                        LOGGER.error("Impossible de synchroniser l'objet  " + localDoc.getClass().getSimpleName() + " [" + localDoc.getId() + "]" + " car le doc de vente est null");
                         continue_ = false;
                     }
                     if (re.getArticle() != null ? !Constantes.asLong(re.getArticle().getId()) : true) {
-                        LogFiles.addLogInFile("Impossible de synchroniser l'objet  " + localDoc.getClass().getSimpleName() + " [" + localDoc.getId() + "]" + " car l'article est null", Severity.ERROR);
+                        LOGGER.error("Impossible de synchroniser l'objet  " + localDoc.getClass().getSimpleName() + " [" + localDoc.getId() + "]" + " car l'article est null");
                         continue_ = false;
                     }
                     if (re.getConditionnement() != null ? !Constantes.asLong(re.getConditionnement().getId()) : true) {
-                        LogFiles.addLogInFile("Impossible de synchroniser l'objet  " + localDoc.getClass().getSimpleName() + " [" + localDoc.getId() + "]" + " car le conditionnement est null", Severity.ERROR);
+                        LOGGER.error("Impossible de synchroniser l'objet  " + localDoc.getClass().getSimpleName() + " [" + localDoc.getId() + "]" + " car le conditionnement est null");
                         continue_ = false;
                     }
                     if ((re.getAuthor() != null) ? !Constantes.asLong(re.getAuthor().getId()) : true) {
-                        LogFiles.addLogInFile("Impossible de synchroniser l'objet  " + localDoc.getClass().getSimpleName() + " [" + localDoc.getId() + "]" + " car author est null", Severity.ERROR);
+                        LOGGER.error("Impossible de synchroniser l'objet  " + localDoc.getClass().getSimpleName() + " [" + localDoc.getId() + "]" + " car author est null");
                         continue_ = false;
                     }
                     if (continue_) {
@@ -524,7 +528,7 @@ public class UtilExport {
                 }
             }
         } catch (Exception ex) {
-            LogFiles.addLogInFile("", ex);
+            LOGGER.error("", ex);
             Logger.getLogger(UtilExport.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
@@ -540,15 +544,15 @@ public class UtilExport {
                     boolean continue_ = true;
                     //contrôle des liaison obligatoire
                     if (re.getCaisse() != null ? !Constantes.asLong(re.getCaisse().getId()) : true) {
-                        LogFiles.addLogInFile("Impossible de synchroniser l'objet  " + localDoc.getClass().getSimpleName() + " [" + localDoc.getId() + "]" + " car la caisse est null", Severity.ERROR);
+                        LOGGER.error("Impossible de synchroniser l'objet  " + localDoc.getClass().getSimpleName() + " [" + localDoc.getId() + "]" + " car la caisse est null");
                         continue_ = false;
                     }
                     if (re.getClient() != null ? !Constantes.asLong(re.getClient().getId()) : true) {
-                        LogFiles.addLogInFile("Impossible de synchroniser l'objet  " + localDoc.getClass().getSimpleName() + " [" + localDoc.getId() + "]" + " car le client est null", Severity.ERROR);
+                        LOGGER.error("Impossible de synchroniser l'objet  " + localDoc.getClass().getSimpleName() + " [" + localDoc.getId() + "]" + " car le client est null");
                         continue_ = false;
                     }
                     if (re.getAuthor() != null ? !Constantes.asLong(re.getAuthor().getId()) : true) {
-                        LogFiles.addLogInFile("Impossible de synchroniser l'objet  " + localDoc.getClass().getSimpleName() + " [" + localDoc.getId() + "]" + " car l'auteur est null", Severity.ERROR);
+                        LOGGER.error("Impossible de synchroniser l'objet  " + localDoc.getClass().getSimpleName() + " [" + localDoc.getId() + "]" + " car l'auteur est null");
                         continue_ = false;
                     }
                     if (continue_) {
@@ -561,7 +565,7 @@ public class UtilExport {
                 }
             }
         } catch (Exception ex) {
-            LogFiles.addLogInFile("", ex);
+            LOGGER.error("", ex);
             Logger.getLogger(UtilExport.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
@@ -576,15 +580,15 @@ public class UtilExport {
                     boolean continue_ = true;
                     //contrôle des liaison obligatoire
                     if (re.getCaisse() != null ? !Constantes.asLong(re.getCaisse().getId()) : true) {
-                        LogFiles.addLogInFile("Impossible de synchroniser l'objet  " + localDoc.getClass().getSimpleName() + " [" + localDoc.getId() + "]" + " car la caisse est null", Severity.ERROR);
+                        LOGGER.error("Impossible de synchroniser l'objet  " + localDoc.getClass().getSimpleName() + " [" + localDoc.getId() + "]" + " car la caisse est null");
                         continue_ = false;
                     }
                     if (re.getVente() != null ? !Constantes.asLong(re.getVente().getId()) : true) {
-                        LogFiles.addLogInFile("Impossible de synchroniser l'objet  " + localDoc.getClass().getSimpleName() + " [" + localDoc.getId() + "]" + " car le doc de vente est null", Severity.ERROR);
+                        LOGGER.error("Impossible de synchroniser l'objet  " + localDoc.getClass().getSimpleName() + " [" + localDoc.getId() + "]" + " car le doc de vente est null");
                         continue_ = false;
                     }
                     if (re.getModel() != null ? !Constantes.asLong(re.getModel().getId()) : true) {
-                        LogFiles.addLogInFile("Impossible de synchroniser l'objet  " + localDoc.getClass().getSimpleName() + " [" + localDoc.getId() + "]" + " car le model doc est null", Severity.ERROR);
+                        LOGGER.error("Impossible de synchroniser l'objet  " + localDoc.getClass().getSimpleName() + " [" + localDoc.getId() + "]" + " car le model doc est null");
                         continue_ = false;
                     }
                     if (continue_) {
@@ -597,7 +601,7 @@ public class UtilExport {
                 }
             }
         } catch (Exception ex) {
-            LogFiles.addLogInFile("", ex);
+            LOGGER.error("", ex);
             Logger.getLogger(UtilExport.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
@@ -612,15 +616,15 @@ public class UtilExport {
                     boolean continue_ = true;
                     //contrôle des liaison obligatoire
                     if (re.getAcompte() != null ? !Constantes.asLong(re.getAcompte().getId()) : true) {
-                        LogFiles.addLogInFile("Impossible de synchroniser l'objet  " + localDoc.getClass().getSimpleName() + " [" + localDoc.getId() + "]" + " car la caisse est null", Severity.ERROR);
+                        LOGGER.error("Impossible de synchroniser l'objet  " + localDoc.getClass().getSimpleName() + " [" + localDoc.getId() + "]" + " car la caisse est null");
                         continue_ = false;
                     }
                     if (re.getPieceVente() != null ? !Constantes.asLong(re.getPieceVente().getId()) : true) {
-                        LogFiles.addLogInFile("Impossible de synchroniser l'objet  " + localDoc.getClass().getSimpleName() + " [" + localDoc.getId() + "]" + " car la caisse est null", Severity.ERROR);
+                        LOGGER.error("Impossible de synchroniser l'objet  " + localDoc.getClass().getSimpleName() + " [" + localDoc.getId() + "]" + " car la caisse est null");
                         continue_ = false;
                     }
                     if (re.getAuthor() != null ? !Constantes.asLong(re.getAuthor().getId()) : true) {
-                        LogFiles.addLogInFile("Impossible de synchroniser l'objet  " + localDoc.getClass().getSimpleName() + " [" + localDoc.getId() + "]" + " car la caisse est null", Severity.ERROR);
+                        LOGGER.error("Impossible de synchroniser l'objet  " + localDoc.getClass().getSimpleName() + " [" + localDoc.getId() + "]" + " car la caisse est null");
                         continue_ = false;
                     }
                     if (continue_) {
@@ -633,7 +637,7 @@ public class UtilExport {
                 }
             }
         } catch (Exception ex) {
-            LogFiles.addLogInFile("", ex);
+            LOGGER.error("", ex);
             Logger.getLogger(UtilExport.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
@@ -649,12 +653,12 @@ public class UtilExport {
                     re.setAuthor(new YvsUsersAgence(UtilsProject.currentUser.getId()));
                     re.setCible(new YvsBaseCaisse(re.getCible()));
                     re.setSource(new YvsBaseCaisse(re.getSource()));
-                    JSONObject jo= UtilEntityBase.factoryJsonObject(re, YvsComptaCaissePieceVirement.class);                    
+                    JSONObject jo = UtilEntityBase.factoryJsonObject(re, YvsComptaCaissePieceVirement.class);
                     return jo;
                 }
             }
         } catch (Exception ex) {
-            LogFiles.addLogInFile("", ex);
+            LOGGER.error("", ex);
             Logger.getLogger(UtilExport.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;

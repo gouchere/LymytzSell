@@ -9,14 +9,14 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.print.attribute.standard.Severity;
+
+import com.lymytz.lymytzsell.service.application.config.PropertiesManager;
 import com.lymytz.lymytzsell.service.application.exception.CloseConException;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.EncryptMessage;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
-import com.lymytz.lymytzsell.service.utils.log.LogFiles;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  *
@@ -24,6 +24,7 @@ import com.lymytz.lymytzsell.service.utils.log.LogFiles;
  */
 public class RemoteDao {
 
+    private static final Logger LOGGER = LogManager.getLogger(RemoteDao.class);
     private static RemoteDao instance = null;
     private static Connection con;
 
@@ -32,26 +33,26 @@ public class RemoteDao {
         try {
             Class.forName("org.postgresql.Driver");
         } catch (ClassNotFoundException ex) {
-            LogFiles.addLogInFile("Aucun pilote de connexion à votre BD n'a été trouvé", ex);
+            LOGGER.error("Aucun pilote de connexion à votre BD n'a été trouvé", ex);
             throw new Exception("Aucun pilote de connexion à votre BD n'a été trouvé", ex.getCause());
         }
         UtilsProject.loadFilePropertie();
         if (UtilsProject.properties != null) {
-            String host = UtilsProject.properties.getProperty(Constantes.KEY_REMOTE_HOST);
-            String port = UtilsProject.properties.getProperty(Constantes.KEY_REMOTE_PORT);
-            String dbName = UtilsProject.properties.getProperty(Constantes.KEY_REMOTE_DB_NAME);
-            String user = EncryptMessage.decrypt(UtilsProject.properties.getProperty(Constantes.KEY_REMOTE_USERS), Constantes.KEY_ENCRYPT);
-            String password = EncryptMessage.decrypt(UtilsProject.properties.getProperty(Constantes.KEY_REMOTE_PASSWORD), Constantes.KEY_ENCRYPT);
+            String host = PropertiesManager.getInstance().getVal(Constantes.KEY_REMOTE_HOST);
+            String port = PropertiesManager.getInstance().getVal(Constantes.KEY_REMOTE_PORT);
+            String dbName = PropertiesManager.getInstance().getVal(Constantes.KEY_REMOTE_DB_NAME);
+            String user = EncryptMessage.decrypt(PropertiesManager.getInstance().getVal(Constantes.KEY_REMOTE_USERS), Constantes.KEY_ENCRYPT);
+            String password = EncryptMessage.decrypt(PropertiesManager.getInstance().getVal(Constantes.KEY_REMOTE_PASSWORD), Constantes.KEY_ENCRYPT);
             String URL = "jdbc:postgresql://" + host + ":" + port + "/" + dbName;
             try {
                 Properties p = new Properties();
                 RemoteDao.con = DriverManager.getConnection(URL, user, password);
             } catch (SQLException ex) {
-                LogFiles.addLogInFile("Connexion au serveur de données echoué", ex);
+                LOGGER.error("Connexion au serveur de données echoué", ex);
                 throw new Exception("Connexion au serveur de données echoué");
             }
         } else {
-            LogFiles.addLogInFile("Aucun paramètres de connexion à la BD trouvé !", Severity.REPORT);
+            LOGGER.info("Aucun paramètres de connexion à la BD trouvé !");
         }
     }
 
@@ -65,7 +66,7 @@ public class RemoteDao {
                 //détruit la connexion
                 RemoteDao.instance.getConnection().close();
             } catch (CloseConException | SQLException ex) {
-                Logger.getLogger(RemoteDao.class.getName()).log(Level.SEVERE, null, ex);
+                LOGGER.error("Erreur lors de la fermeture de la connexion", ex);
             }
         }
         RemoteDao.instance = instance;
@@ -82,7 +83,7 @@ public class RemoteDao {
                         instance = new RemoteDao();
                     } catch (Exception ex) {
                         instance = null;
-                        Logger.getLogger(RemoteDao.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
+                        LOGGER.error(ex.getMessage(), ex);
                     }
                 }
             }
@@ -99,7 +100,7 @@ public class RemoteDao {
                 throw new CloseConException();
             }
         } catch (SQLException ex) {
-            Logger.getLogger(RemoteDao.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.error("Erreur lors de l'obtention de la connexion", ex);
         }
         return null;
     }

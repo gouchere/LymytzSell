@@ -22,12 +22,13 @@ import com.lymytz.lymytzsell.dao.entity.YvsBaseUniteMesure;
 import com.lymytz.lymytzsell.dao.entity.YvsComDocVentes;
 import com.lymytz.lymytzsell.service.application.bean.ContentPanier;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
-import com.lymytz.lymytzsell.service.utils.log.LogFiles;
 
 /**
  * @author LYMYTZ
  */
 public class LoaderListing extends Task<ObservableList<ContentPanier>> {
+
+    private static final org.apache.logging.log4j.Logger LOGGER = org.apache.logging.log4j.LogManager.getLogger(LoaderListing.class);
 
     LocalQueryFactories Ldao;
     boolean details;
@@ -103,7 +104,7 @@ public class LoaderListing extends Task<ObservableList<ContentPanier>> {
                 .append("WHERE d.entete_doc=? AND d.type_doc IN ('FV', 'BCV') AND d.statut='V' ")
                 .append("GROUP BY a.id ,u.id, d.type_doc ")
                 .append("ORDER BY a.id ");
-        LogFiles.addLogInFile(sb.toString(), Severity.REPORT);
+        LOGGER.info(sb.toString());
         return sb.toString();
     }
 

@@ -42,7 +42,6 @@ import com.lymytz.lymytzsell.service.application.bean.TableBean;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.CustomWindow;
 import com.lymytz.lymytzsell.service.utils.LymytzService;
-import com.lymytz.lymytzsell.service.utils.log.LogFiles;
 import com.lymytz.lymytzsell.synchro.ws.WsSynchro;
 import com.lymytz.lymytzsell.view.main.HomeCaisseController;
 
@@ -60,6 +59,8 @@ import java.util.logging.Logger;
  * @author Admin
  */
 public class ImportDataController implements Initializable, Controller {
+
+    private static final org.apache.logging.log4j.Logger LOGGER = org.apache.logging.log4j.LogManager.getLogger(ImportDataController.class);
 
     RQueryFactories Rdao = new RQueryFactories();   //dao sur la base de donnée distante
     LocalQueryFactories dao = new LocalQueryFactories();   //dao sur la base de donnée distante
@@ -313,8 +314,8 @@ public class ImportDataController implements Initializable, Controller {
             tLoaderR.setName("Loader R Data");
             tLoaderR.start();
         } catch (Exception ex) {
-            LogFiles.addLogInFile("", new Exception(ex));
-            Logger.getLogger(ImportDataController.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.error("Erreur import", ex);
+            
         }
     }
 

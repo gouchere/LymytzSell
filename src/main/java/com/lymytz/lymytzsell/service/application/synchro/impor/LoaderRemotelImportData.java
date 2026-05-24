@@ -12,7 +12,6 @@ import javafx.concurrent.Task;
 import com.lymytz.lymytzsell.dao.entity.service.LymytzData;
 import com.lymytz.lymytzsell.dao.query.RQueryFactories;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
-import com.lymytz.lymytzsell.service.utils.log.LogFiles;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -32,6 +31,8 @@ import java.util.logging.Logger;
 @Getter
 @Setter
 public class LoaderRemotelImportData extends Task<ObservableList<ObservableList>> {
+
+    private static final org.apache.logging.log4j.Logger LOGGER = org.apache.logging.log4j.LogManager.getLogger(LoaderRemotelImportData.class);
 
     RQueryFactories dao = new RQueryFactories();
     private String methode;
@@ -79,7 +80,7 @@ public class LoaderRemotelImportData extends Task<ObservableList<ObservableList>
                     }
                 } catch (SQLException | NumberFormatException e) {
                     st.close();
-                    LogFiles.addLogInFile("", new Exception(e));
+                    LOGGER.error("", e);
                     Logger.getLogger(RQueryFactories.class.getName()).log(Level.SEVERE, null, e);
                 }
                 listData.add(line);
@@ -97,10 +98,10 @@ public class LoaderRemotelImportData extends Task<ObservableList<ObservableList>
             try {
                 st.close();
             } catch (SQLException ex1) {
-                LogFiles.addLogInFile("", new Exception(ex1));
+                LOGGER.error("", ex1);
                 Logger.getLogger(LoaderRemotelImportData.class.getName()).log(Level.SEVERE, null, ex1);
             }
-            LogFiles.addLogInFile("Erreur à l'exécution de la requête", new Exception(ex));
+            LOGGER.error("Erreur à l'exécution de la requête", ex);
             Logger.getLogger(RQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
         }
         return re;
@@ -124,10 +125,10 @@ public class LoaderRemotelImportData extends Task<ObservableList<ObservableList>
             try {
                 rs.close();
             } catch (SQLException ex1) {
-                LogFiles.addLogInFile("Erreur à la fermeture de la requête", new Exception(ex));
+                LOGGER.error("Erreur à la fermeture de la requête", ex);
                 Logger.getLogger(LoaderRemotelImportData.class.getName()).log(Level.SEVERE, null, ex1);
             }
-            LogFiles.addLogInFile("Erreur à l'exécution de la requête", new Exception(ex));
+            LOGGER.error("Erreur à l'exécution de la requête", ex);
             Logger.getLogger(RQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
         }
         return re;

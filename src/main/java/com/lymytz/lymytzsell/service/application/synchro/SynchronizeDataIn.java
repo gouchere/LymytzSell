@@ -6,6 +6,7 @@
 package com.lymytz.lymytzsell.service.application.synchro;
 
 import com.lymytz.lymytzsell.dao.query.LocalQueryFactories;
+import com.lymytz.lymytzsell.service.application.config.PropertiesManager;
 import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.ScheduledService;
@@ -23,7 +24,6 @@ import com.lymytz.lymytzsell.service.application.synchro.impor.ImportService;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.LQuery;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
-import com.lymytz.lymytzsell.service.utils.log.LogFiles;
 import com.lymytz.lymytzsell.synchro.ws.WsSynchro;
 import com.lymytz.lymytzsell.view.main.HomeCaisseController;
 
@@ -38,6 +38,8 @@ import java.util.logging.Logger;
  * @author LENOVO
  */
 public class SynchronizeDataIn extends ScheduledService<Boolean> {
+
+    private static final org.apache.logging.log4j.Logger LOGGER = org.apache.logging.log4j.LogManager.getLogger(SynchronizeDataIn.class);
 
     HomeCaisseController page;
     RQueryFactories Rdao;
@@ -80,7 +82,7 @@ public class SynchronizeDataIn extends ScheduledService<Boolean> {
                 return cal.getTime();
             }
         } catch (NumberFormatException ex) {
-            LogFiles.addLogInFile("Récupération de la date erronée !", ex);
+            LOGGER.error("Récupération de la date erronée !", ex);
         }
         return new Date();
     }
@@ -96,7 +98,7 @@ public class SynchronizeDataIn extends ScheduledService<Boolean> {
                     if (ListenServersRemote.remoteConnect) {
                         if (!WsSynchro.runningIn.get() && UtilsProject.RcurrentSociete != null && Constantes.asLong(UtilsProject.ID_SERVEUR)) {
                             String query = Constantes.getQueryListenData();
-                            String dure_init = UtilsProject.properties.get("DATE_INIT").toString();
+                            String dure_init = PropertiesManager.getInstance().getVal("DATE_INIT");
                             Date date = getDate(dure_init);
                             List<Object[]> l = Rdao.loadBySQLQuery(query, new Options[]{new Options(UtilsProject.ID_SERVEUR, 1), new Options(UtilsProject.RcurrentSociete.getId(), 2), new Options(date, 3)});
                             if (l != null && !l.isEmpty()) {
@@ -120,9 +122,9 @@ public class SynchronizeDataIn extends ScheduledService<Boolean> {
                                         service.setRemoteIdLocal(idLocalOnRemote);
                                         new Thread(service).start();
                                     } catch (Exception ex) {
-                                        LogFiles.addLogInFile("", ex);
+                                        LOGGER.error("", ex);
                                         WsSynchro.runningIn.set(false);
-                                        Logger.getLogger(SynchronizeDataIn.class.getName()).log(Level.SEVERE, null, ex);
+                                        
                                     }
                                 } else {
                                     WsSynchro.runningIn.set(false);
@@ -157,8 +159,8 @@ public class SynchronizeDataIn extends ScheduledService<Boolean> {
                         }
                     }
                 } catch (Exception ex) {
-                    LogFiles.addLogInFile("Synchronisation des données de ventes non réussi ", ex);
-                    Logger.getLogger(SynchronizeDataIn.class.getName()).log(Level.SEVERE, null, ex);
+                    LOGGER.error("Synchronisation des données de ventes non réussi ", ex);
+                    
                     this.failed();
                 }
                 return true;           

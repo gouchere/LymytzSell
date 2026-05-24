@@ -12,7 +12,6 @@ import com.lymytz.lymytzsell.dao.entity.YvsComEnteteDocVente;
 import com.lymytz.lymytzsell.dao.entity.YvsComptaAcompteClient;
 import com.lymytz.lymytzsell.dao.entity.YvsComptaCaissePieceVente;
 import com.lymytz.lymytzsell.dao.entity.YvsComptaNotifReglementVente;
-import com.lymytz.lymytzsell.service.utils.log.LogFiles;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -25,6 +24,8 @@ import static com.lymytz.lymytzsell.service.application.synchro.export.UtilExpor
  */
 public class BuilderEntitySynchro {
 
+    private static final org.apache.logging.log4j.Logger LOGGER = org.apache.logging.log4j.LogManager.getLogger(BuilderEntitySynchro.class);
+
     public BuilderEntitySynchro() {
     }
 
@@ -36,7 +37,7 @@ public class BuilderEntitySynchro {
             }
             return entity;
         } catch (Exception ex) {
-            LogFiles.addLogInFile("", ex);
+            LOGGER.error("", ex);
             Logger.getLogger(BuilderEntitySynchro.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
@@ -55,7 +56,7 @@ public class BuilderEntitySynchro {
                 return entity;
             }
         } catch (Exception ex) {
-            LogFiles.addLogInFile("", ex);
+            LOGGER.error("", ex);
             Logger.getLogger(BuilderEntitySynchro.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
@@ -77,7 +78,7 @@ public class BuilderEntitySynchro {
 
             return entity;
         } catch (Exception ex) {
-            LogFiles.addLogInFile("", ex);
+            LOGGER.error("", ex);
             Logger.getLogger(BuilderEntitySynchro.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
@@ -88,7 +89,7 @@ public class BuilderEntitySynchro {
             YvsComptaCaissePieceVente entity = (YvsComptaCaissePieceVente) dao.findOneByNQ("YvsComptaCaissePieceVente.findById", new String[]{"id"}, new Object[]{id});
             return entity;
         } catch (Exception ex) {
-            LogFiles.addLogInFile("", ex);
+            LOGGER.error("", ex);
             Logger.getLogger(BuilderEntitySynchro.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
@@ -99,7 +100,7 @@ public class BuilderEntitySynchro {
             YvsComptaNotifReglementVente entity = (YvsComptaNotifReglementVente) dao.findOneByNQ("YvsComptaNotifReglementVente.findById", new String[]{"id"}, new Object[]{id});
             return entity;
         } catch (Exception ex) {
-            LogFiles.addLogInFile("", ex);
+            LOGGER.error("", ex);
             Logger.getLogger(BuilderEntitySynchro.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;

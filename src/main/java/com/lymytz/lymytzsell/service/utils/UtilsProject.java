@@ -6,7 +6,6 @@
 package com.lymytz.lymytzsell.service.utils;
 
 import com.lymytz.lymytzsell.dao.Options;
-import com.lymytz.lymytzsell.dao.ParamConnection;
 import com.lymytz.lymytzsell.dao.UtilsBean;
 import com.lymytz.lymytzsell.dao.entity.YvsAgences;
 import com.lymytz.lymytzsell.dao.entity.YvsBaseCaisse;
@@ -25,8 +24,9 @@ import com.lymytz.lymytzsell.dao.entity.YvsUsersAgence;
 import com.lymytz.lymytzsell.dao.entity.service.EntityColumn;
 import com.lymytz.lymytzsell.dao.query.LocalQueryFactories;
 import com.lymytz.lymytzsell.dao.query.RQueryFactories;
+import com.lymytz.lymytzsell.service.application.config.Properties;
+import com.lymytz.lymytzsell.service.application.config.PropertiesManager;
 import com.lymytz.lymytzsell.service.application.synchro.UtilEntityBase;
-import com.lymytz.lymytzsell.service.utils.log.LogFiles;
 import com.lymytz.lymytzsell.synchro.ws.WsSynchro;
 import com.lymytz.lymytzsell.view.LocalLoader;
 import com.lymytz.lymytzsell.view.main.HomeCaisseController;
@@ -38,9 +38,6 @@ import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.print.attribute.standard.Severity;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.net.ServerSocket;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -50,7 +47,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-import java.util.Properties;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -67,7 +63,6 @@ public class UtilsProject {
     public static final AtomicLong localId = new AtomicLong(-9999);
     public static ServerSocket server;
     public static HomeCaisseController currentPage;
-    public static ParamConnection paramConnection;
     public static Properties properties;
     public static Stage primaryStage;
     public static Stage stageConnect;
@@ -109,11 +104,11 @@ public class UtilsProject {
     }
 
     public static boolean isReplicationMode() {
-        return Boolean.TRUE.equals(UtilsProject.REPLICATION) && Constantes.APPS_MODE_BOTH.equals(UtilsProject.properties.getProperty(Constantes.KEY_MODE));
+        return UtilsProject.REPLICATION && Constantes.APPS_MODE_BOTH.equals(PropertiesManager.getInstance().getVal(Constantes.KEY_MODE));
     }
 
     public static boolean isProductionEnv() {
-        return UtilsProject.properties.containsKey(Constantes.KEY_ENVIRONNEMENT) && (UtilsProject.properties.getProperty(Constantes.KEY_ENVIRONNEMENT).equals("PRODUCTION"));
+        return (PropertiesManager.getInstance().getVal(Constantes.KEY_ENVIRONNEMENT).equals("PRODUCTION"));
     }
 
     public static boolean verifyDateVente(Date date) {
@@ -145,7 +140,7 @@ public class UtilsProject {
         LocalQueryFactories dao = new LocalQueryFactories();
         String[] champ = new String[]{"dateJour"};
         Object[] val = new Object[]{date};
-        YvsBaseExercice exo = (YvsBaseExercice) dao.findOneByNQ("YvsBaseExercice.findActifByDate", champ, val);
+        YvsBaseExercice exo = dao.findOneByNQ("YvsBaseExercice.findActifByDate", champ, val);
         if (exo == null || exo.getId() < 1) {
             LymytzService.openAlertDialog("Le document doit etre enregistré dans un exercice actif", "Erreur facture", "Aucun exercice actif trouvé", Alert.AlertType.ERROR);
             return false;
@@ -183,18 +178,9 @@ public class UtilsProject {
         return true;
     }
 
-    public static String generatedNumDocCaisse() {
-        UtilsBean util = new UtilsBean();
-        if (headerDoc != null && headerDoc.getCreneau() != null) {
-            return util.genererReference(Constantes.TYPE_PT_NAME, headerDoc.getDateEntete(), headerDoc.getCreneau().getCreneauPoint().getPoint().getId(), Constantes.DEPOT, "", currentAgence);
-        } else {
-            return null;
-        }
-    }
-
     public static double getStocks(YvsBaseConditionnement c, long depot) {
         Double re;
-        if (Boolean.FALSE.equals(UtilsProject.REPLICATION)) {
+        if (!UtilsProject.REPLICATION) {
             LocalQueryFactories rq = new LocalQueryFactories();
             re = (Double) (rq.findOneObjectBySQLQ("select public.get_stock_reel(?,?,?,?,?,?::date,?,?)", new Options[]{
                     new Options(c.getArticle().getId(), 1), new Options(0, 2), new Options(depot, 3), new Options(0, 4), new Options(0, 5),
@@ -212,7 +198,7 @@ public class UtilsProject {
 
     public static double getPr(YvsBaseConditionnement c, long depot) {
         Double prixDeRevient;
-        if (Boolean.FALSE.equals(UtilsProject.REPLICATION)) {
+        if (!UtilsProject.REPLICATION) {
             var queryFactorie = new LocalQueryFactories();
             prixDeRevient = (Double) (queryFactorie.findOneObjectBySQLQ("select public.get_pr(?,?,?,?::date,?)", new Options[]{
                     new Options(c.getArticle().getId(), 1), new Options(depot, 2), new Options(0, 3),
@@ -229,76 +215,39 @@ public class UtilsProject {
     }
 
     public static String getVal(String key) {
-        try {
-            String re = UtilsProject.properties.getProperty(key);
-            return (Constantes.asString(re) ? re : null);
-        } catch (Exception ex) {
-            LOGGER.error("Récupération de la clé erronée ! {}", key, ex);
-        }
-        return null;
+        return PropertiesManager.getInstance().getVal(key);
     }
 
+    /**
+     * Force le rechargement des propriétés depuis le disque.
+     * À appeler uniquement lors d'un rechargement explicite par l'utilisateur.
+     */
+    public static void reloadFilePropertie() {
+        PropertiesManager.getInstance().reload();
+        properties = PropertiesManager.getInstance().getProperties();
+    }
+
+    /**
+     * Initialise les propriétés et {@code paramConnection} depuis le singleton {@link PropertiesManager}.
+     * Idempotent : le chargement disque n'a lieu qu'une seule fois (dans le constructeur du singleton).
+     */
     public static void loadFilePropertie() {
-        try {
-            if (UtilsProject.properties == null) {
-                LOGGER.info("initialisation des propriétés de l'application");
-                UtilsProject.properties = new Properties();
-            }
-            try (FileInputStream fis = LymytzService.getPropertiesFileInputStream()) {
-                UtilsProject.properties.load(fis);
-                if (paramConnection == null) {
-                    paramConnection = new ParamConnection();
-                }
-                paramConnection.setCheminPhotos(getVal(Constantes.KEY_PATH));
-                String s = getVal(Constantes.KEY_CLIENT_DIVERS);
-                paramConnection.setClientDivers(Constantes.asString(s) ? Long.parseLong(s) : 0L);
-                paramConnection.setCodeAgence((Constantes.asString(getVal(Constantes.KEY_LOCAL_AGENCE))) ? Long.parseLong(Objects.requireNonNull(getVal(Constantes.KEY_LOCAL_AGENCE))) : 0L);
-                paramConnection.setCodeSociete((Constantes.asString(getVal(Constantes.KEY_LOCAL_SOCIETE))) ? Long.parseLong(Objects.requireNonNull(getVal(Constantes.KEY_LOCAL_SOCIETE))) : 0L);
-                paramConnection.setDataBase(getVal(Constantes.KEY_LOCAL_DB_NAME));
-                paramConnection.setDataBaseRemote(getVal(Constantes.KEY_REMOTE_DB_NAME));
-                paramConnection.setHostWeb(getVal(Constantes.KEY_WEB_HOST));
-                paramConnection.setIdRemoteScte((Constantes.asString(getVal(Constantes.KEY_REMOTE_SOCIETE))) ? Long.parseLong(Objects.requireNonNull(getVal(Constantes.KEY_REMOTE_SOCIETE))) : 0L);
-                paramConnection.setModeReg((Constantes.asString(getVal(Constantes.KEY_MODE_REGLEMENT))) ? Long.parseLong(Objects.requireNonNull(getVal(Constantes.KEY_MODE_REGLEMENT))) : 0L);
-                paramConnection.setModelReg((Constantes.asString(getVal(Constantes.KEY_MODEL_REGLEMENT))) ? Long.parseLong(Objects.requireNonNull(getVal(Constantes.KEY_MODEL_REGLEMENT))) : 0L);
-                paramConnection.setP_default(!(Constantes.asString(getVal(Constantes.KEY_USE_PRINTER))) || Boolean.parseBoolean(getVal(Constantes.KEY_USE_PRINTER)));
-                paramConnection.setP_height((Constantes.asString(getVal(Constantes.KEY_PAPER_HEIGHT))) ? Double.parseDouble(Objects.requireNonNull(getVal(Constantes.KEY_PAPER_HEIGHT))) : 0d);
-                paramConnection.setP_width((Constantes.asString(getVal(Constantes.KEY_PAPER_WIDTH))) ? Double.parseDouble(Objects.requireNonNull(getVal(Constantes.KEY_PAPER_WIDTH))) : 0d);
-                paramConnection.setP_mb((Constantes.asString(getVal(Constantes.KEY_PAPER_M_BOTOM))) ? Double.parseDouble(Objects.requireNonNull(getVal(Constantes.KEY_PAPER_M_BOTOM))) : 0d);
-                paramConnection.setP_ml((Constantes.asString(getVal(Constantes.KEY_PAPER_M_LEFT))) ? Double.parseDouble(Objects.requireNonNull(getVal(Constantes.KEY_PAPER_M_LEFT))) : 0d);
-                paramConnection.setP_mr((Constantes.asString(getVal(Constantes.KEY_PAPER_M_RIGHT))) ? Double.parseDouble(Objects.requireNonNull(getVal(Constantes.KEY_PAPER_M_RIGHT))) : 0d);
-                paramConnection.setP_mt((Constantes.asString(getVal(Constantes.KEY_PAPER_M_TOP))) ? Double.parseDouble(Objects.requireNonNull(getVal(Constantes.KEY_PAPER_M_TOP))) : 0d);
-                paramConnection.setPassword(getVal(Constantes.KEY_LOCAL_PASSWORD));
-                paramConnection.setPasswordRemote(getVal(Constantes.KEY_REMOTE_PASSWORD));
-                paramConnection.setPort(getVal(Constantes.KEY_LOCAL_PORT));
-                paramConnection.setPortRemote(getVal(Constantes.KEY_REMOTE_PORT));
-                paramConnection.setPortWeb(getVal(Constantes.KEY_WEB_PORT));
-                paramConnection.setSever(getVal(Constantes.KEY_LOCAL_HOST));
-                paramConnection.setSeverRemote(getVal(Constantes.KEY_REMOTE_HOST));
-                paramConnection.setTypeRapport(getVal(Constantes.KEY_TYPE_PRINT));
-                paramConnection.setUseCodeBarre(!Constantes.asString(getVal(Constantes.KEY_USE_CODE_BARRE)) || Boolean.parseBoolean(getVal(Constantes.KEY_USE_CODE_BARRE)));
-                paramConnection.setUsePrinter(!Constantes.asString(getVal(Constantes.KEY_USE_PRINTER)) || Boolean.parseBoolean(getVal(Constantes.KEY_USE_PRINTER)));
-                paramConnection.setUsers(getVal(Constantes.KEY_LOCAL_USERS));
-                paramConnection.setUsersRemote(getVal(Constantes.KEY_REMOTE_USERS));
-                var isropertyLoad=Constantes.asString(getVal(Constantes.KEY_LOAD_CATALOGUE));
-                paramConnection.setLoadCatalogue(isropertyLoad && Boolean.parseBoolean(getVal(Constantes.KEY_LOAD_CATALOGUE)));
-            }
-        } catch (IOException ex) {
-            LOGGER.error("Fichier d'Environnement non trouvé !", ex);
-        }
+        PropertiesManager app = PropertiesManager.getInstance();
+        properties = app.getProperties();
     }
 
     public static void chargerLesDonneesDistante() {
         loadFilePropertie();
         try {
             if (UtilsProject.properties != null) {
-                if (Constantes.asString(properties.getProperty(Constantes.KEY_REMOTE_SOCIETE))) {
-                    LogFiles.addLogInFile("loading remote société !", Severity.REPORT);
-                    RcurrentSociete = new YvsSocietes(Long.valueOf(properties.getProperty(Constantes.KEY_REMOTE_SOCIETE)));
+                if (properties.getIdRemoteScte() <= 0) {
+                    LOGGER.info("loading remote société !");
+                    RcurrentSociete = new YvsSocietes(properties.getIdRemoteScte());
                 }
                 REPLICATION = getReplication();
                 LOGGER.info("Le mode réplication {}", (REPLICATION ? "est activé" : "n'est pas activé"));
-                if (REPLICATION && Constantes.asString(properties.getProperty(Constantes.KEY_LOCAL_AGENCE))) {
-                    currentAgence = new YvsAgences(Long.valueOf(properties.getProperty(Constantes.KEY_LOCAL_AGENCE)));
+                if (REPLICATION && properties.getCodeAgence() > 0) {
+                    currentAgence = new YvsAgences(properties.getCodeAgence());
                     RcurrentAgence = new YvsAgences(UtilEntityBase.findIdRemoteData(Constantes.TABLE_AGENCE_CODE, currentAgence.getId()));
                 }
             }
@@ -315,8 +264,8 @@ public class UtilsProject {
     }
 
     public static void initDataR() {
-        if (Constantes.asString((String) properties.get(Constantes.KEY_REMOTE_SOCIETE))) {
-            RcurrentSociete = new YvsSocietes(Long.valueOf(properties.getProperty(Constantes.KEY_REMOTE_SOCIETE)));
+        if (properties.getIdRemoteScte() > 0) {
+            RcurrentSociete = new YvsSocietes(properties.getIdRemoteScte());
         }
         if (currentAgence != null && currentAgence.getId() > 0) {
             RcurrentAgence = new YvsAgences(UtilEntityBase.findIdRemoteData(Constantes.TABLE_AGENCE_CODE, currentAgence.getId()));
@@ -330,16 +279,10 @@ public class UtilsProject {
 
     public static void loadInitData() {
         LocalQueryFactories dao = new LocalQueryFactories();
-        if (paramConnection == null) {
-            paramConnection = new ParamConnection();
+        if (properties == null) {
+            properties = new Properties();
         }
         loadFilePropertie();
-        if (Constantes.asString((String) properties.get(Constantes.KEY_LOCAL_AGENCE))) {
-            paramConnection.setCodeAgence(Long.parseLong(properties.get(Constantes.KEY_LOCAL_AGENCE).toString()));
-        }
-        if (Constantes.asString((String) properties.get(Constantes.KEY_LOCAL_SOCIETE))) {
-            paramConnection.setCodeSociete(Long.parseLong(properties.get(Constantes.KEY_LOCAL_SOCIETE).toString()));
-        }
         //Charge la liste des villes
         villes = dao.loadByNamedQuery("YvsDictionnaire.findVilles", new String[]{}, new Object[]{});
         //charge l'agence par defaut
@@ -349,26 +292,26 @@ public class UtilsProject {
                 Platform.runLater(() -> LymytzService.openAlertDialog("Impossible de trouver l'agence locale", "Erreur au demarrage", "Aucune Agence n'a été trouvé !", Alert.AlertType.ERROR));
             }
         }
-        if (Constantes.asLong(paramConnection.getCodeSociete())) {
-            currentSociete = dao.findOneByNQ("YvsSocietes.findById", new String[]{"id"}, new Object[]{paramConnection.getCodeSociete()});
+        if (Constantes.asLong(properties.getCodeSociete())) {
+            currentSociete = dao.findOneByNQ("YvsSocietes.findById", new String[]{"id"}, new Object[]{properties.getCodeSociete()});
             if (currentSociete == null) {
                 Platform.runLater(() -> LymytzService.openAlertDialog("Impossible de trouver la société", "Erreur au demarrage", "Aucune société n'a été trouvé !", Alert.AlertType.ERROR));
             }
         }
-        if (Constantes.asLong(paramConnection.getClientDivers())) {
-            clientDivers = dao.findOneByNQ("YvsComClient.findById", new String[]{"id"}, new Object[]{paramConnection.getClientDivers()});
+        if (Constantes.asLong(properties.getClientDivers())) {
+            clientDivers = dao.findOneByNQ("YvsComClient.findById", new String[]{"id"}, new Object[]{properties.getClientDivers()});
         }
-        if (Constantes.asLong(paramConnection.getSecteur())) {
-            defaultAdresse = dao.findOneByNQ("YvsDictionnaire.findById", new String[]{"id"}, new Object[]{paramConnection.getSecteur()});
+        if (Constantes.asLong(properties.getSecteur())) {
+            defaultAdresse = dao.findOneByNQ("YvsDictionnaire.findById", new String[]{"id"}, new Object[]{properties.getSecteur()});
         }
-        if (Constantes.asLong(paramConnection.getModeReg())) {
-            modeReg = dao.findOneByNQ("YvsBaseModeReglement.findById", new String[]{"id"}, new Object[]{paramConnection.getModeReg()});
+        if (Constantes.asLong(properties.getModeReg())) {
+            modeReg = dao.findOneByNQ("YvsBaseModeReglement.findById", new String[]{"id"}, new Object[]{properties.getModeReg()});
         }
-        if (Constantes.asLong(paramConnection.getModelReg())) {
-            modelReg = dao.findOneByNQ("YvsBaseModelReglement.findById", new String[]{"id"}, new Object[]{paramConnection.getModelReg()});
+        if (Constantes.asLong(properties.getModelReg())) {
+            modelReg = dao.findOneByNQ("YvsBaseModelReglement.findById", new String[]{"id"}, new Object[]{properties.getModelReg()});
         }
         REPLICATION = getReplication();
-        if (Boolean.TRUE.equals(REPLICATION)) {
+        if (REPLICATION) {
             if (currentAgence != null && currentAgence.getId() > 0) {
                 RcurrentAgence = new YvsAgences(UtilEntityBase.findIdRemoteData(Constantes.TABLE_AGENCE_CODE, currentAgence.getId()));
             }
@@ -382,10 +325,11 @@ public class UtilsProject {
 
     public static Boolean getReplication() {
         //On est en environnement de replication si l'adresse distante est différente de l'adresse locale
-        String host = UtilsProject.properties.getProperty(Constantes.KEY_LOCAL_HOST);
-        String hostR = UtilsProject.properties.getProperty(Constantes.KEY_REMOTE_HOST);
-        String db = UtilsProject.properties.getProperty(Constantes.KEY_LOCAL_DB_NAME);
-        String dbR = UtilsProject.properties.getProperty(Constantes.KEY_REMOTE_DB_NAME);
+        Properties properties = PropertiesManager.getInstance().getProperties();
+        String host = properties.getSever();
+        String hostR = properties.getSeverRemote();
+        String db = properties.getDataBase();
+        String dbR = properties.getDataBaseRemote();
         return !host.equals(hostR) || !db.equals(dbR);
     }
 

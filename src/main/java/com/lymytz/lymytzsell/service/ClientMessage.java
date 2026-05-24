@@ -5,6 +5,7 @@
  */
 package com.lymytz.lymytzsell.service;
 
+import com.lymytz.lymytzsell.service.application.config.PropertiesManager;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.LymytzService;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
@@ -48,8 +49,8 @@ public class ClientMessage {
         try {
             page.LAB_SYNC_MSG.setVisible(false);
             page.LAB_SYNC_MSG.setText("");
-            String ip = UtilsProject.properties.getProperty(Constantes.KEY_LOCAL_HOST);
-            String port = UtilsProject.properties.getProperty(Constantes.KEY_APPS_PORT);
+            String ip = PropertiesManager.getInstance().getVal(Constantes.KEY_LOCAL_HOST);
+            String port = PropertiesManager.getInstance().getVal(Constantes.KEY_APPS_PORT);
             socketClient = new Socket(ip, Integer.parseInt(port));
             readMessage(socketClient);
         } catch (IOException ex) {

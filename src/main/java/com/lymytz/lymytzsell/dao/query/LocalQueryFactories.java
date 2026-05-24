@@ -16,8 +16,9 @@ import com.lymytz.lymytzsell.dao.entity.YvsSynchroServeurs;
 import com.lymytz.lymytzsell.dao.entity.service.EntityColumn;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
-import com.lymytz.lymytzsell.service.utils.log.LogFiles;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.persistence.EntityManager;
 import javax.persistence.FlushModeType;
@@ -32,17 +33,17 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import static com.lymytz.lymytzsell.business.helpers.HelperFactureVente.factureDtoFromEntity;
 import static com.lymytz.lymytzsell.business.helpers.HelperFactureVente.getStringJsonFromEntity;
 import static com.lymytz.lymytzsell.service.utils.MessagesConstants.ECHEC_DE_LEXEECUTION_DE_LA_REQUETE;
+import static org.apache.logging.log4j.LogManager.getLogger;
 
 /**
  * @author Admin gestionnaire des requêtes locale
  */
 public class LocalQueryFactories {
+    private static final Logger LOGGER = getLogger(LocalQueryFactories.class);
     private static final String QUERY_EXECUTION_ERROR_MESSAGE = "Echec de l'execution de la requete: %s";
 
     public LocalQueryFactories() {
@@ -58,7 +59,7 @@ public class LocalQueryFactories {
                 em.close();
                 return true;
             } catch (Exception ex) {
-                LogFiles.addLogInFile(String.format(QUERY_EXECUTION_ERROR_MESSAGE, query), ex);
+                LOGGER.error(String.format(QUERY_EXECUTION_ERROR_MESSAGE, query), ex);
                 LocalDao.setInstance(null);
                 return false;
             }
@@ -85,9 +86,8 @@ public class LocalQueryFactories {
                 return entity;
             } catch (Exception ex) {
                 //Logging de l'erreur
-                LogFiles.addLogInFile("Echec de l'execution de la requete save " + (entity.toString()), ex);
+                LOGGER.error("Echec de l'execution de la requete save " + (entity.toString()), ex);
                 LocalDao.setInstance(null);
-                Logger.getLogger(LocalQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         return null;
@@ -112,9 +112,8 @@ public class LocalQueryFactories {
                 return (entity);
             } catch (Exception ex) {
                 //Logging de l'erreur
-                LogFiles.addLogInFile("Echec de l'execution de la requete save " + (entity.toString()), ex);
+                LOGGER.error("Echec de l'execution de la requete save " + (entity.toString()), ex);
                 LocalDao.setInstance(null);
-                Logger.getLogger(LocalQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         return null;
@@ -141,9 +140,8 @@ public class LocalQueryFactories {
                 }
             } catch (Exception ex) {
                 //Logging de l'erreur
-                LogFiles.addLogInFile(String.format(QUERY_EXECUTION_ERROR_MESSAGE, query), ex);
+                LOGGER.error(String.format(QUERY_EXECUTION_ERROR_MESSAGE, query), ex);
                 LocalDao.setInstance(null);
-                Logger.getLogger(LocalQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         return null;
@@ -174,9 +172,8 @@ public class LocalQueryFactories {
                 }
             } catch (Exception ex) {
                 //Logging de l'erreur
-                LogFiles.addLogInFile(String.format(QUERY_EXECUTION_ERROR_MESSAGE, query), ex);
+                LOGGER.error(String.format(QUERY_EXECUTION_ERROR_MESSAGE, query), ex);
                 LocalDao.setInstance(null);
-                Logger.getLogger(LocalQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         return null;
@@ -202,9 +199,8 @@ public class LocalQueryFactories {
                 }
             } catch (Exception ex) {
                 //Logging de l'erreur
-                LogFiles.addLogInFile(String.format(QUERY_EXECUTION_ERROR_MESSAGE, query), ex);
+                LOGGER.error(String.format(QUERY_EXECUTION_ERROR_MESSAGE, query), ex);
                 LocalDao.setInstance(null);
-                Logger.getLogger(LocalQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         return null;
@@ -226,9 +222,8 @@ public class LocalQueryFactories {
                 return result;
             } catch (Exception ex) {
                 //Logging de l'erreur
-                LogFiles.addLogInFile(String.format(QUERY_EXECUTION_ERROR_MESSAGE, query), ex);
+                LOGGER.error(String.format(QUERY_EXECUTION_ERROR_MESSAGE, query), ex);
                 LocalDao.setInstance(null);
-                Logger.getLogger(LocalQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         return result;
@@ -252,9 +247,8 @@ public class LocalQueryFactories {
                 return result;
             } catch (Exception ex) {
                 //Logging de l'erreur
-                LogFiles.addLogInFile(String.format(QUERY_EXECUTION_ERROR_MESSAGE, query), ex);
+                LOGGER.error(String.format(QUERY_EXECUTION_ERROR_MESSAGE, query), ex);
                 LocalDao.setInstance(null);
-                Logger.getLogger(LocalQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         return result;
@@ -274,9 +268,8 @@ public class LocalQueryFactories {
                 return result;
             } catch (Exception ex) {
                 //Logging de l'erreur
-                LogFiles.addLogInFile(String.format(QUERY_EXECUTION_ERROR_MESSAGE, query), ex);
+                LOGGER.error(String.format(QUERY_EXECUTION_ERROR_MESSAGE, query), ex);
                 LocalDao.setInstance(null);
-                Logger.getLogger(LocalQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         return result;
@@ -296,9 +289,8 @@ public class LocalQueryFactories {
                 return result;
             } catch (Exception ex) {
                 //Logging de l'erreur
-                LogFiles.addLogInFile(String.format(QUERY_EXECUTION_ERROR_MESSAGE, query), ex);
+                LOGGER.error(String.format(QUERY_EXECUTION_ERROR_MESSAGE, query), ex);
                 LocalDao.setInstance(null);
-                Logger.getLogger(LocalQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         return result;
@@ -320,9 +312,8 @@ public class LocalQueryFactories {
                 return result;
             } catch (Exception ex) {
                 //Logging de l'erreur
-                LogFiles.addLogInFile(String.format(QUERY_EXECUTION_ERROR_MESSAGE, query), ex);
+                LOGGER.error(String.format(QUERY_EXECUTION_ERROR_MESSAGE, query), ex);
                 LocalDao.setInstance(null);
-                Logger.getLogger(LocalQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         return result;
@@ -344,11 +335,9 @@ public class LocalQueryFactories {
                 }
             } catch (Exception ex) {
                 try {
-                    LogFiles.addLogInFile(String.format(QUERY_EXECUTION_ERROR_MESSAGE, ""), ex);
+                    LOGGER.error(String.format(QUERY_EXECUTION_ERROR_MESSAGE, ""), ex);
                     LocalDao.setInstance(null);
-                    Logger.getLogger(LocalQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (Exception ex1) {
-                    Logger.getLogger(LocalQueryFactories.class.getName()).log(Level.SEVERE, null, ex1);
                 }
             }
         }
@@ -365,8 +354,7 @@ public class LocalQueryFactories {
                     st.setObject(1, valueFilter);
                 }
             } catch (SQLException ex) {
-                LogFiles.addLogInFile(String.format(QUERY_EXECUTION_ERROR_MESSAGE, query), ex);
-                Logger.getLogger(LocalQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
+                LOGGER.error(String.format(QUERY_EXECUTION_ERROR_MESSAGE, query), ex);
             }
         }
         return st;
@@ -383,7 +371,6 @@ public class LocalQueryFactories {
                     st.setObject(1, valueFilter);
                 }
             } catch (SQLException ex) {
-                Logger.getLogger(LocalQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         return st;
@@ -407,9 +394,8 @@ public class LocalQueryFactories {
                 return id;
             } catch (Exception ex) {
                 //Logging de l'erreur
-                LogFiles.addLogInFile(String.format(QUERY_EXECUTION_ERROR_MESSAGE, query), ex);
+                LOGGER.error(String.format(QUERY_EXECUTION_ERROR_MESSAGE, query), ex);
                 LocalDao.setInstance(null);
-                Logger.getLogger(LocalQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
             }
 
         }
@@ -434,11 +420,9 @@ public class LocalQueryFactories {
             return dr != null ? dr : false;
         } catch (Exception ex) {
             try {
-                LogFiles.addLogInFile("", ex);
+                LOGGER.error("", ex);
                 LocalDao.setInstance(null);
-                Logger.getLogger(LocalQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
             } catch (Exception ex1) {
-                Logger.getLogger(LocalQueryFactories.class.getName()).log(Level.SEVERE, null, ex1);
             }
         }
         return false;
@@ -459,9 +443,8 @@ public class LocalQueryFactories {
                 return 1L;
             } catch (Exception ex) {
                 //Logging de l'erreur
-                LogFiles.addLogInFile(ECHEC_DE_LEXEECUTION_DE_LA_REQUETE + query, ex);
+                LOGGER.error(ECHEC_DE_LEXEECUTION_DE_LA_REQUETE + query, ex);
                 LocalDao.setInstance(null);
-                Logger.getLogger(LocalQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
             }
 
         }
@@ -515,9 +498,8 @@ public class LocalQueryFactories {
                 em.getTransaction().commit();
             } catch (Exception ex) {
                 //Logging de l'erreur
-                LogFiles.addLogInFile(String.format(QUERY_EXECUTION_ERROR_MESSAGE, query), ex);
+                LOGGER.error(String.format(QUERY_EXECUTION_ERROR_MESSAGE, query), ex);
                 LocalDao.setInstance(null);
-                Logger.getLogger(LocalQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
@@ -541,9 +523,8 @@ public class LocalQueryFactories {
                     return 0L;
                 } catch (Exception ex) {
                     //Logging de l'erreur
-                    LogFiles.addLogInFile(ECHEC_DE_LEXEECUTION_DE_LA_REQUETE + rq, ex);
+                    LOGGER.error(ECHEC_DE_LEXEECUTION_DE_LA_REQUETE + rq, ex);
                     LocalDao.setInstance(null);
-                    Logger.getLogger(LocalQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
                 }
 //            }
             } else {
@@ -579,9 +560,8 @@ public class LocalQueryFactories {
                         return idListen;
                     } catch (Exception ex) {
                         //Logging de l'erreur
-                        LogFiles.addLogInFile(ECHEC_DE_LEXEECUTION_DE_LA_REQUETE + sb.toString(), ex);
+                        LOGGER.error(ECHEC_DE_LEXEECUTION_DE_LA_REQUETE + sb.toString(), ex);
                         LocalDao.setInstance(null);
-                        Logger.getLogger(LocalQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
             }
@@ -613,9 +593,8 @@ public class LocalQueryFactories {
                 return idListen;
             } catch (Exception ex) {
                 //Logging de l'erreur
-                LogFiles.addLogInFile(ECHEC_DE_LEXEECUTION_DE_LA_REQUETE + sb.toString(), ex);
+                LOGGER.error(ECHEC_DE_LEXEECUTION_DE_LA_REQUETE + sb.toString(), ex);
                 LocalDao.setInstance(null);
-                Logger.getLogger(LocalQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         return null;
@@ -660,8 +639,7 @@ public class LocalQueryFactories {
                 em.close();
             }
         } catch (Exception ex) {
-            LogFiles.addLogInFile("", ex);
-            Logger.getLogger(LocalQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.error("", ex);
         }
     }
 
@@ -683,14 +661,12 @@ public class LocalQueryFactories {
                 em.close();
                 return (!re.isEmpty()) ? re.get(0) : null;
             } catch (NoResultException ex) {
-                LogFiles.addLogInFile(ECHEC_DE_LEXEECUTION_DE_LA_REQUETE + query, ex);
-                Logger.getLogger(LocalQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
+                LOGGER.error(ECHEC_DE_LEXEECUTION_DE_LA_REQUETE + query, ex);
                 return null;
             }
         } catch (Exception ex) {
             //Logging de l'erreur
-            LogFiles.addLogInFile(ECHEC_DE_LEXEECUTION_DE_LA_REQUETE + query, ex);
-            Logger.getLogger(LocalDao.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.error(ECHEC_DE_LEXEECUTION_DE_LA_REQUETE + query, ex);
         }
         return null;
     }
@@ -742,8 +718,7 @@ public class LocalQueryFactories {
 
             }
         } catch (IllegalArgumentException | SecurityException ex) {
-            LogFiles.addLogInFile("", ex);
-            Logger.getLogger(LocalQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.error("", ex);
         }
         return entity;
     }
@@ -753,8 +728,7 @@ public class LocalQueryFactories {
         try {
             executeSqlQuery(query, new Options[]{new Options(nbFailed, 1), new Options(idListenn, 2)});
         } catch (NoResultException ex) {
-            LogFiles.addLogInFile(ECHEC_DE_LEXEECUTION_DE_LA_REQUETE + query, ex);
-            Logger.getLogger(LocalQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.error(ECHEC_DE_LEXEECUTION_DE_LA_REQUETE + query, ex);
         }
     }
 
@@ -763,8 +737,7 @@ public class LocalQueryFactories {
         try {
             executeSqlQuery(query, new Options[]{new Options(message, 1), new Options(idListenn, 2)});
         } catch (NoResultException ex) {
-            LogFiles.addLogInFile(ECHEC_DE_LEXEECUTION_DE_LA_REQUETE + query, ex);
-            Logger.getLogger(LocalQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.error(ECHEC_DE_LEXEECUTION_DE_LA_REQUETE + query, ex);
         }
     }
 

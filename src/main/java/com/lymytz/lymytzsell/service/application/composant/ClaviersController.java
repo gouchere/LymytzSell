@@ -15,7 +15,6 @@ import com.lymytz.lymytzsell.service.application.ManagedApplication;
 import com.lymytz.lymytzsell.service.application.bean.ContentPanier;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.LymytzService;
-import com.lymytz.lymytzsell.service.utils.MessagesConstants;
 import com.lymytz.lymytzsell.service.utils.PrintTiket;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
 import com.lymytz.lymytzsell.view.main.HomeCaisseController;
@@ -289,7 +288,7 @@ public class ClaviersController extends ManagedApplication implements Initializa
     }
 
     private void printTicketFacture(YvsComDocVentes facture, double montantRecu) {
-        if (Boolean.TRUE.equals(UtilsProject.paramConnection.getUsePrinter()) && TYPE_RAPPORT_TICKET.equals(UtilsProject.paramConnection.getTypeRapport())) {
+        if (Boolean.TRUE.equals(UtilsProject.properties.getUsePrinter()) && TYPE_RAPPORT_TICKET.equals(UtilsProject.properties.getTypeRapport())) {
             Platform.runLater(() -> {
                 PrintTiket pt = new PrintTiket(montantAvance, "XX");
                 pt.setFacture(new YvsComDocVentes(facture));
@@ -299,7 +298,7 @@ public class ClaviersController extends ManagedApplication implements Initializa
                 pt.setNetAPayer(facture.getMontantTotal());
                 new Thread(pt).start();
             });
-        } else if (Boolean.TRUE.equals(UtilsProject.paramConnection.getUsePrinter()) && TYPE_RAPPORT_A4.equals(UtilsProject.paramConnection.getTypeRapport())) {
+        } else if (Boolean.TRUE.equals(UtilsProject.properties.getUsePrinter()) && TYPE_RAPPORT_A4.equals(UtilsProject.properties.getTypeRapport())) {
             Platform.runLater(() -> {
                 PrintFacture preview = new PrintFacture();
                 preview.loadFactureToPrint(facture);

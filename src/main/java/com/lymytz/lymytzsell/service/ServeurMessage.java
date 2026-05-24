@@ -12,18 +12,17 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.print.attribute.standard.Severity;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import com.lymytz.lymytzsell.dao.query.RQueryFactories;
-import com.lymytz.lymytzsell.service.utils.ConsUtil;
-import com.lymytz.lymytzsell.service.utils.log.LogFiles;
 
 /**
  *
  * @author LYMYTZ
  */
 public class ServeurMessage {
+
+    private static final Logger LOGGER = LogManager.getLogger(ServeurMessage.class);
 
     public static ServerSocket server;
     public static Socket socketServeur;
@@ -50,8 +49,8 @@ public class ServeurMessage {
                 writeMessage(b);
             }
         } catch (IOException ex) {
-            Logger.getLogger(ServeurMessage.class.getName()).log(Level.SEVERE, null, ex);
-            LogFiles.addLogInFile("", Severity.ERROR, ConsUtil.SOURCE_LOG_FILE_EXCEPTION, ex);
+            LOGGER.error("Erreur socket", ex);
+            LOGGER.error("Erreur socket", ex);
         }
     }
 
@@ -63,7 +62,7 @@ public class ServeurMessage {
                     writter.println(etat);
                     writter.flush();
                 } catch (IOException ex) {
-                    Logger.getLogger(ServeurMessage.class.getName()).log(Level.SEVERE, null, ex);
+                    LOGGER.error("Erreur socket", ex);
                 }
             } else {
                 mesSockets.remove(s);

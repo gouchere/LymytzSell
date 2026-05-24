@@ -22,12 +22,13 @@ import com.lymytz.lymytzsell.dao.entity.YvsComEnteteDocVente;
 import com.lymytz.lymytzsell.service.application.bean.Factures;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
-import com.lymytz.lymytzsell.service.utils.log.LogFiles;
 
 /**
  * @author LYMYTZ
  */
 public class LoaderFacture extends Task<ObservableList<Factures>> {
+
+    private static final org.apache.logging.log4j.Logger LOGGER = org.apache.logging.log4j.LogManager.getLogger(LoaderFacture.class);
 
     LocalQueryFactories Ldao;
     String type;
@@ -182,7 +183,7 @@ public class LoaderFacture extends Task<ObservableList<Factures>> {
                 .append("LEFT JOIN yvs_synchro_data_synchro ds ON ds.id_listen=l.id ")
                 .append(where).append(" ")
                 .append("ORDER BY d.type_doc, d.num_doc ");
-        LogFiles.addLogInFile(sb.toString(), Severity.REPORT);
+        LOGGER.info(sb.toString());
         return sb.toString();
     }
 

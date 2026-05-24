@@ -23,7 +23,6 @@ import com.lymytz.lymytzsell.dao.entity.service.EntityColumn;
 import com.lymytz.lymytzsell.dao.entity.service.LymytzData;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
-import com.lymytz.lymytzsell.service.utils.log.LogFiles;
 import com.lymytz.lymytzsell.synchro.ws.ResultatAction;
 import com.lymytz.lymytzsell.synchro.ws.WsSynchro;
 import lombok.Getter;
@@ -580,7 +579,7 @@ public class ExportService<T extends Serializable> extends Task<Boolean> {
 //                }
 //            }
 //        } catch (Exception ex) {
-//            LogFiles.addLogInFile("", ex);
+//            LOGGER.error("", ex);
 //            Logger.getLogger(ExportService.class.getName()).log(Level.SEVERE, null, ex);
 //        }
     }

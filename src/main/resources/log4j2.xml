@@ -7,13 +7,15 @@
 
     <Appenders>
         <Console name="CONSOLE">
-            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} [%t] %-5p %T %c - %m %n%throwable"/>
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} [%t] %-5p %c{1} - %m %n%throwable"/>
         </Console>
+
+        <!-- Fichier principal de l'application : toutes les classes com.lymytz -->
         <RollingFile name="FILE"
                      fileName="${sys:user.home}/lymytz-sell/logs/app.log"
                      filePattern="${sys:user.home}/lymytz-sell/logs/app.%d{yyyy-MM-dd}_%i.log.gz">
-            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} [%t] %-5p %T %c - %m %n%throwable"/>
-            <DefaultRolloverStrategy max="15" /> <!--o ne conserve pas plus de 15 fichiers-->
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} [%t] %-5p %c - %m %n%throwable"/>
+            <DefaultRolloverStrategy max="15" />
             <Policies>
                 <SizeBasedTriggeringPolicy size="1M"/>
             </Policies>
@@ -21,12 +23,13 @@
     </Appenders>
 
     <Loggers>
-        <Logger name="com.lymytz.lymytzsell" level="INFO">
-            <Root level="WARN">
-                <AppenderRef ref="CONSOLE"/>
-                <AppenderRef ref="FILE"/>
-            </Root>
+        <!-- Logger principal de l'application : INFO et plus → app.log + console -->
+        <Logger name="com.lymytz.lymytzsell" level="INFO" additivity="false">
+            <AppenderRef ref="CONSOLE"/>
+            <AppenderRef ref="FILE"/>
         </Logger>
+
+        <!-- Tout le reste (librairies tierces) : ERROR uniquement -->
         <Root level="error">
             <AppenderRef ref="CONSOLE"/>
             <AppenderRef ref="FILE"/>

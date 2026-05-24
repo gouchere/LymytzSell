@@ -9,10 +9,10 @@ package com.lymytz.lymytzsell;
 import com.lymytz.lymytzsell.monitoring.MetricHttpServer;
 import com.lymytz.lymytzsell.service.ServeurMessage;
 import com.lymytz.lymytzsell.service.application.ManagedApplication;
+import com.lymytz.lymytzsell.service.application.config.PropertiesManager;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.LymytzService;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
-import com.lymytz.lymytzsell.service.utils.log.ListenFolder;
 import com.lymytz.lymytzsell.service.utils.log.LogFiles;
 import com.lymytz.lymytzsell.view.LocalLoader;
 import com.lymytz.lymytzsell.view.start.LaunchApps;
@@ -66,17 +66,12 @@ public class LymytzSellApplication extends Application {
         }
         initApps(true);
         Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> getLogger("UncaughtExceptionLogger").error("Uncaught exception in thread {}", thread.getName(), throwable));
-        //créer un fichier de log
-        LogFiles.createLogfile();
 
     }
 
     @Override
     public void start(Stage primaryStage) throws IOException {
         this.primaryStage = primaryStage;
-        Thread t = new Thread(new ListenFolder());
-        t.setName("Listen folder");
-        t.start();
         Platform.setImplicitExit(true);
         javax.swing.SwingUtilities.invokeLater(this::addAppToTray);
         MetricHttpServer metricHttpServer = new MetricHttpServer();
@@ -93,8 +88,6 @@ public class LymytzSellApplication extends Application {
         launch(LymytzSellApplication.class, "--preloader", LaunchApps.class.getName(), Arrays.toString(args));
         LOGGER.info("Démarrage de l'application de caisse...");
         //Lance ensuite la méthode init() et ensuite la méthode start
-        //Créer et lancer le thred d'écoute du fichier de log       
-
     }
 
     public void initApps(boolean first) {
@@ -117,7 +110,6 @@ public class LymytzSellApplication extends Application {
             LymytzService.openApps(primaryStage);
         } catch (Exception ex) {
             LOGGER.error(ex.getMessage());
-            LogFiles.createLogfile();
         }
     }
 
@@ -132,7 +124,7 @@ public class LymytzSellApplication extends Application {
         try {
             java.awt.Toolkit.getDefaultToolkit();
             if (!SystemTray.isSupported()) {
-                LogFiles.addLogInFile("Votre version de java ne supporte pas le systèm Tray...", Severity.WARNING);
+                LOGGER.warn("Votre version de java ne supporte pas le systèm Tray...");
                 return;
             }
             // set up a system tray icon.
@@ -164,9 +156,8 @@ public class LymytzSellApplication extends Application {
     }
 
     public void initializePort() {
-        UtilsProject.loadFilePropertie();
-        int port = Integer.parseInt(UtilsProject.properties.getProperty(Constantes.KEY_APPS_PORT));
-        UtilsProject.ENVIRONNEMENT = UtilsProject.properties.getProperty(Constantes.KEY_ENVIRONNEMENT);
+        int port = Integer.parseInt(PropertiesManager.getInstance().getVal(Constantes.KEY_APPS_PORT));
+        UtilsProject.ENVIRONNEMENT = PropertiesManager.getInstance().getVal(Constantes.KEY_ENVIRONNEMENT);
         try {
             UtilsProject.server = new ServerSocket(port);
         } catch (IOException e) {
@@ -179,7 +170,7 @@ public class LymytzSellApplication extends Application {
 
     private void initialiserLaSynchronisation() {
         UtilsProject.loadFilePropertie();
-        String mode = UtilsProject.properties.getProperty(Constantes.KEY_MODE);
+        String mode = PropertiesManager.getInstance().getVal(Constantes.KEY_MODE);
         if (Constantes.APPS_MODE_BOTH.equals(mode)) {
             ServeurMessage.initSocket();
         }

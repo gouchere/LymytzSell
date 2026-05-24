@@ -5,111 +5,64 @@
  */
 package com.lymytz.lymytzsell.service.utils.log;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import javax.print.attribute.standard.Severity;
-import com.lymytz.lymytzsell.service.utils.ConsUtil;
-import com.lymytz.lymytzsell.service.utils.Constantes;
+import java.io.File;
 
 /**
+ * Facade de logging conservée pour compatibilité ascendante.
+ * Délègue désormais à Log4j2 : tous les messages vont dans app.log.
  *
- * @author LENOVO
+ * @deprecated Utiliser directement {@code LogManager.getLogger(MyClass.class)} dans chaque classe.
  */
+@Deprecated
 public class LogFiles {
 
-    private static final long LIMIT = 1024;
-    private static final long SIZE = 500;
+    private static final Logger LOGGER = LogManager.getLogger(LogFiles.class);
 
-    public LogFiles() {
+    private LogFiles() {
     }
 
+    /**
+     * Crée le dossier conf et le fichier servConfig.ltz si nécessaire.
+     * Les fichiers de log sont gérés automatiquement par Log4j2.
+     */
     public static boolean createLogfile() {
-        File logFile = new File("log");
-        File logFile_ = new File("conf");
-        if (!logFile.exists()) {
-            logFile.mkdirs();
+        File confDir = new File("conf");
+        if (!confDir.exists()) {
+            confDir.mkdirs();
         }
-        if (!logFile_.exists()) {
-            logFile_.mkdirs();
-        }
-        logFile = new File("log/" + ConsUtil.SOURCE_LOG_FILE_SYNC);
-        try {
-            if (!logFile.exists()) {
-                logFile.createNewFile();
-            }
-            logFile = new File("log/" + ConsUtil.SOURCE_LOG_FILE_EXCEPTION);
-            if (!logFile.exists()) {
-                logFile.createNewFile();
-            }
-            logFile = new File("log/" + ConsUtil.SOURCE_LOG_FILE_USER);
-            if (!logFile.exists()) {
-                logFile.createNewFile();
-            }
-        } catch (IOException ex) {
-            Logger.getLogger(LogFiles.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        logFile_ = new File("conf/servConfig.ltz");
-        if (!logFile_.exists()) {
+        File servConfig = new File("conf/servConfig.ltz");
+        if (!servConfig.exists()) {
             try {
-                logFile_.createNewFile();
-            } catch (IOException ex) {
-                Logger.getLogger(LogFiles.class.getName()).log(Level.SEVERE, null, ex);
+                servConfig.createNewFile();
+            } catch (java.io.IOException ex) {
+                LOGGER.error("Impossible de créer le fichier servConfig.ltz", ex);
             }
         }
-        return logFile.exists() && logFile_.exists();
+        return servConfig.exists();
     }
 
     public static boolean addLogInFile(String message, Exception ex) {
-        return addLogInFile(message, Severity.ERROR, ConsUtil.SOURCE_LOG_FILE_EXCEPTION, ex);
-    }
-
-    public static boolean addLogInFile(String message, Severity severity) {
-        return addLogInFile(message, severity, ConsUtil.SOURCE_LOG_FILE_EXCEPTION, null);
-    }
-
-    public synchronized static boolean addLogInFile(String message, Severity severity, String sourceFile, Exception ex) {
-        try {
-            File f = new File("log/" + sourceFile);
-            if ((f.length() / LIMIT) > SIZE) {
-                f.renameTo(new File("log/" + sourceFile.replace(".conf", "").concat("_log_").concat(Constantes.dfh.format(new Date())).concat(".conf")));
-                createLogfile();
-            }
-            if (f.exists()) {
-                final FileWriter fw = new FileWriter(f, true);
-                try (PrintWriter pw = new PrintWriter(fw, true)) {
-                    pw.write(Constantes.dfh.format(new Date()) + " | " + getSeverity(severity));
-                    if (severity == Severity.ERROR) {
-                        pw.println();
-                    }
-                    if (message != null) {
-                        pw.write(message);
-                        pw.println();
-                    }
-                    if (ex != null) {
-                        ex.printStackTrace(pw);
-                    }
-                }
-            }
-        } catch (IOException ex1) {
-            Logger.getLogger(LogFiles.class.getName()).log(Level.SEVERE, null, ex1);
-        } finally {
-
-        }
+        LOGGER.error(message != null ? message : "", ex);
         return true;
     }
 
-    private static String getSeverity(Severity s) {
-        if (s == Severity.REPORT) {
-            return "[INFO]";
-        } else if (s == Severity.ERROR) {
-            return "[ERREUR]";
+    public static boolean addLogInFile(String message, Severity severity) {
+        return addLogInFile(message, severity, null, null);
+    }
+
+    public synchronized static boolean addLogInFile(String message, Severity severity, String sourceFile, Exception ex) {
+        String msg = (message != null) ? message : "";
+        if (severity == Severity.ERROR) {
+            LOGGER.error(msg, ex);
+        } else if (severity == Severity.WARNING) {
+            LOGGER.warn(msg, ex);
         } else {
-            return "[AVERTISSEMENT]";
+            LOGGER.info(msg, ex);
         }
+        return true;
     }
 }
