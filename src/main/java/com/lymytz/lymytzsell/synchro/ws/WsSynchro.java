@@ -6,10 +6,8 @@
 package com.lymytz.lymytzsell.synchro.ws;
 
 import com.lymytz.lymytzsell.dao.entity.YvsUsersAgence;
-import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.LymytzService;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
-import com.lymytz.lymytzsell.service.utils.log.LogFiles;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import org.apache.logging.log4j.LogManager;
@@ -18,7 +16,6 @@ import org.glassfish.jersey.client.ClientConfig;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import javax.print.attribute.standard.Severity;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -57,8 +54,8 @@ public class WsSynchro {
     public static URI getUriAdresse(String service) {
         UtilsProject.loadFilePropertie();
         if (UtilsProject.properties != null) {
-            String adresse = UtilsProject.properties.getProperty(Constantes.KEY_WEB_HOST);
-            String port = UtilsProject.properties.getProperty(Constantes.KEY_WEB_PORT);
+            String adresse = UtilsProject.properties.getHostWeb();
+            String port = UtilsProject.properties.getPortWeb();
             if ((adresse != null && !adresse.trim().isEmpty()) && (port != null && !port.trim().isEmpty())) {
                 return UriBuilder.fromUri("http://" + adresse + ":" + port + "/Lymytz_Web/ws/services/" + service).build();
             }
@@ -179,7 +176,7 @@ public class WsSynchro {
         if (serverOnline()) {
             return comptabiliseVente(idDocVente, auteur);
         } else {
-            LogFiles.addLogInFile(numero + ", non comptabilisé: Le service de comptabilisation est introuvable", Severity.ERROR);
+            LOGGER.error(numero + ", non comptabilisé: Le service de comptabilisation est introuvable");
         }
         return null;
     }

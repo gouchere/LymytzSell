@@ -5,6 +5,7 @@
  */
 package com.lymytz.lymytzsell.service.application.synchro;
 
+import com.lymytz.lymytzsell.service.application.config.PropertiesManager;
 import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.ScheduledService;
@@ -23,7 +24,6 @@ import com.lymytz.lymytzsell.service.application.synchro.impor.ImportServiceDelF
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.LQuery;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
-import com.lymytz.lymytzsell.service.utils.log.LogFiles;
 import com.lymytz.lymytzsell.synchro.ws.WsSynchro;
 import com.lymytz.lymytzsell.view.main.HomeCaisseController;
 
@@ -38,6 +38,8 @@ import java.util.logging.Logger;
  * @author LENOVO
  */
 public class SynchronizeDeleteFacture extends ScheduledService<Boolean> {
+
+    private static final org.apache.logging.log4j.Logger LOGGER = org.apache.logging.log4j.LogManager.getLogger(SynchronizeDeleteFacture.class);
 
     HomeCaisseController page;
     RQueryFactories Rdao;
@@ -73,7 +75,7 @@ public class SynchronizeDeleteFacture extends ScheduledService<Boolean> {
                 return cal.getTime();
             }
         } catch (NumberFormatException ex) {
-            LogFiles.addLogInFile("Récupération de la date erronée !", ex);
+            LOGGER.error("Récupération de la date erronée !", ex);
         }
         return new Date();
     }
@@ -86,10 +88,10 @@ public class SynchronizeDeleteFacture extends ScheduledService<Boolean> {
             if (ListenServersRemote.remoteConnect) {
                 if (UtilsProject.RcurrentSociete != null && Constantes.asLong(UtilsProject.ID_SERVEUR)) {
                     String query = Constantes.getQueryListenDelFacture();
-                    String dure_init = UtilsProject.properties.get("DATE_INIT").toString();
+                    String dure_init = PropertiesManager.getInstance().getVal(Constantes.KEY_DATE_INIT);
                     Date date = getDate(dure_init);
                     List<Object[]> l = Rdao.loadBySQLQuery(query, new Options[]{new Options(UtilsProject.ID_SERVEUR, 1), new Options(UtilsProject.RcurrentAgence.getId(), 2), new Options(date, 3)});
-                    if (l != null ? !l.isEmpty() : false) {
+                    if (l != null && !l.isEmpty()) {
                         Long idListenOnRemote = Long.valueOf((String) l.get(0)[0]);
                         String table = (String) l.get(0)[1];
                         Long idLocalOnRemote = Long.valueOf((String) l.get(0)[2]);
@@ -108,7 +110,7 @@ public class SynchronizeDeleteFacture extends ScheduledService<Boolean> {
                                 service.setRemoteIdListen(idListenOnRemote);
                                 service.setRemoteIdLocal(idLocalOnRemote);
                             } catch (Exception ex) {
-                                LogFiles.addLogInFile("", ex);
+                                LOGGER.error("", ex);
                                 Logger.getLogger(SynchronizeDeleteFacture.class.getName()).log(Level.SEVERE, null, ex);
                             }
                         }
@@ -142,7 +144,7 @@ public class SynchronizeDeleteFacture extends ScheduledService<Boolean> {
                 }
             }
         } catch (Exception ex) {
-            LogFiles.addLogInFile("Synchronisation des données de ventes non réussi ", ex);
+            LOGGER.error("Synchronisation des données de ventes non réussi ", ex);
             Logger.getLogger(SynchronizeDeleteFacture.class.getName()).log(Level.SEVERE, null, ex);
             this.failed();
         }

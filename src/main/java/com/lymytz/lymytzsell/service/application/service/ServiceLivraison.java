@@ -5,32 +5,27 @@
  */
 package com.lymytz.lymytzsell.service.application.service;
 
-import com.lymytz.lymytzsell.service.application.synchro.export.UtilExport;
-import com.lymytz.lymytzsell.service.utils.MessagesConstants;
-import com.lymytz.lymytzsell.view.component.ToastService;
-import javafx.application.Platform;
-import javafx.scene.control.Alert;
 import com.lymytz.lymytzsell.dao.Options;
 import com.lymytz.lymytzsell.dao.entity.YvsBaseArticleDepot;
 import com.lymytz.lymytzsell.dao.entity.YvsComContenuDocVente;
 import com.lymytz.lymytzsell.dao.entity.YvsComDocVentes;
 import com.lymytz.lymytzsell.dao.entity.YvsComptaCaissePieceVente;
-import com.lymytz.lymytzsell.service.utils.ConsUtil;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.LymytzService;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
-import com.lymytz.lymytzsell.service.utils.log.LogFiles;
+import com.lymytz.lymytzsell.synchro.ws.FactureHttpService;
 import com.lymytz.lymytzsell.synchro.ws.ResultatAction;
-import com.lymytz.lymytzsell.synchro.ws.WsSynchro;
+import com.lymytz.lymytzsell.synchro.ws.dto.DeliveryResponseDto;
+import com.lymytz.lymytzsell.view.component.ToastService;
 import com.lymytz.lymytzsell.view.main.HomeCaisseController;
+import javafx.application.Platform;
+import javafx.scene.control.Alert;
 import org.apache.logging.log4j.LogManager;
-import org.json.JSONObject;
+import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import org.apache.logging.log4j.Logger;
 
 import static com.lymytz.lymytzsell.service.utils.MessagesConstants.ERREUR;
 import static com.lymytz.lymytzsell.service.utils.MessagesConstants.ERREUR_A_LA_GENERATION_FACTURE;
@@ -44,19 +39,19 @@ public class ServiceLivraison {
 
     private final Logger LOGGER = LogManager.getLogger(ServiceLivraison.class.getName());
     HomeCaisseController mainPage;
-
-    public ServiceLivraison() {
-    }
+    private final FactureHttpService factureHttpService;
 
     public ServiceLivraison(HomeCaisseController mainPage) {
         this.mainPage = mainPage;
+        factureHttpService = new FactureHttpService();
     }
 
     public void saveLivraison(YvsComDocVentes facture, boolean message) {
-        WsSynchro ws = new WsSynchro();
+        /*WsSynchro ws = new WsSynchro();
         //Construction de l'objet avec ses liaisons sur le serveur distant
         JSONObject entityJson = UtilExport.exportDocVente(facture, false, 0L);
-        ResultatAction<YvsComDocVentes> result = ws.livraisonDocVente(entityJson, "livrer_facture_vente_caisse");
+        ResultatAction<YvsComDocVentes> result = ws.livraisonDocVente(entityJson, "livrer_facture_vente_caisse");*/
+        ResultatAction<DeliveryResponseDto> result = factureHttpService.sendDeliveryRequest(facture.getId());
         if (result != null && result.isResult()) {
             String query = "UPDATE yvs_com_doc_ventes SET statut_livre='L' WHERE id=? ";
             mainPage.dao.executeSqlQuery(query, new Options[]{new Options(facture.getId(), 1)});
@@ -185,9 +180,9 @@ public class ServiceLivraison {
                 //si la facture n'est pas encore réglé, on ne dois pas inclure la quantité bonus dans la quantité à livrer
                 if (c.getQuantite() > (qteFacture - qteLivre)) {
                     if (silence) {
-                        LogFiles.addLogInFile(facture.getNumDoc() + ": Vous ne pouvez livrer l'article " + c.getArticle().getRefArt() + " au delà de la quantité facturée !", null, ConsUtil.SOURCE_LOG_FILE_EXCEPTION, null);
+                        LOGGER.error(facture.getNumDoc() + ": Vous ne pouvez livrer l'article " + c.getArticle().getRefArt() + " au delà de la quantité facturée !");
                     } else {
-                        LogFiles.addLogInFile(facture.getNumDoc() + ": Vous ne pouvez livrer l'article " + c.getArticle().getRefArt() + " au delà de la quantité facturée !", null, ConsUtil.SOURCE_LOG_FILE_EXCEPTION, null);
+                        LOGGER.error(facture.getNumDoc() + ": Vous ne pouvez livrer l'article " + c.getArticle().getRefArt() + " au delà de la quantité facturée !");
                         LymytzService.openAlertDialog("Vous ne pouvez livrer l'article " + c.getArticle().getRefArt() + " au delà de la quantité facturée !", "Erreur !", "Incohérence des quantités", Alert.AlertType.ERROR);
                     }
                     return false;
@@ -195,9 +190,9 @@ public class ServiceLivraison {
             } else {
                 if (c.getQuantite() > ((qteFacture + qteBonusFacture) - qteLivre)) {
                     if (silence) {
-                        LogFiles.addLogInFile(facture.getNumDoc() + ": Vous ne pouvez livrer l'article " + c.getArticle().getRefArt() + " au delà de la quantité facturée !", null, ConsUtil.SOURCE_LOG_FILE_EXCEPTION, null);
+                        LOGGER.error(facture.getNumDoc() + ": Vous ne pouvez livrer l'article " + c.getArticle().getRefArt() + " au delà de la quantité facturée !");
                     } else {
-                        LogFiles.addLogInFile(facture.getNumDoc() + ": Vous ne pouvez livrer l'article " + c.getArticle().getRefArt() + " au delà de la quantité facturée !", null, ConsUtil.SOURCE_LOG_FILE_EXCEPTION, null);
+                        LOGGER.error(facture.getNumDoc() + ": Vous ne pouvez livrer l'article " + c.getArticle().getRefArt() + " au delà de la quantité facturée !");
                         LymytzService.openAlertDialog("Vous ne pouvez livrer l'article " + c.getArticle().getRefArt() + " au delà de la quantité facturée !", "Erreur !", "Incohérence des quantités", Alert.AlertType.ERROR);
                     }
                     return false;
@@ -207,7 +202,7 @@ public class ServiceLivraison {
                 if (c.getArticle().getMethodeVal() != null) {
                     if (!c.getArticle().getMethodeVal().equals(Constantes.CMP2)) {
                         if (silence) {
-                            LogFiles.addLogInFile(facture.getNumDoc() + ": Impossible d'effectuer cette action... Car l'article " + c.getArticle().getDesignation() + " n'a plus un stock suffisant", null, ConsUtil.SOURCE_LOG_FILE_EXCEPTION, null);
+                            LOGGER.error(facture.getNumDoc() + ": Impossible d'effectuer cette action... Car l'article " + c.getArticle().getDesignation() + " n'a plus un stock suffisant");
                         } else {
                             LymytzService.openAlertDialog("Impossible d'effectuer cette action... Car l'article " + c.getArticle().getRefArt() + " n'a plus un stock suffisant", "Erreur !", "Stock insuffisant", Alert.AlertType.ERROR);
                         }
@@ -215,9 +210,9 @@ public class ServiceLivraison {
                     }
                 } else {
                     if (silence) {
-                        LogFiles.addLogInFile(facture.getNumDoc() + ": Impossible d'effectuer cette action... Car l'article " + c.getArticle().getDesignation() + " n'a plus un stock suffisant", null, ConsUtil.SOURCE_LOG_FILE_EXCEPTION, null);
+                        LOGGER.error(facture.getNumDoc() + ": Impossible d'effectuer cette action... Car l'article " + c.getArticle().getDesignation() + " n'a plus un stock suffisant");
                     } else {
-                        LogFiles.addLogInFile(facture.getNumDoc() + ": Impossible d'effectuer cette action... Car l'article " + c.getArticle().getDesignation() + " n'a plus un stock suffisant", null, ConsUtil.SOURCE_LOG_FILE_EXCEPTION, null);
+                        LOGGER.error(facture.getNumDoc() + ": Impossible d'effectuer cette action... Car l'article " + c.getArticle().getDesignation() + " n'a plus un stock suffisant");
                         LymytzService.openAlertDialog("Impossible d'effectuer cette action... Car l'article " + c.getArticle().getRefArt() + " n'a plus un stock suffisant", "Erreur !", "Stock insuffisant", Alert.AlertType.ERROR);
                     }
                     return false;
@@ -226,9 +221,9 @@ public class ServiceLivraison {
             YvsBaseArticleDepot y = (YvsBaseArticleDepot) mainPage.dao.findOneByNQ("YvsBaseArticleDepot.findByArticleDepot", new String[]{"article", "depot"}, new Object[]{c.getArticle(), UtilsProject.depotLivraison});
             if (y == null || y.getId() < 1) {
                 if (silence) {
-                    LogFiles.addLogInFile(facture.getNumDoc() + ": Impossible d'effectuer cette action... Car le dépôt " + UtilsProject.depotLivraison.getDesignation() + " ne possède pas l'article " + c.getArticle().getDesignation(), null, ConsUtil.SOURCE_LOG_FILE_EXCEPTION, null);
+                    LOGGER.error(facture.getNumDoc() + ": Impossible d'effectuer cette action... Car le dépôt " + UtilsProject.depotLivraison.getDesignation() + " ne possède pas l'article " + c.getArticle().getDesignation());
                 } else {
-                    LogFiles.addLogInFile(facture.getNumDoc() + ": Impossible d'effectuer cette action... Car le dépôt " + UtilsProject.depotLivraison.getDesignation() + " ne possède pas l'article " + c.getArticle().getDesignation(), null, ConsUtil.SOURCE_LOG_FILE_EXCEPTION, null);
+                    LOGGER.error(facture.getNumDoc() + ": Impossible d'effectuer cette action... Car le dépôt " + UtilsProject.depotLivraison.getDesignation() + " ne possède pas l'article " + c.getArticle().getDesignation());
                     LymytzService.openAlertDialog("Impossible d'effectuer cette action... Car le dépôt " + UtilsProject.depotLivraison.getDesignation() + " ne possède pas l'article " + c.getArticle().getDesignation(), "Erreur !", "Paramétrage dépôt incorrecte", Alert.AlertType.ERROR);
                 }
                 return false;

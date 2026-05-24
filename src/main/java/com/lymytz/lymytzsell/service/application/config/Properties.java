@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.lymytz.lymytzsell.dao;
+package com.lymytz.lymytzsell.service.application.config;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -13,7 +13,6 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.io.EOFException;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
-import com.lymytz.lymytzsell.service.utils.log.LogFiles;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.logging.log4j.LogManager;
@@ -25,9 +24,9 @@ import org.apache.logging.log4j.Logger;
  */
 @Setter
 @Getter
-public class ParamConnection implements Serializable {
+public class Properties implements Serializable {
 
-    private static final Logger LOGGER = LogManager.getLogger(ParamConnection.class);
+    private static final Logger LOGGER = LogManager.getLogger(Properties.class);
 
     private String users, usersRemote;
     private String password, passwordRemote;
@@ -56,10 +55,10 @@ public class ParamConnection implements Serializable {
     private long modelReg;
     private long modeReg;
 
-    public ParamConnection() {
+    public Properties() {
     }
 
-    public ParamConnection(String users, String password, String sever, String port, String dataBase) {
+    public Properties(String users, String password, String sever, String port, String dataBase) {
         this.users = users;
         this.password = password;
         this.sever = sever;
@@ -114,12 +113,12 @@ public class ParamConnection implements Serializable {
         }
     }
 
-    public static ParamConnection readFile(FileInputStream fis) {
+    public static Properties readFile(FileInputStream fis) {
         try {
             try {
-                ParamConnection p;
+                Properties p;
                 try (ObjectInputStream ois = new ObjectInputStream(fis)) {
-                    p = (ParamConnection) ois.readObject();
+                    p = (Properties) ois.readObject();
                 }
                 return p;
             } catch (ClassNotFoundException ex) {

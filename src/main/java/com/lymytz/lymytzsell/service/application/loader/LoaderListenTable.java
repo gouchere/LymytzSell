@@ -9,9 +9,9 @@ import com.lymytz.lymytzsell.dao.Options;
 import com.lymytz.lymytzsell.dao.query.LocalQueryFactories;
 import com.lymytz.lymytzsell.dao.query.RQueryFactories;
 import com.lymytz.lymytzsell.service.application.bean.ListenTableBean;
+import com.lymytz.lymytzsell.service.application.config.PropertiesManager;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
-import com.lymytz.lymytzsell.service.utils.log.LogFiles;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
@@ -27,6 +27,8 @@ import java.util.logging.Logger;
  * @author LYMYTZ
  */
 public class LoaderListenTable extends Task<ObservableList<ListenTableBean>> {
+
+    private static final org.apache.logging.log4j.Logger LOGGER = org.apache.logging.log4j.LogManager.getLogger(LoaderListenTable.class);
 
     LocalQueryFactories Ldao;
     RQueryFactories Rdao;
@@ -51,25 +53,25 @@ public class LoaderListenTable extends Task<ObservableList<ListenTableBean>> {
             if (!loadAll) {
                 query = "SELECT l.id,l.name_table, l.id_source, l.action_name,l.message,l.date_save "
                         + "FROM yvs_synchro_listen_table l WHERE (l.to_listen=true OR (l.message IS NOT NULL AND l.to_listen=true)) "
-                        + "AND name_table IN ( "+Constantes.TABLES_TO_SYNCHRO+" ) "
+                        + "AND name_table IN ( " + Constantes.TABLES_TO_SYNCHRO + " ) "
                         + "ORDER BY l.id";
             } else {
                 query = "SELECT l.id,l.name_table, l.id_source, l.action_name,l.message,l.date_save "
                         + "FROM yvs_synchro_listen_table l WHERE "
-                        + "name_table IN ( "+Constantes.TABLES_TO_SYNCHRO+" ) "
+                        + "name_table IN ( " + Constantes.TABLES_TO_SYNCHRO + " ) "
                         + "ORDER BY l.id";
             }
             l = Ldao.loadBySQLQuery(query, new Options[]{});
         } else {
             query = Constantes.getQueryListenData().replace("LIMIT 1", "");
-            String dure_init = UtilsProject.properties.get("DATE_INIT").toString();
+            String dure_init = PropertiesManager.getInstance().getVal(Constantes.KEY_DATE_INIT);
             Date date = getDate(dure_init);
             l = Rdao.loadBySQLQuery(query, new Options[]{new Options(UtilsProject.ID_SERVEUR, 1), new Options(UtilsProject.RcurrentSociete.getId(), 2), new Options(date, 3)});
         }
         int i = 1;
         ObservableList<ListenTableBean> result = FXCollections.observableArrayList();
         try {
-            if (l.size() > 0) {
+            if (!l.isEmpty()) {
                 for (Object[] line : l) {
                     result.add(buildBeanFacture(line, i));
                     this.updateProgress(i, l.size());
@@ -124,7 +126,7 @@ public class LoaderListenTable extends Task<ObservableList<ListenTableBean>> {
                 return cal.getTime();
             }
         } catch (NumberFormatException ex) {
-            LogFiles.addLogInFile("Récupération de la date erronée !", ex);
+            LOGGER.error("Récupération de la date erronée !", ex);
             Logger.getLogger(LoaderListenTable.class.getName()).log(Level.SEVERE, null, ex);
         }
         return new Date();

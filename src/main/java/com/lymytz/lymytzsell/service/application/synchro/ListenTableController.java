@@ -29,7 +29,6 @@ import com.lymytz.lymytzsell.dao.entity.YvsComDocVentes;
 import com.lymytz.lymytzsell.service.application.bean.ListenTableBean;
 import com.lymytz.lymytzsell.service.application.loader.LoaderListenTable;
 import com.lymytz.lymytzsell.service.utils.Constantes;
-import com.lymytz.lymytzsell.service.utils.log.LogFiles;
 import com.lymytz.lymytzsell.view.main.HomeCaisseController;
 
 import java.net.URL;
@@ -43,6 +42,8 @@ import java.util.logging.Logger;
  * @author LYMYTZ
  */
 public class ListenTableController implements Initializable, Controller {
+
+    private static final org.apache.logging.log4j.Logger LOGGER = org.apache.logging.log4j.LogManager.getLogger(ListenTableController.class);
 
     HomeCaisseController page;
     ObservableList<ListenTableBean> items = FXCollections.observableArrayList();
@@ -119,8 +120,8 @@ public class ListenTableController implements Initializable, Controller {
                     }
                 }
             } catch (Exception ex) {
-                LogFiles.addLogInFile("", ex);
-                Logger.getLogger(ListenTableController.class.getName()).log(Level.SEVERE, null, ex);
+                LOGGER.error("Erreur synchro", ex);
+                
             }
         });
         iResynchroAll.setOnAction((ActionEvent ev) -> {
@@ -139,8 +140,8 @@ public class ListenTableController implements Initializable, Controller {
                     TAB_LISTEN.refresh();
                 }
             } catch (Exception ex) {
-                LogFiles.addLogInFile("", ex);
-                Logger.getLogger(ListenTableController.class.getName()).log(Level.SEVERE, null, ex);
+                LOGGER.error("Erreur synchro", ex);
+                
             }
         });
         itemCancel.setOnAction((ActionEvent ev) -> {
@@ -155,8 +156,8 @@ public class ListenTableController implements Initializable, Controller {
                     }
                 }
             } catch (Exception ex) {
-                LogFiles.addLogInFile("", ex);
-                Logger.getLogger(ListenTableController.class.getName()).log(Level.SEVERE, null, ex);
+                LOGGER.error("Erreur synchro", ex);
+                
             }
         });
         iCancelAll.setOnAction((ActionEvent ev) -> {
@@ -168,8 +169,8 @@ public class ListenTableController implements Initializable, Controller {
                 TAB_LISTEN.getItems().clear();
                 TAB_LISTEN.refresh();
             } catch (Exception ex) {
-                LogFiles.addLogInFile("", ex);
-                Logger.getLogger(ListenTableController.class.getName()).log(Level.SEVERE, null, ex);
+                LOGGER.error("Erreur synchro", ex);
+                
             }
         });
         refresh.setOnAction((ActionEvent ev) -> {
@@ -218,8 +219,8 @@ public class ListenTableController implements Initializable, Controller {
 
                 }
             } catch (Exception ex) {
-                LogFiles.addLogInFile("", ex);
-                Logger.getLogger(ListenTableController.class.getName()).log(Level.SEVERE, null, ex);
+                LOGGER.error("Erreur synchro", ex);
+                
             }
         });
         LINK_CONTROL.setTooltip(new Tooltip("Remettre toutes les ligne dans la file de synchronization"));
@@ -256,8 +257,8 @@ public class ListenTableController implements Initializable, Controller {
             Thread t = new Thread(task);
             t.start();
         } catch (Exception ex) {
-            LogFiles.addLogInFile("", ex);
-            Logger.getLogger(ListenTableController.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.error("Erreur synchro", ex);
+            
         }
     }
 

@@ -18,7 +18,6 @@ import com.lymytz.lymytzsell.dao.entity.YvsUsersAgence;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.DoubleAdapter;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
-import com.lymytz.lymytzsell.service.utils.log.LogFiles;
 import com.lymytz.lymytzsell.synchro.ws.WsSynchro;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -37,6 +36,8 @@ import static com.lymytz.lymytzsell.synchro.ws.WsSynchro.serverOnline;
  * @author LYMYTZ
  */
 public class UtilEntityBase {
+
+    private static final org.apache.logging.log4j.Logger LOGGER = org.apache.logging.log4j.LogManager.getLogger(UtilEntityBase.class);
 
     public static Long findIdRemoteData(String table, Long localId) {
         Long id = -1L;
@@ -76,8 +77,8 @@ public class UtilEntityBase {
         try {
             return Constantes.dfD.parse(d);
         } catch (ParseException ex) {
-            LogFiles.addLogInFile(d, ex);
-            Logger.getLogger(UtilEntityBase.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.error(d, ex);
+            
         }
         return null;
     }
@@ -102,8 +103,8 @@ public class UtilEntityBase {
               .registerTypeAdapter(Double.class, new DoubleAdapter()).create();
             return gson;
         } catch (Exception ex) {
-            LogFiles.addLogInFile("", ex);
-            Logger.getLogger(UtilEntityBase.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.error("", ex);
+            
         }
         return null;
     }
@@ -115,8 +116,8 @@ public class UtilEntityBase {
             JSONObject json = new JSONObject(jsonStr);
             return json;
         } catch (JSONException ex) {
-            LogFiles.addLogInFile("", ex);
-            Logger.getLogger(UtilEntityBase.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.error("", ex);
+            
         }
         return null;
     }

@@ -5,6 +5,7 @@
  */
 package com.lymytz.lymytzsell.view.component;
 
+import com.lymytz.lymytzsell.service.application.config.PropertiesManager;
 import com.lymytz.lymytzsell.view.LocalLoader;
 import javafx.concurrent.Task;
 import javafx.scene.image.Image;
@@ -32,11 +33,11 @@ public class LoaderImage extends Task<ImageView> {
     @Override
     protected ImageView call() throws Exception {
         ImageView imgV = new ImageView();
-        Image img = null;
+        Image img;
         String fileIconeName = "/icones/coffee.png";
         try {
             if (Constantes.asString(this.photo)) {
-                String path = UtilsProject.properties.getProperty(Constantes.KEY_PATH);
+                String path = PropertiesManager.getInstance().getVal(Constantes.KEY_PATH);
                 if (Constantes.asString(path)) {
                     File f = new File(path + "\\" + photo);
                     if (f.exists()) {

@@ -7,6 +7,7 @@ package com.lymytz.lymytzsell.service.application.synchro;
 
 import com.lymytz.lymytzsell.service.ServeurMessage;
 import com.lymytz.lymytzsell.service.application.Controller;
+import com.lymytz.lymytzsell.service.application.config.PropertiesManager;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -88,7 +89,7 @@ public class ControlServiceController implements Initializable, Controller {
 
     @FXML
     private void launchServiceOut(ActionEvent event) {
-        if (serviceOut != null && UtilsProject.REPLICATION && Constantes.APPS_MODE_BOTH.equals(UtilsProject.properties.getProperty(Constantes.KEY_MODE))) {
+        if (serviceOut != null && UtilsProject.REPLICATION && Constantes.APPS_MODE_BOTH.equals(PropertiesManager.getInstance().getVal(Constantes.KEY_MODE))) {
             this.serviceOut.restart();
             this.serviceOut.start();
             LAUNCH_OUT.setDisable(true);

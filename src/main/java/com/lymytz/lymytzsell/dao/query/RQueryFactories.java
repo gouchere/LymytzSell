@@ -16,9 +16,9 @@ import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.LQuery;
 import com.lymytz.lymytzsell.service.utils.LymytzService;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
-import com.lymytz.lymytzsell.service.utils.log.LogFiles;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-import javax.print.attribute.standard.Severity;
 import java.io.Serializable;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -27,8 +27,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -36,6 +34,8 @@ import java.util.logging.Logger;
  * @param <T>
  */
 public class RQueryFactories<T extends Serializable> {
+
+    private static final Logger LOGGER = LogManager.getLogger(RQueryFactories.class);
 
     public RQueryFactories() {
     }
@@ -53,7 +53,7 @@ public class RQueryFactories<T extends Serializable> {
                 return true;
             } catch (SQLException | CloseConException ex) {
                 RemoteDao.setInstance(null);
-                LogFiles.addLogInFile("", new Exception(ex));
+                LOGGER.error("", new Exception(ex));
                 return false;
             }
         }
@@ -76,14 +76,14 @@ public class RQueryFactories<T extends Serializable> {
                         }
                     } catch (SQLException ex) {
                         RemoteDao.setInstance(null);
-                        LogFiles.addLogInFile("", new Exception(ex));
-                        Logger.getLogger(RQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
+                        LOGGER.error("", new Exception(ex));
+                        
                     }
                 }
             } catch (SQLException | CloseConException ex) {
                 RemoteDao.setInstance(null);
-                LogFiles.addLogInFile("", new Exception(ex));
-                Logger.getLogger(RQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
+                LOGGER.error("", new Exception(ex));
+                
             }
             return re;
         }
@@ -107,12 +107,12 @@ public class RQueryFactories<T extends Serializable> {
                         }
                     } catch (SQLException ex) {
                         RemoteDao.setInstance(null);
-                        Logger.getLogger(RQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
+                        
                     }
                 }
             } catch (SQLException | CloseConException ex1) {
-                Logger.getLogger(RQueryFactories.class.getName()).log(Level.SEVERE, null, ex1);
-                LogFiles.addLogInFile("", new Exception(ex1));
+                
+                LOGGER.error("", new Exception(ex1));
                 return -1L;
             }
             return re;
@@ -153,13 +153,13 @@ public class RQueryFactories<T extends Serializable> {
                         }
                     } catch (SQLException ex) {
                         RemoteDao.setInstance(null);
-                        LogFiles.addLogInFile("", new Exception(ex));
-                        Logger.getLogger(RQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
+                        LOGGER.error("", new Exception(ex));
+                        
                     }
                 } catch (SQLException | CloseConException ex) {
                     RemoteDao.setInstance(null);
-                    LogFiles.addLogInFile("", new Exception(ex));
-                    Logger.getLogger(RQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
+                    LOGGER.error("", new Exception(ex));
+                    
                 }
             }
         }
@@ -191,8 +191,8 @@ public class RQueryFactories<T extends Serializable> {
                 }
             } catch (SQLException | CloseConException ex) {
                 RemoteDao.setInstance(null);
-                LogFiles.addLogInFile("", new Exception(ex));
-                Logger.getLogger(RQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
+                LOGGER.error("", new Exception(ex));
+                
             }
         }
         return st;
@@ -223,16 +223,16 @@ public class RQueryFactories<T extends Serializable> {
                     }
                 } catch (SQLException ex) {
                     //Logging de l'erreur
-                    LogFiles.addLogInFile("Echec de l'execution de la requete: " + query, ex);
+                    LOGGER.error("Echec de l'execution de la requete: " + query, ex);
                     RemoteDao.setInstance(null);
-                    Logger.getLogger(RQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
+                    
                 }
                 return result;
             } catch (SQLException | CloseConException ex) {
                 //Logging de l'erreur
-                LogFiles.addLogInFile("Echec de l'execution de la requete: " + query, ex);
+                LOGGER.error("Echec de l'execution de la requete: " + query, ex);
                 RemoteDao.setInstance(null);
-                Logger.getLogger(RQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
+                
             }
         }
         return result;
@@ -263,14 +263,14 @@ public class RQueryFactories<T extends Serializable> {
                         }
                     }
                 } catch (Exception e) {
-                    LogFiles.addLogInFile("Echec de lecture du résultat de la requête: " + query, e);
+                    LOGGER.error("Echec de lecture du résultat de la requête: " + query, e);
                     RemoteDao.setInstance(null);
-                    Logger.getLogger(RQueryFactories.class.getName()).log(Level.SEVERE, null, e);
+                    
                 }
             } catch (SQLException | CloseConException ex) {
-                LogFiles.addLogInFile("Echec de l'execution de la requete: " + query, ex);
+                LOGGER.error("Echec de l'execution de la requete: " + query, ex);
                 RemoteDao.setInstance(null);
-                Logger.getLogger(RQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
+                
                 return null;
             }
         }
@@ -292,17 +292,17 @@ public class RQueryFactories<T extends Serializable> {
                             result = rs.getObject(1);
                         }
                     } catch (Exception e) {
-                        LogFiles.addLogInFile("Echec de lecture du résultat de la requête: " + query, e);
+                        LOGGER.error("Echec de lecture du résultat de la requête: " + query, e);
                         RemoteDao.setInstance(null);
-                        Logger.getLogger(RQueryFactories.class.getName()).log(Level.SEVERE, null, e);
+                        
                     }
                 }
                 return result;
             } catch (SQLException | CloseConException ex) {
                 //Logging de l'erreur
-                LogFiles.addLogInFile("Echec de l'execution de la requete: " + query, ex);
+                LOGGER.error("Echec de l'execution de la requete: " + query, ex);
                 RemoteDao.setInstance(null);
-                Logger.getLogger(RQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
+                
             }
         }
         return result;
@@ -325,21 +325,20 @@ public class RQueryFactories<T extends Serializable> {
                         }
                         RemoteDao.getInstance().getConnection().commit();
                     } catch (SQLException | CloseConException ex) {
-                        LogFiles.addLogInFile("Echec de l'execution de la requete ", ex);
-                        Logger.getLogger(RQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
+                        LOGGER.error("Echec de l'execution de la requete ", ex);
+                        
                         if (!RemoteDao.getInstance().getConnection().isClosed()) {
                             RemoteDao.getInstance().getConnection().rollback();
                         }
                     }
                 }
             } else {
-                LogFiles.addLogInFile("Votre serveur n'est pas enregistré sur l'ordinateur distant", Severity.ERROR);
+                LOGGER.error("Votre serveur n'est pas enregistré sur l'ordinateur distant");
             }
         } catch (SQLException | CloseConException ex) {
             //Logging de l'erreur
-            LogFiles.addLogInFile("Echec de l'execution de la requete " + sb1.toString(), ex);
+            LOGGER.error("Echec de l'execution de la requete " + sb1.toString(), ex);
             RemoteDao.setInstance(null);
-            Logger.getLogger(LocalDao.class.getName()).log(Level.SEVERE, null, ex);
         }
         return true;
     }
@@ -364,21 +363,20 @@ public class RQueryFactories<T extends Serializable> {
                         }
                         RemoteDao.getInstance().getConnection().commit();
                     } catch (SQLException | CloseConException ex) {
-                        LogFiles.addLogInFile("Echec de l'execution de la requete ", ex);
-                        Logger.getLogger(RQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
+                        LOGGER.error("Echec de l'execution de la requete ", ex);
+                        
                         if (!RemoteDao.getInstance().getConnection().isClosed()) {
                             RemoteDao.getInstance().getConnection().rollback();
                         }
                     }
                 }
             } else {
-                LogFiles.addLogInFile("Votre serveur n'est pas enregistré sur l'ordinateur distant", Severity.ERROR);
+                LOGGER.error("Votre serveur n'est pas enregistré sur l'ordinateur distant");
             }
         } catch (SQLException | CloseConException ex) {
             //Logging de l'erreur
-            LogFiles.addLogInFile("Echec de l'execution de la requete " + query, ex);
+            LOGGER.error("Echec de l'execution de la requete " + query, ex);
             RemoteDao.setInstance(null);
-            Logger.getLogger(LocalDao.class.getName()).log(Level.SEVERE, null, ex);
         }
         return true;
     }
@@ -407,8 +405,8 @@ public class RQueryFactories<T extends Serializable> {
                     ps.close();
                     return idListen;
                 } catch (SQLException | CloseConException ex) {
-                    LogFiles.addLogInFile("Echec de l'execution de la requete ", ex);
-                    Logger.getLogger(RQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
+                    LOGGER.error("Echec de l'execution de la requete ", ex);
+                    
                     if (!RemoteDao.getInstance().getConnection().isClosed()) {
                         RemoteDao.getInstance().getConnection().rollback();
                     }
@@ -416,9 +414,8 @@ public class RQueryFactories<T extends Serializable> {
             }
         } catch (SQLException | CloseConException ex) {
             //Logging de l'erreur
-            LogFiles.addLogInFile("Echec de l'execution de la requete " + sb1.toString(), ex);
+            LOGGER.error("Echec de l'execution de la requete " + sb1.toString(), ex);
             RemoteDao.setInstance(null);
-            Logger.getLogger(LocalDao.class.getName()).log(Level.SEVERE, null, ex);
         }
         return -1L;
     }
@@ -440,11 +437,11 @@ public class RQueryFactories<T extends Serializable> {
                     facture.setStatutReglement(sR);
                 }
             } catch (SQLException ex) {
-                Logger.getLogger(RQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
+                
             }
         } catch (SQLException e) {
         } catch (CloseConException ex) {
-            Logger.getLogger(RQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
+            
         }
         return facture;
     }

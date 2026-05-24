@@ -16,11 +16,9 @@ import com.lymytz.lymytzsell.dao.query.RQueryFactories;
 import com.lymytz.lymytzsell.service.application.Controller;
 import com.lymytz.lymytzsell.service.application.synchro.UtilEntityBase;
 import com.lymytz.lymytzsell.service.application.synchro.export.UtilExport;
-import com.lymytz.lymytzsell.service.utils.ConsUtil;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.LymytzService;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
-import com.lymytz.lymytzsell.service.utils.log.LogFiles;
 import com.lymytz.lymytzsell.synchro.ws.ResultatAction;
 import com.lymytz.lymytzsell.synchro.ws.WsSynchro;
 import com.lymytz.lymytzsell.view.main.HomeCaisseController;
@@ -182,7 +180,7 @@ public class FormVirementController implements Initializable, Controller {
             saveVirementFromFiche(header, montant);
             closeFicheVente(header);
         } catch (NumberFormatException ex) {
-            LogFiles.addLogInFile("", Severity.ERROR, ConsUtil.SOURCE_LOG_FILE_EXCEPTION, ex);
+            LOGGER.error("Erreur lors de la clôture", ex);
             LymytzService.openExceptionDialog("Erreur lors de la clôture !", Alert.AlertType.ERROR, ex);
         }
     }

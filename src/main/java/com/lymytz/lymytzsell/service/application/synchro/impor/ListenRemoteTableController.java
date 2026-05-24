@@ -25,7 +25,6 @@ import com.lymytz.lymytzsell.dao.Options;
 import com.lymytz.lymytzsell.service.application.bean.ListenTableBean;
 import com.lymytz.lymytzsell.service.application.loader.LoaderListenTable;
 import com.lymytz.lymytzsell.service.utils.Constantes;
-import com.lymytz.lymytzsell.service.utils.log.LogFiles;
 import com.lymytz.lymytzsell.view.main.HomeCaisseController;
 
 import java.net.URL;
@@ -39,6 +38,8 @@ import java.util.logging.Logger;
  * @author LYMYTZ
  */
 public class ListenRemoteTableController implements Initializable, Controller {
+
+    private static final org.apache.logging.log4j.Logger LOGGER = org.apache.logging.log4j.LogManager.getLogger(ListenRemoteTableController.class);
 
     HomeCaisseController page;
     ObservableList<ListenTableBean> items = FXCollections.observableArrayList();
@@ -97,8 +98,8 @@ public class ListenRemoteTableController implements Initializable, Controller {
                     }
                 }
             } catch (Exception ex) {
-                LogFiles.addLogInFile("", ex);
-                Logger.getLogger(ListenRemoteTableController.class.getName()).log(Level.SEVERE, null, ex);
+                LOGGER.error("Erreur synchro", ex);
+                
             }
         });
         itemCancel.setOnAction((ActionEvent ev) -> {
@@ -113,8 +114,8 @@ public class ListenRemoteTableController implements Initializable, Controller {
                     }
                 }
             } catch (Exception ex) {
-                LogFiles.addLogInFile("", ex);
-                Logger.getLogger(ListenRemoteTableController.class.getName()).log(Level.SEVERE, null, ex);
+                LOGGER.error("Erreur synchro", ex);
+                
             }
         });}
 
@@ -153,8 +154,8 @@ public class ListenRemoteTableController implements Initializable, Controller {
             Thread t = new Thread(task);
             t.start();
         } catch (Exception ex) {
-            LogFiles.addLogInFile("", ex);
-            Logger.getLogger(ListenRemoteTableController.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.error("Erreur synchro", ex);
+            
         }
     }
 

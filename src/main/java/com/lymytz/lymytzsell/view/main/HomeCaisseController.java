@@ -10,7 +10,7 @@ import com.lymytz.lymytzsell.business.helpers.Helpers;
 import com.lymytz.lymytzsell.business.helpers.KeyBoardAction;
 import com.lymytz.lymytzsell.business.helpers.ResponseAction;
 import com.lymytz.lymytzsell.dao.Options;
-import com.lymytz.lymytzsell.dao.ParamConnection;
+import com.lymytz.lymytzsell.service.application.config.Properties;
 import com.lymytz.lymytzsell.dao.UtilsBean;
 import com.lymytz.lymytzsell.dao.entity.YvsBaseArticleCategorieComptable;
 import com.lymytz.lymytzsell.dao.entity.YvsBaseArticleCategorieComptableTaxe;
@@ -32,6 +32,7 @@ import com.lymytz.lymytzsell.service.application.MyComptesController;
 import com.lymytz.lymytzsell.service.application.bean.ContentPanier;
 import com.lymytz.lymytzsell.service.application.composant.ClaviersController;
 import com.lymytz.lymytzsell.service.application.composant.Onglets;
+import com.lymytz.lymytzsell.service.application.config.PropertiesManager;
 import com.lymytz.lymytzsell.service.application.loader.LoaderArticleTask;
 import com.lymytz.lymytzsell.service.application.loader.LoaderFamilleArticleTask;
 import com.lymytz.lymytzsell.service.application.loader.LoaderInitData;
@@ -53,13 +54,11 @@ import com.lymytz.lymytzsell.service.application.synchro.impor.ImportDataControl
 import com.lymytz.lymytzsell.service.application.synchro.impor.ListenRemoteTableController;
 import com.lymytz.lymytzsell.service.start.StartController;
 import com.lymytz.lymytzsell.service.utils.Clock;
-import com.lymytz.lymytzsell.service.utils.ConsUtil;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.CustomWindow;
 import com.lymytz.lymytzsell.service.utils.LymytzService;
 import com.lymytz.lymytzsell.service.utils.PrintTiket;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
-import com.lymytz.lymytzsell.service.utils.log.LogFiles;
 import com.lymytz.lymytzsell.synchro.ws.WsSynchro;
 import com.lymytz.lymytzsell.view.LocalLoader;
 import com.lymytz.lymytzsell.view.component.CustomComponents;
@@ -112,7 +111,6 @@ import lombok.Setter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.print.attribute.standard.Severity;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -431,9 +429,9 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
         time.addListener((ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> Platform.runLater(() -> SESS_DUREE.setText(Constantes.HMS.format(new Date(getTime())))));
         connectRemoteServer.addListener((observable, oldValue, newValue) -> {
             //ecrit sur la socket: seul le serveur peut écrire 
-            if (newValue != null && (UtilsProject.properties.getProperty(Constantes.KEY_MODE).equals(Constantes.APPS_MODE_BOTH))) {
+            if (newValue != null && (PropertiesManager.getInstance().getVal(Constantes.KEY_MODE).equals(Constantes.APPS_MODE_BOTH))) {
                 ServeurMessage.writeMessage(newValue);
-                LogFiles.addLogInFile(null, Severity.REPORT, ConsUtil.SOURCE_LOG_FILE_EXCEPTION, null);
+                LOGGER.info("Changement état connexion serveur distant");
 
             }
         });
@@ -836,7 +834,7 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
     private void livrerEtReglerFactureValide(YvsComDocVentes facture, double montantPaye, double montantRecu) {
         Thread tcompta = new Thread(() -> {
             saveLivraisonAndreglement(new YvsComDocVentes(facture), montantPaye, montantRecu);
-            if (Boolean.TRUE.equals(!UtilsProject.REPLICATION) && facture.getTypeDoc().equals(TYPE_FV)) {
+            if (!UtilsProject.REPLICATION && facture.getTypeDoc().equals(TYPE_FV)) {
                 comptabilise(facture.getId(), facture.getNumDoc());
             }
         });
@@ -962,7 +960,7 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
         service.saveReglementFacture(facture, montantPaye, montantRecu);
         //3. Enregistrer le document de livraison. 
         //on enregistre directement que si on n'est pas en mode replication (car si on est en mode replication, le BL sera géré par le serveur d'application dès la validation de la facture)
-        if (Boolean.FALSE.equals(UtilsProject.REPLICATION) && (!facture.getTypeDoc().equals(Constantes.TYPE_BCV))) {
+        if (!UtilsProject.REPLICATION && (!facture.getTypeDoc().equals(Constantes.TYPE_BCV))) {
             ServiceLivraison serviceL = new ServiceLivraison(this);
             if (facture.getTrancheLivrer() == null) {
                 facture.setTrancheLivrer(UtilsProject.headerDoc.getCreneau().getCreneauDepot().getTranche());
@@ -1110,7 +1108,7 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
                 controler.initDataForm(this);
             }
         } catch (Exception ex) {
-            LogFiles.addLogInFile("Erreur à l'ouverture de la page form_create_facture.fxml", Severity.ERROR, ConsUtil.SOURCE_LOG_FILE_EXCEPTION, ex);
+            LOGGER.error("Erreur à l'ouverture de la page form_create_facture.fxml", ex);
             LymytzService.openAlertDialog("Impossible d'ouvrir la page de création de la facture. Consultez votre fichier de log pour en savoir plus sur la cause", "Ouverture Impossible", "Ouverture de la page", Alert.AlertType.ERROR);
         }
     }
@@ -1173,8 +1171,8 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
     private void printFacture(ActionEvent event) {
         if (!TAB_FACTURES.getTabs().isEmpty()) {
             Onglets ong = (Onglets) TAB_FACTURES.getSelectionModel().getSelectedItem();
-            ParamConnection param = new ParamConnection();
-            ParamConnection.readFile(LymytzService.getFileInputStream());
+            Properties param = new Properties();
+            Properties.readFile(LymytzService.getFileInputStream());
             if (ong != null) {
                 ong.setNetAPayer(ong.getFacture().getMontantTTC());
                 if (param.getTypeRapport().equals(UtilsProject.TYPE_RAPPORT_TICKET)) {
@@ -1309,7 +1307,7 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
 
     @FXML
     public void reloadPropertieFile(ActionEvent ev) {
-        UtilsProject.loadFilePropertie();
+        UtilsProject.reloadFilePropertie();
         if (UtilsProject.properties != null) {
             UtilsProject.loadInitData();
             loadProperties();
@@ -1337,7 +1335,7 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
     public void saveOrGenerateBl(Onglets currentOnglet) {
         if (currentOnglet != null) {
             ServiceLivraison service = new ServiceLivraison(this);
-            if (!currentOnglet.getFacture().getTypeDoc().equals(Constantes.TYPE_BCV)) {
+            if (!currentOnglet.getFacture().isCommande()) {
                 service.saveLivraison(currentOnglet.getFacture(), true);
             } else {
                 Alert dlg = new Alert(Alert.AlertType.CONFIRMATION, "Confirmez vous la livraison de ce bon de commande ?", new ButtonType("Oui"), new ButtonType("Non"));
@@ -1355,7 +1353,7 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
         if (UtilsProject.isProductionEnv()) {
             //Lance des ping sur le serveur distant pour savoir s'il est toujours connecté
             //cette methode est lancé seulement lorsque le serveur est en mode BOTH
-            if (UtilsProject.properties.getProperty(Constantes.KEY_MODE).equals(Constantes.APPS_MODE_BOTH)) {
+            if (PropertiesManager.getInstance().getVal(Constantes.KEY_MODE).equals(Constantes.APPS_MODE_BOTH)) {
                 new ListenServersRemote(10, this).start();
             } else {
                 //lance la socket d'écoute client... (si on est en mode replication)
@@ -1451,7 +1449,7 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
 
     //méthode qui vérifie que la socket client est toujours connecté au serveur
     public void verifySocketIsConnected() {
-        if (Constantes.APPS_MODE_SINGLE.equals(UtilsProject.properties.getProperty(Constantes.KEY_MODE))) {
+        if (Constantes.APPS_MODE_SINGLE.equals(PropertiesManager.getInstance().getVal(Constantes.KEY_MODE))) {
             new Thread(this::monitorSocketConnection).start();
         }
     }

@@ -14,7 +14,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextArea;
 import com.lymytz.lymytzsell.service.application.Controller;
-import com.lymytz.lymytzsell.service.utils.ConsUtil;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -73,7 +72,7 @@ public class ReadLogController implements Initializable, Controller {
             try {
                 String line = "";
                 String texte = "";
-                File f = new File("log/" + ConsUtil.SOURCE_LOG_FILE_EXCEPTION);
+                File f = new File(System.getProperty("user.home") + "/lymytz-sell/logs/exception.log");
                 br = new BufferedReader(new FileReader(f));
                 int progress = 0;
                 while ((line = br.readLine()) != null) {

@@ -9,7 +9,6 @@ import com.lymytz.lymytzsell.dao.entity.service.EntityColumn;
 import com.lymytz.lymytzsell.dao.entity.service.LymytzData;
 import com.lymytz.lymytzsell.dao.query.LocalQueryFactories;
 import com.lymytz.lymytzsell.dao.query.RQueryFactories;
-import com.lymytz.lymytzsell.service.utils.log.LogFiles;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
@@ -27,6 +26,8 @@ import java.util.logging.Logger;
  * @author Admin
  */
 public class LoaderLocalExport extends Task<ObservableList<ObservableList>> {
+
+    private static final org.apache.logging.log4j.Logger LOGGER = org.apache.logging.log4j.LogManager.getLogger(LoaderLocalExport.class);
 
     LocalQueryFactories dao = new LocalQueryFactories();
     private String methode;
@@ -143,15 +144,15 @@ public class LoaderLocalExport extends Task<ObservableList<ObservableList>> {
             st.close();
         } catch (SQLException ex) {
             try {
-                LogFiles.addLogInFile("Echec de l'execution de la requete: ", ex);
+                LOGGER.error("Echec de l'execution de la requete: ", ex);
                 st.close();
             } catch (SQLException ex1) {
 
-                LogFiles.addLogInFile("Echec de l'execution de la requete: ", ex1);
-                Logger.getLogger(LoaderLocalExport.class.getName()).log(Level.SEVERE, null, ex1);
+                LOGGER.error("Echec de l'execution de la requete: ", ex1);
+                
             }
-            LogFiles.addLogInFile("Echec de l'execution de la requete: ", ex);
-            Logger.getLogger(RQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.error("Echec de l'execution de la requete: ", ex);
+            
         }
         return re;
     }
@@ -179,7 +180,7 @@ public class LoaderLocalExport extends Task<ObservableList<ObservableList>> {
                 }
             }
         } catch (SQLException ex) {
-            Logger.getLogger(RQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
+            
         }
         return re;
     }
@@ -223,7 +224,7 @@ public class LoaderLocalExport extends Task<ObservableList<ObservableList>> {
                 }
             }
         } catch (SQLException ex) {
-            Logger.getLogger(RQueryFactories.class.getName()).log(Level.SEVERE, null, ex);
+            
         }
         return re;
     }

@@ -6,6 +6,7 @@
 package com.lymytz.lymytzsell.service.start;
 
     import com.lymytz.lymytzsell.service.application.Controller;
+    import com.lymytz.lymytzsell.service.application.config.PropertiesManager;
     import com.lymytz.lymytzsell.service.utils.Constantes;
     import com.lymytz.lymytzsell.service.utils.LymytzService;
     import com.lymytz.lymytzsell.service.utils.UtilsProject;
@@ -27,7 +28,7 @@ package com.lymytz.lymytzsell.service.start;
     import javafx.stage.DirectoryChooser;
     import javafx.util.StringConverter;
     import com.lymytz.lymytzsell.dao.LocalDao;
-    import com.lymytz.lymytzsell.dao.ParamConnection;
+    import com.lymytz.lymytzsell.service.application.config.Properties;
     import com.lymytz.lymytzsell.dao.RemoteDao;
     import com.lymytz.lymytzsell.dao.entity.YvsAgences;
     import com.lymytz.lymytzsell.dao.entity.YvsBaseModeReglement;
@@ -171,7 +172,7 @@ public class ParametresController implements Initializable, Controller {
                 return null;
             }
         });
-        ParamConnection p = ParamConnection.readFile(LymytzService.getFileInputStream());
+        Properties p = Properties.readFile(LymytzService.getFileInputStream());
         if (p != null ? p.getIdRemoteScte() > 0 : false) {
             init();
         }
@@ -241,7 +242,7 @@ public class ParametresController implements Initializable, Controller {
         if (TXT_NUM_CAISSE.getText() != null) {
 //            if (CB_SOCIETE.getValue() != null) {
 //                if (CB_AGENCE.getValue() != null) {
-            ParamConnection param = new ParamConnection();
+            Properties param = new Properties();
             param.setIdRemoteScte(Constantes.asString(TXT_ID_R.getText()) ? Long.valueOf(TXT_ID_R.getText()) : 0L);
             param.setCheminPhotos(TXT_PATH.getText());
             param.setCodeCaisse(TXT_NUM_CAISSE.getText());
@@ -304,7 +305,7 @@ public class ParametresController implements Initializable, Controller {
     }
 
     public void displayParametres(boolean establish) {
-        ParamConnection param = ParamConnection.readFile(LymytzService.getFileInputStream());
+        Properties param = Properties.readFile(LymytzService.getFileInputStream());
         if (param != null) {
             if (establish) {
                 initClients();
@@ -363,7 +364,7 @@ public class ParametresController implements Initializable, Controller {
                 TYPE_PRINT.selectToggle(RAD_TICKET);
             }
         } else {
-            TXT_ID_R.setText(UtilsProject.properties.getProperty(Constantes.KEY_REMOTE_SOCIETE));
+            TXT_ID_R.setText(PropertiesManager.getInstance().getVal(Constantes.KEY_REMOTE_SOCIETE));
         }
     }
 

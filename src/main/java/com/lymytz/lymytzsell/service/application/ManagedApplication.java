@@ -10,6 +10,7 @@ import com.lymytz.lymytzsell.dao.entity.YvsBaseArticles;
 import com.lymytz.lymytzsell.dao.entity.YvsComCreneauHoraireUsers;
 import com.lymytz.lymytzsell.dao.entity.YvsComEnteteDocVente;
 import com.lymytz.lymytzsell.dao.query.LocalQueryFactories;
+import com.lymytz.lymytzsell.service.application.config.PropertiesManager;
 import com.lymytz.lymytzsell.service.application.service.ListenServersRemote;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.LymytzService;
@@ -317,7 +318,7 @@ public class ManagedApplication {
 
     private Image displayPhotos(String photo) {
         try {
-            String path = UtilsProject.properties.getProperty(Constantes.KEY_PATH);
+            String path = PropertiesManager.getInstance().getVal(Constantes.KEY_PATH);
             if (Constantes.asString(path)) {
                 File f = new File(path + '\\' + photo);
                 if (f.exists()) {

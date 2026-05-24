@@ -94,8 +94,8 @@ public class PrintTiket implements Runnable {
         try {
             PageLayout pl;
             var paper = PrintHelper.createPaper("Perso", 300d, 15000d, Units.INCH);
-            PageOrientation pageOrientation = (UtilsProject.paramConnection.getOrientation() != null) ? UtilsProject.paramConnection.getOrientation().equals("PAYSAGE") ? PageOrientation.LANDSCAPE : PageOrientation.PORTRAIT : PageOrientation.PORTRAIT;
-            pl = Printer.getDefaultPrinter().createPageLayout(paper, pageOrientation, UtilsProject.paramConnection.getP_ml(), UtilsProject.paramConnection.getP_mr(), UtilsProject.paramConnection.getP_mt(), UtilsProject.paramConnection.getP_mb());
+            PageOrientation pageOrientation = (UtilsProject.properties.getOrientation() != null) ? UtilsProject.properties.getOrientation().equals("PAYSAGE") ? PageOrientation.LANDSCAPE : PageOrientation.PORTRAIT : PageOrientation.PORTRAIT;
+            pl = Printer.getDefaultPrinter().createPageLayout(paper, pageOrientation, UtilsProject.properties.getP_ml(), UtilsProject.properties.getP_mr(), UtilsProject.properties.getP_mt(), UtilsProject.properties.getP_mb());
             return pl;
         } catch (Exception ex) {
             LOGGER.error("Impossible d'imprimer !", ex);

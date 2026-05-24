@@ -329,7 +329,7 @@
                 // display statistique
                 mainControler.loadFamilleArticles(header);
                 mainControler.displayPropertiesFiche(header);
-                if (UtilsProject.paramConnection.getLoadCatalogue()) {
+                if (UtilsProject.properties.getLoadCatalogue()) {
                     mainControler.loadCatalogue(header, null);
                 }
                 displayStatHeader(header);
