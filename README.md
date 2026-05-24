@@ -7,6 +7,13 @@ Application de gestion de caisse associé à Lymytz ERP
   ![JDK](https://img.shields.io/badge/PostgresSql-14-orange)
 
 ## Exécuter l'application en developpement
+### Préparer son environnement
+- Installer JDK 17
+- Installer JavaFx SDK 17
+- Installer Jlink
+- Installer Jpackage
+- Installer JavaFX Scene Builder
+
 ### Chargement de la configuration
   L'application utilise un fichier de configuration nommé `application.properties` qui est en principe initialisé à la première exécution de l'application. 
   dans le dossier home de l'utilisateur "C:\Users\{user}\lymytz-sell\conf\application.properties".

@@ -94,10 +94,10 @@ public class ServiceReglement {
         YvsComptaCaissePieceVente piece = new YvsComptaCaissePieceVente();
         YvsComptaAcompteClient avance = null;
         String numDoc = UtilsProject.generatedNumDoc(Constantes.TYPE_PC_NAME);
-        if (numDoc != null ? !numDoc.isEmpty() : false) {
+        if (numDoc != null && !numDoc.isEmpty()) {
             if (facture.getTypeDoc().equals(Constantes.TYPE_BCV)) {
                 avance = saveAcompteClient(facture, montant, UtilsProject.headerDoc.getDateEntete());
-                if (avance == null ? true : avance.getId() <= 0) {
+                if (avance == null || avance.getId() <= 0) {
                     LOGGER.error("L'avance de la commande " + facture.getNumDoc() + " n'a pas pue être généré !");
                     return Constantes.ETAT_ATTENTE;
                 }
@@ -121,7 +121,7 @@ public class ServiceReglement {
             piece.setValideBy(UtilsProject.currentUser.getUsers());
             piece.setMontantRecu(montantRecu);
             piece.setMouvement(Constantes.MOUV_CAISS_ENTREE.charAt(0));
-            piece = (YvsComptaCaissePieceVente) dao.save1(piece);
+            piece = dao.save1(piece);
             bindNotifReglement(avance, piece);
             if (piece.getId() != null) {
                 if (montantNet <= 0) {
@@ -138,7 +138,7 @@ public class ServiceReglement {
     private YvsComptaAcompteClient saveAcompteClient(YvsComDocVentes facture, double montant, Date date) {
         YvsComptaAcompteClient bean = new YvsComptaAcompteClient();
         String numDoc = UtilsProject.generatedNumDoc(Constantes.TYPE_PT_AVANCE_VENTE);
-        if (numDoc != null ? !numDoc.isEmpty() : false) {
+        if (numDoc != null && !numDoc.isEmpty()) {
             bean.setAuthor(UtilsProject.currentUser);
             bean.setCaisse(UtilsProject.caisse);
             bean.setClient(facture.getClient());
@@ -152,14 +152,7 @@ public class ServiceReglement {
             bean.setMontant(montant);
             bean.setNumRefrence(numDoc);
             bean.setStatut(Constantes.STATUT_DOC_PAYER);
-            bean = (YvsComptaAcompteClient) dao.save1(bean);
-            //Intruction du au trigger de la table
-//            Long idExt=(Long)rq.loadObjectByNameQueries("YvsComptaMouvementCaisse.findIdExterneById", new String[]{"id"}, new Object[]{bean.getId()});
-//            YvsComptaMouvementCaisse mvt = (YvsComptaMouvementCaisse) rq.findOneEntity("YvsComptaMouvementCaisse.findById", new String[]{"id"}, new Object[]{bean.getId()});
-//            if (mvt != null) {
-//                bean.setId(idExt);
-//            }
-//            bean=(YvsComptaAcompteClient)rq.findOneEntity("YvsComptaAcompteClient.findById", new String[]{"id"}, new Object[]{idExt});
+            bean = dao.save1(bean);
             return bean;
         } else {
             LOGGER.error("Le numéro de pièce d'avance client n'a pu être généré ");

@@ -150,38 +150,6 @@ public class WsSynchro {
     }
 
     /**
-     * Service cmptabilité
-     *
-     *
-     * @param idDocVente
-     * @param auteur
-     * @return
-     */
-    public ResultatAction comptabiliseVente(long idDocVente, long auteur) {
-        try {
-            Client client = ClientBuilder.newClient(new ClientConfig());
-            WebTarget target = client.target(WsSynchro.getUriAdresse("compta/comptabiliseVente"));
-            Invocation.Builder invocation = target.request(MediaType.APPLICATION_JSON);
-            invocation.header("doc", idDocVente);
-            invocation.header("idUser", auteur);
-            Response rep = invocation.post(Entity.text("{doc:"+idDocVente+", idUser:"+auteur+"}"));
-            return rep.readEntity(ResultatAction.class);
-        } catch (Exception ex) {
-            LOGGER.error(ex);
-        }
-        return null;
-    }
-
-    public ResultatAction comptabiliseVente(long idDocVente, long auteur, String numero) {
-        if (serverOnline()) {
-            return comptabiliseVente(idDocVente, auteur);
-        } else {
-            LOGGER.error(numero + ", non comptabilisé: Le service de comptabilisation est introuvable");
-        }
-        return null;
-    }
-
-    /**
      * Service stocks
      *
      *

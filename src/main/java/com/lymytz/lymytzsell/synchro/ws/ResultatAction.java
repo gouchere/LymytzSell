@@ -36,10 +36,6 @@ public class ResultatAction<T extends Serializable> {
         this.message = message;
     }
 
-    public ResultatAction(int codeInfo, Long idEntity, Long source, String message, String module, String fonctionalite, Object data, T entity) {
-
-    }
-
     public void setResult(boolean result) {
         this.result = result;
     }

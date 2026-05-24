@@ -13,7 +13,7 @@ import com.lymytz.lymytzsell.dao.entity.YvsComptaCaissePieceVente;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.LymytzService;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
-import com.lymytz.lymytzsell.synchro.ws.FactureHttpService;
+import com.lymytz.lymytzsell.synchro.ws.LivrerFactureHttpService;
 import com.lymytz.lymytzsell.synchro.ws.ResultatAction;
 import com.lymytz.lymytzsell.synchro.ws.dto.DeliveryResponseDto;
 import com.lymytz.lymytzsell.view.component.ToastService;
@@ -39,19 +39,15 @@ public class ServiceLivraison {
 
     private final Logger LOGGER = LogManager.getLogger(ServiceLivraison.class.getName());
     HomeCaisseController mainPage;
-    private final FactureHttpService factureHttpService;
+    private final LivrerFactureHttpService livrerFactureHttpService;
 
     public ServiceLivraison(HomeCaisseController mainPage) {
         this.mainPage = mainPage;
-        factureHttpService = new FactureHttpService();
+        livrerFactureHttpService = new LivrerFactureHttpService();
     }
 
     public void saveLivraison(YvsComDocVentes facture, boolean message) {
-        /*WsSynchro ws = new WsSynchro();
-        //Construction de l'objet avec ses liaisons sur le serveur distant
-        JSONObject entityJson = UtilExport.exportDocVente(facture, false, 0L);
-        ResultatAction<YvsComDocVentes> result = ws.livraisonDocVente(entityJson, "livrer_facture_vente_caisse");*/
-        ResultatAction<DeliveryResponseDto> result = factureHttpService.sendDeliveryRequest(facture.getId());
+        ResultatAction<DeliveryResponseDto> result = livrerFactureHttpService.livrer(facture.getId());
         if (result != null && result.isResult()) {
             String query = "UPDATE yvs_com_doc_ventes SET statut_livre='L' WHERE id=? ";
             mainPage.dao.executeSqlQuery(query, new Options[]{new Options(facture.getId(), 1)});
@@ -73,7 +69,7 @@ public class ServiceLivraison {
             YvsComDocVentes facture = validerOrder(commande, true);
             if (facture != null && facture.getId() > 0) {
                 //si la facture a été généré, il faut la comptabiliser
-                Thread t = new Thread(() -> mainPage.comptabilise(facture.getId(), facture.getNumDoc()));
+                Thread t = new Thread(() -> mainPage.comptabilise(facture.getId()));
                 t.start();
                 if (controleLivraison(facture, false) && UtilsProject.trancheLivraison != null) {
                     boolean continu = false;

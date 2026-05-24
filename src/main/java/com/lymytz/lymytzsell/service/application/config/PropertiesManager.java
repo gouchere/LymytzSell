@@ -81,14 +81,14 @@ public class PropertiesManager {
 
         String s = getVal(Constantes.KEY_CLIENT_DIVERS);
         properties.setClientDivers(Constantes.asString(s) ? Long.parseLong(s) : 0L);
-        properties.setCodeAgence(Long.parseLong(getVal(Constantes.KEY_LOCAL_AGENCE)));
-        properties.setCodeSociete(Long.parseLong(getVal(Constantes.KEY_LOCAL_SOCIETE)));
+        properties.setCodeAgence(parseLong(getVal(Constantes.KEY_LOCAL_AGENCE)));
+        properties.setCodeSociete(parseLong(getVal(Constantes.KEY_LOCAL_SOCIETE)));
         properties.setDataBase(getVal(Constantes.KEY_LOCAL_DB_NAME));
         properties.setDataBaseRemote(getVal(Constantes.KEY_REMOTE_DB_NAME));
         properties.setHostWeb(getVal(Constantes.KEY_WEB_HOST));
-        properties.setIdRemoteScte(Long.parseLong(getVal(Constantes.KEY_REMOTE_SOCIETE)));
-        properties.setModeReg(Long.parseLong(getVal(Constantes.KEY_MODE_REGLEMENT)));
-        properties.setModelReg(Long.parseLong(getVal(Constantes.KEY_MODEL_REGLEMENT)));
+        properties.setIdRemoteScte(parseLong(getVal(Constantes.KEY_REMOTE_SOCIETE)));
+        properties.setModeReg(parseLong(getVal(Constantes.KEY_MODE_REGLEMENT)));
+        properties.setModelReg(parseLong(getVal(Constantes.KEY_MODEL_REGLEMENT)));
         properties.setP_default(!Constantes.asString(getVal(Constantes.KEY_USE_PRINTER)) || Boolean.parseBoolean(getVal(Constantes.KEY_USE_PRINTER)));
         properties.setP_height(parseDouble(getVal(Constantes.KEY_PAPER_HEIGHT)));
         properties.setP_width(parseDouble(getVal(Constantes.KEY_PAPER_WIDTH)));
@@ -185,7 +185,7 @@ public class PropertiesManager {
         }
         try {
             String value = propertiesConfig.getProperty(key);
-            return Constantes.asString(value) ? value : null;
+            return Constantes.asString(value) ? value : "";
         } catch (Exception ex) {
             LOGGER.error("Récupération de la clé erronée ! {}", key, ex);
         }
@@ -205,6 +205,14 @@ public class PropertiesManager {
             java.util.logging.Logger.getLogger(PreferenceController.class.getName()).log(Level.SEVERE, null, ex);
             LymytzService.openExceptionDialog("", Alert.AlertType.ERROR, ex);
         }
+    }
+    private long parseLong(String val) {
+        try{
+            return Long.parseLong(val);
+        }catch (Exception ex){
+            LOGGER.warn("Erreur de conversion de la valeur {} en long", val, ex);
+        }
+        return 0L;
     }
 }
 

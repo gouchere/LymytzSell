@@ -314,8 +314,6 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
     public Label LAB_DES;
     @FXML
     public Label QTE_FACTURE;
-    /* @FXML
-     private VBox ZONE_IMG;*/
     @FXML
     private Label SESS_DUREE;
     //Footer
@@ -589,8 +587,6 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
                 UtilsProject.trancheLivraison = head.getCreneau().getCreneauPoint().getTranche();
             }
             LAB_TRANCHE.setText(UtilsProject.trancheLivraison.getTitre());
-            //Récupère les ids des dépôts lié au point de vente courant
-            //setIdDepots(dao.loadByNamedQuery("YvsBasePointVenteDepot.findIdDepotByPoint", new String[]{"pointVente"}, new Object[]{head.getCreneau().getCreneauPoint().getPoint()}));
         }
     }
 
@@ -677,7 +673,7 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
                 } else {
                     QTE_FACTURE.setText(Constantes.nbf.format(0));
                 }
-                if (Boolean.FALSE.equals(UtilsProject.REPLICATION) && UtilsProject.depotLivraison != null) {
+                if (!UtilsProject.REPLICATION && UtilsProject.depotLivraison != null) {
                     //si on est pas en mode replication, calcul immédiatement le stock
                     double stock = UtilsProject.getStocks(art, UtilsProject.depotLivraison.getId());
                     art.setStock(stock);
@@ -835,7 +831,7 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
         Thread tcompta = new Thread(() -> {
             saveLivraisonAndreglement(new YvsComDocVentes(facture), montantPaye, montantRecu);
             if (!UtilsProject.REPLICATION && facture.getTypeDoc().equals(TYPE_FV)) {
-                comptabilise(facture.getId(), facture.getNumDoc());
+                comptabilise(facture.getId());
             }
         });
         tcompta.start();

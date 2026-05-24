@@ -15,6 +15,7 @@ import com.lymytz.lymytzsell.service.application.service.ListenServersRemote;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.LymytzService;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
+import com.lymytz.lymytzsell.synchro.ws.AccountingHttpService;
 import com.lymytz.lymytzsell.synchro.ws.WsSynchro;
 import com.lymytz.lymytzsell.view.LocalLoader;
 import com.lymytz.lymytzsell.view.main.HomeCaisseController;
@@ -278,12 +279,11 @@ public class ManagedApplication {
         }
     }
 
-    public void comptabilise(Long id, String numDoc) {
+    public void comptabilise(Long id) {
         String squery = "SELECT y.comptabilisation_auto FROM yvs_com_parametre_vente y WHERE y.agence=?";
         Boolean be = (Boolean) dao.findOneObjectBySQLQ(squery, new Options[]{new Options(UtilsProject.currentAgence.getId(), 1)});
         if (Boolean.TRUE.equals(be)) {
-            WsSynchro ws = new WsSynchro();
-            ws.comptabiliseVente(id, UtilsProject.currentUser.getId(), numDoc);
+            new AccountingHttpService().comptabilise(id, UtilsProject.currentUser.getId());
         }
     }
 

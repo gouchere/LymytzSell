@@ -29,7 +29,7 @@
                         <Insets right="15.0" />
                     </padding>
                 </Label>
-                <Label fx:id="TITRE_CLAVIER" alignment="CENTER" prefHeight="17.0" prefWidth="502.0" text="Entrer Le montant reçu" textAlignment="CENTER" textFill="#756d6d" wrapText="true">
+                <Label fx:id="TITRE_CLAVIER" alignment="CENTER" prefHeight="17.0" prefWidth="502.0" text="Entrez Le montant reçu" textAlignment="CENTER" textFill="#756d6d" wrapText="true">
                     <font>
                         <Font size="20.0" />
                     </font>
