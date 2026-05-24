@@ -5,10 +5,15 @@
  */
 package com.lymytz.lymytzsell.dao;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  *
  * @author Admin
  */
+@Setter
+@Getter
 public class Options {
 
     private Object valeur;
@@ -22,22 +27,5 @@ public class Options {
         this.position = position;
     }
 
-    public Object getValeur() {
-        return valeur;
-    }
-
-    public void setValeur(Object valeur) {
-        this.valeur = valeur;
-    }
-
-    public int getPosition() {
-        return position;
-    }
-
-    public void setPosition(int position) {
-        this.position = position;
-    }
-    
-    
 
 }

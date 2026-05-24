@@ -5,48 +5,26 @@
  */
 package com.lymytz.lymytzsell.dao;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.Objects;
 
 /**
  *
  * @author Admin
  */
+@Setter
+@Getter
 public class ParamOption {
 
     private Object valeur;
     private String param;
     private String operateur;
 
-    public ParamOption() {
-    }
-
     public ParamOption(String param, Object valeur, String operateur) {
         this.valeur = valeur;
         this.param = param;
-        this.operateur = operateur;
-    }
-
-    public Object getValeur() {
-        return valeur;
-    }
-
-    public void setValeur(Object valeur) {
-        this.valeur = valeur;
-    }
-
-    public String getParam() {
-        return param;
-    }
-
-    public void setParam(String param) {
-        this.param = param;
-    }
-
-    public String getOperateur() {
-        return operateur;
-    }
-
-    public void setOperateur(String operateur) {
         this.operateur = operateur;
     }
 
@@ -66,10 +44,7 @@ public class ParamOption {
             return false;
         }
         final ParamOption other = (ParamOption) obj;
-        if (!Objects.equals(this.param, other.param)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(this.param, other.param);
     }
 
 }

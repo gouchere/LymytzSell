@@ -41,7 +41,6 @@ import com.lymytz.lymytzsell.service.application.service.ListenServersLocal;
 import com.lymytz.lymytzsell.service.application.service.ListenServersRemote;
 import com.lymytz.lymytzsell.service.application.service.ServiceCreateFacture;
 import com.lymytz.lymytzsell.service.application.service.ServiceLivraison;
-import com.lymytz.lymytzsell.service.application.service.mail.SendMail;
 import com.lymytz.lymytzsell.service.application.service.reglement.FormVirementController;
 import com.lymytz.lymytzsell.service.application.service.reglement.ServiceReglement;
 import com.lymytz.lymytzsell.service.application.service.report.ListingController;
@@ -1309,17 +1308,6 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
             loadProperties();
             ToastService.show(getMainStage(), "Les propriétés de l'application ont été rechargés avec succès ", 2500, INFO);
         }
-    }
-
-    @FXML
-    public void testLoadData(ActionEvent ev) {
-        WsSynchro.runningIn.set(false);
-    }
-
-    @FXML
-    public void testSendMail(ActionEvent ev) {
-        SendMail service = new SendMail("", "");
-        service.sendMessage();
     }
 
     @FXML

@@ -5,8 +5,18 @@
  */
 package com.lymytz.lymytzsell.service.application.service.report;
 
+import com.lymytz.lymytzsell.dao.entity.YvsComDocVentes;
 import com.lymytz.lymytzsell.dao.query.LocalQueryFactories;
 import com.lymytz.lymytzsell.service.application.Controller;
+import com.lymytz.lymytzsell.service.application.bean.ContentPanier;
+import com.lymytz.lymytzsell.service.application.bean.Factures;
+import com.lymytz.lymytzsell.service.application.loader.LoaderListing;
+import com.lymytz.lymytzsell.service.utils.Constantes;
+import com.lymytz.lymytzsell.service.utils.LymytzService;
+import com.lymytz.lymytzsell.service.utils.UtilsProject;
+import com.lymytz.lymytzsell.view.LocalLoader;
+import com.lymytz.lymytzsell.view.main.HomeCaisseController;
+import com.lymytz.lymytzsell.view.main.ListFacturesController;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -31,16 +41,8 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import com.lymytz.lymytzsell.dao.entity.YvsComDocVentes;
-import com.lymytz.lymytzsell.service.application.bean.ContentPanier;
-import com.lymytz.lymytzsell.service.application.bean.Factures;
-import com.lymytz.lymytzsell.service.application.loader.LoaderListing;
-import com.lymytz.lymytzsell.service.utils.Constantes;
-import com.lymytz.lymytzsell.service.utils.LymytzService;
-import com.lymytz.lymytzsell.service.utils.UtilsProject;
-import com.lymytz.lymytzsell.view.LocalLoader;
-import com.lymytz.lymytzsell.view.main.HomeCaisseController;
-import com.lymytz.lymytzsell.view.main.ListFacturesController;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.IOException;
 import java.net.URL;
@@ -61,12 +63,9 @@ import static com.lymytz.lymytzsell.service.utils.MessagesConstants.VEUILLEZ_ENR
 public class ListingController implements Initializable, Controller {
 
     HomeCaisseController page;
-    LocalQueryFactories rq = new LocalQueryFactories();
+    @Setter
+    @Getter
     ObservableList<ContentPanier> items = FXCollections.observableArrayList();
-
-    ContextMenu CTM_TV = new ContextMenu();
-
-    private List<String> types;
 
     @FXML
     private TableView<ContentPanier> TABLE_LISTING;
@@ -95,21 +94,7 @@ public class ListingController implements Initializable, Controller {
     @FXML
     private TableColumn<ContentPanier, Boolean> COL_LIV;
     @FXML
-    private TextField F_FACTURE;
-    @FXML
-    private TextField F_CLIENT;
-    @FXML
-    private TextField F_ARTICLE;
-    @FXML
     private ProgressBar PROGRESS;
-    
-    public ObservableList<ContentPanier> getItems() {
-        return items;
-    }
-
-    public void setItems(ObservableList<ContentPanier> items) {
-        this.items = items;
-    }
 
     /**
      * Initializes the controller class.

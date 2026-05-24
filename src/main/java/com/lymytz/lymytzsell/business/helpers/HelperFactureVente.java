@@ -80,26 +80,4 @@ public class HelperFactureVente {
                 .build();
     }
 
-    private static YvsBaseArticles simplifyArticleToSave(YvsBaseArticles articles) {
-        if (articles != null) {
-            var art = new YvsBaseArticles();
-            art.setId(articles.getId());
-            art.setRefArt(articles.getRefArt());
-            art.setDesignation(articles.getDesignation());
-            return art;
-        }
-        return null;
-    }
-
-    private static YvsComEnteteDocVente simplifyHeaderToSave(YvsComEnteteDocVente docVente) {
-        if (docVente != null) {
-            var ent = new YvsComEnteteDocVente();
-            ent.setId(docVente.getId());
-            ent.setCloturer(docVente.getCloturer());
-            ent.setCreneau(new YvsComCreneauHoraireUsers(docVente.getCreneau().getId()));
-            return ent;
-        }
-        return null;
-    }
-
 }

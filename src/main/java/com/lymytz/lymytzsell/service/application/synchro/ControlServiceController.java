@@ -28,7 +28,6 @@ import java.util.ResourceBundle;
  */
 public class ControlServiceController implements Initializable, Controller {
 
-    RQueryFactories dao = new RQueryFactories();
     HomeCaisseController page;
     SynchronizeDataOut serviceOut;
     SynchronizeDataIn serviceIn;
