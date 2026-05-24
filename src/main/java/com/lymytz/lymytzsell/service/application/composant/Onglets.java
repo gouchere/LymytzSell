@@ -238,12 +238,6 @@ public final class Onglets extends Tab {
     public ContentPanier evaluePrix(ContentPanier line) {
         if (line != null) {
             PrixArticles prix = getPrixArticle(line.getConditionnement(), line.getQuantite(), getFacture(), line.getPrix());
-            //todo retirer ce commentaire
-            if (Boolean.TRUE.equals(!UtilsProject.REPLICATION) && UtilsProject.depotLivraison != null) {
-                //si on est pas en mode replication, calcul immédiatement le stock
-                /*var pr = UtilsProject.getPr(line.getConditionnement(), UtilsProject.depotLivraison.getId());
-                line.setPr(pr);*/
-            }
             line.setPrix(prix.getPrixUnite());
             line.setRemise(prix.getRemise());
             line.setRistourne(prix.getRistourne());
@@ -315,10 +309,10 @@ public final class Onglets extends Tab {
     }
 
     private boolean isStockEnable(YvsBaseConditionnement cond, double qteLine, Onglets tab, ContentPanier line) {
-        return (Boolean.FALSE.equals(UtilsProject.REPLICATION) && (Constantes.TYPE_FV.equals(tab.getFacture().getTypeDoc()) &&
+        return (!UtilsProject.REPLICATION && (Constantes.TYPE_FV.equals(tab.getFacture().getTypeDoc()) &&
                 (cond.getStock() - qteLine > 0 || canSaveWithoutStock(cond, tab, line)))) ||
                 Constantes.TYPE_BCV.equals(tab.getFacture().getTypeDoc())
-                || Boolean.TRUE.equals(UtilsProject.REPLICATION);
+                || UtilsProject.REPLICATION;
     }
 
     private boolean isEditableCurrentFacture() {

@@ -98,7 +98,13 @@ public class UtilsProject {
     public static String generatedNumDoc(String type) {
         UtilsBean util = new UtilsBean();
         if (headerDoc != null && headerDoc.getCreneau() != null) {
-            return util.genererReference(type, headerDoc.getDateEntete(), headerDoc.getCreneau().getCreneauPoint().getPoint().getId(), Constantes.POINTVENTE, "", currentAgence);
+            return util.genererReference(type,
+                    headerDoc.getDateEntete(),
+                    headerDoc.getCreneau().getCreneauPoint().getPoint().getId(),
+                    Constantes.POINTVENTE,
+                    "",
+                    currentAgence
+            );
         }
         return null;
     }

@@ -38,4 +38,16 @@ public class LivrerFactureHttpService extends AbstractHttpService {
         }
         return new ResultatAction<>(false, "Failed to send delivery request for facture id " + idFacture);
     }
+
+    public ResultatAction<DeliveryResponseDto> livrerCommande(Long idFacture) {
+        Invocation.Builder invocation = getWebTarget()
+                .path(PATH_ROOT + "valide_doc_commande")
+                .request(MediaType.APPLICATION_JSON);
+        try (Response response = invocation.post(Entity.json(new DeliveryRequestDto(idFacture)))) {
+            return genericHandleResponse(response);
+        } catch (Exception ex) {
+            LOGGER.error("Error sending delivery request for facture id {}: {}", idFacture, ex);
+        }
+        return new ResultatAction<>(false, "Failed to send delivery request for facture id " + idFacture);
+    }
 }

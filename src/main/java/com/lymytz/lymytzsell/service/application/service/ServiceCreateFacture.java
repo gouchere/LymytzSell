@@ -5,8 +5,6 @@
  */
 package com.lymytz.lymytzsell.service.application.service;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import com.lymytz.lymytzsell.business.helpers.KeyBoardAction;
 import com.lymytz.lymytzsell.dao.Options;
 import com.lymytz.lymytzsell.dao.entity.YvsBasePointVente;
@@ -17,13 +15,10 @@ import com.lymytz.lymytzsell.dao.entity.YvsComCommercialVente;
 import com.lymytz.lymytzsell.dao.entity.YvsComDocVentes;
 import com.lymytz.lymytzsell.dao.query.LocalQueryFactories;
 import com.lymytz.lymytzsell.service.application.composant.Onglets;
-import com.lymytz.lymytzsell.service.application.synchro.UtilEntityBase;
-import com.lymytz.lymytzsell.service.application.synchro.export.UtilExport;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.LymytzService;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
-import com.lymytz.lymytzsell.synchro.ws.ResultatAction;
-import com.lymytz.lymytzsell.synchro.ws.WsSynchro;
+import com.lymytz.lymytzsell.synchro.ws.LivrerFactureHttpService;
 import com.lymytz.lymytzsell.view.component.ToastService;
 import com.lymytz.lymytzsell.view.main.HomeCaisseController;
 import javafx.application.Platform;
@@ -35,7 +30,6 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import lombok.Getter;
 import lombok.Setter;
-import org.json.JSONObject;
 
 import java.util.Date;
 import java.util.Optional;
@@ -174,17 +168,18 @@ public class ServiceCreateFacture {
     }
 
     private void validationCommande(Onglets fac) {
-        if (!fac.getFacture().getStatutRegle().equals(Constantes.ETAT_REGLE)) {
+        if (!Constantes.ETAT_REGLE.equals(fac.getFacture().getStatutRegle())) {
             if (fac.getFacture().getId() > 0) {
                 saveOrGeneratedPaiement_(fac);
             } else {
                 page.openDlgCalculatrice(fac, "F", KeyBoardAction.VALIDER);
             }
         } else {
+            //TODO il est possible que ce code ne s'exécute jamais.
             //Appelle le service de validation des commandes
             Alert dlg = new Alert(Alert.AlertType.CONFIRMATION, "Confirmez vous la livraison de cette commande ?", new ButtonType("Oui"), new ButtonType("Non"));
             Optional<ButtonType> re = dlg.showAndWait();
-            if (re.get().getText().equals("Oui")) {
+            if ("Oui".equals(re.get().getText())) {
                 //Vérifie que tout les règlements en rapport avec la commande sont synchronisé.
                 if (verifieSynchroCommande(fac.getFacture())) {
                     //Appelle le service de validation des commandes
@@ -272,7 +267,7 @@ public class ServiceCreateFacture {
         return true;
     }
 
-    public class Livraison extends Task<Boolean> {
+    public static class Livraison extends Task<Boolean> {
 
         YvsComDocVentes commande;
 
@@ -282,22 +277,8 @@ public class ServiceCreateFacture {
 
         @Override
         protected Boolean call() throws Exception {
-            WsSynchro service = new WsSynchro();
-            //construction de l'objet
-            JSONObject entityJson = UtilExport.exportDocVente(commande, false, null);
-            ResultatAction<YvsComDocVentes> result = service.livraisonDocVente(entityJson, "valide_doc_commande");
-            if (result != null && (result.isResult())) {
-                YvsComDocVentes entity;
-                if (result.getData() != null) {
-                    Gson gson = UtilEntityBase.createGson();
-                    JsonObject jo = gson.toJsonTree(result.getData()).getAsJsonObject();
-                    entity = gson.fromJson(jo.toString(), YvsComDocVentes.class);
-                    //met à jour le statut livré de la commande
-                    String query = "UPDATE yvs_com_doc_ventes SET statut=?, statut_livre=? WHERE id=? ";
-                    dao.executeSqlQuery(query, new Options[]{new Options(entity.getStatut(), 1), new Options(entity.getStatutLivre(), 2), new Options(commande.getId(), 3)});
-                }
-
-            }
+            LivrerFactureHttpService httpService = new LivrerFactureHttpService();
+            httpService.livrerCommande(commande.getId());
             return true;
         }
     }

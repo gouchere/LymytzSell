@@ -60,7 +60,7 @@ public class UtilsBean {
     }
 
     private String getReferenceElement(YvsBaseModeleReference modele, Date date, long id, String type, String code, YvsAgences agence) {
-        String motRefTable = "";
+        String motRefTable;
         StringBuilder inter = new StringBuilder(genererPrefixeComplet(modele, date, id, type, code, agence));
         switch (modele.getElement().getDesignation()) {
             case TYPE_BLV_NAME,
@@ -75,7 +75,7 @@ public class UtilsBean {
                 String query = "YvsComDocVentes.findByReference";
                 List<YvsComDocVentes> l = dao.loadByNamedQuery(query, ch, v, 0, 1);
                 if (l != null && !l.isEmpty()) {
-                    motRefTable = l.get(0).getNumeroExterne();
+                    motRefTable = l.get(0).getNumDoc();
                 } else {
                     motRefTable = "";
                 }

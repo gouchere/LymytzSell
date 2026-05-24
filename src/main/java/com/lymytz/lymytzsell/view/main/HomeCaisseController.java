@@ -1336,7 +1336,8 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
             } else {
                 Alert dlg = new Alert(Alert.AlertType.CONFIRMATION, "Confirmez vous la livraison de ce bon de commande ?", new ButtonType("Oui"), new ButtonType("Non"));
                 Optional<ButtonType> resp = dlg.showAndWait();
-                if (resp.isPresent() && resp.get().getText().equals("Oui") && (service.transmisOrder(currentOnglet.getFacture()))) {
+                if (resp.isPresent() && resp.get().getText().equals("Oui") &&
+                        (service.transmisOrder(currentOnglet.getFacture()))) {
                     BTN_LIVRER.setVisible(false);
 
                 }
