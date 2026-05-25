@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<VBox minHeight="240.0" minWidth="599.0" prefHeight="268.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lymytz.lymytzsell.service.application.service.reglement.FormVirementController">
+<VBox minHeight="240.0" minWidth="599.0" prefHeight="268.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lymytz.lymytzsell.view.controller.FormVirementController">
    <children>
       <Label alignment="CENTER" contentDisplay="CENTER" lineSpacing="1.0" prefHeight="44.0" prefWidth="608.0" style="-fx-border-color: #333;" text="Clôture la fiche de vente" textFill="#804f4f" wrapText="true" VBox.vgrow="ALWAYS">
          <font>

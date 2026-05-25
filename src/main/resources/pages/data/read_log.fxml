@@ -8,7 +8,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox id="AnchorPane" prefHeight="500.0" prefWidth="649.0" styleClass="mainFxmlClass" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lymytz.lymytzsell.view.data.ReadLogController">
+<VBox id="AnchorPane" prefHeight="500.0" prefWidth="649.0" styleClass="mainFxmlClass" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lymytz.lymytzsell.view.controller.ReadLogController">
     <stylesheets>
         <URL value="@/pages/main/form_application.css" />
     </stylesheets>

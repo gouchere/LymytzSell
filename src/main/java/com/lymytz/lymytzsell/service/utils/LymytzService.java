@@ -5,13 +5,11 @@
  */
 package com.lymytz.lymytzsell.service.utils;
 
-import com.lymytz.lymytzsell.business.helpers.Helpers;
 import com.lymytz.lymytzsell.service.application.config.PropertiesManager;
-import com.lymytz.lymytzsell.service.start.StartController;
+import com.lymytz.lymytzsell.view.controller.StartController;
 import com.lymytz.lymytzsell.view.LocalLoader;
-import com.lymytz.lymytzsell.view.main.HomeCaisseController;
+import com.lymytz.lymytzsell.view.controller.HomeCaisseController;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -44,13 +42,10 @@ import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.UnknownHostException;
-import java.nio.file.Files;
-import java.util.Date;
 import java.util.Enumeration;
 import java.util.Objects;
 import java.util.Optional;
 
-import static com.lymytz.lymytzsell.service.utils.Constantes.PROPERTIE_FILE_NAME;
 import static com.lymytz.lymytzsell.service.utils.MessagesConstants.FICHIER_PROPERTIE_MAL_CONFIGURE;
 import static com.lymytz.lymytzsell.service.utils.MessagesConstants.IMPOSSIBE_DE_DEMARRER_L_APPLICATION;
 import static com.lymytz.lymytzsell.service.utils.MessagesConstants.VOUS_DEVEZ_INITIALISER_LA_PROPRIETE;

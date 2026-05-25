@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import java.net.URL?>
-<BorderPane id="AnchorPane" prefHeight="590.0" prefWidth="1000.0" styleClass="mainFxmlClass" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lymytz.lymytzsell.service.application.synchro.impor.ImportDataController">
+<BorderPane id="AnchorPane" prefHeight="590.0" prefWidth="1000.0" styleClass="mainFxmlClass" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lymytz.lymytzsell.view.controller.ImportDataController">
     <stylesheets>
         <URL value="@form_application.css" />
     </stylesheets>

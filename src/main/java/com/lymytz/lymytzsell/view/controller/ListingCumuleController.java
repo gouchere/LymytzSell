@@ -3,21 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.lymytz.lymytzsell.service.application.service.report;
+package com.lymytz.lymytzsell.view.controller;
 
-import com.lymytz.lymytzsell.persistence.entity.YvsComDocVentes;
 import com.lymytz.lymytzsell.service.application.Controller;
-import com.lymytz.lymytzsell.service.application.bean.ContentPanier;
-import com.lymytz.lymytzsell.service.application.bean.Factures;
-import com.lymytz.lymytzsell.service.application.loader.LoaderListing;
-import com.lymytz.lymytzsell.service.utils.Constantes;
-import com.lymytz.lymytzsell.service.utils.LymytzService;
-import com.lymytz.lymytzsell.service.utils.UtilsProject;
-import com.lymytz.lymytzsell.view.LocalLoader;
-import com.lymytz.lymytzsell.view.main.HomeCaisseController;
-import com.lymytz.lymytzsell.view.main.ListFacturesController;
 import javafx.application.Platform;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -29,17 +18,26 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import lombok.Getter;
-import lombok.Setter;
+import com.lymytz.lymytzsell.persistence.entity.YvsComDocVentes;
+import com.lymytz.lymytzsell.persistence.dao.LocalQueryFactories;
+import com.lymytz.lymytzsell.service.application.bean.ContentPanier;
+import com.lymytz.lymytzsell.service.application.bean.Factures;
+import com.lymytz.lymytzsell.service.application.loader.LoaderListing;
+import com.lymytz.lymytzsell.service.utils.Constantes;
+import com.lymytz.lymytzsell.service.utils.LymytzService;
+import com.lymytz.lymytzsell.service.utils.UtilsProject;
+import com.lymytz.lymytzsell.view.LocalLoader;
 
 import java.io.IOException;
 import java.net.URL;
@@ -57,12 +55,15 @@ import static com.lymytz.lymytzsell.service.utils.MessagesConstants.VEUILLEZ_ENR
  *
  * @author LENOVO
  */
-public class ListingController implements Initializable, Controller {
+public class ListingCumuleController implements Initializable, Controller {
 
     HomeCaisseController page;
-    @Setter
-    @Getter
+    LocalQueryFactories rq = new LocalQueryFactories();
     ObservableList<ContentPanier> items = FXCollections.observableArrayList();
+
+    ContextMenu CTM_TV = new ContextMenu();
+
+    private List<String> types;
 
     @FXML
     private TableView<ContentPanier> TABLE_LISTING;
@@ -75,23 +76,23 @@ public class ListingController implements Initializable, Controller {
     @FXML
     private TableColumn<ContentPanier, String> COL_UNITE;
     @FXML
-    private TableColumn<ContentPanier, String> COL_CLIENT;
-    @FXML
-    private TableColumn<ContentPanier, String> COL_TIME;
-    @FXML
     private TableColumn<ContentPanier, String> COL_TOTAL;
     @FXML
     private TableColumn<ContentPanier, String> COL_QTE;
     @FXML
-    private TableColumn<ContentPanier, String> COL_NUM_DOC;
-    @FXML
-    private TableColumn<ContentPanier, String> COL_PRIX;
-    @FXML
     private TableColumn<ContentPanier, String> COL_TYPE;
     @FXML
-    private TableColumn<ContentPanier, Boolean> COL_LIV;
+    private TextField F_ARTICLE;
     @FXML
     private ProgressBar PROGRESS;
+
+    public ObservableList<ContentPanier> getItems() {
+        return items;
+    }
+
+    public void setItems(ObservableList<ContentPanier> items) {
+        this.items = items;
+    }
 
     /**
      * Initializes the controller class.
@@ -114,18 +115,13 @@ public class ListingController implements Initializable, Controller {
     }
 
     private void initColumnData() {
-        COL_CLIENT.setCellValueFactory((TableColumn.CellDataFeatures<ContentPanier, String> param) -> new SimpleObjectProperty(param.getValue().getFacture().getNomClient()));
-        COL_TIME.setCellValueFactory((TableColumn.CellDataFeatures<ContentPanier, String> param) -> new SimpleObjectProperty((param.getValue().getDateSave()!= null) ? Constantes.dfh.format(param.getValue().getDateSave()) : ""));
         COL_TOTAL.setCellValueFactory((TableColumn.CellDataFeatures<ContentPanier, String> param) -> new SimpleObjectProperty(Constantes.nbf.format(param.getValue().getMontantTotalTTC())));
         COL_QTE.setCellValueFactory((TableColumn.CellDataFeatures<ContentPanier, String> param) -> new SimpleObjectProperty(Constantes.nbf.format(param.getValue().getQuantite())));
-        COL_PRIX.setCellValueFactory((TableColumn.CellDataFeatures<ContentPanier, String> param) -> new SimpleObjectProperty(Constantes.nbf.format(param.getValue().getPrix())));
         //COL_N.setCellValueFactory((TableColumn.CellDataFeatures<ContentPanier, Integer> param) -> new SimpleObjectProperty(param.getValue().getNumLine()));
         COL_REF.setCellValueFactory((TableColumn.CellDataFeatures<ContentPanier, String> param) -> new SimpleObjectProperty(param.getValue().getConditionnement().getArticle().getRefArt()));
         COL_ART.setCellValueFactory((TableColumn.CellDataFeatures<ContentPanier, String> param) -> new SimpleObjectProperty(param.getValue().getConditionnement().getArticle().getDesignation()));
         COL_UNITE.setCellValueFactory((TableColumn.CellDataFeatures<ContentPanier, String> param) -> new SimpleObjectProperty(param.getValue().getConditionnement().getUnite().getReference()));
         COL_TYPE.setCellValueFactory((TableColumn.CellDataFeatures<ContentPanier, String> param) -> new SimpleObjectProperty(param.getValue().getFacture().getTypeDoc()));
-        COL_NUM_DOC.setCellValueFactory((TableColumn.CellDataFeatures<ContentPanier, String> param) -> new SimpleObjectProperty(param.getValue().getFacture().getNumDoc()));
-        COL_LIV.setCellValueFactory((TableColumn.CellDataFeatures<ContentPanier, Boolean> param) -> new SimpleBooleanProperty(param.getValue().getFacture().getStatutLivre().equals(Constantes.ETAT_LIVRE)));
 
     }
 
@@ -136,16 +132,14 @@ public class ListingController implements Initializable, Controller {
     private void loadDataFactures() {
         try {
             if (UtilsProject.headerDoc != null) {
-                LoaderListing task = new LoaderListing(true);
+                LoaderListing task = new LoaderListing(false);
                 PROGRESS.progressProperty().unbind();
                 PROGRESS.progressProperty().bind(task.progressProperty());
-                task.setOnSucceeded((WorkerStateEvent event) -> {
-                    Platform.runLater(() -> {
-                        items.clear();
-                        items.addAll(task.getValue());
-                        TABLE_LISTING.setItems(items);
-                    });
-                });
+                task.setOnSucceeded((WorkerStateEvent event) -> Platform.runLater(() -> {
+                    items.clear();
+                    items.addAll(task.getValue());
+                    TABLE_LISTING.setItems(items);
+                }));
                 Thread t = new Thread(task);
                 t.setName("Loader listing");
                 t.start();
@@ -158,18 +152,8 @@ public class ListingController implements Initializable, Controller {
     }
 
     @FXML
-    private void addParamClient(KeyEvent event) {
-       
-    }
-
-    @FXML
-    private void addParamNumDoc(KeyEvent event) {
-        
-    }
-
-    @FXML
     private void addParamRefArticle(KeyEvent event) {
-       
+
     }
 
 ////    private void findByNumDoc() {

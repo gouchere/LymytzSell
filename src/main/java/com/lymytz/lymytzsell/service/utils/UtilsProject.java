@@ -29,7 +29,7 @@ import com.lymytz.lymytzsell.service.application.config.PropertiesManager;
 import com.lymytz.lymytzsell.service.application.synchro.UtilEntityBase;
 import com.lymytz.lymytzsell.synchro.ws.WsSynchro;
 import com.lymytz.lymytzsell.view.LocalLoader;
-import com.lymytz.lymytzsell.view.main.HomeCaisseController;
+import com.lymytz.lymytzsell.view.controller.HomeCaisseController;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.image.Image;

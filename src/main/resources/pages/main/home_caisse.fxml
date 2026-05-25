@@ -13,7 +13,7 @@
 <?import java.lang.String?>
 <?import java.net.URL?>
 <BorderPane id="HomeCaisse" prefWidth="741.0" styleClass="background_gray_" xmlns="http://javafx.com/javafx/8"
-            xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lymytz.lymytzsell.view.main.HomeCaisseController">
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lymytz.lymytzsell.view.controller.HomeCaisseController">
     <stylesheets>
         <URL value="@form_application.css"/>
     </stylesheets>

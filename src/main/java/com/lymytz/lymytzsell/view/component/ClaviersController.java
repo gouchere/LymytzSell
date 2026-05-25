@@ -17,7 +17,7 @@ import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.LymytzService;
 import com.lymytz.lymytzsell.service.application.service.report.PrintTiket;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
-import com.lymytz.lymytzsell.view.main.HomeCaisseController;
+import com.lymytz.lymytzsell.view.controller.HomeCaisseController;
 import com.lymytz.lymytzsell.view.main.report.PrintFacture;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;

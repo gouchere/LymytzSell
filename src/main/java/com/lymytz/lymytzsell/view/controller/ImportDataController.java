@@ -3,11 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.lymytz.lymytzsell.service.application.synchro.impor;
+package com.lymytz.lymytzsell.view.controller;
 
 import com.lymytz.lymytzsell.persistence.dao.LocalQueryFactories;
 import com.lymytz.lymytzsell.service.application.Controller;
 import com.lymytz.lymytzsell.service.application.synchro.ParamQuery;
+import com.lymytz.lymytzsell.service.application.synchro.impor.ImportService;
+import com.lymytz.lymytzsell.service.application.synchro.impor.LoaderLocalImportData;
+import com.lymytz.lymytzsell.service.application.synchro.impor.LoaderRemotelImportData;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
@@ -43,7 +46,6 @@ import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.CustomWindow;
 import com.lymytz.lymytzsell.service.utils.LymytzService;
 import com.lymytz.lymytzsell.synchro.ws.WsSynchro;
-import com.lymytz.lymytzsell.view.main.HomeCaisseController;
 
 import java.net.URL;
 import java.util.ArrayList;

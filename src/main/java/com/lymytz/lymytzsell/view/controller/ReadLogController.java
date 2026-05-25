@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.lymytz.lymytzsell.view.data;
+package com.lymytz.lymytzsell.view.controller;
 
 import javafx.application.Platform;
 import javafx.concurrent.Task;

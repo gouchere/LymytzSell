@@ -8,7 +8,7 @@ package com.lymytz.lymytzsell.view.component;
 import com.lymytz.lymytzsell.persistence.entity.YvsBaseConditionnement;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.view.LocalLoader;
-import com.lymytz.lymytzsell.view.main.HomeCaisseController;
+import com.lymytz.lymytzsell.view.controller.HomeCaisseController;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.geometry.Insets;

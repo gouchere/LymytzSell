@@ -14,7 +14,7 @@ import javafx.scene.image.Image;
 import javafx.util.Duration;
 import com.lymytz.lymytzsell.persistence.dao.RQueryFactories;
 import com.lymytz.lymytzsell.view.LocalLoader;
-import com.lymytz.lymytzsell.view.main.HomeCaisseController;
+import com.lymytz.lymytzsell.view.controller.HomeCaisseController;
 
 /**
  *

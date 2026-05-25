@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.lymytz.lymytzsell.service.application.synchro.impor;
+package com.lymytz.lymytzsell.view.controller;
 
 import com.lymytz.lymytzsell.service.application.Controller;
 import javafx.application.Platform;
@@ -25,7 +25,6 @@ import com.lymytz.lymytzsell.persistence.dao.Options;
 import com.lymytz.lymytzsell.service.application.bean.ListenTableBean;
 import com.lymytz.lymytzsell.service.application.loader.LoaderListenTable;
 import com.lymytz.lymytzsell.service.utils.Constantes;
-import com.lymytz.lymytzsell.view.main.HomeCaisseController;
 
 import java.net.URL;
 import java.util.ResourceBundle;

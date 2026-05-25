@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.lymytz.lymytzsell.service.application.service.reglement;
+package com.lymytz.lymytzsell.view.controller;
 
 import com.lymytz.lymytzsell.business.helpers.StatutResponse;
 import com.lymytz.lymytzsell.persistence.dao.Options;
@@ -21,7 +21,6 @@ import com.lymytz.lymytzsell.service.utils.LymytzService;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
 import com.lymytz.lymytzsell.synchro.ws.ResultatAction;
 import com.lymytz.lymytzsell.synchro.ws.WsSynchro;
-import com.lymytz.lymytzsell.view.main.HomeCaisseController;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;

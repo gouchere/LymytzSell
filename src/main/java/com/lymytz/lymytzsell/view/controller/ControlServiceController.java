@@ -3,11 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.lymytz.lymytzsell.service.application.synchro;
+package com.lymytz.lymytzsell.view.controller;
 
 import com.lymytz.lymytzsell.service.ServeurMessage;
 import com.lymytz.lymytzsell.service.application.Controller;
 import com.lymytz.lymytzsell.service.application.config.PropertiesManager;
+import com.lymytz.lymytzsell.service.application.synchro.SynchronizeDataIn;
+import com.lymytz.lymytzsell.service.application.synchro.SynchronizeDataOut;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -15,7 +17,6 @@ import javafx.scene.control.Button;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
 import com.lymytz.lymytzsell.synchro.ws.WsSynchro;
-import com.lymytz.lymytzsell.view.main.HomeCaisseController;
 
 import java.net.URL;
 import java.util.ResourceBundle;

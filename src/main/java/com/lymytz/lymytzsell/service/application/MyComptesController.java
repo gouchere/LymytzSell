@@ -23,7 +23,7 @@
     import com.lymytz.lymytzsell.service.utils.LymytzService;
     import com.lymytz.lymytzsell.service.utils.UtilsProject;
     import com.lymytz.lymytzsell.view.component.ToastService;
-    import com.lymytz.lymytzsell.view.main.HomeCaisseController;
+    import com.lymytz.lymytzsell.view.controller.HomeCaisseController;
     import javafx.beans.property.SimpleBooleanProperty;
     import javafx.beans.value.ObservableValue;
     import javafx.collections.FXCollections;

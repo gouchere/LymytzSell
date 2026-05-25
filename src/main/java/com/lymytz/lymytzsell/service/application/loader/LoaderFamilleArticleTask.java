@@ -9,7 +9,7 @@ import com.lymytz.lymytzsell.persistence.dao.Options;
 import com.lymytz.lymytzsell.persistence.entity.YvsBaseFamilleArticle;
 import com.lymytz.lymytzsell.persistence.entity.YvsComEnteteDocVente;
 import com.lymytz.lymytzsell.persistence.dao.LocalQueryFactories;
-import com.lymytz.lymytzsell.view.main.HomeCaisseController;
+import com.lymytz.lymytzsell.view.controller.HomeCaisseController;
 import javafx.concurrent.Task;
 import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;

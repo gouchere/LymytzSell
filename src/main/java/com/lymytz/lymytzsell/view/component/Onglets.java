@@ -41,7 +41,7 @@ import com.lymytz.lymytzsell.service.application.bean.PrixArticles;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.LymytzService;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
-import com.lymytz.lymytzsell.view.main.HomeCaisseController;
+import com.lymytz.lymytzsell.view.controller.HomeCaisseController;
 import lombok.Getter;
 import lombok.Setter;
 

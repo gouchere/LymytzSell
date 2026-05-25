@@ -17,7 +17,7 @@ import com.lymytz.lymytzsell.synchro.ws.LivrerFactureHttpService;
 import com.lymytz.lymytzsell.synchro.ws.ResultatAction;
 import com.lymytz.lymytzsell.synchro.ws.dto.DeliveryResponseDto;
 import com.lymytz.lymytzsell.view.component.ToastService;
-import com.lymytz.lymytzsell.view.main.HomeCaisseController;
+import com.lymytz.lymytzsell.view.controller.HomeCaisseController;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import org.apache.logging.log4j.LogManager;

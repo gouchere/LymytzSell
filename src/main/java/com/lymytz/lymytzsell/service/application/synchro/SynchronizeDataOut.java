@@ -18,7 +18,7 @@ import com.lymytz.lymytzsell.service.application.synchro.export.ExportService;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
 import com.lymytz.lymytzsell.synchro.ws.WsSynchro;
-import com.lymytz.lymytzsell.view.main.HomeCaisseController;
+import com.lymytz.lymytzsell.view.controller.HomeCaisseController;
 
 import java.util.List;
 import java.util.logging.Level;

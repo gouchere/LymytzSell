@@ -5,7 +5,7 @@ import com.lymytz.lymytzsell.persistence.entity.YvsComEnteteDocVente;
 import com.lymytz.lymytzsell.persistence.dao.LocalQueryFactories;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
-import com.lymytz.lymytzsell.view.main.HomeCaisseController;
+import com.lymytz.lymytzsell.view.controller.HomeCaisseController;
 import javafx.concurrent.Task;
 
 import java.util.ArrayList;

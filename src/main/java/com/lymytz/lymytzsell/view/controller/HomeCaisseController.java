@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.lymytz.lymytzsell.view.main;
+package com.lymytz.lymytzsell.view.controller;
 
 import com.lymytz.lymytzsell.service.application.service.ManagedFactureVente;
 import com.lymytz.lymytzsell.business.helpers.Helpers;
@@ -41,17 +41,9 @@ import com.lymytz.lymytzsell.service.application.listener.ListenServersLocal;
 import com.lymytz.lymytzsell.service.application.listener.ListenServersRemote;
 import com.lymytz.lymytzsell.service.application.service.ServiceCreateFacture;
 import com.lymytz.lymytzsell.service.application.service.ServiceLivraison;
-import com.lymytz.lymytzsell.service.application.service.reglement.FormVirementController;
 import com.lymytz.lymytzsell.service.application.service.reglement.ServiceReglement;
-import com.lymytz.lymytzsell.service.application.service.report.ListingController;
-import com.lymytz.lymytzsell.service.application.service.report.ListingCumuleController;
-import com.lymytz.lymytzsell.service.application.synchro.ControlServiceController;
-import com.lymytz.lymytzsell.service.application.synchro.ListenTableController;
 import com.lymytz.lymytzsell.service.application.synchro.SynchronizeDataIn;
 import com.lymytz.lymytzsell.service.application.synchro.SynchronizeDataOut;
-import com.lymytz.lymytzsell.service.application.synchro.impor.ImportDataController;
-import com.lymytz.lymytzsell.service.application.synchro.impor.ListenRemoteTableController;
-import com.lymytz.lymytzsell.service.start.StartController;
 import com.lymytz.lymytzsell.service.utils.Clock;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.CustomWindow;

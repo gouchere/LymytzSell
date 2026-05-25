@@ -8,7 +8,7 @@ package com.lymytz.lymytzsell.view.component;
 import javafx.event.ActionEvent;
 import com.lymytz.lymytzsell.service.application.MyComptesController;
 import com.lymytz.lymytzsell.service.application.bean.HeaderDoc;
-import com.lymytz.lymytzsell.view.main.HomeCaisseController;
+import com.lymytz.lymytzsell.view.controller.HomeCaisseController;
 import lombok.Setter;
 
 /**

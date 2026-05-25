@@ -6,7 +6,7 @@
 package com.lymytz.lymytzsell.view.component;
 
 import com.lymytz.lymytzsell.persistence.entity.YvsBaseConditionnement;
-import com.lymytz.lymytzsell.view.main.HomeCaisseController;
+import com.lymytz.lymytzsell.view.controller.HomeCaisseController;
 import javafx.application.Platform;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
