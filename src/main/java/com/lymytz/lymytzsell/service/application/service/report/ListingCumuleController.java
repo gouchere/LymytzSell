@@ -6,7 +6,6 @@
 package com.lymytz.lymytzsell.service.application.service.report;
 
 import com.lymytz.lymytzsell.service.application.Controller;
-import com.lymytz.lymytzsell.service.utils.MessagesConstants;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
@@ -30,8 +29,8 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import com.lymytz.lymytzsell.dao.entity.YvsComDocVentes;
-import com.lymytz.lymytzsell.dao.query.LocalQueryFactories;
+import com.lymytz.lymytzsell.persistence.entity.YvsComDocVentes;
+import com.lymytz.lymytzsell.persistence.dao.LocalQueryFactories;
 import com.lymytz.lymytzsell.service.application.bean.ContentPanier;
 import com.lymytz.lymytzsell.service.application.bean.Factures;
 import com.lymytz.lymytzsell.service.application.loader.LoaderListing;

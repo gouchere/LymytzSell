@@ -5,7 +5,7 @@
  */
 package com.lymytz.lymytzsell.service.application.synchro;
 
-import com.lymytz.lymytzsell.dao.query.LocalQueryFactories;
+import com.lymytz.lymytzsell.persistence.dao.LocalQueryFactories;
 import com.lymytz.lymytzsell.service.application.Controller;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
@@ -24,8 +24,8 @@ import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.Tooltip;
-import com.lymytz.lymytzsell.dao.Options;
-import com.lymytz.lymytzsell.dao.entity.YvsComDocVentes;
+import com.lymytz.lymytzsell.persistence.dao.Options;
+import com.lymytz.lymytzsell.persistence.entity.YvsComDocVentes;
 import com.lymytz.lymytzsell.service.application.bean.ListenTableBean;
 import com.lymytz.lymytzsell.service.application.loader.LoaderListenTable;
 import com.lymytz.lymytzsell.service.utils.Constantes;
@@ -33,8 +33,6 @@ import com.lymytz.lymytzsell.view.main.HomeCaisseController;
 
 import java.net.URL;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * FXML Controller class

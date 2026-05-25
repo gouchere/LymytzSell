@@ -9,12 +9,12 @@ import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.lymytz.lymytzsell.dao.query.LocalQueryFactories;
+import com.lymytz.lymytzsell.persistence.dao.LocalQueryFactories;
 import javafx.application.Platform;
-import com.lymytz.lymytzsell.dao.Options;
-import com.lymytz.lymytzsell.dao.entity.YvsAgences;
-import com.lymytz.lymytzsell.dao.entity.YvsUsers;
-import com.lymytz.lymytzsell.dao.entity.YvsUsersAgence;
+import com.lymytz.lymytzsell.persistence.dao.Options;
+import com.lymytz.lymytzsell.persistence.entity.YvsAgences;
+import com.lymytz.lymytzsell.persistence.entity.YvsUsers;
+import com.lymytz.lymytzsell.persistence.entity.YvsUsersAgence;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.DoubleAdapter;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
@@ -26,8 +26,6 @@ import javax.xml.bind.annotation.XmlTransient;
 import java.lang.reflect.Type;
 import java.text.ParseException;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import static com.lymytz.lymytzsell.synchro.ws.WsSynchro.serverOnline;
 

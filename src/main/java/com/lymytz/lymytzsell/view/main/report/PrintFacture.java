@@ -5,8 +5,8 @@
  */
 package com.lymytz.lymytzsell.view.main.report;
 
-import com.lymytz.lymytzsell.dao.LocalSqlDao;
-import com.lymytz.lymytzsell.dao.entity.YvsComDocVentes;
+import com.lymytz.lymytzsell.persistence.dao.LocalSqlDao;
+import com.lymytz.lymytzsell.persistence.entity.YvsComDocVentes;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
 import net.sf.jasperreports.engine.JRException;

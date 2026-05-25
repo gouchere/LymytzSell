@@ -5,12 +5,12 @@
  */
 package com.lymytz.lymytzsell.service.application.synchro.impor;
 
-import com.lymytz.lymytzsell.dao.entity.service.EntityColumn;
+import com.lymytz.lymytzsell.persistence.dao.util.EntityColumn;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
-import com.lymytz.lymytzsell.dao.entity.service.LymytzData;
-import com.lymytz.lymytzsell.dao.query.RQueryFactories;
+import com.lymytz.lymytzsell.persistence.dao.util.LymytzData;
+import com.lymytz.lymytzsell.persistence.dao.RQueryFactories;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
 import lombok.Getter;
 import lombok.Setter;

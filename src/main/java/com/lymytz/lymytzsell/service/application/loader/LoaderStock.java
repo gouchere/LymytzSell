@@ -5,8 +5,8 @@
  */
 package com.lymytz.lymytzsell.service.application.loader;
 
-import com.lymytz.lymytzsell.dao.entity.YvsBaseConditionnement;
-import com.lymytz.lymytzsell.dao.entity.YvsBaseDepots;
+import com.lymytz.lymytzsell.persistence.entity.YvsBaseConditionnement;
+import com.lymytz.lymytzsell.persistence.entity.YvsBaseDepots;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
 import com.lymytz.lymytzsell.view.main.HomeCaisseController;

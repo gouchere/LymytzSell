@@ -7,16 +7,15 @@ package com.lymytz.lymytzsell.service.application.service.reglement;
 
 import java.util.Date;
 
-import com.lymytz.lymytzsell.dao.query.LocalQueryFactories;
+import com.lymytz.lymytzsell.persistence.dao.LocalQueryFactories;
 import javafx.scene.control.Alert;
-import javax.print.attribute.standard.Severity;
-import com.lymytz.lymytzsell.dao.UtilsBean;
-import com.lymytz.lymytzsell.dao.entity.YvsBaseCaisse;
-import com.lymytz.lymytzsell.dao.entity.YvsBaseModeReglement;
-import com.lymytz.lymytzsell.dao.entity.YvsComDocVentes;
-import com.lymytz.lymytzsell.dao.entity.YvsComptaAcompteClient;
-import com.lymytz.lymytzsell.dao.entity.YvsComptaCaissePieceVente;
-import com.lymytz.lymytzsell.dao.entity.YvsComptaNotifReglementVente;
+import com.lymytz.lymytzsell.persistence.dao.util.UtilsBean;
+import com.lymytz.lymytzsell.persistence.entity.YvsBaseCaisse;
+import com.lymytz.lymytzsell.persistence.entity.YvsBaseModeReglement;
+import com.lymytz.lymytzsell.persistence.entity.YvsComDocVentes;
+import com.lymytz.lymytzsell.persistence.entity.YvsComptaAcompteClient;
+import com.lymytz.lymytzsell.persistence.entity.YvsComptaCaissePieceVente;
+import com.lymytz.lymytzsell.persistence.entity.YvsComptaNotifReglementVente;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.LymytzService;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;

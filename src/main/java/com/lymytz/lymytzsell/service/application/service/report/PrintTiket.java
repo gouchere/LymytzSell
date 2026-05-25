@@ -5,8 +5,8 @@
  */
 package com.lymytz.lymytzsell.service.application.service.report;
 
-import com.lymytz.lymytzsell.dao.entity.YvsComContenuDocVente;
-import com.lymytz.lymytzsell.dao.entity.YvsComDocVentes;
+import com.lymytz.lymytzsell.persistence.entity.YvsComContenuDocVente;
+import com.lymytz.lymytzsell.persistence.entity.YvsComDocVentes;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.LymytzService;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;

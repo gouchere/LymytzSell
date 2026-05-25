@@ -9,7 +9,7 @@ import com.lymytz.lymytzsell.service.application.service.ManagedFactureVente;
 import com.lymytz.lymytzsell.business.helpers.EtatMontantPayer;
 import com.lymytz.lymytzsell.business.helpers.KeyBoardAction;
 import com.lymytz.lymytzsell.business.helpers.StatutResponse;
-import com.lymytz.lymytzsell.dao.entity.YvsComDocVentes;
+import com.lymytz.lymytzsell.persistence.entity.YvsComDocVentes;
 import com.lymytz.lymytzsell.service.application.Controller;
 import com.lymytz.lymytzsell.service.application.ManagedApplication;
 import com.lymytz.lymytzsell.service.application.bean.ContentPanier;

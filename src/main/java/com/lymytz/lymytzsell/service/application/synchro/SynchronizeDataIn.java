@@ -5,7 +5,7 @@
  */
 package com.lymytz.lymytzsell.service.application.synchro;
 
-import com.lymytz.lymytzsell.dao.query.LocalQueryFactories;
+import com.lymytz.lymytzsell.persistence.dao.LocalQueryFactories;
 import com.lymytz.lymytzsell.service.application.config.PropertiesManager;
 import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
@@ -13,13 +13,13 @@ import javafx.concurrent.ScheduledService;
 import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.util.Duration;
-import com.lymytz.lymytzsell.dao.Options;
-import com.lymytz.lymytzsell.dao.entity.service.EntityColumn;
-import com.lymytz.lymytzsell.dao.entity.service.LymytzData;
-import com.lymytz.lymytzsell.dao.entity.service.EntityClass;
-import com.lymytz.lymytzsell.dao.entity.service.LymytzLoaderEntity;
-import com.lymytz.lymytzsell.dao.query.RQueryFactories;
-import com.lymytz.lymytzsell.service.application.service.ListenServersRemote;
+import com.lymytz.lymytzsell.persistence.dao.Options;
+import com.lymytz.lymytzsell.persistence.dao.util.EntityColumn;
+import com.lymytz.lymytzsell.persistence.dao.util.LymytzData;
+import com.lymytz.lymytzsell.persistence.dao.util.EntityClass;
+import com.lymytz.lymytzsell.persistence.dao.util.LymytzLoaderEntity;
+import com.lymytz.lymytzsell.persistence.dao.RQueryFactories;
+import com.lymytz.lymytzsell.service.application.listener.ListenServersRemote;
 import com.lymytz.lymytzsell.service.application.synchro.impor.ImportService;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.LQuery;
@@ -30,8 +30,6 @@ import com.lymytz.lymytzsell.view.main.HomeCaisseController;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *

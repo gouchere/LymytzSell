@@ -6,11 +6,11 @@
 package com.lymytz.lymytzsell.service.application;
 
 import com.lymytz.lymytzsell.service.application.service.ManagedFactureVente;
-import com.lymytz.lymytzsell.dao.entity.YvsComClient;
-import com.lymytz.lymytzsell.dao.entity.YvsComCreneauHoraireUsers;
-import com.lymytz.lymytzsell.dao.entity.YvsComEnteteDocVente;
-import com.lymytz.lymytzsell.dao.entity.YvsDictionnaire;
-import com.lymytz.lymytzsell.dao.query.LocalQueryFactories;
+import com.lymytz.lymytzsell.persistence.entity.YvsComClient;
+import com.lymytz.lymytzsell.persistence.entity.YvsComCreneauHoraireUsers;
+import com.lymytz.lymytzsell.persistence.entity.YvsComEnteteDocVente;
+import com.lymytz.lymytzsell.persistence.entity.YvsDictionnaire;
+import com.lymytz.lymytzsell.persistence.dao.LocalQueryFactories;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.LymytzService;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;

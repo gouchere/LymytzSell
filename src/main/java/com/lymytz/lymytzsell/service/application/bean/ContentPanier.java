@@ -5,14 +5,13 @@
      */
     package com.lymytz.lymytzsell.service.application.bean;
 
-    import com.lymytz.lymytzsell.dao.entity.YvsBaseConditionnement;
-    import com.lymytz.lymytzsell.dao.entity.YvsComDocVentes;
+    import com.lymytz.lymytzsell.persistence.entity.YvsBaseConditionnement;
+    import com.lymytz.lymytzsell.persistence.entity.YvsComDocVentes;
     import javafx.beans.property.DoubleProperty;
     import javafx.beans.property.SimpleDoubleProperty;
     import lombok.Getter;
     import lombok.Setter;
 
-    import java.beans.PropertyChangeSupport;
     import java.util.Date;
     import java.util.Objects;
 

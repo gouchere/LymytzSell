@@ -5,7 +5,7 @@
  */
 package com.lymytz.lymytzsell.service.application.synchro.impor;
 
-import com.lymytz.lymytzsell.dao.query.LocalQueryFactories;
+import com.lymytz.lymytzsell.persistence.dao.LocalQueryFactories;
 import com.lymytz.lymytzsell.service.application.Controller;
 import com.lymytz.lymytzsell.service.application.synchro.ParamQuery;
 import javafx.application.Platform;
@@ -32,12 +32,12 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.Callback;
-import com.lymytz.lymytzsell.dao.Options;
-import com.lymytz.lymytzsell.dao.entity.service.EntityColumn;
-import com.lymytz.lymytzsell.dao.entity.service.LymytzData;
-import com.lymytz.lymytzsell.dao.entity.service.EntityClass;
-import com.lymytz.lymytzsell.dao.entity.service.LymytzLoaderEntity;
-import com.lymytz.lymytzsell.dao.query.RQueryFactories;
+import com.lymytz.lymytzsell.persistence.dao.Options;
+import com.lymytz.lymytzsell.persistence.dao.util.EntityColumn;
+import com.lymytz.lymytzsell.persistence.dao.util.LymytzData;
+import com.lymytz.lymytzsell.persistence.dao.util.EntityClass;
+import com.lymytz.lymytzsell.persistence.dao.util.LymytzLoaderEntity;
+import com.lymytz.lymytzsell.persistence.dao.RQueryFactories;
 import com.lymytz.lymytzsell.service.application.bean.TableBean;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.CustomWindow;

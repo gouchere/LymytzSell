@@ -8,18 +8,16 @@ package com.lymytz.lymytzsell.service.application.loader;
 import java.util.Date;
 import java.util.List;
 
-import com.lymytz.lymytzsell.dao.query.LocalQueryFactories;
+import com.lymytz.lymytzsell.persistence.dao.LocalQueryFactories;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 
-import javax.print.attribute.standard.Severity;
-
-import com.lymytz.lymytzsell.dao.Options;
-import com.lymytz.lymytzsell.dao.entity.YvsBaseArticles;
-import com.lymytz.lymytzsell.dao.entity.YvsBaseConditionnement;
-import com.lymytz.lymytzsell.dao.entity.YvsBaseUniteMesure;
-import com.lymytz.lymytzsell.dao.entity.YvsComDocVentes;
+import com.lymytz.lymytzsell.persistence.dao.Options;
+import com.lymytz.lymytzsell.persistence.entity.YvsBaseArticles;
+import com.lymytz.lymytzsell.persistence.entity.YvsBaseConditionnement;
+import com.lymytz.lymytzsell.persistence.entity.YvsBaseUniteMesure;
+import com.lymytz.lymytzsell.persistence.entity.YvsComDocVentes;
 import com.lymytz.lymytzsell.service.application.bean.ContentPanier;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
 

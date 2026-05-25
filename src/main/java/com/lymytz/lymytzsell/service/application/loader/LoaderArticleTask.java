@@ -6,34 +6,29 @@
 package com.lymytz.lymytzsell.service.application.loader;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.lymytz.lymytzsell.dao.entity.YvsBaseDepots;
-import com.lymytz.lymytzsell.dao.entity.YvsComEnteteDocVente;
+import com.lymytz.lymytzsell.persistence.entity.YvsComEnteteDocVente;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.scene.layout.GridPane;
-import com.lymytz.lymytzsell.dao.Options;
-import com.lymytz.lymytzsell.dao.entity.YvsBaseArticles;
-import com.lymytz.lymytzsell.dao.entity.YvsBaseClassesStat;
-import com.lymytz.lymytzsell.dao.entity.YvsBaseConditionnement;
-import com.lymytz.lymytzsell.dao.entity.YvsBaseFamilleArticle;
-import com.lymytz.lymytzsell.dao.entity.YvsBaseGroupesArticle;
-import com.lymytz.lymytzsell.dao.entity.YvsBaseUniteMesure;
-import com.lymytz.lymytzsell.dao.query.LocalQueryFactories;
+import com.lymytz.lymytzsell.persistence.dao.Options;
+import com.lymytz.lymytzsell.persistence.entity.YvsBaseArticles;
+import com.lymytz.lymytzsell.persistence.entity.YvsBaseClassesStat;
+import com.lymytz.lymytzsell.persistence.entity.YvsBaseConditionnement;
+import com.lymytz.lymytzsell.persistence.entity.YvsBaseFamilleArticle;
+import com.lymytz.lymytzsell.persistence.entity.YvsBaseGroupesArticle;
+import com.lymytz.lymytzsell.persistence.entity.YvsBaseUniteMesure;
+import com.lymytz.lymytzsell.persistence.dao.LocalQueryFactories;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
 import com.lymytz.lymytzsell.view.component.CustomComponents;
 import com.lymytz.lymytzsell.view.main.HomeCaisseController;
 import javafx.scene.layout.VBox;
-import org.glassfish.jersey.internal.guava.Lists;
 
 /**
  * @author LYMYTZ

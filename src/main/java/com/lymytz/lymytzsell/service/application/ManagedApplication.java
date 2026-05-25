@@ -5,18 +5,17 @@
  */
 package com.lymytz.lymytzsell.service.application;
 
-import com.lymytz.lymytzsell.dao.Options;
-import com.lymytz.lymytzsell.dao.entity.YvsBaseArticles;
-import com.lymytz.lymytzsell.dao.entity.YvsComCreneauHoraireUsers;
-import com.lymytz.lymytzsell.dao.entity.YvsComEnteteDocVente;
-import com.lymytz.lymytzsell.dao.query.LocalQueryFactories;
+import com.lymytz.lymytzsell.persistence.dao.Options;
+import com.lymytz.lymytzsell.persistence.entity.YvsBaseArticles;
+import com.lymytz.lymytzsell.persistence.entity.YvsComCreneauHoraireUsers;
+import com.lymytz.lymytzsell.persistence.entity.YvsComEnteteDocVente;
+import com.lymytz.lymytzsell.persistence.dao.LocalQueryFactories;
 import com.lymytz.lymytzsell.service.application.config.PropertiesManager;
-import com.lymytz.lymytzsell.service.application.service.ListenServersRemote;
+import com.lymytz.lymytzsell.service.application.listener.ListenServersRemote;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.LymytzService;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
 import com.lymytz.lymytzsell.synchro.ws.AccountingHttpService;
-import com.lymytz.lymytzsell.synchro.ws.WsSynchro;
 import com.lymytz.lymytzsell.view.LocalLoader;
 import com.lymytz.lymytzsell.view.main.HomeCaisseController;
 import javafx.event.ActionEvent;

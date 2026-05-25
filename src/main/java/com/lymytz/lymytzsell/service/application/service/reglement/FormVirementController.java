@@ -6,13 +6,13 @@
 package com.lymytz.lymytzsell.service.application.service.reglement;
 
 import com.lymytz.lymytzsell.business.helpers.StatutResponse;
-import com.lymytz.lymytzsell.dao.Options;
-import com.lymytz.lymytzsell.dao.UtilsBean;
-import com.lymytz.lymytzsell.dao.entity.YvsBaseCaisse;
-import com.lymytz.lymytzsell.dao.entity.YvsComEnteteDocVente;
-import com.lymytz.lymytzsell.dao.entity.YvsComptaCaissePieceVirement;
-import com.lymytz.lymytzsell.dao.query.LocalQueryFactories;
-import com.lymytz.lymytzsell.dao.query.RQueryFactories;
+import com.lymytz.lymytzsell.persistence.dao.Options;
+import com.lymytz.lymytzsell.persistence.dao.util.UtilsBean;
+import com.lymytz.lymytzsell.persistence.entity.YvsBaseCaisse;
+import com.lymytz.lymytzsell.persistence.entity.YvsComEnteteDocVente;
+import com.lymytz.lymytzsell.persistence.entity.YvsComptaCaissePieceVirement;
+import com.lymytz.lymytzsell.persistence.dao.LocalQueryFactories;
+import com.lymytz.lymytzsell.persistence.dao.RQueryFactories;
 import com.lymytz.lymytzsell.service.application.Controller;
 import com.lymytz.lymytzsell.service.application.synchro.UtilEntityBase;
 import com.lymytz.lymytzsell.service.application.synchro.export.UtilExport;
@@ -40,7 +40,6 @@ import javafx.util.StringConverter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.print.attribute.standard.Severity;
 import java.net.URL;
 import java.util.Date;
 import java.util.List;

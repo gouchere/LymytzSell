@@ -6,10 +6,10 @@
 package com.lymytz.lymytzsell.service.start;
 
 import com.lymytz.lymytzsell.business.helpers.KeyBoardAction;
-import com.lymytz.lymytzsell.dao.entity.YvsComCreneauHoraireUsers;
-import com.lymytz.lymytzsell.dao.entity.YvsUsers;
-import com.lymytz.lymytzsell.dao.entity.YvsUsersAgence;
-import com.lymytz.lymytzsell.dao.query.LocalQueryFactories;
+import com.lymytz.lymytzsell.persistence.entity.YvsComCreneauHoraireUsers;
+import com.lymytz.lymytzsell.persistence.entity.YvsUsers;
+import com.lymytz.lymytzsell.persistence.entity.YvsUsersAgence;
+import com.lymytz.lymytzsell.persistence.dao.LocalQueryFactories;
 import com.lymytz.lymytzsell.service.application.Controller;
 import com.lymytz.lymytzsell.view.component.Onglets;
 import com.lymytz.lymytzsell.service.application.config.PropertiesManager;

@@ -5,16 +5,16 @@
  */
 package com.lymytz.lymytzsell.service.application.synchro.impor;
 
-import com.lymytz.lymytzsell.dao.query.LocalQueryFactories;
+import com.lymytz.lymytzsell.persistence.dao.LocalQueryFactories;
 import com.lymytz.lymytzsell.service.application.synchro.ParamQuery;
 import com.lymytz.lymytzsell.service.application.synchro.UtilEntityBase;
 import javafx.concurrent.Task;
-import com.lymytz.lymytzsell.dao.Options;
-import com.lymytz.lymytzsell.dao.entity.service.EntityColumn;
-import com.lymytz.lymytzsell.dao.entity.service.LymytzData;
-import com.lymytz.lymytzsell.dao.entity.service.EntityClass;
-import com.lymytz.lymytzsell.dao.entity.service.LymytzLoaderEntity;
-import com.lymytz.lymytzsell.dao.query.RQueryFactories;
+import com.lymytz.lymytzsell.persistence.dao.Options;
+import com.lymytz.lymytzsell.persistence.dao.util.EntityColumn;
+import com.lymytz.lymytzsell.persistence.dao.util.LymytzData;
+import com.lymytz.lymytzsell.persistence.dao.util.EntityClass;
+import com.lymytz.lymytzsell.persistence.dao.util.LymytzLoaderEntity;
+import com.lymytz.lymytzsell.persistence.dao.RQueryFactories;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
 import com.lymytz.lymytzsell.synchro.ws.WsSynchro;
@@ -138,10 +138,10 @@ public class ImportServiceDelFacture extends Task<Boolean> {
                         localKey = findForeignKey(col, col.getTableName());
                         if (localKey == null) {
                             row.setAction(Constantes.INSERT_ACTION);
-                            row.setpKey(null);
+                            row.setPKey(null);
                         } else {
                             row.setAction(Constantes.UPDATE_ACTION);
-                            row.setpKey(localKey);
+                            row.setPKey(localKey);
                         }
                     }
                     i++;

@@ -11,7 +11,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
-import com.lymytz.lymytzsell.dao.entity.YvsComEnteteDocVente;
+import com.lymytz.lymytzsell.persistence.entity.YvsComEnteteDocVente;
 
 /**
  * @author LENOVO

@@ -5,7 +5,7 @@
  */
 package com.lymytz.lymytzsell.synchro.ws;
 
-import com.lymytz.lymytzsell.dao.entity.YvsUsersAgence;
+import com.lymytz.lymytzsell.persistence.entity.YvsUsersAgence;
 import com.lymytz.lymytzsell.service.utils.LymytzService;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
 import javafx.application.Platform;

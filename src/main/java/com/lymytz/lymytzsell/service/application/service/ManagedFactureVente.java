@@ -2,10 +2,10 @@ package com.lymytz.lymytzsell.service.application.service;
 
 import com.lymytz.lymytzsell.business.helpers.ResponseAction;
 import com.lymytz.lymytzsell.business.helpers.StatutResponse;
-import com.lymytz.lymytzsell.dao.entity.YvsComClient;
-import com.lymytz.lymytzsell.dao.entity.YvsComDocVentes;
-import com.lymytz.lymytzsell.dao.entity.YvsComEnteteDocVente;
-import com.lymytz.lymytzsell.dao.entity.YvsDictionnaire;
+import com.lymytz.lymytzsell.persistence.entity.YvsComClient;
+import com.lymytz.lymytzsell.persistence.entity.YvsComDocVentes;
+import com.lymytz.lymytzsell.persistence.entity.YvsComEnteteDocVente;
+import com.lymytz.lymytzsell.persistence.entity.YvsDictionnaire;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
 

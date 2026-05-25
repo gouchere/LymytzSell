@@ -5,7 +5,7 @@
  */
 package com.lymytz.lymytzsell.service.application.bean;
 
-import com.lymytz.lymytzsell.dao.entity.YvsBaseArticles;
+import com.lymytz.lymytzsell.persistence.entity.YvsBaseArticles;
 
 
 /**

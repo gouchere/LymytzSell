@@ -6,14 +6,14 @@
 package com.lymytz.lymytzsell.service.application.service;
 
 import com.lymytz.lymytzsell.business.helpers.KeyBoardAction;
-import com.lymytz.lymytzsell.dao.Options;
-import com.lymytz.lymytzsell.dao.entity.YvsBasePointVente;
-import com.lymytz.lymytzsell.dao.entity.YvsComClient;
-import com.lymytz.lymytzsell.dao.entity.YvsComComerciale;
-import com.lymytz.lymytzsell.dao.entity.YvsComCommercialPoint;
-import com.lymytz.lymytzsell.dao.entity.YvsComCommercialVente;
-import com.lymytz.lymytzsell.dao.entity.YvsComDocVentes;
-import com.lymytz.lymytzsell.dao.query.LocalQueryFactories;
+import com.lymytz.lymytzsell.persistence.dao.Options;
+import com.lymytz.lymytzsell.persistence.entity.YvsBasePointVente;
+import com.lymytz.lymytzsell.persistence.entity.YvsComClient;
+import com.lymytz.lymytzsell.persistence.entity.YvsComComerciale;
+import com.lymytz.lymytzsell.persistence.entity.YvsComCommercialPoint;
+import com.lymytz.lymytzsell.persistence.entity.YvsComCommercialVente;
+import com.lymytz.lymytzsell.persistence.entity.YvsComDocVentes;
+import com.lymytz.lymytzsell.persistence.dao.LocalQueryFactories;
 import com.lymytz.lymytzsell.view.component.Onglets;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.LymytzService;

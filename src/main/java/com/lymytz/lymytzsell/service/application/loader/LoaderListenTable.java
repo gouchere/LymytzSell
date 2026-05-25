@@ -5,9 +5,9 @@
  */
 package com.lymytz.lymytzsell.service.application.loader;
 
-import com.lymytz.lymytzsell.dao.Options;
-import com.lymytz.lymytzsell.dao.query.LocalQueryFactories;
-import com.lymytz.lymytzsell.dao.query.RQueryFactories;
+import com.lymytz.lymytzsell.persistence.dao.Options;
+import com.lymytz.lymytzsell.persistence.dao.LocalQueryFactories;
+import com.lymytz.lymytzsell.persistence.dao.RQueryFactories;
 import com.lymytz.lymytzsell.service.application.bean.ListenTableBean;
 import com.lymytz.lymytzsell.service.application.config.PropertiesManager;
 import com.lymytz.lymytzsell.service.utils.Constantes;

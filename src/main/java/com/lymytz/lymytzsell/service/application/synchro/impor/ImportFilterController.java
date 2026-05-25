@@ -15,7 +15,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import com.lymytz.lymytzsell.dao.entity.service.EntityColumn;
+import com.lymytz.lymytzsell.persistence.dao.util.EntityColumn;
 import com.lymytz.lymytzsell.service.utils.LymytzService;
 
 import java.net.URL;

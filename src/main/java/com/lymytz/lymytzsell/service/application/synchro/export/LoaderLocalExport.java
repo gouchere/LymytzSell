@@ -5,10 +5,9 @@
  */
 package com.lymytz.lymytzsell.service.application.synchro.export;
 
-import com.lymytz.lymytzsell.dao.entity.service.EntityColumn;
-import com.lymytz.lymytzsell.dao.entity.service.LymytzData;
-import com.lymytz.lymytzsell.dao.query.LocalQueryFactories;
-import com.lymytz.lymytzsell.dao.query.RQueryFactories;
+import com.lymytz.lymytzsell.persistence.dao.util.EntityColumn;
+import com.lymytz.lymytzsell.persistence.dao.util.LymytzData;
+import com.lymytz.lymytzsell.persistence.dao.LocalQueryFactories;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
@@ -18,8 +17,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *

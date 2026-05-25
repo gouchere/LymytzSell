@@ -5,15 +5,14 @@
  */
 package com.lymytz.lymytzsell.service.application;
 
-import com.lymytz.lymytzsell.LymytzSellApplication;
 import com.lymytz.lymytzsell.business.helpers.Helpers;
-import com.lymytz.lymytzsell.dao.entity.YvsAgences;
-import com.lymytz.lymytzsell.dao.entity.YvsBaseModeReglement;
-import com.lymytz.lymytzsell.dao.entity.YvsBaseModelReglement;
-import com.lymytz.lymytzsell.dao.entity.YvsComClient;
-import com.lymytz.lymytzsell.dao.entity.YvsEntity;
-import com.lymytz.lymytzsell.dao.entity.YvsSocietes;
-import com.lymytz.lymytzsell.dao.query.LocalQueryFactories;
+import com.lymytz.lymytzsell.persistence.entity.YvsAgences;
+import com.lymytz.lymytzsell.persistence.entity.YvsBaseModeReglement;
+import com.lymytz.lymytzsell.persistence.entity.YvsBaseModelReglement;
+import com.lymytz.lymytzsell.persistence.entity.YvsComClient;
+import com.lymytz.lymytzsell.persistence.entity.YvsEntity;
+import com.lymytz.lymytzsell.persistence.entity.YvsSocietes;
+import com.lymytz.lymytzsell.persistence.dao.LocalQueryFactories;
 import com.lymytz.lymytzsell.service.application.config.PropertiesManager;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.EncryptMessage;
@@ -24,7 +23,6 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
@@ -37,8 +35,6 @@ import javafx.util.StringConverter;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -48,8 +44,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import static com.lymytz.lymytzsell.service.utils.Constantes.PROPERTIE_FILE_NAME;
 import static com.lymytz.lymytzsell.service.utils.MessagesConstants.KEY_VALUE;

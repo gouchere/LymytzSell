@@ -10,11 +10,11 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import com.lymytz.lymytzsell.dao.query.LocalQueryFactories;
+import com.lymytz.lymytzsell.persistence.dao.LocalQueryFactories;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
-import com.lymytz.lymytzsell.dao.entity.YvsComCreneauHoraireUsers;
+import com.lymytz.lymytzsell.persistence.entity.YvsComCreneauHoraireUsers;
 import com.lymytz.lymytzsell.service.application.bean.Planning;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;

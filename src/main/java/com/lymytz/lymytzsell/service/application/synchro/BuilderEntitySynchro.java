@@ -5,13 +5,13 @@
  */
 package com.lymytz.lymytzsell.service.application.synchro;
 
-import com.lymytz.lymytzsell.dao.entity.YvsComCommercialVente;
-import com.lymytz.lymytzsell.dao.entity.YvsComContenuDocVente;
-import com.lymytz.lymytzsell.dao.entity.YvsComDocVentes;
-import com.lymytz.lymytzsell.dao.entity.YvsComEnteteDocVente;
-import com.lymytz.lymytzsell.dao.entity.YvsComptaAcompteClient;
-import com.lymytz.lymytzsell.dao.entity.YvsComptaCaissePieceVente;
-import com.lymytz.lymytzsell.dao.entity.YvsComptaNotifReglementVente;
+import com.lymytz.lymytzsell.persistence.entity.YvsComCommercialVente;
+import com.lymytz.lymytzsell.persistence.entity.YvsComContenuDocVente;
+import com.lymytz.lymytzsell.persistence.entity.YvsComDocVentes;
+import com.lymytz.lymytzsell.persistence.entity.YvsComEnteteDocVente;
+import com.lymytz.lymytzsell.persistence.entity.YvsComptaAcompteClient;
+import com.lymytz.lymytzsell.persistence.entity.YvsComptaCaissePieceVente;
+import com.lymytz.lymytzsell.persistence.entity.YvsComptaNotifReglementVente;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;

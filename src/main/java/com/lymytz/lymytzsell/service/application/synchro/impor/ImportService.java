@@ -8,13 +8,13 @@ package com.lymytz.lymytzsell.service.application.synchro.impor;
 import com.lymytz.lymytzsell.service.application.synchro.ParamQuery;
 import com.lymytz.lymytzsell.service.application.synchro.UtilEntityBase;
 import javafx.concurrent.Task;
-import com.lymytz.lymytzsell.dao.Options;
-import com.lymytz.lymytzsell.dao.entity.service.EntityColumn;
-import com.lymytz.lymytzsell.dao.entity.service.LymytzData;
-import com.lymytz.lymytzsell.dao.entity.service.EntityClass;
-import com.lymytz.lymytzsell.dao.entity.service.LymytzLoaderEntity;
-import com.lymytz.lymytzsell.dao.query.LocalQueryFactories;
-import com.lymytz.lymytzsell.dao.query.RQueryFactories;
+import com.lymytz.lymytzsell.persistence.dao.Options;
+import com.lymytz.lymytzsell.persistence.dao.util.EntityColumn;
+import com.lymytz.lymytzsell.persistence.dao.util.LymytzData;
+import com.lymytz.lymytzsell.persistence.dao.util.EntityClass;
+import com.lymytz.lymytzsell.persistence.dao.util.LymytzLoaderEntity;
+import com.lymytz.lymytzsell.persistence.dao.LocalQueryFactories;
+import com.lymytz.lymytzsell.persistence.dao.RQueryFactories;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
 import com.lymytz.lymytzsell.synchro.ws.WsSynchro;
@@ -106,7 +106,7 @@ public class ImportService extends Task<Boolean> {
                         row.getValue()[i].setColumnValue(key);
                         if (key != null && key <= 0) {
                             //si la clé n'est pas trouvé, on peut interrompre le traitement en indiquant la valeur non trouvé
-                            LOGGER.warn("Erreur d'importation de la l'entité " + table + " pour la clé " + row.getpKey() + ". La référence à la table " + col.getJoinTable() + " Id=" + col.getColumnValue(), Severity.WARNING);
+                            LOGGER.warn("Erreur d'importation de la l'entité " + table + " pour la clé " + row.getPKey() + ". La référence à la table " + col.getJoinTable() + " Id=" + col.getColumnValue(), Severity.WARNING);
                             return null;
                         }
                     }
@@ -116,10 +116,10 @@ public class ImportService extends Task<Boolean> {
                         localKey = findForeignKey(col, col.getTableName());
                         if (localKey == null) {
                             row.setAction(Constantes.INSERT_ACTION);
-                            row.setpKey(null);
+                            row.setPKey(null);
                         } else {
                             row.setAction(Constantes.UPDATE_ACTION);
-                            row.setpKey(localKey);
+                            row.setPKey(localKey);
                         }
                     }
                     i++;
@@ -231,8 +231,8 @@ public class ImportService extends Task<Boolean> {
                                 localId = Ldao.insertFromSqlQuery(table, query, UtilsProject.buildValueParam(row.getValue(), (row.getValue().length - 1)));
                                 break;
                             case Constantes.UPDATE_ACTION:
-                                query = UtilsProject.buildUpdateQuery(table, row.getValue(), row.getpKey());
-                                localId = row.getpKey();
+                                query = UtilsProject.buildUpdateQuery(table, row.getValue(), row.getPKey());
+                                localId = row.getPKey();
                                 Options[] parametres_ = UtilsProject.buildValueParam(row.getValue(), row.getValue().length);
                                 parametres_[row.getValue().length - 1] = new Options(localId, row.getValue().length);
                                 Ldao.executeSqlQuery(query, parametres_);

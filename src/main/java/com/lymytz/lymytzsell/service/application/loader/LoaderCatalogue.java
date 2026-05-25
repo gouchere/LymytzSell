@@ -7,11 +7,11 @@ package com.lymytz.lymytzsell.service.application.loader;
 
 import java.util.List;
 
-import com.lymytz.lymytzsell.dao.query.LocalQueryFactories;
+import com.lymytz.lymytzsell.persistence.dao.LocalQueryFactories;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
-import com.lymytz.lymytzsell.dao.Options;
+import com.lymytz.lymytzsell.persistence.dao.Options;
 import com.lymytz.lymytzsell.service.application.bean.Articles;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
 
