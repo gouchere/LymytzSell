@@ -25,7 +25,6 @@ import java.util.logging.Logger;
 public class LoaderStock extends Task<VBox> {
 
     HomeCaisseController page;
-    String reference;
     List<YvsBaseDepots> depots;
     YvsBaseConditionnement cond;
 

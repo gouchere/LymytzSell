@@ -5,7 +5,7 @@
  */
 package com.lymytz.lymytzsell.service.application;
 
-import com.lymytz.lymytzsell.business.ManagedFactureVente;
+import com.lymytz.lymytzsell.service.application.service.ManagedFactureVente;
 import com.lymytz.lymytzsell.dao.entity.YvsComClient;
 import com.lymytz.lymytzsell.dao.entity.YvsComCreneauHoraireUsers;
 import com.lymytz.lymytzsell.dao.entity.YvsComEnteteDocVente;

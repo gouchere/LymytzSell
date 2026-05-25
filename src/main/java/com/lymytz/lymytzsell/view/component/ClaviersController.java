@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.lymytz.lymytzsell.service.application.composant;
+package com.lymytz.lymytzsell.view.component;
 
-import com.lymytz.lymytzsell.business.ManagedFactureVente;
+import com.lymytz.lymytzsell.service.application.service.ManagedFactureVente;
 import com.lymytz.lymytzsell.business.helpers.EtatMontantPayer;
 import com.lymytz.lymytzsell.business.helpers.KeyBoardAction;
 import com.lymytz.lymytzsell.business.helpers.StatutResponse;
@@ -15,7 +15,7 @@ import com.lymytz.lymytzsell.service.application.ManagedApplication;
 import com.lymytz.lymytzsell.service.application.bean.ContentPanier;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.LymytzService;
-import com.lymytz.lymytzsell.service.utils.PrintTiket;
+import com.lymytz.lymytzsell.service.application.service.report.PrintTiket;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
 import com.lymytz.lymytzsell.view.main.HomeCaisseController;
 import com.lymytz.lymytzsell.view.main.report.PrintFacture;

@@ -21,15 +21,6 @@ public class MdpUtil implements Serializable {
     public static String charArray = "abcdefghijklmnopqrstuvwxyz"
             + "ABCDEFGHIJKLMNOPQRSTUVWXTZ0123456789/-*@_-()";
 
-    public String randomString(int length) {
-        Random rd = new Random();
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < charArray.length(); i++) {
-            sb.append(charArray.charAt(rd.nextInt(70)));
-        }
-        return sb.toString();
-    }
-
     public static String hashString(String mdp) {
         byte[] tabBytes = null;
         try {

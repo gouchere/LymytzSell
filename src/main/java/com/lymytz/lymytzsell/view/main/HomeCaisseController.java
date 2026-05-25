@@ -5,7 +5,7 @@
  */
 package com.lymytz.lymytzsell.view.main;
 
-import com.lymytz.lymytzsell.business.ManagedFactureVente;
+import com.lymytz.lymytzsell.service.application.service.ManagedFactureVente;
 import com.lymytz.lymytzsell.business.helpers.Helpers;
 import com.lymytz.lymytzsell.business.helpers.KeyBoardAction;
 import com.lymytz.lymytzsell.business.helpers.ResponseAction;
@@ -30,8 +30,8 @@ import com.lymytz.lymytzsell.service.application.FactureController;
 import com.lymytz.lymytzsell.service.application.ManagedApplication;
 import com.lymytz.lymytzsell.service.application.MyComptesController;
 import com.lymytz.lymytzsell.service.application.bean.ContentPanier;
-import com.lymytz.lymytzsell.service.application.composant.ClaviersController;
-import com.lymytz.lymytzsell.service.application.composant.Onglets;
+import com.lymytz.lymytzsell.view.component.ClaviersController;
+import com.lymytz.lymytzsell.view.component.Onglets;
 import com.lymytz.lymytzsell.service.application.config.PropertiesManager;
 import com.lymytz.lymytzsell.service.application.loader.LoaderArticleTask;
 import com.lymytz.lymytzsell.service.application.loader.LoaderFamilleArticleTask;
@@ -56,7 +56,7 @@ import com.lymytz.lymytzsell.service.utils.Clock;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.CustomWindow;
 import com.lymytz.lymytzsell.service.utils.LymytzService;
-import com.lymytz.lymytzsell.service.utils.PrintTiket;
+import com.lymytz.lymytzsell.service.application.service.report.PrintTiket;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
 import com.lymytz.lymytzsell.synchro.ws.WsSynchro;
 import com.lymytz.lymytzsell.view.LocalLoader;

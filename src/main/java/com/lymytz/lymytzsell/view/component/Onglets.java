@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.lymytz.lymytzsell.service.application.composant;
+package com.lymytz.lymytzsell.view.component;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -41,7 +41,6 @@ import com.lymytz.lymytzsell.service.application.bean.PrixArticles;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.LymytzService;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
-import com.lymytz.lymytzsell.view.component.CustomComponents;
 import com.lymytz.lymytzsell.view.main.HomeCaisseController;
 import lombok.Getter;
 import lombok.Setter;

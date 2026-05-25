@@ -14,7 +14,7 @@ import com.lymytz.lymytzsell.dao.entity.YvsComCommercialPoint;
 import com.lymytz.lymytzsell.dao.entity.YvsComCommercialVente;
 import com.lymytz.lymytzsell.dao.entity.YvsComDocVentes;
 import com.lymytz.lymytzsell.dao.query.LocalQueryFactories;
-import com.lymytz.lymytzsell.service.application.composant.Onglets;
+import com.lymytz.lymytzsell.view.component.Onglets;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.LymytzService;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;

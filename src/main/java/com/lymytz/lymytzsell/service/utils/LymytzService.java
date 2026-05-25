@@ -60,20 +60,9 @@ import static com.lymytz.lymytzsell.service.utils.MessagesConstants.VOUS_DEVEZ_I
  */
 public class LymytzService {
 
-    public static boolean stopThread = false;
     private static final Logger LOGGER = LogManager.getLogger(LymytzService.class);
 
     private LymytzService() {
-    }
-
-    public static void alertConnexion() {
-        Alert dlg = new Alert(Alert.AlertType.ERROR);
-        dlg.setTitle("Erreur !!!!! ");
-        dlg.setHeaderText("Erreur base de données non accessible !");
-        dlg.setContentText("Base de données innaccessible!");
-        Stage stage = (Stage) dlg.getDialogPane().getScene().getWindow();
-        stage.getIcons().add(new Image(Objects.requireNonNull(LymytzService.class.getResourceAsStream("/icones/memo_apps.png"))));
-        dlg.showAndWait();
     }
 
     public static void openAlertDialog(String message, String title, String headersg, Alert.AlertType type) {
@@ -84,15 +73,6 @@ public class LymytzService {
         Stage stage = (Stage) dlg.getDialogPane().getScene().getWindow();
         stage.getIcons().add(new Image(Objects.requireNonNull(LymytzService.class.getResourceAsStream("/icones/memo_apps.png"))));
         dlg.showAndWait();
-    }
-
-    public static ButtonType openAlertDialogChoice(String message, String title, String headersg, Alert.AlertType type) {
-        Alert dlg = new Alert(type);
-        dlg.setTitle(title);
-        dlg.setHeaderText(headersg);
-        dlg.setContentText(message);
-        Optional<ButtonType> re = dlg.showAndWait();
-        return re.get();
     }
 
     public static ButtonType openCustumAlertDialogChoice(String message, String title, String headersg, Alert.AlertType type, CheckBox control) {

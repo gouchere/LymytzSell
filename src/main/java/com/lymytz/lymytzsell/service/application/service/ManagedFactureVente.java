@@ -1,4 +1,4 @@
-package com.lymytz.lymytzsell.business;
+package com.lymytz.lymytzsell.service.application.service;
 
 import com.lymytz.lymytzsell.business.helpers.ResponseAction;
 import com.lymytz.lymytzsell.business.helpers.StatutResponse;

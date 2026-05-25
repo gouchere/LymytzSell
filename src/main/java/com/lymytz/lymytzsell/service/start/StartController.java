@@ -11,7 +11,7 @@ import com.lymytz.lymytzsell.dao.entity.YvsUsers;
 import com.lymytz.lymytzsell.dao.entity.YvsUsersAgence;
 import com.lymytz.lymytzsell.dao.query.LocalQueryFactories;
 import com.lymytz.lymytzsell.service.application.Controller;
-import com.lymytz.lymytzsell.service.application.composant.Onglets;
+import com.lymytz.lymytzsell.view.component.Onglets;
 import com.lymytz.lymytzsell.service.application.config.PropertiesManager;
 import com.lymytz.lymytzsell.service.application.synchro.UtilEntityBase;
 import com.lymytz.lymytzsell.service.utils.Constantes;
@@ -41,7 +41,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.flywaydb.core.Flyway;
 
-import javax.print.attribute.standard.Severity;
 import java.awt.*;
 import java.io.IOException;
 import java.net.URL;

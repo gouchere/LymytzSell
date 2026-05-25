@@ -5,36 +5,22 @@
  */
 package com.lymytz.lymytzsell.service.utils;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  *
  * @author LYMYTZ
  */
+@Setter
+@Getter
 public class LQuery {
 
     String query;
     String param;
 
-    public LQuery() {
-    }
-
     public LQuery(String query, String param) {
         this.query = query;
-        this.param = param;
-    }
-
-    public String getQuery() {
-        return query;
-    }
-
-    public void setQuery(String query) {
-        this.query = query;
-    }
-
-    public String getParam() {
-        return param;
-    }
-
-    public void setParam(String param) {
         this.param = param;
     }
 

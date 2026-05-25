@@ -13,7 +13,6 @@ import com.lymytz.lymytzsell.service.application.config.PropertiesManager;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.LymytzService;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
-import com.lymytz.lymytzsell.service.utils.log.LogFiles;
 import com.lymytz.lymytzsell.view.LocalLoader;
 import com.lymytz.lymytzsell.view.start.LaunchApps;
 import io.micrometer.prometheusmetrics.PrometheusMeterRegistry;
@@ -27,7 +26,6 @@ import lombok.Setter;
 import org.apache.logging.log4j.Logger;
 
 import javax.imageio.ImageIO;
-import javax.print.attribute.standard.Severity;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.IOException;

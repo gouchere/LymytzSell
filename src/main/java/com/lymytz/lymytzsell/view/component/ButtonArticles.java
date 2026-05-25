@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.lymytz.lymytzsell.service.application.composant;
+package com.lymytz.lymytzsell.view.component;
 
 import com.lymytz.lymytzsell.dao.entity.YvsBaseConditionnement;
 import com.lymytz.lymytzsell.view.main.HomeCaisseController;

@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import java.net.URL?>
-<VBox onKeyReleased="#saisieOnClavier" prefHeight="566.0" prefWidth="472.0" styleClass="mainFxmlClass" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lymytz.lymytzsell.service.application.composant.ClaviersController">
+<VBox onKeyReleased="#saisieOnClavier" prefHeight="566.0" prefWidth="472.0" styleClass="mainFxmlClass" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lymytz.lymytzsell.view.component.ClaviersController">
     <stylesheets>
         <URL value="@/pages/main/form_application.css" />
     </stylesheets>

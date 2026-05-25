@@ -3,10 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.lymytz.lymytzsell.service.utils;
+package com.lymytz.lymytzsell.service.application.service.report;
 
 import com.lymytz.lymytzsell.dao.entity.YvsComContenuDocVente;
 import com.lymytz.lymytzsell.dao.entity.YvsComDocVentes;
+import com.lymytz.lymytzsell.service.utils.Constantes;
+import com.lymytz.lymytzsell.service.utils.LymytzService;
+import com.lymytz.lymytzsell.service.utils.UtilsProject;
 import com.sun.javafx.print.PrintHelper;
 import com.sun.javafx.print.Units;
 import javafx.application.Platform;

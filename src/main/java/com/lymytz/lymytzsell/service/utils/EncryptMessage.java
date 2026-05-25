@@ -15,6 +15,7 @@ import javax.crypto.spec.SecretKeySpec;
  * @author LYMYTZ
  */
 public class EncryptMessage {
+
     public EncryptMessage() {
     }
 

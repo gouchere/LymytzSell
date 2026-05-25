@@ -23,7 +23,7 @@
  *
  */
 
-package com.lymytz.lymytzsell.service.application.composant.date;
+package com.lymytz.lymytzsell.view.component.date;
 
 import javafx.scene.control.skin.CellSkinBase;
 import javafx.scene.text.Text;

@@ -5,36 +5,22 @@
  */
 package com.lymytz.lymytzsell.service.utils;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  *
  * @author LYMYTZ
  */
+@Setter
+@Getter
 public class EtatDoc {
 
     private String codeEtat;
     private String libelle;
 
-    public EtatDoc() {
-    }
-
     public EtatDoc(String codeEtat, String libelle) {
         this.codeEtat = codeEtat;
-        this.libelle = libelle;
-    }
-
-    public String getCodeEtat() {
-        return codeEtat;
-    }
-
-    public void setCodeEtat(String codeEtat) {
-        this.codeEtat = codeEtat;
-    }
-
-    public String getLibelle() {
-        return libelle;
-    }
-
-    public void setLibelle(String libelle) {
         this.libelle = libelle;
     }
 

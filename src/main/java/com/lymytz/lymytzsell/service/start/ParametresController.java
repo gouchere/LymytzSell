@@ -240,8 +240,6 @@ public class ParametresController implements Initializable, Controller {
     private void saveParametres(ActionEvent event) {
         //contrôle les infos De societes
         if (TXT_NUM_CAISSE.getText() != null) {
-//            if (CB_SOCIETE.getValue() != null) {
-//                if (CB_AGENCE.getValue() != null) {
             Properties param = new Properties();
             param.setIdRemoteScte(Constantes.asString(TXT_ID_R.getText()) ? Long.valueOf(TXT_ID_R.getText()) : 0L);
             param.setCheminPhotos(TXT_PATH.getText());
