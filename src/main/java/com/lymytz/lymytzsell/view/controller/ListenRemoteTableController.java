@@ -5,7 +5,6 @@
  */
 package com.lymytz.lymytzsell.view.controller;
 
-import com.lymytz.lymytzsell.service.application.Controller;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;

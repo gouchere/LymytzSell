@@ -1,11 +1,10 @@
 package com.lymytz.lymytzsell.service.application.config;
 
 import com.lymytz.lymytzsell.business.helpers.Helpers;
-import com.lymytz.lymytzsell.service.application.PreferenceController;
+import com.lymytz.lymytzsell.view.controller.PreferenceController;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.EncryptMessage;
 import com.lymytz.lymytzsell.service.utils.LymytzService;
-import com.lymytz.lymytzsell.service.utils.UtilsProject;
 import javafx.scene.control.Alert;
 import lombok.Getter;
 import org.apache.logging.log4j.LogManager;

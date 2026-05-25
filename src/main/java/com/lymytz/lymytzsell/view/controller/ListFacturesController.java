@@ -39,7 +39,6 @@ import com.lymytz.lymytzsell.persistence.dao.ParamOption;
 import com.lymytz.lymytzsell.persistence.entity.YvsComDocVentes;
 import com.lymytz.lymytzsell.persistence.dao.LocalQueryFactories;
 import com.lymytz.lymytzsell.persistence.dao.RQueryFactories;
-import com.lymytz.lymytzsell.service.application.Controller;
 import com.lymytz.lymytzsell.service.application.bean.Factures;
 import com.lymytz.lymytzsell.service.application.loader.LoaderFacture;
 import com.lymytz.lymytzsell.service.utils.Constantes;

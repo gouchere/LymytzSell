@@ -13,7 +13,6 @@ import com.lymytz.lymytzsell.persistence.entity.YvsComEnteteDocVente;
 import com.lymytz.lymytzsell.persistence.entity.YvsComptaCaissePieceVirement;
 import com.lymytz.lymytzsell.persistence.dao.LocalQueryFactories;
 import com.lymytz.lymytzsell.persistence.dao.RQueryFactories;
-import com.lymytz.lymytzsell.service.application.Controller;
 import com.lymytz.lymytzsell.service.application.synchro.UtilEntityBase;
 import com.lymytz.lymytzsell.service.application.synchro.export.UtilExport;
 import com.lymytz.lymytzsell.service.utils.Constantes;

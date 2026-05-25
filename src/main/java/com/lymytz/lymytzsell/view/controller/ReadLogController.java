@@ -13,7 +13,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextArea;
-import com.lymytz.lymytzsell.service.application.Controller;
 
 import java.io.BufferedReader;
 import java.io.File;

@@ -8,7 +8,7 @@ package com.lymytz.lymytzsell;
 
 import com.lymytz.lymytzsell.monitoring.MetricHttpServer;
 import com.lymytz.lymytzsell.service.ServeurMessage;
-import com.lymytz.lymytzsell.service.application.ManagedApplication;
+import com.lymytz.lymytzsell.view.controller.ManagedApplication;
 import com.lymytz.lymytzsell.service.application.config.PropertiesManager;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.LymytzService;

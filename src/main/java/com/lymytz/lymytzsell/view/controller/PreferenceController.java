@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.lymytz.lymytzsell.service.application;
+package com.lymytz.lymytzsell.view.controller;
 
 import com.lymytz.lymytzsell.business.helpers.Helpers;
 import com.lymytz.lymytzsell.persistence.entity.YvsAgences;

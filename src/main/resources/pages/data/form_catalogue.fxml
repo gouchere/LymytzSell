@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.*?>
 
 
-<VBox prefHeight="531.0" prefWidth="699.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lymytz.lymytzsell.service.application.FormCatalogueController">
+<VBox prefHeight="531.0" prefWidth="699.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lymytz.lymytzsell.view.controller.FormCatalogueController">
    <children>
       <TableView fx:id="TV_ARTICLE" prefHeight="507.0" prefWidth="646.0" tableMenuButtonVisible="true">
         <columns>

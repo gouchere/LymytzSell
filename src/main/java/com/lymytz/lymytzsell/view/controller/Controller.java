@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.lymytz.lymytzsell.service.application;
+package com.lymytz.lymytzsell.view.controller;
 
 /**
  * @author LYMYTZ

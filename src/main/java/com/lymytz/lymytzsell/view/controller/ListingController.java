@@ -6,7 +6,6 @@
 package com.lymytz.lymytzsell.view.controller;
 
 import com.lymytz.lymytzsell.persistence.entity.YvsComDocVentes;
-import com.lymytz.lymytzsell.service.application.Controller;
 import com.lymytz.lymytzsell.service.application.bean.ContentPanier;
 import com.lymytz.lymytzsell.service.application.bean.Factures;
 import com.lymytz.lymytzsell.service.application.loader.LoaderListing;

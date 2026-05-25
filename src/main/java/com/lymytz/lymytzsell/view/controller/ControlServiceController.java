@@ -6,7 +6,6 @@
 package com.lymytz.lymytzsell.view.controller;
 
 import com.lymytz.lymytzsell.service.ServeurMessage;
-import com.lymytz.lymytzsell.service.application.Controller;
 import com.lymytz.lymytzsell.service.application.config.PropertiesManager;
 import com.lymytz.lymytzsell.service.application.synchro.SynchronizeDataIn;
 import com.lymytz.lymytzsell.service.application.synchro.SynchronizeDataOut;

@@ -17,7 +17,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-<VBox prefHeight="446.0" prefWidth="739.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lymytz.lymytzsell.service.application.MyComptesController">
+<VBox prefHeight="446.0" prefWidth="739.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lymytz.lymytzsell.view.controller.MyComptesController">
     <children>
         <HBox prefHeight="18.0" prefWidth="739.0" style="-fx-background-color: #ccc;" />
         <TabPane prefHeight="406.0" prefWidth="745.0" side="LEFT" tabClosingPolicy="UNAVAILABLE">

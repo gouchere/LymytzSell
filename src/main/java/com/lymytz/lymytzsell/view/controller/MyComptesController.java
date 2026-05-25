@@ -3,7 +3,7 @@
      * To change this template file, choose Tools | Templates
      * and open the template in the editor.
      */
-    package com.lymytz.lymytzsell.service.application;
+    package com.lymytz.lymytzsell.view.controller;
 
     import com.lymytz.lymytzsell.persistence.dao.Options;
     import com.lymytz.lymytzsell.persistence.dao.util.UtilsBean;
@@ -23,7 +23,6 @@
     import com.lymytz.lymytzsell.service.utils.LymytzService;
     import com.lymytz.lymytzsell.service.utils.UtilsProject;
     import com.lymytz.lymytzsell.view.component.ToastService;
-    import com.lymytz.lymytzsell.view.controller.HomeCaisseController;
     import javafx.beans.property.SimpleBooleanProperty;
     import javafx.beans.value.ObservableValue;
     import javafx.collections.FXCollections;

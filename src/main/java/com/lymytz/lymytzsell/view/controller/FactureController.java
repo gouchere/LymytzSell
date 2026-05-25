@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.lymytz.lymytzsell.service.application;
+package com.lymytz.lymytzsell.view.controller;
 
 import com.lymytz.lymytzsell.service.application.service.ManagedFactureVente;
 import com.lymytz.lymytzsell.persistence.entity.YvsComClient;
@@ -15,7 +15,6 @@ import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.LymytzService;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
 import com.lymytz.lymytzsell.view.component.DateTimePickerController;
-import com.lymytz.lymytzsell.view.controller.HomeCaisseController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;

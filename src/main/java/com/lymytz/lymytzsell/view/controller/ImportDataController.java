@@ -6,7 +6,6 @@
 package com.lymytz.lymytzsell.view.controller;
 
 import com.lymytz.lymytzsell.persistence.dao.LocalQueryFactories;
-import com.lymytz.lymytzsell.service.application.Controller;
 import com.lymytz.lymytzsell.service.application.synchro.ParamQuery;
 import com.lymytz.lymytzsell.service.application.synchro.impor.ImportService;
 import com.lymytz.lymytzsell.service.application.synchro.impor.LoaderLocalImportData;

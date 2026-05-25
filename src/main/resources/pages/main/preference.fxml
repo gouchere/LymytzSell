@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<VBox prefHeight="600.0" prefWidth="650.0" stylesheets="@form_application.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lymytz.lymytzsell.service.application.PreferenceController">
+<VBox prefHeight="600.0" prefWidth="650.0" stylesheets="@form_application.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lymytz.lymytzsell.view.controller.PreferenceController">
     <ScrollPane hbarPolicy="NEVER" prefHeight="900.0" prefWidth="650.0">
         <VBox>
             <TitledPane animated="false" text="Config locale">

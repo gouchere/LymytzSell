@@ -7,7 +7,7 @@ package com.lymytz.lymytzsell.view.component;
 
 import java.util.Date;
 import javafx.event.ActionEvent;
-import com.lymytz.lymytzsell.service.application.MyComptesController;
+import com.lymytz.lymytzsell.view.controller.MyComptesController;
 import com.lymytz.lymytzsell.service.application.bean.Planning;
 import lombok.Getter;
 import lombok.Setter;

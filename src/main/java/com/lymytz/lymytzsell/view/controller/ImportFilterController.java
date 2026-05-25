@@ -5,7 +5,6 @@
  */
 package com.lymytz.lymytzsell.view.controller;
 
-import com.lymytz.lymytzsell.service.application.Controller;
 import com.lymytz.lymytzsell.service.application.synchro.ParamQuery;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;

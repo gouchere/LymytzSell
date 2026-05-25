@@ -5,7 +5,7 @@
  */
 package com.lymytz.lymytzsell.service.application.synchro.export;
 
-import com.lymytz.lymytzsell.service.application.Controller;
+import com.lymytz.lymytzsell.view.controller.Controller;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;

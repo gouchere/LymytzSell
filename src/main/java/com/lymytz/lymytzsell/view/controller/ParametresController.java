@@ -5,7 +5,6 @@
  */
 package com.lymytz.lymytzsell.view.controller;
 
-    import com.lymytz.lymytzsell.service.application.Controller;
     import com.lymytz.lymytzsell.service.application.config.PropertiesManager;
     import com.lymytz.lymytzsell.service.utils.Constantes;
     import com.lymytz.lymytzsell.service.utils.LymytzService;

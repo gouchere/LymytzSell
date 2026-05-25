@@ -4,21 +4,26 @@
  * and open the template in the editor.
  */
 
-package com.lymytz.lymytzsell.service.application;
+package com.lymytz.lymytzsell.view.controller;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.Initializable;
 
 /**
+ * FXML Controller class
  *
  * @author LYMYTZ
  */
-public class HelpController implements Initializable,Controller{
+public class FormClientsController implements Initializable, Controller {
 
+    /**
+     * Initializes the controller class.
+     */
     @Override
-    public void initialize(URL location, ResourceBundle resources) {
-    }
+    public void initialize(URL url, ResourceBundle rb) {
+        // TODO
+    }    
 
     @Override
     public void freeMemoryController() {

@@ -10,7 +10,6 @@ import com.lymytz.lymytzsell.persistence.entity.YvsComCreneauHoraireUsers;
 import com.lymytz.lymytzsell.persistence.entity.YvsUsers;
 import com.lymytz.lymytzsell.persistence.entity.YvsUsersAgence;
 import com.lymytz.lymytzsell.persistence.dao.LocalQueryFactories;
-import com.lymytz.lymytzsell.service.application.Controller;
 import com.lymytz.lymytzsell.view.component.Onglets;
 import com.lymytz.lymytzsell.service.application.config.PropertiesManager;
 import com.lymytz.lymytzsell.service.application.synchro.UtilEntityBase;

@@ -3,40 +3,29 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.lymytz.lymytzsell.service.application;
+package com.lymytz.lymytzsell.view.controller;
 
+import com.lymytz.lymytzsell.persistence.dao.LocalQueryFactories;
 import com.lymytz.lymytzsell.persistence.dao.Options;
 import com.lymytz.lymytzsell.persistence.entity.YvsBaseArticles;
 import com.lymytz.lymytzsell.persistence.entity.YvsComCreneauHoraireUsers;
 import com.lymytz.lymytzsell.persistence.entity.YvsComEnteteDocVente;
-import com.lymytz.lymytzsell.persistence.dao.LocalQueryFactories;
 import com.lymytz.lymytzsell.service.application.config.PropertiesManager;
-import com.lymytz.lymytzsell.service.application.listener.ListenServersRemote;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.LymytzService;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
 import com.lymytz.lymytzsell.synchro.ws.AccountingHttpService;
 import com.lymytz.lymytzsell.view.LocalLoader;
-import com.lymytz.lymytzsell.view.controller.HomeCaisseController;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Pagination;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
-import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCode;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import lombok.Getter;
 import lombok.Setter;
@@ -63,9 +52,6 @@ public class ManagedApplication {
     @Getter
     @Setter
     private HomeCaisseController mainPage;
-    public ListenServersRemote serviceListen;
-    /*    @Setter
-        private List<Long> idDepots;*/
     List<String> categories;
 
     public ManagedApplication() {
@@ -130,77 +116,14 @@ public class ManagedApplication {
         head.setEtat(Constantes.ETAT_EDITABLE);
         head.setStatutLivre(Constantes.ETAT_ATTENTE);
         head.setStatutRegle(Constantes.ETAT_ATTENTE);
-        head = (YvsComEnteteDocVente) dao.save1(head);
+        head = dao.save1(head);
         return head;
     }
 
-    final Tooltip info_quit = new Tooltip("Quitter");
-    final Tooltip info_compte = new Tooltip("Voir mon espace");
-    final Tooltip info_param = new Tooltip("Paramétrer");
-
-    public Pagination pagination;
-
-    @FXML
-    private BorderPane ROOT_PAN;
-    @FXML
-    private VBox ZONE_IMG;
-    @FXML
-    private VBox PAN_ART;
-    @FXML
-    public Button BTN_CMDE;
-    @FXML
-    private Button BTN_LIST;
-    @FXML
-    public Button BTN_CATALOGUE;
-    @FXML
-    private Button BTN_TRASH;
-    @FXML
-    private Button BTN_COMPTE;
-    @FXML
-    private Button BTN_LOG_OOUT;
-    @FXML
-    private AnchorPane PANE;
-    @FXML
-    private TextField TEXT_FIND;
-    @FXML
-    public Label LABEL_NB_TRANSFERT;
-    @FXML
-    public Label LAB_RESULT;
-
-    @FXML
-    private Label LAB_VOL;
-    @FXML
-    private Label LAB_POID;
-    //    @FXML
-//    private VBox PAN_COND;
-    @FXML
-    private Button BTN_PARAM;
-
-    @FXML
-    private Label LAB_TOTAL;
-    @FXML
-    private Label LAB_T_HT;
-
-    @FXML
-    private Label L_CURRENT;
+   public Pagination pagination;
 
     @FXML
     public VBox PAN_STOCK;
-    @FXML
-    public ImageView IMG_WIFI;
-    @FXML
-    private TextArea ART_DESCRIPTION;
-
-    @FXML
-    private Label SESS_SOCIETE;
-    @FXML
-    private Label SESS_DUREE;
-
-    @FXML
-    private void openViewParam(ActionEvent event) {
-        openViewParam(true);
-
-    }
 
     public void openViewParam(boolean establish) {
         try {
@@ -211,67 +134,6 @@ public class ManagedApplication {
             stage.setScene(scene);
             stage.initOwner(UtilsProject.primaryStage);
             stage.centerOnScreen();
-            stage.show();
-        } catch (IOException ex) {
-            Logger.getLogger(ManagedApplication.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    @FXML
-    private void openListContent(ActionEvent event) {
-        try {
-            FXMLLoader load = new FXMLLoader(LocalLoader.class.getResource("/main/report/form_listing.fxml"));
-            VBox root = load.load();
-            Scene scene = new Scene(root, 1000, 565);
-            Stage stage = new Stage();
-            stage.setScene(scene);
-            stage.setTitle("Lymytz:extended caisse apps");
-            stage.centerOnScreen();
-            stage.setIconified(false);
-            stage.initOwner(UtilsProject.primaryStage);
-            stage.initModality(Modality.WINDOW_MODAL);
-            stage.show();
-        } catch (IOException ex) {
-            Logger.getLogger(ManagedApplication.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    @FXML
-    private void createNewFacture(ActionEvent event) {
-        try {
-            FXMLLoader load = new FXMLLoader(LocalLoader.class.getResource("/main/form_create_facture.fxml"));
-            VBox root = load.load();
-            Scene scene = new Scene(root, 500, 320);
-            Stage stage = new Stage();
-            stage.setScene(scene);
-            stage.setTitle("Lymytz:extended caisse apps");
-            stage.centerOnScreen();
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.initOwner(UtilsProject.primaryStage);
-            stage.show();
-            load.getController();
-            scene.setOnKeyReleased(event1 -> {
-                if (event1.getCode().equals(KeyCode.ESCAPE)) {
-                    stage.close();
-                }
-            });
-        } catch (IOException ex) {
-            Logger.getLogger(ManagedApplication.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    @FXML
-    private void openViewFacture(ActionEvent event) {
-        try {
-            FXMLLoader load = new FXMLLoader(LocalLoader.class.getResource("/main/form_factures.fxml"));
-            AnchorPane root = load.load();
-            Scene scene = new Scene(root, 955, 580);
-            Stage stage = new Stage();
-            stage.setScene(scene);
-            stage.setTitle("Lymytz:Factures");
-            stage.centerOnScreen();
-            stage.initOwner(UtilsProject.primaryStage);
-            stage.initModality(Modality.APPLICATION_MODAL);
             stage.show();
         } catch (IOException ex) {
             Logger.getLogger(ManagedApplication.class.getName()).log(Level.SEVERE, null, ex);
