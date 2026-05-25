@@ -111,10 +111,6 @@ public class LymytzSellApplication extends Application {
         }
     }
 
-    public void openViewParam(boolean establish) {
-        new ManagedApplication().openViewParam(establish);
-    }
-
     /**
      * Sets up a system tray icon for the application.
      */

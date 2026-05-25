@@ -193,14 +193,14 @@ public class ListenTableController implements Initializable, Controller {
                         case Constantes.TABLE_DOC_VENTE_CODE:
                             {
                                 LocalQueryFactories dao=new LocalQueryFactories();
-                                YvsComDocVentes d=(YvsComDocVentes) dao.findOneByNQ("YvsComDocVentes.findById", new String[]{"id"}, new Object[]{row.getIdSource()});
+                                YvsComDocVentes d= dao.findOneByNQ("YvsComDocVentes.findById", new String[]{"id"}, new Object[]{row.getIdSource()});
                                 page.displayFactureOnView(d);
                                 break;
                             }
                         case Constantes.TABLE_CONTENT_DOC_VENTE_CODE:
                             {
                                 LocalQueryFactories dao=new LocalQueryFactories();
-                                YvsComDocVentes d=(YvsComDocVentes) dao.findOneByNQ("YvsComContenuDocVente.findDocById", new String[]{"id"}, new Object[]{row.getIdSource()});
+                                YvsComDocVentes d= dao.findOneByNQ("YvsComContenuDocVente.findDocById", new String[]{"id"}, new Object[]{row.getIdSource()});
                                 page.displayFactureOnView(d);
                                 break;
                             }

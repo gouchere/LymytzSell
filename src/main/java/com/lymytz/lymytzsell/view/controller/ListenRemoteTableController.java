@@ -47,8 +47,6 @@ public class ListenRemoteTableController implements Initializable, Controller {
 
     ContextMenu CONTEXT;
     @FXML
-    private Label NB_WAIT;
-    @FXML
     private TableView<ListenTableBean> TAB_LISTEN;
     @FXML
     private TableColumn<ListenTableBean, Long> C_ID;
@@ -132,21 +130,13 @@ public class ListenRemoteTableController implements Initializable, Controller {
             PROGRESS.progressProperty().bind(task.progressProperty());
             PROGRESS_LABEL.textProperty().unbind();
             PROGRESS_LABEL.textProperty().bind(task.messageProperty());
-            task.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
-                @Override
-                public void handle(WorkerStateEvent event) {
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            items.clear();
-                            items.addAll(task.getValue());
-                            TAB_LISTEN.setItems(items);
-                            PROGRESS_LABEL.textProperty().unbind();
-                            PROGRESS_LABEL.setText("terminé !");
-                        }
-                    });
-                }
-            });
+            task.setOnSucceeded(event -> Platform.runLater(() -> {
+                items.clear();
+                items.addAll(task.getValue());
+                TAB_LISTEN.setItems(items);
+                PROGRESS_LABEL.textProperty().unbind();
+                PROGRESS_LABEL.setText("terminé !");
+            }));
             Thread t = new Thread(task);
             t.start();
         } catch (Exception ex) {

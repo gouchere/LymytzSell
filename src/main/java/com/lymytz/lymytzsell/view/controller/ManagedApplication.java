@@ -125,21 +125,6 @@ public class ManagedApplication {
     @FXML
     public VBox PAN_STOCK;
 
-    public void openViewParam(boolean establish) {
-        try {
-            FXMLLoader loader = new FXMLLoader(LocalLoader.class.getResource("/start/form_parametres.fxml"));
-            VBox root = loader.load();
-            Scene scene = new Scene(root, 500, 280);
-            Stage stage = new Stage();
-            stage.setScene(scene);
-            stage.initOwner(UtilsProject.primaryStage);
-            stage.centerOnScreen();
-            stage.show();
-        } catch (IOException ex) {
-            Logger.getLogger(ManagedApplication.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
     public void comptabilise(Long id) {
         String squery = "SELECT y.comptabilisation_auto FROM yvs_com_parametre_vente y WHERE y.agence=?";
         Boolean be = (Boolean) dao.findOneObjectBySQLQ(squery, new Options[]{new Options(UtilsProject.currentAgence.getId(), 1)});

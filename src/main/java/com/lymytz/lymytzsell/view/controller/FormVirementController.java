@@ -77,8 +77,6 @@ public class FormVirementController implements Initializable, Controller {
     @FXML
     private Label LAB_VERSE;
     @FXML
-    private CheckBox CHK_CLOTURE;
-    @FXML
     private TextField TXT_MONTANT;
     @FXML
     private ComboBox<YvsBaseCaisse> CB_CAISS_CIBLE;

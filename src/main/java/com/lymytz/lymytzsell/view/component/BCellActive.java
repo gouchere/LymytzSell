@@ -17,22 +17,16 @@ import lombok.Setter;
  */
 @Setter
 public class BCellActive extends AbstractButtonCell<HeaderDoc> {
-
-    HomeCaisseController mainControler;
+    
     MyComptesController compteController;
 
     public BCellActive(String text) {
         super(text);
     }
 
-    public BCellActive(String text, HomeCaisseController main) {
-        this(text);
-        mainControler = main;
-    }
-
     @Override
     public void listenEvent(ActionEvent ev, HeaderDoc object) {
-        compteController.changeHeader(object.getId(),compteController);
+        compteController.changeHeader(object.getId(), compteController);
     }
 
 }

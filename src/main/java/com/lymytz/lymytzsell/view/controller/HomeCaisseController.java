@@ -146,8 +146,6 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
     @FXML
     private VBox MAIN_LEFT_PANE;
     @FXML
-    private MenuBar HOMEMENU;
-    @FXML
     public ToolBar TOOLBAR;
     @FXML
     public Button BTN_NEW_CMDE;
@@ -759,8 +757,6 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
         L_TOTAL.setText(nb != null ? nb.toString() : "0");
     }
 
-    ButtonType re;
-
     public void giveFocusAtTxtFind() {
         Platform.runLater(() -> {
             TEXT_FIND.setText("");
@@ -1331,7 +1327,7 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
                 new ListenServersRemote(10, this).start();
             } else {
                 //lance la socket d'écoute client... (si on est en mode replication)
-                if (Boolean.TRUE.equals(UtilsProject.REPLICATION)) {
+                if (UtilsProject.REPLICATION) {
                     Thread t = new Thread(() -> {
                         clientSocket = new ClientMessage("", this);
                         clientSocket.initClient();

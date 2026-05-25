@@ -51,7 +51,6 @@ import java.util.logging.Logger;
  */
 public class ExportDataController implements Initializable, Controller {
 
-    RQueryFactories dao = new RQueryFactories();
     public List<LymytzData> listDataLocal;
 
     /**/
