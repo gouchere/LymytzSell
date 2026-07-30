@@ -148,32 +148,6 @@
         protected ComboBox<Planning> CB_CRENO;
         @FXML
         public DatePicker DATE;
-        @FXML
-        private TreeTableView<ContenuDocStock> TAB_APPRO;
-        @FXML
-        private TreeTableColumn<ContenuDocStock, String> COL_REF_ART;
-        @FXML
-        private TreeTableColumn<ContenuDocStock, String> COL_DESIGNATION;
-        @FXML
-        private TreeTableColumn<ContenuDocStock, Double> COL_QUANTITE_E;
-        @FXML
-        private TreeTableColumn<ContenuDocStock, String> COL_UNITE_E;
-        @FXML
-        private TreeTableColumn<ContenuDocStock, Date> COL_DATE_T;
-        @FXML
-        private TreeTableColumn<ContenuDocStock, String> COL_TRANCHE_S;
-        @FXML
-        private TreeTableColumn<ContenuDocStock, Double> COL_PUV;
-        @FXML
-        private TreeTableColumn<ContenuDocStock, String> COL_DEPOT;
-        @FXML
-        private TreeTableColumn<ContenuDocStock, String> COL_NUM_DOC;
-        @FXML
-        private TreeTableColumn<ContenuDocStock, String> COL_STATUT;
-        @FXML
-        private TreeTableColumn<ContenuDocStock, Long> COL_ACTION;
-
-        private ObservableList dataTransfert;
 
         public void setMainController(HomeCaisseController appc) {
             mainControler = appc;
@@ -211,10 +185,10 @@
 
         private void initColumnTablePlanning() {
             current = this;
-            COL_PV.setCellValueFactory(new PropertyValueFactory("pointVente"));
-            COL_TRANCHE.setCellValueFactory(new PropertyValueFactory("tranche"));
-            COL_OP.setCellValueFactory(new PropertyValueFactory("id"));
-            COL_DATE.setCellValueFactory(new PropertyValueFactory("date"));
+            COL_PV.setCellValueFactory(new PropertyValueFactory<>("pointVente"));
+            COL_TRANCHE.setCellValueFactory(new PropertyValueFactory<>("tranche"));
+            COL_OP.setCellValueFactory(new PropertyValueFactory<>("id"));
+            COL_DATE.setCellValueFactory(new PropertyValueFactory<>("date"));
             COL_ACTIF.setCellValueFactory((TableColumn.CellDataFeatures<Planning, Boolean> param) -> {
                 Planning p = param.getValue();
                 SimpleBooleanProperty val = new SimpleBooleanProperty(p.getActif());
@@ -224,7 +198,7 @@
                 return val;
             });
             COL_ACTIF.setCellFactory((TableColumn<Planning, Boolean> param) -> {
-                CheckBoxTableCell<Planning, Boolean> cell = new CheckBoxTableCell();
+                CheckBoxTableCell<Planning, Boolean> cell = new CheckBoxTableCell<>();
                 cell.setAlignment(Pos.CENTER);
                 return cell;
             });
@@ -238,12 +212,12 @@
 
         private void initColumnTableHeader() {
             current = this;
-            PV_FICHE.setCellValueFactory(new PropertyValueFactory("pointVente"));
-            TRANCHE_FICHE.setCellValueFactory(new PropertyValueFactory("tranche"));
-            COL_CLOSE.setCellValueFactory(new PropertyValueFactory("id"));
-            COL_ACTIVE.setCellValueFactory(new PropertyValueFactory("idPlus"));
-            DATE_FICHE.setCellValueFactory(new PropertyValueFactory("date"));
-            DATE_EDIT.setCellValueFactory(new PropertyValueFactory("dateSave"));
+            PV_FICHE.setCellValueFactory(new PropertyValueFactory<>("pointVente"));
+            TRANCHE_FICHE.setCellValueFactory(new PropertyValueFactory<>("tranche"));
+            COL_CLOSE.setCellValueFactory(new PropertyValueFactory<>("id"));
+            COL_ACTIVE.setCellValueFactory(new PropertyValueFactory<>("idPlus"));
+            DATE_FICHE.setCellValueFactory(new PropertyValueFactory<>("date"));
+            DATE_EDIT.setCellValueFactory(new PropertyValueFactory<>("dateSave"));
             STATUT_FICHE.setCellValueFactory((TableColumn.CellDataFeatures<HeaderDoc, Boolean> param) -> {
                 HeaderDoc he = param.getValue();
                 SimpleBooleanProperty val = new SimpleBooleanProperty(he.getCloturer());
@@ -253,7 +227,7 @@
                 return val;
             });
             STATUT_FICHE.setCellFactory((TableColumn<HeaderDoc, Boolean> param) -> {
-                CheckBoxTableCell<HeaderDoc, Boolean> cell = new CheckBoxTableCell();
+                CheckBoxTableCell<HeaderDoc, Boolean> cell = new CheckBoxTableCell<>();
                 cell.setAlignment(Pos.CENTER);
                 return cell;
             });
@@ -429,7 +403,6 @@
         @Override
         public void freeMemoryController() {
             TAB_PLANING = null;
-            TAB_APPRO = null;
             TAB_FICHES = null;
         }
 

@@ -30,7 +30,6 @@ import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.net.URL;
@@ -54,7 +53,7 @@ public class ClaviersController extends ManagedApplication implements Initializa
 
     HomeCaisseController page;
     private Stage fenetre;
-    private Onglets selectOnglet;
+    private TabFacture selectOnglet;
     ContentPanier lineContent;
     private boolean avance = false;
     double montantAvance;
@@ -68,11 +67,7 @@ public class ClaviersController extends ManagedApplication implements Initializa
     @FXML
     private Label TITRE_CLAVIER;
     @FXML
-    private VBox ZONE_REST;
-    @FXML
     private Label LAB_REST;
-    @FXML
-    private Button BTN_CLEAR;
     @FXML
     private Button BTN_BACK;
     @FXML
@@ -90,21 +85,21 @@ public class ClaviersController extends ManagedApplication implements Initializa
         // code d'initialisation de la vue si nécessaire
     }
 
-    public void initController(HomeCaisseController page, Onglets fac, Stage fen, String source, KeyBoardAction action, ContentPanier line) {
+    public void initController(HomeCaisseController page, TabFacture tabFacture, Stage fenetre, String source, KeyBoardAction action, ContentPanier line) {
         this.page = page;
-        this.selectOnglet = fac;
-        this.fenetre = fen;
+        this.selectOnglet = tabFacture;
+        this.fenetre = fenetre;
         this.sourceOfAction = source;
         this.action = action;
         this.lineContent = line;
         this.BTN_PRINT_ONLY.setVisible(true);
-        if (fac != null && fac.getFacture() != null) {
-            if (!Constantes.asLong(fac.getFacture().getId())) {
+        if (tabFacture != null && tabFacture.getFacture() != null) {
+            if (!Constantes.asLong(tabFacture.getFacture().getId())) {
                 this.BTN_PRINT_ONLY.setVisible(false);
             }
             switch (action) {
                 case VALIDER, REGLER:
-                    if (fac.getFacture().getTypeDoc().equals(Constantes.TYPE_BCV)) {
+                    if (Constantes.TYPE_BCV.equals(tabFacture.getFacture().getTypeDoc())) {
                         TITRE_CLAVIER.setText("Entrer le montant d'avance de la commande !");
                         LAB_TITRE_REST.setText("Reste à payer");
                         avance = true;
@@ -206,7 +201,7 @@ public class ClaviersController extends ManagedApplication implements Initializa
                 case REGLER, VALIDER:
                     page.LAB_T_AVANCE.setText(Constantes.nbf.format(montantAvance));
                     page.LAB_NET_A_PAYER.setText(Constantes.nbf.format(selectOnglet.getNetAPayer() - montantAvance));
-                    if (sourceOfAction.equals("F") && TYPE_FV.equals(selectOnglet.getFacture().getTypeDoc()) && selectOnglet.getNetAPayer() > getMontantAffiche()) {
+                    if ("F".equals(sourceOfAction) && TYPE_FV.equals(selectOnglet.getFacture().getTypeDoc()) && selectOnglet.getNetAPayer() > getMontantAffiche()) {
                         LymytzService.openAlertDialog("Le montant reçu n'est pas conforme !", "Erreur montant", "Erreur !", Alert.AlertType.ERROR);
                         return;
                     }
@@ -267,19 +262,34 @@ public class ClaviersController extends ManagedApplication implements Initializa
     }
 
     private void saveAndValidateFacture() {
-        var facture = getDocVenteFromOnglet(selectOnglet);
-        var statutMontantPaye = isValideMontantPaye(selectOnglet.getFacture().getTypeDoc(), montantAvance, selectOnglet.getNetAPayer());
-        var statut = ManagedFactureVente.controleBeforeSaveFacture.apply(facture);
+        YvsComDocVentes facture = getDocVenteFromTab(selectOnglet);
+        selectOnglet.getFacture().setNumDoc(facture.getNumDoc());
+        // Capturer les données du ticket AVANT tout thread concurrent
+        final YvsComDocVentes factureForPrint = new YvsComDocVentes(selectOnglet.getFacture());
+        final double montantRecuSnapshot = selectOnglet.getMontantRecu();
+        // Capturer getMontantAffiche() depuis le FX thread avant de lancer le worker
+        final double montantAffiche = getMontantAffiche();
+
+        EtatMontantPayer statutMontantPaye = isValideMontantPaye(selectOnglet.getFacture().getTypeDoc(), montantAvance, selectOnglet.getNetAPayer());
+        StatutResponse statut = ManagedFactureVente.controleBeforeSaveFacture.apply(facture);
+
         if (OK.equals(statutMontantPaye) && StatutResponse.OK.equals(statut)) {
-            new Thread(() -> page.confirmValideFacture(facture, montantAvance, getMontantAffiche())).start();
-            printTicketFacture(selectOnglet.getFacture(), selectOnglet.getMontantRecu());
+            // aucune attente DB : expérience caisse fluide
+            printTicketFacture(factureForPrint, montantRecuSnapshot);
+            new Thread(() -> {
+                YvsComDocVentes savedFacture = page.saveFacture(facture, montantAvance);
+                if (savedFacture != null) {
+                    page.validateFacture(facture, montantAvance, montantAffiche);
+                }
+            }).start();
+
             page.closeOngletFacture(selectOnglet);
         } else {
             processResponseIfError(statut, statutMontantPaye);
         }
     }
 
-    private YvsComDocVentes getDocVenteFromOnglet(Onglets onglet) {
+    private YvsComDocVentes getDocVenteFromTab(TabFacture onglet) {
         YvsComDocVentes docVente = new YvsComDocVentes(onglet.getFacture());
         String numFacture = UtilsProject.generatedNumDoc((docVente.getTypeDoc().equals(TYPE_FV)) ? Constantes.TYPE_FV_NAME : Constantes.TYPE_BCV_NAME);
         docVente.setNumDoc(numFacture);

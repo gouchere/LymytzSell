@@ -5,12 +5,12 @@
  */
 package com.lymytz.lymytzsell.view.controller;
 
-import com.lymytz.lymytzsell.service.application.service.ManagedFactureVente;
 import com.lymytz.lymytzsell.business.helpers.Helpers;
 import com.lymytz.lymytzsell.business.helpers.KeyBoardAction;
 import com.lymytz.lymytzsell.business.helpers.ResponseAction;
+import com.lymytz.lymytzsell.persistence.dao.LocalQueryFactories;
 import com.lymytz.lymytzsell.persistence.dao.Options;
-import com.lymytz.lymytzsell.service.application.config.Properties;
+import com.lymytz.lymytzsell.persistence.dao.RQueryFactories;
 import com.lymytz.lymytzsell.persistence.dao.util.UtilsBean;
 import com.lymytz.lymytzsell.persistence.entity.YvsBaseArticleCategorieComptable;
 import com.lymytz.lymytzsell.persistence.entity.YvsBaseArticleCategorieComptableTaxe;
@@ -22,34 +22,34 @@ import com.lymytz.lymytzsell.persistence.entity.YvsComContenuDocVente;
 import com.lymytz.lymytzsell.persistence.entity.YvsComDocVentes;
 import com.lymytz.lymytzsell.persistence.entity.YvsComEnteteDocVente;
 import com.lymytz.lymytzsell.persistence.entity.YvsComTaxeContenuVente;
-import com.lymytz.lymytzsell.persistence.dao.LocalQueryFactories;
-import com.lymytz.lymytzsell.persistence.dao.RQueryFactories;
 import com.lymytz.lymytzsell.service.ClientMessage;
 import com.lymytz.lymytzsell.service.ServeurMessage;
 import com.lymytz.lymytzsell.service.application.bean.ContentPanier;
-import com.lymytz.lymytzsell.view.component.ClaviersController;
-import com.lymytz.lymytzsell.view.component.Onglets;
+import com.lymytz.lymytzsell.service.application.config.Properties;
 import com.lymytz.lymytzsell.service.application.config.PropertiesManager;
+import com.lymytz.lymytzsell.service.application.listener.ListenServersLocal;
+import com.lymytz.lymytzsell.service.application.listener.ListenServersRemote;
 import com.lymytz.lymytzsell.service.application.loader.LoaderArticleTask;
 import com.lymytz.lymytzsell.service.application.loader.LoaderFamilleArticleTask;
 import com.lymytz.lymytzsell.service.application.loader.LoaderInitData;
 import com.lymytz.lymytzsell.service.application.loader.LoaderStock;
-import com.lymytz.lymytzsell.service.application.listener.ListenServersLocal;
-import com.lymytz.lymytzsell.service.application.listener.ListenServersRemote;
+import com.lymytz.lymytzsell.service.application.service.ManagedFactureVente;
 import com.lymytz.lymytzsell.service.application.service.ServiceCreateFacture;
 import com.lymytz.lymytzsell.service.application.service.ServiceLivraison;
 import com.lymytz.lymytzsell.service.application.service.reglement.ServiceReglement;
+import com.lymytz.lymytzsell.service.application.service.report.PrintTiket;
 import com.lymytz.lymytzsell.service.application.synchro.SynchronizeDataIn;
 import com.lymytz.lymytzsell.service.application.synchro.SynchronizeDataOut;
 import com.lymytz.lymytzsell.service.utils.Clock;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.CustomWindow;
 import com.lymytz.lymytzsell.service.utils.LymytzService;
-import com.lymytz.lymytzsell.service.application.service.report.PrintTiket;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
 import com.lymytz.lymytzsell.synchro.ws.WsSynchro;
 import com.lymytz.lymytzsell.view.LocalLoader;
+import com.lymytz.lymytzsell.view.component.ClaviersController;
 import com.lymytz.lymytzsell.view.component.CustomComponents;
+import com.lymytz.lymytzsell.view.component.TabFacture;
 import com.lymytz.lymytzsell.view.component.ToastService;
 import com.lymytz.lymytzsell.view.main.report.PrintFacture;
 import javafx.application.Platform;
@@ -77,7 +77,6 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ScrollPane;
@@ -385,10 +384,10 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
     }
 
     private void addInCardIfOneArtIsFind(YvsBaseConditionnement art) {
-        Onglets tab = (Onglets) TAB_FACTURES.getSelectionModel().getSelectedItem();
+        TabFacture tab = (TabFacture) TAB_FACTURES.getSelectionModel().getSelectedItem();
         if (tab == null) {
             this.initFactureVenteClientDivers();
-            tab = (Onglets) TAB_FACTURES.getSelectionModel().getSelectedItem();
+            tab = (TabFacture) TAB_FACTURES.getSelectionModel().getSelectedItem();
         }
         Optional.ofNullable(tab).ifPresent(ong -> {
             if (ong.addArticleOnFacture(art, 1, false, art.getPrix())) {
@@ -597,11 +596,11 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
             LAB_NAME_CLT.setText(facture.getNomClient());
             double avance = facture.getMontantAvance();
 
-            Onglets onglets = (Onglets) TAB_FACTURES.getSelectionModel().getSelectedItem();
-            if (onglets != null) {
-                onglets.setNetAPayer(facture.getMontantResteApayer());
+            TabFacture tabFacture = (TabFacture) TAB_FACTURES.getSelectionModel().getSelectedItem();
+            if (tabFacture != null) {
+                tabFacture.setNetAPayer(facture.getMontantResteApayer());
                 LAB_T_AVANCE.setText(Constantes.nbf.format(avance));
-                LAB_NET_A_PAYER.setText(Constantes.nbf.format(onglets.getNetAPayer()));
+                LAB_NET_A_PAYER.setText(Constantes.nbf.format(tabFacture.getNetAPayer()));
             }
             if (facture.getStatut().equals(ETAT_VALIDE) || facture.getStatut().equals(ETAT_CLOTURE)) {
                 BTN_SAVE.setVisible(false);
@@ -747,7 +746,7 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
 
     public void initTabPane(YvsComDocVentes facture) {
         if (facture != null) {
-            TAB_FACTURES.getTabs().add(0, new Onglets(facture, this));
+            TAB_FACTURES.getTabs().add(0, new TabFacture(facture, this));
             TAB_FACTURES.getSelectionModel().select(0);
         }
     }
@@ -799,29 +798,55 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
      *  5.
      * */
 
-    public void confirmValideFacture(YvsComDocVentes facture, final double montantPaye, final double montantRecu) {
+    /**
+     * Enregistre la facture et son contenu en base (sans livraison ni règlement).
+     * Doit être appelé depuis un thread worker (pas le FX thread).
+     * @return la facture enregistrée, ou {@code null} en cas d'erreur
+     */
+    public YvsComDocVentes saveFacture(YvsComDocVentes facture, double montantPaye) {
         List<YvsComContenuDocVente> contenuDuPanier = new ArrayList<>(facture.getContenus());
         facture.getContenus().clear();
         YvsComDocVentes entityFacture = saveFactureAndContent(facture, contenuDuPanier, montantPaye);
         if (entityFacture != null) {
             new ServiceCreateFacture(this).saveCurrentCommercial(facture);
-            livrerEtReglerFactureValide(facture, montantPaye, montantRecu);
         } else {
-            ToastService.show(getMainStage(), "Votre facture n'a pas été enregistré veuillez regarder vos notifications", 3500, ERROR);
+            Platform.runLater(() -> ToastService.show(getMainStage(),
+                    "Votre facture n'a pas été enregistré veuillez regarder vos notifications", 3500, ERROR));
+        }
+        return entityFacture;
+    }
+
+    /**
+     * Exécute la validation (livraison + règlement + comptabilisation).
+     * Doit être appelé après {@link #saveFacture} depuis un thread worker.
+     */
+    public void validateFacture(YvsComDocVentes facture, double montantPaye, double montantRecu) {
+        livrerEtReglerFactureValide(facture, montantPaye, montantRecu);
+    }
+
+    /**
+     * Wrapper non bloquant pour les appelants qui ne gèrent pas leur propre thread.
+     */
+    public void validateFactureAsync(YvsComDocVentes facture, double montantPaye, double montantRecu) {
+        new Thread(() -> validateFacture(facture, montantPaye, montantRecu)).start();
+    }
+
+    /** Conservé pour compatibilité — délègue aux deux nouvelles méthodes. */
+    public void saveAndValidateFacture(YvsComDocVentes facture, final double montantPaye, final double montantRecu) {
+        YvsComDocVentes entityFacture = saveFacture(facture, montantPaye);
+        if (entityFacture != null) {
+            validateFactureAsync(facture, montantPaye, montantRecu);
         }
     }
 
     private void livrerEtReglerFactureValide(YvsComDocVentes facture, double montantPaye, double montantRecu) {
-        Thread tcompta = new Thread(() -> {
-            saveLivraisonAndreglement(new YvsComDocVentes(facture), montantPaye, montantRecu);
-            if (!UtilsProject.REPLICATION && facture.getTypeDoc().equals(TYPE_FV)) {
-                comptabilise(facture.getId());
-            }
-        });
-        tcompta.start();
+        saveLivraisonAndreglement(new YvsComDocVentes(facture), montantPaye, montantRecu);
+        if (!UtilsProject.REPLICATION && facture.getTypeDoc().equals(TYPE_FV)) {
+            comptabilise(facture.getId());
+        }
     }
 
-    public void closeOngletFacture(Onglets currentOnglet) {
+    public void closeOngletFacture(TabFacture currentOnglet) {
         Platform.runLater(() -> {
             TAB_FACTURES.getTabs().remove(currentOnglet);
             if (!TAB_FACTURES.getTabs().isEmpty()) {
@@ -854,7 +879,7 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
             }
         } catch (Exception ex) {
             //Enregistrer la facture sous forme de json si elle n'a pas pu être enregistré
-            var fatureLog = new YvsComDocVentes(facture);
+            YvsComDocVentes fatureLog = new YvsComDocVentes(facture);
             fatureLog.setContenus(contenuDocVentes);
             dao.saveLogsFacture(fatureLog);
         }
@@ -966,7 +991,7 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
 
     public void displayFactureOnView(YvsComDocVentes doc) {
         //Crée ou récupère l'onglet
-        Onglets ong = new Onglets(doc, this);
+        TabFacture ong = new TabFacture(doc, this);
         int idx = TAB_FACTURES.getTabs().indexOf(ong);
         if (idx < 0) {
             TAB_FACTURES.getTabs().add(0, ong);
@@ -1150,7 +1175,7 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
     @FXML
     private void printFacture(ActionEvent event) {
         if (!TAB_FACTURES.getTabs().isEmpty()) {
-            Onglets ong = (Onglets) TAB_FACTURES.getSelectionModel().getSelectedItem();
+            TabFacture ong = (TabFacture) TAB_FACTURES.getSelectionModel().getSelectedItem();
             Properties param = new Properties();
             Properties.readFile(LymytzService.getFileInputStream());
             if (ong != null) {
@@ -1174,7 +1199,7 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
     @FXML
     private void saveOrGeneratedPaiement(ActionEvent event) {
         //1. Controle la caisse et le mode de paiement  
-        Onglets tab = (Onglets) TAB_FACTURES.getSelectionModel().getSelectedItem();
+        TabFacture tab = (TabFacture) TAB_FACTURES.getSelectionModel().getSelectedItem();
         if (tab != null) {
             ServiceCreateFacture service = new ServiceCreateFacture(this);
             service.saveOrGeneratedPaiement_(tab);
@@ -1184,14 +1209,14 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
     @FXML
     private void showDisplayCatalogueOptions(ActionEvent event) {
         //1. Controle la caisse et le mode de paiement
-        Onglets tab = (Onglets) TAB_FACTURES.getSelectionModel().getSelectedItem();
+        TabFacture tab = (TabFacture) TAB_FACTURES.getSelectionModel().getSelectedItem();
         if (tab != null) {
             ServiceCreateFacture service = new ServiceCreateFacture(this);
             service.saveOrGeneratedPaiement_(tab);
         }
     }
 
-    public void openDlgCalculatrice(Onglets onglet, String source, KeyBoardAction action, ContentPanier content) {
+    public void openDlgCalculatrice(TabFacture onglet, String source, KeyBoardAction action, ContentPanier content) {
         try {
             if (onglet == null || onglet.getContentFacture().isEmpty()) {
                 LymytzService.openAlertDialog("Votre panier est vide", "erreur contenu", "Erreur !", Alert.AlertType.ERROR);
@@ -1221,7 +1246,7 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
         }
     }
 
-    public void openDlgCalculatrice(Onglets onglet, String source, KeyBoardAction action) {
+    public void openDlgCalculatrice(TabFacture onglet, String source, KeyBoardAction action) {
         openDlgCalculatrice(onglet, source, action, null);
     }
 
@@ -1297,11 +1322,11 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
 
     @FXML
     public void livrerFacture(ActionEvent ev) {
-        Onglets fac = (Onglets) TAB_FACTURES.getSelectionModel().getSelectedItem();
+        TabFacture fac = (TabFacture) TAB_FACTURES.getSelectionModel().getSelectedItem();
         saveOrGenerateBl(fac);
     }
 
-    public void saveOrGenerateBl(Onglets currentOnglet) {
+    public void saveOrGenerateBl(TabFacture currentOnglet) {
         if (currentOnglet != null) {
             ServiceLivraison service = new ServiceLivraison(this);
             if (!currentOnglet.getFacture().isCommande()) {

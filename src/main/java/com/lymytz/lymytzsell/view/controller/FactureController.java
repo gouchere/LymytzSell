@@ -63,7 +63,6 @@ public class FactureController implements Initializable, Controller {
     @FXML
     private ComboBox<YvsDictionnaire> CB_SECTEUR;
 
-    private ObservableList dataClients;
     private ObservableList dataVilles;
     private ObservableList dataSecteurs;
     @FXML
@@ -92,35 +91,6 @@ public class FactureController implements Initializable, Controller {
         }
         initVilles();
         initializeClient();
-        /*AutoCompletePopup<YvsComClient> popUpClients = TextFields.bindAutoCompletion(TF_CLIENT, c -> UtilsProject.listClients.stream().filter(elt -> (elt.getNom_prenom().toLowerCase().contains(c.getUserText().toLowerCase())
-                || elt.getCodeClient().toLowerCase().contains(c.getUserText().toLowerCase()))).collect(Collectors.toList()), new StringConverter<>() {
-
-            @Override
-            public String toString(YvsComClient object) {
-                if (object != null) {
-                    return object.getTextClient();
-                }
-                return "";
-            }
-
-            @Override
-            public YvsComClient fromString(String string) {
-                return null;
-            }
-        }).getAutoCompletionPopup();
-        popUpClients.setSkin(new AutoCompletePopupSkin<>(popUpClients, param -> new ListCell<>() {
-            @Override
-            public void updateItem(YvsComClient item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty) {
-                    setText(null);
-                    setGraphic(null);
-                } else {
-                    setGraphic(new Rectangle(32, 32, Color.BEIGE));
-                    setText(item.getTextClient());
-                }
-            }
-        }));*/
         TF_CLIENT.focusedProperty().addListener((observable, oldValue, newValue) -> getClientWithText());
         TF_CLIENT.setPromptText(TF_CLIENT.getText());
     }
@@ -145,24 +115,6 @@ public class FactureController implements Initializable, Controller {
                     }
                 }
         );
-
-        // Personnalisation des cellules de la liste de suggestions
-        binding.setOnAutoCompleted(event -> {
-            // Logique à appliquer après la sélection
-        });
-        /*binding.getAutoCompletionPopup().setCellFactory(param -> new ListCell<YvsComClient>() {
-            @Override
-            protected void updateItem(YvsComClient item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) {
-                    setText(null);
-                    setGraphic(null);
-                } else {
-                    setGraphic(new javafx.scene.shape.Rectangle(32, 32, javafx.scene.paint.Color.BEIGE));
-                    setText(item.getTextClient());
-                }
-            }
-        });*/
     }
 
     public void initDataForm(HomeCaisseController main) {

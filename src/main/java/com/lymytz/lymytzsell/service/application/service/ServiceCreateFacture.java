@@ -14,7 +14,7 @@ import com.lymytz.lymytzsell.persistence.entity.YvsComCommercialPoint;
 import com.lymytz.lymytzsell.persistence.entity.YvsComCommercialVente;
 import com.lymytz.lymytzsell.persistence.entity.YvsComDocVentes;
 import com.lymytz.lymytzsell.persistence.dao.LocalQueryFactories;
-import com.lymytz.lymytzsell.view.component.Onglets;
+import com.lymytz.lymytzsell.view.component.TabFacture;
 import com.lymytz.lymytzsell.service.utils.Constantes;
 import com.lymytz.lymytzsell.service.utils.LymytzService;
 import com.lymytz.lymytzsell.service.utils.UtilsProject;
@@ -60,7 +60,8 @@ public class ServiceCreateFacture {
             YvsComComerciale y = dao.findOneByNQ("YvsComComerciale.findByUser", new String[]{"user"}, new Object[]{UtilsProject.headerDoc.getCreneau().getUsers()});
             if (y == null && pointDeVente != null) { //Commerciale est celui rattaché au user en cours
                 YvsComCommercialVente bean;
-                double taux = !pointDeVente.getCommerciaux().isEmpty() ? ((double) 100 / pointDeVente.getCommerciaux().size()) : 0;
+                double taux = !pointDeVente.getCommerciaux().isEmpty() ?
+                        ((double) 100 / pointDeVente.getCommerciaux().size()) : 0;
                 for (YvsComCommercialPoint cp : pointDeVente.getCommerciaux()) {
                     bean = new YvsComCommercialVente();
                     bean.setFacture(fac);
@@ -154,7 +155,7 @@ public class ServiceCreateFacture {
     }
 
     public void valideFacture() {
-        Onglets onglet = (Onglets) page.TAB_FACTURES.getSelectionModel().getSelectedItem();
+        TabFacture onglet = (TabFacture) page.TAB_FACTURES.getSelectionModel().getSelectedItem();
         Optional.ofNullable(onglet)
                 .filter(ong -> controleSaveFacture(ong.getFacture()))
                 .ifPresentOrElse(fac -> {
@@ -167,7 +168,7 @@ public class ServiceCreateFacture {
                         () -> Platform.runLater(() -> ToastService.show(page.getMainStage(), "Assurez-vous de selectionner une facture", 5000, ToastService.ToastType.ERROR)));
     }
 
-    private void validationCommande(Onglets fac) {
+    private void validationCommande(TabFacture fac) {
         if (!Constantes.ETAT_REGLE.equals(fac.getFacture().getStatutRegle())) {
             if (fac.getFacture().getId() > 0) {
                 saveOrGeneratedPaiement_(fac);
@@ -195,7 +196,7 @@ public class ServiceCreateFacture {
         }
     }
 
-    public void saveOrGeneratedPaiement_(Onglets onglet) {
+    public void saveOrGeneratedPaiement_(TabFacture onglet) {
         if (controleSaveReglement()) {
             page.openDlgCalculatrice(onglet, onglet.getFacture().getTypeDoc().equals(Constantes.TYPE_BCV) ? "A" : "F", KeyBoardAction.REGLER);
         }

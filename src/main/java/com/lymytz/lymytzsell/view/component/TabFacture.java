@@ -51,7 +51,7 @@ import static com.lymytz.lymytzsell.service.utils.MessagesConstants.MODIFICATION
 /**
  * @author LENOVO
  */
-public final class Onglets extends Tab {
+public final class TabFacture extends Tab {
 
     LocalQueryFactories dao;
     @Getter
@@ -69,24 +69,15 @@ public final class Onglets extends Tab {
     HomeCaisseController page;
     private final CheckBox memoireDlg = new CheckBox("Ne plus me rappeler...");
 
-    public Onglets(String title, HomeCaisseController page) {
+    public TabFacture(String title, HomeCaisseController page) {
         super(title, new ScrollPane(new VBox()));
         contentFacture = new ArrayList<>();
         this.page = page;
         dao = new LocalQueryFactories();
     }
 
-    public Onglets(Onglets onglet) {
-        this.facture = new YvsComDocVentes(onglet.facture, true);
-        this.netAPayer = onglet.netAPayer;
-        this.montantRecu = onglet.montantRecu;
-        this.contentFacture = new ArrayList<>(onglet.contentFacture);
-        this.dao = onglet.dao;
-        this.page = onglet.page;
-    }
 
-
-    public Onglets(YvsComDocVentes facture, HomeCaisseController page) {
+    public TabFacture(YvsComDocVentes facture, HomeCaisseController page) {
         this(facture != null ? facture.getId() > 0 ? facture.getNumDoc() : facture.getTypeDoc() + ":" + facture.getClient().getCodeClient() + "-" + facture.getId() : "", page);
         this.facture = facture;
         //ajoute un évènement
@@ -94,7 +85,7 @@ public final class Onglets extends Tab {
             int idx = page.TAB_FACTURES.getSelectionModel().getSelectedIndex();
             if (idx >= 0 && page.TAB_FACTURES.getTabs().size() > idx) {
                 displayMontantsBean();
-                page.displayDetailFacture(((Onglets) page.TAB_FACTURES.getTabs().get(idx)).getFacture());
+                page.displayDetailFacture(((TabFacture) page.TAB_FACTURES.getTabs().get(idx)).getFacture());
             } else if (idx <= 0) {
                 this.page.ECRAN.setText("0");
             }
@@ -261,7 +252,7 @@ public final class Onglets extends Tab {
     ButtonType re;
 
     public boolean addArticleOnFacture(YvsBaseConditionnement cond, double qteLine, boolean resetQte, double prixV) {
-        Onglets tab = (Onglets) page.TAB_FACTURES.getSelectionModel().getSelectedItem();
+        TabFacture tab = (TabFacture) page.TAB_FACTURES.getSelectionModel().getSelectedItem();
         if (isEditableCurrentFacture()) {
             //page.displayPropertyArticle(cond, false);
             ContentPanier line = tab.buildLineContentanier(cond);
@@ -284,7 +275,7 @@ public final class Onglets extends Tab {
     }
 
     private void addOrRemoveLineInCard(ContentPanier line, double quantite, double prixArticle) {
-        Onglets currentOnget = (Onglets) page.TAB_FACTURES.getSelectionModel().getSelectedItem();
+        TabFacture currentOnget = (TabFacture) page.TAB_FACTURES.getSelectionModel().getSelectedItem();
         if (quantite <= 0) {
             Optional.ofNullable(currentOnget).ifPresent(tab -> tab.moveLineContent(line));
         } else {
@@ -307,7 +298,7 @@ public final class Onglets extends Tab {
         }
     }
 
-    private boolean isStockEnable(YvsBaseConditionnement cond, double qteLine, Onglets tab, ContentPanier line) {
+    private boolean isStockEnable(YvsBaseConditionnement cond, double qteLine, TabFacture tab, ContentPanier line) {
         return (!UtilsProject.REPLICATION && (Constantes.TYPE_FV.equals(tab.getFacture().getTypeDoc()) &&
                 (cond.getStock() - qteLine > 0 || canSaveWithoutStock(cond, tab, line)))) ||
                 Constantes.TYPE_BCV.equals(tab.getFacture().getTypeDoc())
@@ -315,14 +306,14 @@ public final class Onglets extends Tab {
     }
 
     private boolean isEditableCurrentFacture() {
-        Onglets currentOnget = (Onglets) page.TAB_FACTURES.getSelectionModel().getSelectedItem();
+        TabFacture currentOnget = (TabFacture) page.TAB_FACTURES.getSelectionModel().getSelectedItem();
         return Optional.ofNullable(currentOnget)
-                .map(Onglets::getFacture)
+                .map(TabFacture::getFacture)
                 .filter(currentFacture -> Constantes.ETAT_EDITABLE.equals(currentFacture.getStatut()))
                 .isPresent();
     }
 
-    private boolean canSaveWithoutStock(YvsBaseConditionnement cond, Onglets tab, ContentPanier line) {
+    private boolean canSaveWithoutStock(YvsBaseConditionnement cond, TabFacture tab, ContentPanier line) {
         Boolean sellWithoutStock = (Boolean) dao.findOneObjectByNQ("YvsBaseArticleDepot.findIfSellWithOutStock", new String[]{"article", "depot"}, new Object[]{cond.getArticle(), UtilsProject.depotLivraison});
         sellWithoutStock = sellWithoutStock == null || sellWithoutStock;
         if (!sellWithoutStock) {
@@ -443,7 +434,7 @@ public final class Onglets extends Tab {
         return prixArticles;
     }
 
-    private void eventForLabelQte(Label label, boolean qte, Onglets onglet, ContentPanier content) {
+    private void eventForLabelQte(Label label, boolean qte, TabFacture onglet, ContentPanier content) {
         label.getStyleClass().add("catalogue-item-editable-label");
         label.setOnMouseClicked(event -> Optional.of(event).map(MouseEvent::getButton).filter(MouseButton.PRIMARY::equals).ifPresent(btn -> {
             if (event.getClickCount() > 1 && !qte) {
@@ -484,7 +475,7 @@ public final class Onglets extends Tab {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final Onglets other = (Onglets) obj;
+        final TabFacture other = (TabFacture) obj;
         return Objects.equals(this.facture, other.facture);
     }
 

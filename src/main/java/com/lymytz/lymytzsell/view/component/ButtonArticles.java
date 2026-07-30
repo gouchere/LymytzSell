@@ -32,13 +32,13 @@ public class ButtonArticles extends VBox {
         this.page = home;
         this.setOnMouseClicked((MouseEvent event) -> {
             if (event.getButton().equals(MouseButton.PRIMARY)) {
-                Onglets tab = (Onglets) page.TAB_FACTURES.getSelectionModel().getSelectedItem();
+                TabFacture tab = (TabFacture) page.TAB_FACTURES.getSelectionModel().getSelectedItem();
                 if (tab != null) {
                     tab.addArticleOnFacture(conditionnement, 1, false, conditionnement.getPrix());
                 } else {
                     this.page.initFactureVenteClientDivers();
                     Platform.runLater(() -> {
-                        var newTab = (Onglets) page.TAB_FACTURES.getSelectionModel().getSelectedItem();
+                        var newTab = (TabFacture) page.TAB_FACTURES.getSelectionModel().getSelectedItem();
                         Optional.ofNullable(newTab).ifPresent(t -> t.addArticleOnFacture(conditionnement, 1, false, conditionnement.getPrix()));
                     });
                 }

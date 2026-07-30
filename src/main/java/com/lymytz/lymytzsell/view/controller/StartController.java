@@ -10,7 +10,7 @@ import com.lymytz.lymytzsell.persistence.entity.YvsComCreneauHoraireUsers;
 import com.lymytz.lymytzsell.persistence.entity.YvsUsers;
 import com.lymytz.lymytzsell.persistence.entity.YvsUsersAgence;
 import com.lymytz.lymytzsell.persistence.dao.LocalQueryFactories;
-import com.lymytz.lymytzsell.view.component.Onglets;
+import com.lymytz.lymytzsell.view.component.TabFacture;
 import com.lymytz.lymytzsell.service.application.config.PropertiesManager;
 import com.lymytz.lymytzsell.service.application.synchro.UtilEntityBase;
 import com.lymytz.lymytzsell.service.utils.Constantes;
@@ -178,7 +178,7 @@ public class StartController implements Initializable, Controller {
                             break;
                         case ADD:
                             if (mainController.TAB_FACTURES != null && (!mainController.TAB_FACTURES.getTabs().isEmpty())) {
-                                Onglets o = (Onglets) mainController.TAB_FACTURES.getSelectionModel().getSelectedItem();
+                                TabFacture o = (TabFacture) mainController.TAB_FACTURES.getSelectionModel().getSelectedItem();
                                 if (!o.getContentFacture().isEmpty()) {
                                     o.addArticleOnFacture(o.getContentFacture().get(o.getContentFacture().size() - 1).getConditionnement(), 1, false, o.getContentFacture().get(o.getContentFacture().size() - 1).getPrix());
                                 }
@@ -187,7 +187,7 @@ public class StartController implements Initializable, Controller {
                             break;
                         case SUBTRACT:
                             if (mainController.TAB_FACTURES != null && (!mainController.TAB_FACTURES.getTabs().isEmpty())) {
-                                Onglets o = (Onglets) mainController.TAB_FACTURES.getSelectionModel().getSelectedItem();
+                                TabFacture o = (TabFacture) mainController.TAB_FACTURES.getSelectionModel().getSelectedItem();
                                 if (!o.getContentFacture().isEmpty()) {
                                     o.addArticleOnFacture(o.getContentFacture().get(o.getContentFacture().size() - 1).getConditionnement(), -1, false, o.getContentFacture().get(o.getContentFacture().size() - 1).getPrix());
                                 }
@@ -196,7 +196,7 @@ public class StartController implements Initializable, Controller {
                             break;
                         case Q:
                             if (mainController.TAB_FACTURES != null && (!mainController.TAB_FACTURES.getTabs().isEmpty())) {
-                                Onglets o = (Onglets) mainController.TAB_FACTURES.getSelectionModel().getSelectedItem();
+                                TabFacture o = (TabFacture) mainController.TAB_FACTURES.getSelectionModel().getSelectedItem();
                                 if (!o.getContentFacture().isEmpty()) {
                                     mainController.openDlgCalculatrice(o, "F", KeyBoardAction.SET_QTE, o.getContentFacture().get(o.getContentFacture().size() - 1));
                                 }

@@ -1,6 +1,5 @@
 package com.lymytz.lymytzsell.monitoring;
 
-import com.lymytz.lymytzsell.service.application.service.ServiceLivraison;
 import com.sun.net.httpserver.HttpServer;
 import io.micrometer.prometheusmetrics.PrometheusConfig;
 import io.micrometer.prometheusmetrics.PrometheusMeterRegistry;
