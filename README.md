@@ -36,15 +36,15 @@ Générer l'installeur
 jpackage --input ./LymytzSell/target/
 --name Lymytz-sell
 --main-jar lymytzSell-1.0-SNAPSHOT.jar
---main-class com.lymytz.lymytzsell.LymytzSellApplication
+--main-class com.lymytz.lymytzsell.LymytzSell
 --type msi --runtime-image ./runtimejdk17
---app-version 3.0.1
+--app-version 3.0.3
 --icon lymytz-sell.ico
---java-options "-Xms2g -Xmx2g --add-opens=javafx.graphics/com.sun.javafx.application=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens javafx.controls/com.sun.javafx.scene.control.skin.resources=ALL-UNNAMED --add-exports=javafx.base/com.sun.javafx.event=ALL-UNNAMED --add-exports=javafx.controls/com.sun.javafx.scene.control.behavior=ALL-UNNAMED --add-exports=javafx.controls/com.sun.javafx.scene.control=ALL-UNNAMED --add-exports javafx.graphics/com.sun.javafx.print=ALL-UNNAMED"                                                                                                           
+--java-options "--add-opens=javafx.graphics/com.sun.javafx.application=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens javafx.controls/com.sun.javafx.scene.control.skin.resources=ALL-UNNAMED --add-exports=javafx.base/com.sun.javafx.event=ALL-UNNAMED --add-exports=javafx.controls/com.sun.javafx.scene.control.behavior=ALL-UNNAMED --add-exports=javafx.controls/com.sun.javafx.scene.control=ALL-UNNAMED --add-exports javafx.graphics/com.sun.javafx.print=ALL-UNNAMED"                                                                                                           
 ```
 One Line 
 ``` bash
-jpackage --input ./LymytzSell/target/ --name Lymytz-sell --main-jar lymytzSell-1.0-SNAPSHOT.jar --main-class com.lymytz.lymytzsell.LymytzSellApplication --type msi --runtime-image ./runtimejdk17 --vendor Lymytz --app-version 3.0.1 --icon logo_lymytzSell.png --java-options "--add-opens=javafx.graphics/com.sun.javafx.application=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens javafx.controls/com.sun.javafx.scene.control.skin.resources=ALL-UNNAMED --add-exports=javafx.base/com.sun.javafx.event=ALL-UNNAMED --add-exports=javafx.controls/com.sun.javafx.scene.control.behavior=ALL-UNNAMED --add-exports=javafx.controls/com.sun.javafx.scene.control=ALL-UNNAMED --add-exports javafx.graphics/com.sun.javafx.print=ALL-UNNAMED" --win-shortcut --win-menu
+jpackage --input ./LymytzSell/target/ --name Lymytz-sell --main-jar lymytzSell-3.0.3.jar --main-class com.lymytz.lymytzsell.LymytzSell --type msi --runtime-image ./runtimejdk17 --vendor Lymytz --app-version 3.0.4 --icon logo_lymytzSell.ico --java-options "--add-opens=javafx.graphics/com.sun.javafx.application=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens javafx.controls/com.sun.javafx.scene.control.skin.resources=ALL-UNNAMED --add-exports=javafx.base/com.sun.javafx.event=ALL-UNNAMED --add-exports=javafx.controls/com.sun.javafx.scene.control.behavior=ALL-UNNAMED --add-exports=javafx.controls/com.sun.javafx.scene.control=ALL-UNNAMED --add-exports javafx.graphics/com.sun.javafx.print=ALL-UNNAMED" --win-shortcut --win-menu
 ```
 ## Lancer l'application en ligne de commande avec le runtime
 ```bash
