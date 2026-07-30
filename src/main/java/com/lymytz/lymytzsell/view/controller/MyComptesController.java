@@ -12,16 +12,16 @@
     import com.lymytz.lymytzsell.service.application.bean.ContenuDocStock;
     import com.lymytz.lymytzsell.service.application.bean.HeaderDoc;
     import com.lymytz.lymytzsell.service.application.bean.Planning;
-    import com.lymytz.lymytzsell.view.component.BCellActive;
-    import com.lymytz.lymytzsell.view.component.BCellClose;
-    import com.lymytz.lymytzsell.view.component.BCellInit;
-    import com.lymytz.lymytzsell.view.component.ButtonCellFactory;
-    import com.lymytz.lymytzsell.view.component.IButtonCellFactory;
     import com.lymytz.lymytzsell.service.application.loader.LoaderFiches;
     import com.lymytz.lymytzsell.service.application.loader.LoaderPlanning;
     import com.lymytz.lymytzsell.service.utils.Constantes;
     import com.lymytz.lymytzsell.service.utils.LymytzService;
     import com.lymytz.lymytzsell.service.utils.UtilsProject;
+    import com.lymytz.lymytzsell.view.component.BCellActive;
+    import com.lymytz.lymytzsell.view.component.BCellClose;
+    import com.lymytz.lymytzsell.view.component.BCellInit;
+    import com.lymytz.lymytzsell.view.component.ButtonCellFactory;
+    import com.lymytz.lymytzsell.view.component.IButtonCellFactory;
     import com.lymytz.lymytzsell.view.component.ToastService;
     import javafx.beans.property.SimpleBooleanProperty;
     import javafx.beans.value.ObservableValue;
@@ -40,8 +40,6 @@
     import javafx.scene.control.TableColumn;
     import javafx.scene.control.TableView;
     import javafx.scene.control.TreeItem;
-    import javafx.scene.control.TreeTableColumn;
-    import javafx.scene.control.TreeTableView;
     import javafx.scene.control.cell.CheckBoxTableCell;
     import javafx.scene.control.cell.PropertyValueFactory;
     import javafx.scene.layout.VBox;
@@ -192,9 +190,7 @@
             COL_ACTIF.setCellValueFactory((TableColumn.CellDataFeatures<Planning, Boolean> param) -> {
                 Planning p = param.getValue();
                 SimpleBooleanProperty val = new SimpleBooleanProperty(p.getActif());
-                val.addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
-                    p.setActif(newValue);
-                });
+                val.addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> p.setActif(newValue));
                 return val;
             });
             COL_ACTIF.setCellFactory((TableColumn<Planning, Boolean> param) -> {
@@ -221,9 +217,7 @@
             STATUT_FICHE.setCellValueFactory((TableColumn.CellDataFeatures<HeaderDoc, Boolean> param) -> {
                 HeaderDoc he = param.getValue();
                 SimpleBooleanProperty val = new SimpleBooleanProperty(he.getCloturer());
-                val.addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
-                    he.setCloturer(newValue);
-                });
+                val.addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> he.setCloturer(newValue));
                 return val;
             });
             STATUT_FICHE.setCellFactory((TableColumn<HeaderDoc, Boolean> param) -> {

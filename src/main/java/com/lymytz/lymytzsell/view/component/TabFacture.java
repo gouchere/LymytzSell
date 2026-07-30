@@ -452,7 +452,7 @@ public final class TabFacture extends Tab {
     private Double getRabais(YvsBaseConditionnement c, YvsBasePointVente p, Date date) {
         double rabais = 0;
         if ((c != null && Constantes.asLong(c.getId())) && (p != null && Constantes.asLong(p.getId()))) {
-            YvsComRabais r = (YvsComRabais) dao.findOneByNQ("YvsComRabais.findRabais", new String[]{"conditionnement", "point", "date"}, new Object[]{c, p, date});
+            YvsComRabais r = dao.findOneByNQ("YvsComRabais.findRabais", new String[]{"conditionnement", "point", "date"}, new Object[]{c, p, date});
             if (r != null) {
                 rabais = r.getMontant();
             }
