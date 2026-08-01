@@ -68,13 +68,17 @@ public class LymytzSellApplication extends Application {
     }
 
     @Override
-    public void start(Stage primaryStage) throws IOException {
+    public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
         Platform.setImplicitExit(true);
         javax.swing.SwingUtilities.invokeLater(this::addAppToTray);
-        MetricHttpServer metricHttpServer = new MetricHttpServer();
-        metricHttpServer.start();
-        metricRegistry = metricHttpServer.getMeterRegistry();
+        try {
+            MetricHttpServer metricHttpServer = new MetricHttpServer();
+            metricHttpServer.start();
+            metricRegistry = metricHttpServer.getMeterRegistry();
+        } catch (Exception e) {
+            LOGGER.warn("Le serveur de métriques Prometheus n'a pas pu démarrer (port 9099 indisponible ou module manquant) : {}", e.getMessage());
+        }
         initializePort();
         startApps();
     }

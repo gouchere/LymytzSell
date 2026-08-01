@@ -6,7 +6,7 @@
 
     <groupId>lymytz</groupId>
     <artifactId>lymytzSell</artifactId>
-    <version>3.0.3</version>
+    <version>3.0.6</version>
     <name>lymytz-sell</name>
 
     <properties>
@@ -225,6 +225,12 @@
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-core</artifactId>
+            <version>10.21.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-database-postgresql</artifactId>
             <version>10.21.0</version>
             <scope>compile</scope>
         </dependency>

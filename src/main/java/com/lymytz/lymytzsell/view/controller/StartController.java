@@ -336,6 +336,11 @@ public class StartController implements Initializable, Controller {
     }
 
     private void executeFlywayMigration() {
+        boolean flywayEnabled = Boolean.parseBoolean(System.getProperty("flyway.enabled", "true"));
+        if (!flywayEnabled) {
+            LOGGER.info("Migration Flyway désactivée (flyway.enabled=false).");
+            return;
+        }
         String host = PropertiesManager.getInstance().getVal(Constantes.KEY_LOCAL_HOST);
         String port = PropertiesManager.getInstance().getVal(Constantes.KEY_LOCAL_PORT);
         String dbName = PropertiesManager.getInstance().getVal(Constantes.KEY_LOCAL_DB_NAME);

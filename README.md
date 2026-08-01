@@ -28,7 +28,7 @@ jlink --module-path "C:\Progra~1\Eclipse Adoptium\jdk-17.0.13.11-hotspot\jmods;D
 ```
 Copier ensuite les .dll qui ne sont pas prise en compte avec Jlink
 ```bash
-cp D\:/Logiciels/Javafx-SDK-17.0.13/bin/*.dll ./runtimejdk17/bin/ 
+cp D:/Logiciels/Javafx-SDK-17.0.13/bin/*.dll ./runtimejdk17/bin/ 
 
 ```
 Générer l'installeur
