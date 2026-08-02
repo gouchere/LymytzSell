@@ -431,11 +431,11 @@
                 <Button fx:id="BTN_SAVE" mnemonicParsing="false"
                         onAction="#valideFacture" text="VALIDER" styleClass="bottom-action-button, validate-button"/>
                 <Button fx:id="BTN_LIVRER" mnemonicParsing="false" onAction="#livrerFacture"
-                        prefWidth="100.0" text="LIVRER" styleClass="bottom-action-button, deliver-button"/>
+                        text="LIVRER" styleClass="bottom-action-button, deliver-button"/>
                 <Button fx:id="BTN_REGLER" mnemonicParsing="false"
                         onAction="#saveOrGeneratedPaiement" text="REGLER" styleClass="bottom-action-button, pay-button"/>
                 <Button fx:id="BTN_PRINT" mnemonicParsing="false" onAction="#printFacture" styleClass="bottom-action-button, print-button"
-                        prefWidth="130.0" text="IMPRIMER"/>
+                        text="IMPRIMER"/>
             </HBox>
             <HBox prefHeight="45.0" spacing="5.0" styleClass="status-bar">
                 <Label alignment="CENTER" prefHeight="36.0" text="Société" styleClass="status-text"/>
