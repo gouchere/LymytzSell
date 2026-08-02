@@ -32,21 +32,7 @@ import java.util.Objects;
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CustomComponents {
-    /**
-     * Gestion des tailles et redimensionnement*
-     * @param home
-     */
-    public static void initEventComponents(HomeCaisseController home) {
-        home.SPLIT_CENTER.getDividers().get(1).positionProperty().addListener((ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
-            if (home.RIGHT_BOX.getWidth() == 0) {
-                home.ECRAN.setPrefWidth(450);
-                home.LAB_TITLE_PANIER.setPrefWidth(450);
-            } else {
-                home.ECRAN.setPrefWidth(home.RIGHT_BOX.getWidth() + 50);
-                home.LAB_TITLE_PANIER.setPrefWidth(home.RIGHT_BOX.getWidth() + 50);
-            }
-        });
-    }
+
 
     public static void custumMenuAndToolBar(HomeCaisseController home) {
         final ImageView btnSave = new ImageView(new Image(Objects.requireNonNull(CustomComponents.class.getResourceAsStream("/icones/save.png"))));

@@ -80,7 +80,6 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.SplitPane;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToolBar;
@@ -154,8 +153,6 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
     public Button BTN_COMPTE;
     @FXML
     public Button BTN_QUIT;
-    @FXML
-    public SplitPane SPLIT_CENTER;
     @FXML
     public VBox RIGHT_BOX;
     @FXML
@@ -350,17 +347,19 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         LoaderInitData loaderInitData = new LoaderInitData(dao, this);
-        loaderInitData.addEventHandler(WorkerStateEvent.WORKER_STATE_SUCCEEDED, event -> {
-            this.displayPropertiesFiche(UtilsProject.headerDoc);
-        });
+        loaderInitData.addEventHandler(
+                WorkerStateEvent.WORKER_STATE_SUCCEEDED, event -> {
+                    this.displayPropertiesFiche(UtilsProject.headerDoc);
+                });
         initComponent();
         setMainPage(this);
-        TEXT_FIND.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
-            if (event.getCode() == KeyCode.ENTER || event.getCode() == KeyCode.TAB) {
-                event.consume();
-                handlePressTab(TEXT_FIND);
-            }
-        });
+        TEXT_FIND.addEventFilter(
+                KeyEvent.KEY_PRESSED, event -> {
+                    if (event.getCode() == KeyCode.ENTER || event.getCode() == KeyCode.TAB) {
+                        event.consume();
+                        handlePressTab(TEXT_FIND);
+                    }
+                });
     }
 
     private void handlePressTab(TextField textField) {
@@ -402,7 +401,6 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
         PROGRESS.setPrefHeight(18.0);
         PROGRESS.setPrefWidth(StartController.SCREENHEIGHT);
         CustomComponents.custumMenuAndToolBar(this);
-        CustomComponents.initEventComponents(this);
         if (UtilsProject.currentAgence != null && UtilsProject.currentSociete != null) {
             TEXT_SOCIETE.setText(UtilsProject.currentSociete.getName() + "[" + UtilsProject.currentAgence.getDesignation() + "]");
         }
@@ -510,19 +508,20 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
                 PROGRESS_LABEL.textProperty().unbind();
                 PROGRESS.progressProperty().bind(loaderArticleTask.progressProperty());
                 PROGRESS_LABEL.textProperty().bind(loaderArticleTask.messageProperty());
-                loaderArticleTask.addEventHandler(WorkerStateEvent.WORKER_STATE_SUCCEEDED, event -> {
-                    ObservableList<GridPane> value = loaderArticleTask.getValue();
-                    if (value != null) {
-                        BOX_ARTICLES.getChildren().addAll(value);
-                        PROGRESS_LABEL.textProperty().unbind();
-                    }
-                    if (value != null && !value.isEmpty()) {
-                        PROGRESS_LABEL.setText("terminé !");
-                        MAIN_ARTICLE_CONTAINER.getChildren().remove(0);
-                    } else {
-                        PROGRESS_LABEL.setText("Aucun résultat trouvé !");
-                    }
-                });
+                loaderArticleTask.addEventHandler(
+                        WorkerStateEvent.WORKER_STATE_SUCCEEDED, event -> {
+                            ObservableList<GridPane> value = loaderArticleTask.getValue();
+                            if (value != null) {
+                                BOX_ARTICLES.getChildren().addAll(value);
+                                PROGRESS_LABEL.textProperty().unbind();
+                            }
+                            if (value != null && !value.isEmpty()) {
+                                PROGRESS_LABEL.setText("terminé !");
+                                MAIN_ARTICLE_CONTAINER.getChildren().remove(0);
+                            } else {
+                                PROGRESS_LABEL.setText("Aucun résultat trouvé !");
+                            }
+                        });
                 new Thread(loaderArticleTask).start();
             }
         } catch (Exception ex) {
@@ -534,17 +533,18 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
         var loaderFamilleTask = new LoaderFamilleArticleTask(this, header);
         try {
             if (header != null) {
-                loaderFamilleTask.addEventHandler(WorkerStateEvent.WORKER_STATE_SUCCEEDED, event -> {
-                    VBox value = loaderFamilleTask.getValue();
-                    ScrollPane scrollPane = new ScrollPane();
-                    scrollPane.setId("ZONE_FAMILLE");
-                    scrollPane.setContent(value);
-                    scrollPane.setFitToWidth(true);
-                    scrollPane.setMaxHeight(350);
-                    var node = MAIN_LEFT_PANE.getChildren().stream().filter(elt -> "ZONE_FAMILLE".equals(elt.getId())).findFirst();
-                    node.ifPresent((e) -> MAIN_LEFT_PANE.getChildren().remove(e));
-                    MAIN_LEFT_PANE.getChildren().add(0, scrollPane);
-                });
+                loaderFamilleTask.addEventHandler(
+                        WorkerStateEvent.WORKER_STATE_SUCCEEDED, event -> {
+                            VBox value = loaderFamilleTask.getValue();
+                            ScrollPane scrollPane = new ScrollPane();
+                            scrollPane.setId("ZONE_FAMILLE");
+                            scrollPane.setContent(value);
+                            scrollPane.setFitToWidth(true);
+                            scrollPane.setMaxHeight(350);
+                            var node = MAIN_LEFT_PANE.getChildren().stream().filter(elt -> "ZONE_FAMILLE".equals(elt.getId())).findFirst();
+                            node.ifPresent((e) -> MAIN_LEFT_PANE.getChildren().remove(e));
+                            MAIN_LEFT_PANE.getChildren().add(0, scrollPane);
+                        });
                 new Thread(loaderFamilleTask).start();
             }
         } catch (Exception ex) {
@@ -555,7 +555,7 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
     private int calculPageTotal(String ref, YvsBaseFamilleArticle familleArticle) {
         Long nbArticleCatalogue = new LoaderArticleTask(this, UtilsProject.headerDoc, ref, familleArticle, 0, 0).countArticlesInDb();
         return Optional.of(nbArticleCatalogue).map(n -> Math.ceil((double) n / MAX_SIZE))
-                .map(Double::intValue).orElse(0);
+                       .map(Double::intValue).orElse(0);
     }
 
     public void displayPropertiesFiche(YvsComEnteteDocVente head) {
@@ -687,16 +687,17 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
         }
         try {
             LoaderStock service = new LoaderStock(this, depots, art);
-            service.addEventHandler(WorkerStateEvent.WORKER_STATE_SUCCEEDED, (WorkerStateEvent event) -> {
-                VBox containerStock = service.getValue();
-                ScrollPane scrollPane = new ScrollPane(containerStock);
-                scrollPane.setFitToHeight(true);
-                scrollPane.setPrefHeight(150);
-                Platform.runLater(() -> {
-                    PAN_STOCK.getChildren().clear();
-                    PAN_STOCK.getChildren().add(scrollPane);
-                });
-            });
+            service.addEventHandler(
+                    WorkerStateEvent.WORKER_STATE_SUCCEEDED, (WorkerStateEvent event) -> {
+                        VBox containerStock = service.getValue();
+                        ScrollPane scrollPane = new ScrollPane(containerStock);
+                        scrollPane.setFitToHeight(true);
+                        scrollPane.setPrefHeight(150);
+                        Platform.runLater(() -> {
+                            PAN_STOCK.getChildren().clear();
+                            PAN_STOCK.getChildren().add(scrollPane);
+                        });
+                    });
             new Thread(service).start();
         } catch (Exception ex) {
             LOGGER.error("Une exception survenue à l'affichage des propriétés de l'article", ex);
@@ -801,6 +802,7 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
     /**
      * Enregistre la facture et son contenu en base (sans livraison ni règlement).
      * Doit être appelé depuis un thread worker (pas le FX thread).
+     *
      * @return la facture enregistrée, ou {@code null} en cas d'erreur
      */
     public YvsComDocVentes saveFacture(YvsComDocVentes facture, double montantPaye) {
@@ -810,7 +812,8 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
         if (entityFacture != null) {
             new ServiceCreateFacture(this).saveCurrentCommercial(facture);
         } else {
-            Platform.runLater(() -> ToastService.show(getMainStage(),
+            Platform.runLater(() -> ToastService.show(
+                    getMainStage(),
                     "Votre facture n'a pas été enregistré veuillez regarder vos notifications", 3500, ERROR));
         }
         return entityFacture;
@@ -831,7 +834,9 @@ public class HomeCaisseController extends ManagedApplication implements Initiali
         new Thread(() -> validateFacture(facture, montantPaye, montantRecu)).start();
     }
 
-    /** Conservé pour compatibilité — délègue aux deux nouvelles méthodes. */
+    /**
+     * Conservé pour compatibilité — délègue aux deux nouvelles méthodes.
+     */
     public void saveAndValidateFacture(YvsComDocVentes facture, final double montantPaye, final double montantRecu) {
         YvsComDocVentes entityFacture = saveFacture(facture, montantPaye);
         if (entityFacture != null) {

@@ -102,13 +102,13 @@ public final class TabFacture extends Tab {
         ImageView buttonDel = getButtonUpDown("delete-icon.png", line, "DELETE");
         ImageView buttonAdd = getButtonUpDown("add1.png", line, "ADD");
         ImageView buttonMinus = getButtonUpDown("minus_ico.png", line, "MOVE");
-        HBox boxBottom = new HBox(buttonDel);
-        boxBottom.getStyleClass().add("border_top");
-        HBox boxBottom1 = new HBox(buttonMinus, textQte, buttonAdd);
-        boxBottom1.setAlignment(Pos.CENTER_RIGHT);
-        boxBottom.setPrefWidth(370);
-        boxBottom1.setPrefWidth(330);
-        boxBottom.getChildren().add(boxBottom1);
+        HBox controlsLineBoxLeft = new HBox(buttonDel);
+        controlsLineBoxLeft.getStyleClass().add("border_top");
+        controlsLineBoxLeft.setPrefWidth(370);
+        HBox controlsLineBoxRight = new HBox(buttonMinus, textQte, buttonAdd);
+        controlsLineBoxRight.setAlignment(Pos.CENTER_RIGHT);
+        controlsLineBoxRight.setPrefWidth(330);
+        controlsLineBoxLeft.getChildren().add(controlsLineBoxRight);
 
         HBox boxTop = new HBox();
         VBox boxInfosArt = new VBox();
@@ -126,7 +126,7 @@ public final class TabFacture extends Tab {
         boxInfosArt.getChildren().add(hBox);
         boxInfosArt.getChildren().add(new HBox(10, new Label("Rist. :"), CustomComponents.getLabelN(Constantes.nbf.format(line.getRistourne())), new Label(""), new Label("Remise/Rabais : "), CustomComponents.getLabelN(Constantes.nbf.format(line.getRemise() + line.getRabais()))));
         boxTop.getChildren().addAll(UtilsProject.buildImageProduit("coffee.png"), boxInfosArt, new Label("      "), totalLabel, deviseLabel);
-        resultBox.getChildren().addAll(boxTop, boxBottom);
+        resultBox.getChildren().addAll(boxTop, controlsLineBoxLeft);
         resultBox.getStyleClass().add("border_bottom");
         return resultBox;
     }
@@ -174,9 +174,9 @@ public final class TabFacture extends Tab {
             ScrollPane sp = (ScrollPane) this.getContent();
             VBox content = (VBox) sp.getContent();
             // vérifie si la ligne est déjà dans le panier
-            VBox b = retriveLineInCart(line, content);
-            if (b != null && line.getQuantite() > 0) {
-                int idx = content.getChildren().indexOf(b);
+            VBox lineBox = retriveLineInCart(line, content);
+            if (lineBox != null && line.getQuantite() > 0) {
+                int idx = content.getChildren().indexOf(lineBox);
                 if (idx >= 0) {
                     content.getChildren().remove(idx);
                     content.getChildren().add(idx, this.buildLineContent(line));
@@ -185,9 +185,9 @@ public final class TabFacture extends Tab {
                 if (idx >= 0) {
                     this.getContentFacture().set(idx, line);
                 }
-            } else if (b != null && line.getQuantite() < 0) {
+            } else if (lineBox != null && line.getQuantite() < 0) {
                 moveLineContent(line);
-            } else if (b == null) {
+            } else if (lineBox == null) {
                 content.getChildren().add(0, this.buildLineContent(line));
                 this.getContentFacture().add(line);
             }

@@ -59,10 +59,6 @@ public class StartController implements Initializable, Controller {
     private PasswordField TXT_PWD;
     @FXML
     private Button BTN_CONNECT;
-    @FXML
-    private Button BTN_CANCEL;
-    @FXML
-    private Hyperlink LINK_FORGET;
 
     public static int SCREENWIDTH;
     public static int SCREENHEIGHT;
@@ -229,7 +225,7 @@ public class StartController implements Initializable, Controller {
     private YvsUsers controleConnection(String login) {
         try {
             if (LocalQueryFactories.pingServer()) {
-                return (YvsUsers) dao.findOneByNQ("YvsUsers.findByCodeUsers_", new String[]{"codeUsers"}, new Object[]{login});
+                return dao.findOneByNQ("YvsUsers.findByCodeUsers_", new String[]{"codeUsers"}, new Object[]{login});
             } else {
                 LymytzService.openAlertDialog("Les paramètres de connexion à la source de données sont certainement incorrecte", "Connexion", "Erreur de connexion à la source de données", Alert.AlertType.ERROR);
                 return null;

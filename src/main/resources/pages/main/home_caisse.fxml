@@ -12,8 +12,10 @@
 <?import javafx.scene.text.Font?>
 <?import java.lang.String?>
 <?import java.net.URL?>
+<?import javafx.scene.layout.Region?>
 <BorderPane id="HomeCaisse" prefWidth="741.0" styleClass="background_gray_" xmlns="http://javafx.com/javafx/8"
-            xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lymytz.lymytzsell.view.controller.HomeCaisseController">
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.lymytz.lymytzsell.view.controller.HomeCaisseController">
     <stylesheets>
         <URL value="@form_application.css"/>
     </stylesheets>
@@ -154,7 +156,7 @@
                             text="Quitter" textAlignment="RIGHT"/>
                 </ToolBar>
             </HBox>
-            <HBox prefHeight="30.0" style="-fx-background-color: #fff;">
+            <HBox prefHeight="30.0" style="-fx-background-color: #ffffff;">
                 <VBox prefHeight="38.0" prefWidth="137.0">
                     <HBox prefHeight="5.0">
                         <Label prefHeight="16.0" text="Etat Serveur Local:"
@@ -253,245 +255,213 @@
         </VBox>
     </top>
     <center>
-        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity"
-              minWidth="-Infinity" VBox.vgrow="ALWAYS">
-            <SplitPane dividerPositions="0.90" orientation="VERTICAL" VBox.vgrow="ALWAYS">
-                <HBox VBox.vgrow="ALWAYS">
-                    <SplitPane fx:id="SPLIT_CENTER" dividerPositions="0.19, 0.79"
-                               HBox.hgrow="ALWAYS">
-                        <VBox fx:id="MAIN_LEFT_PANE">
-                            <HBox style="-fx-background-color: #bbb;">
-                                <Label prefHeight="22.0" prefWidth="124.0"
-                                       style="-fx-background-color: #bbb;" text="INFOS FACTURE"
-                                       textFill="#ee1d06"/>
-                                <Label fx:id="LAB_REF_FACTURE" prefHeight="22.0" prefWidth="238.0"
-                                       text="FV/000000000" wrapText="true">
-                                    <HBox.margin>
-                                        <Insets left="10.0"/>
-                                    </HBox.margin>
-                                    <styleClass>
-                                        <String fx:value="bold"/>
-                                        <String fx:value="color_blue"/>
-                                    </styleClass>
-                                    <font>
-                                        <Font size="13.0"/>
-                                    </font>
-                                </Label>
-                            </HBox>
-                            <VBox prefHeight="200.0" prefWidth="100.0">
-                                <VBox>
-                                    <HBox prefHeight="29.0">
-                                        <Label prefHeight="40.0" text="Code client:">
-                                            <HBox.margin>
-                                                <Insets right="20.0"/>
-                                            </HBox.margin>
-                                        </Label>
-                                        <Label fx:id="LAB_CLIENT" prefHeight="40.0"
-                                               styleClass="bold"
-                                               text="DIV001" wrapText="true"/>
-                                    </HBox>
-                                    <Label fx:id="LAB_NAME_CLT" prefHeight="28.0"
-                                           prefWidth="266.0" styleClass="bold"
-                                           text="Client Divers" wrapText="true"/>
-                                    <HBox prefHeight="29.0" prefWidth="330.0">
-                                        <Label prefHeight="28.0" text="Adresse:">
-                                            <HBox.margin>
-                                                <Insets right="5.0"/>
-                                            </HBox.margin>
-                                        </Label>
-                                        <Label fx:id="LAB_ADRESSSE" prefHeight="28.0"
-                                               prefWidth="261.0" styleClass="bold"
-                                               text="XXXX" wrapText="true"/>
-                                    </HBox>
-                                </VBox>
-                                <HBox prefHeight="29.0" prefWidth="386.0">
-                                    <Label prefHeight="30.0" prefWidth="60.0" text="Statut:"/>
-                                    <CheckBox fx:id="CHK_LIVRE" mnemonicParsing="false"
-                                              prefHeight="32.0" prefWidth="73.0" text="Livré"/>
-                                    <CheckBox fx:id="CHK_REGLE" mnemonicParsing="false" prefHeight="32.0"
-                                              prefWidth="73.0" text="Réglé"/>
-                                </HBox>
-                                <Separator prefWidth="200.0"/>
-                                <HBox prefHeight="29.0">
-                                    <Label prefHeight="29.0" text="Ristourne :"/>
-                                    <Label fx:id="LAB_T_RIST" alignment="CENTER_RIGHT"
-                                           prefHeight="29.0" prefWidth="80.0" styleClass="bold"
-                                           text="0">
-                                        <HBox.margin>
-                                            <Insets left="10.0"/>
-                                        </HBox.margin>
-                                        <padding>
-                                            <Insets right="10.0"/>
-                                        </padding>
-                                    </Label>
-                                    <Label prefHeight="23.0" prefWidth="66.0" text="Remise :">
-                                        <HBox.margin>
-                                            <Insets left="30.0"/>
-                                        </HBox.margin>
-                                    </Label>
-                                    <Label fx:id="LAB_T_REM" alignment="CENTER_RIGHT"
-                                           prefHeight="26.0" prefWidth="86.0" styleClass="bold" text="0">
-                                        <padding>
-                                            <Insets right="10.0"/>
-                                        </padding>
-                                    </Label>
-                                </HBox>
-                                <HBox prefHeight="29.0">
-                                    <Label prefHeight="29.0" text="Total TTC:"/>
-                                    <Label fx:id="LAB_TTC" alignment="CENTER_RIGHT"
-                                           prefHeight="29.0" prefWidth="80.0" styleClass="bold"
-                                           text="0">
-                                        <HBox.margin>
-                                            <Insets left="10.0"/>
-                                        </HBox.margin>
-                                        <padding>
-                                            <Insets right="10.0"/>
-                                        </padding>
-                                    </Label>
-                                </HBox>
-                                <HBox prefHeight="29.0">
-                                    <Label prefHeight="29.0" text="Avance :"/>
-                                    <Label fx:id="LAB_T_AVANCE" alignment="CENTER_RIGHT"
-                                           prefHeight="24.0" prefWidth="80.0" styleClass="bold"
-                                           text="0">
-                                        <padding>
-                                            <Insets right="10.0"/>
-                                        </padding>
-                                        <HBox.margin>
-                                            <Insets left="10.0"/>
-                                        </HBox.margin>
-                                    </Label>
-                                    <Label prefHeight="29.0" text="Net à payer :">
-                                        <HBox.margin>
-                                            <Insets left="10.0"/>
-                                        </HBox.margin>
-                                    </Label>
-                                    <Label fx:id="LAB_NET_A_PAYER" alignment="CENTER_RIGHT"
-                                           prefHeight="25.0" styleClass="bold" text="0">
-                                        <padding>
-                                            <Insets right="10.0"/>
-                                        </padding>
-                                    </Label>
-                                </HBox>
-                            </VBox>
-                            <Separator prefWidth="200.0"/>
-                            <HBox prefHeight="27.0" prefWidth="386.0">
-                                <Label fx:id="L_TOTAL" prefHeight="27.0" text="0">
-                                    <HBox.margin>
-                                        <Insets left="10.0"/>
-                                    </HBox.margin>
-                                </Label>
-                                <Label prefHeight="27.0"
-                                       text="Factures enregistrée(s)  pour cette session"
-                                       textFill="#6f6d6d">
-                                    <HBox.margin>
-                                        <Insets left="5.0"/>
-                                    </HBox.margin>
-                                    <font>
-                                        <Font name="System Italic" size="12.0"/>
-                                    </font>
-                                </Label>
-                            </HBox>
-                            <Separator prefWidth="200.0"/>
-                            <VBox prefHeight="43.0" prefWidth="386.0">
-                                <Label fx:id="LAB_DES" text="DESIGNATION" styleClass="bold"/>
-                                <HBox>
-                                    <Label prefHeight="31.0"
-                                           text="Quantité facturée(s) durant la session:"
-                                           textFill="#233679"/>
-                                    <Label fx:id="QTE_FACTURE" text="0" textFill="#051065">
-                                        <font>
-                                            <Font name="System Bold" size="16.0"/>
-                                        </font>
-                                    </Label>
-                                </HBox>
-                            </VBox>
-                            <VBox fx:id="PAN_STOCK"/>
-                        </VBox>
-                        <VBox fx:id="MAIN_ARTICLE_CONTAINER" spacing="10.0" HBox.hgrow="ALWAYS">
-                            <ScrollPane hbarPolicy="NEVER" pannable="true" fitToWidth="true"
-                                        VBox.vgrow="ALWAYS">
-                                <VBox fx:id="BOX_ARTICLES" spacing="10.0">
-                                    <padding>
-                                        <Insets bottom="8.0"/>
-                                    </padding>
-                                </VBox>
-                            </ScrollPane>
-                        </VBox>
-                        <VBox fx:id="RIGHT_BOX" style="-fx-background-color: #FFF;">
-                            <HBox prefHeight="57.0" prefWidth="350.0">
-                                <Label fx:id="ECRAN" alignment="CENTER" prefHeight="61.0"
-                                       prefWidth="437.0" style="-fx-text-fill: #066B20;"
-                                       styleClass="background_" text="0" wrapText="true">
-                                    <font>
-                                        <Font name="Times New Roman" size="40.0"/>
-                                    </font>
-                                </Label>
-                            </HBox>
-                            <Label fx:id="LAB_TITLE_PANIER" prefHeight="17.0" prefWidth="450.0"
-                                   style="-fx-background-color: #bbb;" text="PANIER"
-                                   textFill="#ee1d06"/>
-                            <TabPane fx:id="TAB_FACTURES" prefWidth="430.0" side="BOTTOM">
-                            </TabPane>
-                        </VBox>
-                    </SplitPane>
-                </HBox>
-                <VBox prefHeight="100.0">
-                    <HBox fillHeight="false" prefHeight="40.0" spacing="5.0"
-                          style="-fx-background-color: #bbb;">
-                        <CheckBox fx:id="CHK_DISPLAY" mnemonicParsing="false" prefHeight="41.0"
-                                  prefWidth="94.0" selected="true" text="Saisie manuel"/>
-                        <TextField fx:id="TEXT_FIND" prefHeight="35.0" prefWidth="240.0"
-                                   promptText="Article ou code barre"
-                                   style="-fx-background-color: #bffcd0; -fx-text-fill: #333;">
-                            <HBox.margin>
-                                <Insets bottom="2.0" right="480.0" top="2.0"/>
-                            </HBox.margin>
-                        </TextField>
-                        <Button fx:id="BTN_SAVE" mnemonicParsing="false"
-                                onAction="#valideFacture" text="VALIDER"/>
-                        <Button fx:id="BTN_LIVRER" mnemonicParsing="false" onAction="#livrerFacture"
-                                prefWidth="100.0" text="LIVRER"/>
-                        <Button fx:id="BTN_REGLER" mnemonicParsing="false"
-                                onAction="#saveOrGeneratedPaiement" text="REGLER"/>
-                        <Button fx:id="BTN_PRINT" mnemonicParsing="false" onAction="#printFacture"
-                                prefWidth="130.0" text="IMPRIMER"/>
-                    </HBox>
-                    <HBox prefHeight="32.0" spacing="5.0">
-                        <Label alignment="CENTER" prefHeight="36.0" text="Société :"/>
-                        <Label fx:id="TEXT_SOCIETE" alignment="CENTER" prefHeight="30.0"
-                               prefWidth="241.0" text="Lymytz Retail"/>
-                        <VBox>
-                            <Label fx:id="LAB_NB_DATA_IN" prefWidth="500.0">
-                                <font>
-                                    <Font size="10.0"/>
-                                </font>
-                            </Label>
-                            <Label fx:id="LAB_NB_DATA_OUT" prefWidth="500.0">
-                                <font>
-                                    <Font size="10.0"/>
-                                </font>
-                            </Label>
-                        </VBox>
-                        <HBox alignment="CENTER_RIGHT" prefHeight="29.0" spacing="20.0">
-                            <VBox>
-                                <Label fx:id="SESS_DUREE" alignment="BOTTOM_RIGHT"
-                                       contentDisplay="RIGHT" prefWidth="850.0">
-                                    <font>
-                                        <Font size="9.0"/>
-                                    </font>
-                                </Label>
-                                <Label alignment="BOTTOM_RIGHT" contentDisplay="RIGHT"
-                                       prefWidth="850.0" text="Copyright(c) Lymytz 2024">
-                                    <font>
-                                        <Font size="9.0"/>
-                                    </font>
-                                </Label>
-                            </VBox>
+        <HBox spacing="5.0" style="-fx-background-color: white;
+          -fx-border-color: #cfcfcf;
+          -fx-border-width: 2 0 0 0;
+      ">
+            <VBox fx:id="MAIN_LEFT_PANE"
+                  minWidth="280.0"
+                  prefWidth="320.0"
+                  maxWidth="350.0"
+                  styleClass="left-panel"
+            >
+                <VBox>
+                    <Label text="INFOS FACTURE" prefWidth="Infinity"
+                           styleClass="left-panel-title"/>
+                    <Label fx:id="LAB_REF_FACTURE" prefHeight="22.0" prefWidth="238.0"
+                           text="FV/000000000" wrapText="true">
+                        <HBox.margin>
+                            <Insets left="10.0"/>
+                        </HBox.margin>
+                        <styleClass>
+                            <String fx:value="bold"/>
+                            <String fx:value="color_blue"/>
+                        </styleClass>
+                        <font>
+                            <Font size="13.0"/>
+                        </font>
+                    </Label>
+                </VBox>
+                <VBox prefHeight="200.0" prefWidth="100.0">
+                    <VBox>
+                        <HBox prefHeight="29.0">
+                            <Label prefHeight="40.0" text="Code client" styleClass="left-label" />
+                            <Label fx:id="LAB_CLIENT" prefHeight="40.0" text="DIV001" wrapText="true" styleClass="left-value"/>
                         </HBox>
+                        <Label fx:id="LAB_NAME_CLT" prefHeight="28.0" prefWidth="266.0" styleClass="left-value" text="Client Divers" wrapText="true"/>
+                        <HBox prefHeight="29.0" prefWidth="330.0">
+                            <Label prefHeight="28.0" text="Adresse" styleClass="left-label">
+                                <HBox.margin>
+                                    <Insets right="5.0"/>
+                                </HBox.margin>
+                            </Label>
+                            <Label fx:id="LAB_ADRESSSE" prefHeight="28.0" styleClass="left-value" text="TYO" wrapText="true"/>
+                        </HBox>
+                    </VBox>
+                    <HBox prefHeight="29.0" prefWidth="386.0">
+                        <Label prefHeight="30.0" prefWidth="60.0" text="Statut" styleClass="left-label"/>
+                        <CheckBox fx:id="CHK_LIVRE" mnemonicParsing="false"
+                                  prefHeight="32.0" prefWidth="73.0" text="Livré" styleClass="left-value"/>
+                        <CheckBox fx:id="CHK_REGLE" mnemonicParsing="false" prefHeight="32.0"
+                                  prefWidth="73.0" text="Réglé" styleClass="left-value"/>
+                    </HBox>
+                    <Separator prefWidth="200.0" styleClass="left-separator"/>
+                    <VBox prefHeight="29.0" styleClass="total-panel">
+                        <HBox>
+                            <Label prefHeight="29.0" text="Ristourne :" styleClass="total-title"/>
+                            <Label fx:id="LAB_T_RIST" alignment="CENTER_RIGHT" styleClass="total-value" text="0" />
+                        </HBox>
+                        <HBox>
+                            <Label prefHeight="29.0" text="Remise :" styleClass="total-title"/>
+                            <Label fx:id="LAB_T_REM" alignment="CENTER_RIGHT" styleClass="total-value" text="0" />
+                        </HBox>
+                        <HBox>
+                            <Label prefHeight="29.0" text="Total TTC" styleClass="total-title"/>
+                            <Label fx:id="LAB_TTC" alignment="CENTER_RIGHT"
+                               prefHeight="29.0" prefWidth="80.0" styleClass="total-value"
+                               text="0" />
+                        </HBox>
+                    </VBox>
+                    <HBox prefHeight="29.0">
+                        <Label prefHeight="29.0" text="Avance" styleClass="total-title"/>
+                        <Label fx:id="LAB_T_AVANCE" alignment="CENTER_RIGHT"
+                               prefHeight="24.0" prefWidth="80.0" styleClass="total-value"
+                               text="0" />
+                        <Label prefHeight="29.0" text="Net à payer :" styleClass="total-title">
+                            <HBox.margin>
+                                <Insets left="10.0"/>
+                            </HBox.margin>
+                        </Label>
+                        <Label fx:id="LAB_NET_A_PAYER" alignment="CENTER_RIGHT"
+                               prefHeight="25.0" styleClass="total-value" text="0">
+                            <padding>
+                                <Insets right="10.0"/>
+                            </padding>
+                        </Label>
                     </HBox>
                 </VBox>
-            </SplitPane>
-        </VBox>
+                <Separator prefWidth="200.0"/>
+                <HBox prefHeight="27.0" prefWidth="386.0" >
+                    <Label fx:id="L_TOTAL" prefHeight="27.0" text="0"/>
+                    <Label prefHeight="27.0"
+                           text="Factures enregistrée(s)  pour cette session"
+                           textFill="#6f6d6d">
+                        <HBox.margin>
+                            <Insets left="5.0"/>
+                        </HBox.margin>
+                        <font>
+                            <Font name="System Italic" size="12.0"/>
+                        </font>
+                    </Label>
+                </HBox>
+                <Separator prefWidth="200.0" styleClass="left-separator"/>
+                <VBox prefHeight="43.0" prefWidth="386.0">
+                    <Label fx:id="LAB_DES" text="DESIGNATION" styleClass="bold"/>
+                    <HBox>
+                        <Label prefHeight="31.0"
+                               text="Quantité facturée(s) durant la session:"
+                               textFill="#233679"/>
+                        <Label fx:id="QTE_FACTURE" text="0" textFill="#051065">
+                            <font>
+                                <Font name="System Bold" size="16.0"/>
+                            </font>
+                        </Label>
+                    </HBox>
+                </VBox>
+                <VBox fx:id="PAN_STOCK"/>
+            </VBox>
+            <VBox fx:id="MAIN_ARTICLE_CONTAINER" minWidth="0.0" spacing="10.0" HBox.hgrow="ALWAYS">
+                <ScrollPane hbarPolicy="NEVER" pannable="true" fitToWidth="true"
+                            VBox.vgrow="ALWAYS">
+                    <VBox fx:id="BOX_ARTICLES" spacing="10.0">
+                        <padding>
+                            <Insets bottom="8.0"/>
+                        </padding>
+                    </VBox>
+                </ScrollPane>
+            </VBox>
+            <VBox fx:id="RIGHT_BOX"
+                  minWidth="300.0"
+                  prefWidth="400.0"
+                  maxWidth="450.0"
+                styleClass="right-panel"
+            >
+                <HBox prefHeight="57.0" prefWidth="350.0">
+                    <Label fx:id="ECRAN" alignment="CENTER" prefHeight="61.0"
+                           maxWidth="Infinity"
+                           style="-fx-text-fill: #066B20;"
+                           styleClass="cash-display"
+                           text="0"
+                           wrapText="true"
+                           HBox.hgrow="ALWAYS"/>
+                </HBox>
+                <Label fx:id="LAB_TITLE_PANIER" prefHeight="17.0"
+                       maxWidth="Infinity"
+                       text="PANIER"
+                       textFill="#ee1d06"
+                       VBox.vgrow="ALWAYS"
+                       styleClass="right-panel-title"
+                />
+                <TabPane fx:id="TAB_FACTURES"
+                         minWidth="0.0"
+                         maxWidth="Infinity"
+                         side="BOTTOM"
+                         styleClass="cart-tabs"
+                         VBox.vgrow="ALWAYS">
+                </TabPane>
+            </VBox>
+        </HBox>
     </center>
+    <bottom>
+        <VBox minHeight="90.0"
+              prefHeight="90.0"
+              maxHeight="90.0"
+              styleClass="bottom-panel">
+            <HBox fillHeight="false" prefHeight="45.0" spacing="5.0"
+                  styleClass="action-bar">
+                <CheckBox fx:id="CHK_DISPLAY" mnemonicParsing="false"
+                          selected="true" text="Recherche manuel" styleClass="manual-entry-check"/>
+                <TextField fx:id="TEXT_FIND"
+                           prefHeight="35.0"
+                           minWidth="220.0"
+                           prefWidth="320.0"
+                           maxWidth="320.0"
+                           promptText="Article ou code barre" styleClass="product-search-field"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button fx:id="BTN_SAVE" mnemonicParsing="false"
+                        onAction="#valideFacture" text="VALIDER" styleClass="bottom-action-button, validate-button"/>
+                <Button fx:id="BTN_LIVRER" mnemonicParsing="false" onAction="#livrerFacture"
+                        prefWidth="100.0" text="LIVRER" styleClass="bottom-action-button, deliver-button"/>
+                <Button fx:id="BTN_REGLER" mnemonicParsing="false"
+                        onAction="#saveOrGeneratedPaiement" text="REGLER" styleClass="bottom-action-button, pay-button"/>
+                <Button fx:id="BTN_PRINT" mnemonicParsing="false" onAction="#printFacture" styleClass="bottom-action-button, print-button"
+                        prefWidth="130.0" text="IMPRIMER"/>
+            </HBox>
+            <HBox prefHeight="45.0" spacing="5.0" styleClass="status-bar">
+                <Label alignment="CENTER" prefHeight="36.0" text="Société" styleClass="status-text"/>
+                <Label fx:id="TEXT_SOCIETE" alignment="CENTER" prefHeight="30.0"
+                       prefWidth="241.0" text="Lymytz Retail" styleClass="status-text"/>
+                <VBox>
+                    <Label fx:id="LAB_NB_DATA_IN" prefWidth="500.0">
+                        <font>
+                            <Font size="10.0"/>
+                        </font>
+                    </Label>
+                    <Label fx:id="LAB_NB_DATA_OUT" prefWidth="500.0">
+                        <font>
+                            <Font size="10.0"/>
+                        </font>
+                    </Label>
+                </VBox>
+                <HBox alignment="CENTER_RIGHT" prefHeight="29.0" spacing="20.0">
+                    <VBox>
+                        <Label fx:id="SESS_DUREE" alignment="BOTTOM_RIGHT"
+                               contentDisplay="RIGHT" prefWidth="850.0" styleClass="status-text"/>
+                        <Label alignment="BOTTOM_RIGHT" contentDisplay="RIGHT"
+                               prefWidth="850.0" text="Copyright(c) Lymytz 2024" styleClass="status-muted-text"/>
+                    </VBox>
+                </HBox>
+            </HBox>
+        </VBox>
+    </bottom>
 </BorderPane>
